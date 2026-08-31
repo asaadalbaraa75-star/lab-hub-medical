@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4338ca"/>
+      <stop offset="50%" stop-color="#4f46e5"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+    <linearGradient id="flaskGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#e0e7ff"/>
+    </linearGradient>
+  </defs>
+  <!-- Background with rounded squircle -->
+  <rect width="512" height="512" rx="115" fill="url(#bgGrad)"/>
+  
+  <!-- Subtle glass ring -->
+  <circle cx="256" cy="256" r="210" fill="none" stroke="#ffffff" stroke-width="4" stroke-opacity="0.2"/>
+  
+  <!-- Laboratory Flask / Microscope Symbolism -->
+  <g transform="translate(106, 86) scale(0.6)" fill="none" stroke="#ffffff" stroke-width="20" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Flask Body -->
+    <path d="M210 60 L290 60" />
+    <path d="M250 60 L250 170 L110 390 C95 415 112 445 142 445 L358 445 C388 445 405 415 390 390 L250 170" />
+    <!-- Liquid Level inside flask -->
+    <path d="M150 330 Q250 355 350 330" stroke-width="16" stroke="#38bdf8" />
+    <path d="M180 280 Q250 300 320 280" stroke-width="12" stroke="#a5b4fc" stroke-opacity="0.8" />
+    <!-- Bubbles -->
+    <circle cx="210" cy="380" r="14" fill="#38bdf8" stroke="none" />
+    <circle cx="280" cy="360" r="18" fill="#a5b4fc" stroke="none" />
+    <circle cx="250" cy="400" r="10" fill="#ffffff" stroke="none" />
+  </g>
+  
+  <!-- Caduceus / Medical Cross Badge -->
+  <g transform="translate(320, 320) scale(0.7)">
+    <circle cx="90" cy="90" r="80" fill="#0f172a" stroke="#38bdf8" stroke-width="10"/>
+    <path d="M90 45 L90 135 M45 90 L135 90" stroke="#38bdf8" stroke-width="20" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Text Branding -->
+  <text x="256" y="475" text-anchor="middle" fill="#ffffff" font-family="system-ui, -apple-system, sans-serif" font-size="44" font-weight="900" letter-spacing="4">LAB HUB</text>
+</svg>

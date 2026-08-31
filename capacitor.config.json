@@ -1,0 +1,9 @@
+{
+  "appId": "com.labhub.medapp",
+  "appName": "LAB HUB",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  }
+}

@@ -1,0 +1,634 @@
+import React, { useState, useEffect } from 'react';
+import {
+  User,
+  LabSubjectId,
+  Practical,
+  Quiz,
+  QuizAttempt,
+  ApprovalWorkflowState,
+  ScheduleItem,
+  MedicalExam,
+  ExamAttempt
+} from './types';
+import { storageService } from './services/storageService';
+import { LAB_SUBJECTS } from './data/mockData';
+
+// Layout Components
+import { Navbar } from './components/layout/Navbar';
+import { Sidebar } from './components/layout/Sidebar';
+import { MobileNav } from './components/layout/MobileNav';
+
+// View Components
+import { DashboardView } from './components/dashboard/DashboardView';
+import { LabSubjectPage } from './components/labs/LabSubjectPage';
+import { PracticalDetailPage } from './components/practicals/PracticalDetailPage';
+import { PracticalsListPage } from './components/practicals/PracticalsListPage';
+import { SpotterView } from './components/spotter/SpotterView';
+import { QuizzesOverviewPage } from './components/quiz/QuizzesOverviewPage';
+import { QuizRunner } from './components/quiz/QuizRunner';
+import { ProgressPage } from './components/progress/ProgressPage';
+import { SchedulePage } from './components/schedule/SchedulePage';
+import { AcademicApprovalHub } from './components/academic/AcademicApprovalHub';
+
+// Exam System Components
+import { AvailableExamsPage } from './components/exam/AvailableExamsPage';
+import { PracticalExamRunner } from './components/exam/PracticalExamRunner';
+import { ExamResultReviewPage } from './components/exam/ExamResultReviewPage';
+import { TeacherDashboard } from './components/teacher/TeacherDashboard';
+import { BiochemistryDetailsModal } from './components/labs/biochemistry/BiochemistryDetailsModal';
+
+// Modals
+import { AiLabTutorModal } from './components/ai/AiLabTutorModal';
+import { AnnouncementsModal } from './components/announcements/AnnouncementsModal';
+import { StudentPortalModal } from './components/share/StudentPortalModal';
+import { AboutPlatformModal } from './components/about/AboutPlatformModal';
+
+export default function App() {
+  // Application State
+  const [currentUser, setCurrentUser] = useState<User>(storageService.getCurrentUser());
+  const [users, setUsers] = useState<User[]>(storageService.getUsers());
+  const [progress, setProgress] = useState(storageService.getStudentProgress(currentUser.id));
+  const [schedule, setSchedule] = useState(storageService.getSchedule());
+  const [practicals, setPracticals] = useState<Practical[]>(storageService.getPracticals());
+  const [spotters, setSpotters] = useState(storageService.getSpotters());
+  const [quizzes, setQuizzes] = useState(storageService.getQuizzes());
+  const [announcements, setAnnouncements] = useState(storageService.getAnnouncements());
+  const [notifications, setNotifications] = useState(storageService.getNotifications());
+
+  // Parse initial tab from URL hash or path
+  const getInitialTabState = () => {
+    try {
+      const hash = window.location.hash.replace('#', '').trim().toLowerCase();
+      const path = window.location.pathname.replace('/', '').trim().toLowerCase();
+      const target = hash || path;
+      const validTabs = [
+        'dashboard',
+        'laboratories',
+        'anatomy',
+        'histology',
+        'bacteriology',
+        'biochemistry',
+        'medical_exams',
+        'teacher_dashboard',
+        'biochemistry_guide',
+        'practicals',
+        'spotters',
+        'quizzes',
+        'schedule',
+        'progress',
+        'academic_approval'
+      ];
+      if (validTabs.includes(target)) {
+        return target;
+      }
+    } catch {
+      // Fallback
+    }
+    return 'dashboard';
+  };
+
+  // Navigation State
+  const [currentTab, setCurrentTab] = useState<string>(getInitialTabState);
+  const [selectedLabId, setSelectedLabId] = useState<LabSubjectId | null>(() => {
+    const initial = getInitialTabState();
+    if (['anatomy', 'histology', 'bacteriology', 'biochemistry'].includes(initial)) {
+      return initial as LabSubjectId;
+    }
+    return null;
+  });
+  const [selectedPracticalId, setSelectedPracticalId] = useState<string | null>(null);
+  const [activeQuiz, setActiveQuiz] = useState<Quiz | null>(null);
+
+  // Medical Exam System State
+  const [activeMedicalExam, setActiveMedicalExam] = useState<MedicalExam | null>(null);
+  const [completedExamAttempt, setCompletedExamAttempt] = useState<ExamAttempt | null>(null);
+
+  // Biochemistry Guide Modal State
+  const [isBiochemistryModalOpen, setIsBiochemistryModalOpen] = useState(false);
+  const [selectedBiochemistryTestId, setSelectedBiochemistryTestId] = useState<string | undefined>(undefined);
+
+  // Modals
+  const [isAiTutorOpen, setIsAiTutorOpen] = useState(false);
+  const [isAnnouncementsOpen, setIsAnnouncementsOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
+  const [globalSearchQuery, setGlobalSearchQuery] = useState('');
+
+  // Handle browser back/forward and hash changes
+  useEffect(() => {
+    const handleHashChange = () => {
+      const target = getInitialTabState();
+      if (['anatomy', 'histology', 'bacteriology', 'biochemistry'].includes(target)) {
+        setSelectedLabId(target as LabSubjectId);
+      }
+      setSelectedPracticalId(null);
+      setActiveQuiz(null);
+      setCurrentTab(target);
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    window.addEventListener('popstate', handleHashChange);
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+      window.removeEventListener('popstate', handleHashChange);
+    };
+  }, []);
+
+  // Update hash when tab changes
+  const updateTabWithHash = (newTab: string) => {
+    try {
+      if (window.location.hash.replace('#', '') !== newTab) {
+        window.history.replaceState(null, '', `#${newTab}`);
+      }
+    } catch {
+      // Ignore in restricted environments
+    }
+  };
+
+  // Sync user progress whenever currentUser changes
+  useEffect(() => {
+    setProgress(storageService.getStudentProgress(currentUser.id));
+  }, [currentUser.id]);
+
+  const handleRoleChange = (role: 'student' | 'instructor' | 'admin') => {
+    const updatedUser = storageService.setCurrentUserRole(role);
+    setCurrentUser(updatedUser);
+  };
+
+  const handleMarkNotificationRead = (id: string) => {
+    storageService.markNotificationRead(id);
+    setNotifications(storageService.getNotifications());
+  };
+
+  const handleMarkAllNotificationsRead = () => {
+    storageService.markAllNotificationsRead();
+    setNotifications(storageService.getNotifications());
+  };
+
+  const handleSelectLab = (labId: LabSubjectId) => {
+    setSelectedLabId(labId);
+    setSelectedPracticalId(null);
+    setActiveQuiz(null);
+    setCurrentTab(labId);
+    updateTabWithHash(labId);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleOpenPractical = (labId: string, practicalId: string) => {
+    setSelectedLabId(labId as LabSubjectId);
+    setSelectedPracticalId(practicalId);
+    setActiveQuiz(null);
+    setCurrentTab('practical_detail');
+    updateTabWithHash('practical_detail');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleOpenSpotter = (labId: LabSubjectId) => {
+    setSelectedLabId(labId);
+    setCurrentTab('spotters');
+    updateTabWithHash('spotters');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleOpenQuiz = (labId: LabSubjectId, practicalId?: string) => {
+    let targetQuiz: Quiz | undefined;
+    if (practicalId) {
+      targetQuiz = quizzes.find(q => q.practicalId === practicalId);
+    }
+    if (!targetQuiz) {
+      targetQuiz = quizzes.find(q => q.labId === labId) || quizzes[0];
+    }
+
+    if (targetQuiz) {
+      setActiveQuiz(targetQuiz);
+      setCurrentTab('quiz_runner');
+      updateTabWithHash('quiz_runner');
+    } else {
+      setCurrentTab('quizzes');
+      updateTabWithHash('quizzes');
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleTogglePracticalComplete = (practicalId: string) => {
+    const updated = storageService.togglePracticalCompletion(currentUser.id, practicalId);
+    setProgress(updated);
+  };
+
+  const handleTogglePreparationTask = (scheduleId: string, taskId: string) => {
+    const updatedSchedule = storageService.togglePreparationTask(scheduleId, taskId);
+    setSchedule(updatedSchedule);
+  };
+
+  const handleCompleteQuizAttempt = (attempt: QuizAttempt) => {
+    const updatedProgress = storageService.saveQuizAttempt(attempt);
+    setProgress(updatedProgress);
+  };
+
+  const handleUpdatePracticalStatus = (
+    practicalId: string,
+    status: ApprovalWorkflowState,
+    comment?: string
+  ) => {
+    const updated = storageService.updatePracticalStatus(
+      practicalId,
+      status,
+      currentUser.name,
+      comment
+    );
+    setPracticals(updated);
+  };
+
+  const handleStartMedicalExam = (exam: MedicalExam) => {
+    setActiveMedicalExam(exam);
+    setCompletedExamAttempt(null);
+    setCurrentTab('exam_runner');
+    updateTabWithHash('exam_runner');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleStartLabExam = (labId: LabSubjectId) => {
+    const exams = storageService.getMedicalExams();
+    const labExam = exams.find(e => e.labId === labId) || exams[0];
+    handleStartMedicalExam(labExam);
+  };
+
+  const handleCompleteMedicalExam = (attempt: ExamAttempt) => {
+    setCompletedExamAttempt(attempt);
+    setProgress(storageService.getStudentProgress(currentUser.id));
+    setCurrentTab('exam_result');
+    updateTabWithHash('exam_result');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleOpenBiochemistryGuide = (testId?: string) => {
+    setSelectedBiochemistryTestId(testId);
+    setIsBiochemistryModalOpen(true);
+  };
+
+  const handleTabSelect = (tab: string) => {
+    if (['anatomy', 'histology', 'bacteriology', 'biochemistry'].includes(tab)) {
+      handleSelectLab(tab as LabSubjectId);
+      return;
+    }
+
+    if (tab === 'biochemistry_guide') {
+      setIsBiochemistryModalOpen(true);
+      return;
+    }
+
+    setSelectedPracticalId(null);
+    setActiveQuiz(null);
+    setCurrentTab(tab);
+    updateTabWithHash(tab);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleSearchSelect = (result: { type: string; id: string; labId?: string }) => {
+    if (result.type === 'lab' && result.labId) {
+      handleSelectLab(result.labId as LabSubjectId);
+    } else if (result.type === 'practical' && result.labId) {
+      handleOpenPractical(result.labId, result.id);
+    } else if (result.type === 'quiz') {
+      const q = quizzes.find(item => item.id === result.id);
+      if (q) {
+        setActiveQuiz(q);
+        setCurrentTab('quiz_runner');
+      }
+    }
+  };
+
+  // Find currently selected practical object
+  const currentPractical = practicals.find(p => p.id === selectedPracticalId) || practicals[0];
+  const currentLabInfo = LAB_SUBJECTS.find(l => l.id === selectedLabId) || LAB_SUBJECTS[0];
+
+  // Render View based on current tab
+  const renderCurrentView = () => {
+    if (currentTab === 'practical_detail' && currentPractical) {
+      return (
+        <PracticalDetailPage
+          practical={currentPractical}
+          progress={progress}
+          onToggleComplete={handleTogglePracticalComplete}
+          onOpenQuiz={handleOpenQuiz}
+          onOpenSpotter={handleOpenSpotter}
+          onBack={() => {
+            if (selectedLabId) {
+              setCurrentTab(selectedLabId);
+            } else {
+              setCurrentTab('dashboard');
+            }
+          }}
+        />
+      );
+    }
+
+    if (currentTab === 'quiz_runner' && activeQuiz) {
+      return (
+        <QuizRunner
+          quiz={activeQuiz}
+          userId={currentUser.id}
+          onCompleteQuiz={handleCompleteQuizAttempt}
+          onBack={() => setCurrentTab('quizzes')}
+        />
+      );
+    }
+
+    if (['anatomy', 'histology', 'bacteriology', 'biochemistry'].includes(currentTab)) {
+      const labInfo = LAB_SUBJECTS.find(l => l.id === currentTab) || LAB_SUBJECTS[0];
+      return (
+        <LabSubjectPage
+          labInfo={labInfo}
+          practicals={practicals}
+          onOpenPractical={handleOpenPractical}
+          onOpenSpotter={handleOpenSpotter}
+          onOpenQuiz={handleOpenQuiz}
+          onBackToDashboard={() => setCurrentTab('dashboard')}
+        />
+      );
+    }
+
+    switch (currentTab) {
+      case 'medical_exams':
+        return (
+          <AvailableExamsPage
+            onStartExam={handleStartMedicalExam}
+            onOpenTeacherDashboard={() => handleTabSelect('teacher_dashboard')}
+          />
+        );
+
+      case 'exam_runner':
+        if (!activeMedicalExam) {
+          const defaultExam = storageService.getMedicalExams()[0];
+          return (
+            <PracticalExamRunner
+              exam={defaultExam}
+              currentUser={currentUser}
+              onComplete={handleCompleteMedicalExam}
+              onExit={() => handleTabSelect('medical_exams')}
+            />
+          );
+        }
+        return (
+          <PracticalExamRunner
+            exam={activeMedicalExam}
+            currentUser={currentUser}
+            onComplete={handleCompleteMedicalExam}
+            onExit={() => handleTabSelect('medical_exams')}
+          />
+        );
+
+      case 'exam_result':
+        if (!completedExamAttempt) {
+          const defaultAttempt = storageService.getExamAttempts()[0];
+          if (defaultAttempt) {
+            return (
+              <ExamResultReviewPage
+                attempt={defaultAttempt}
+                onRetakeExam={() => {
+                  const exam = storageService.getMedicalExams().find(e => e.id === defaultAttempt.examId) || storageService.getMedicalExams()[0];
+                  handleStartMedicalExam(exam);
+                }}
+                onBackToExams={() => handleTabSelect('medical_exams')}
+                onReturnDashboard={() => handleTabSelect('dashboard')}
+              />
+            );
+          }
+          return (
+            <AvailableExamsPage
+              onStartExam={handleStartMedicalExam}
+              onOpenTeacherDashboard={() => handleTabSelect('teacher_dashboard')}
+            />
+          );
+        }
+        return (
+          <ExamResultReviewPage
+            attempt={completedExamAttempt}
+            onRetakeExam={() => {
+              const exam = storageService.getMedicalExams().find(e => e.id === completedExamAttempt.examId) || storageService.getMedicalExams()[0];
+              handleStartMedicalExam(exam);
+            }}
+            onBackToExams={() => handleTabSelect('medical_exams')}
+            onReturnDashboard={() => handleTabSelect('dashboard')}
+          />
+        );
+
+      case 'teacher_dashboard':
+        return (
+          <TeacherDashboard
+            currentUser={currentUser}
+            onPreviewExam={handleStartMedicalExam}
+          />
+        );
+
+      case 'laboratories':
+        return (
+          <div className="space-y-6 animate-in fade-in duration-300">
+            <div className="space-y-1">
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-[#E5E7EB]">
+                MEDICAL LABORATORIES
+              </h1>
+              <p className="text-sm text-[#94A3B8]">
+                Select a discipline to access slides, models, cultures, and practical protocols.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {LAB_SUBJECTS.map(lab => (
+                <div
+                  key={lab.id}
+                  onClick={() => handleSelectLab(lab.id)}
+                  className="bg-[#1E293B] hover:bg-[#243244] border border-[#334155] hover:border-[#5B9BD5]/60 rounded-3xl overflow-hidden cursor-pointer transition-all shadow-md group"
+                >
+                  <div className="h-44 bg-[#172235] relative">
+                    <img
+                      src={lab.cardImage}
+                      alt={lab.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-75"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#1E293B] to-transparent" />
+                    <span className="absolute bottom-3 left-4 text-lg font-bold text-white">
+                      {lab.name}
+                    </span>
+                  </div>
+                  <div className="p-5 space-y-3">
+                    <p className="text-xs text-[#94A3B8] leading-relaxed line-clamp-3">
+                      {lab.description}
+                    </p>
+                    <div className="text-xs text-[#5B9BD5] font-bold">
+                      Explore {lab.name} →
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 'practicals':
+        return (
+          <PracticalsListPage
+            practicals={practicals}
+            progress={progress}
+            onOpenPractical={handleOpenPractical}
+          />
+        );
+
+      case 'spotters':
+        return (
+          <SpotterView
+            spotters={spotters}
+            selectedLabId={selectedLabId || undefined}
+            onBack={() => setCurrentTab('dashboard')}
+          />
+        );
+
+      case 'quizzes':
+        return (
+          <QuizzesOverviewPage
+            quizzes={quizzes}
+            progress={progress}
+            onStartQuiz={quiz => {
+              setActiveQuiz(quiz);
+              setCurrentTab('quiz_runner');
+            }}
+          />
+        );
+
+      case 'schedule':
+        return (
+          <SchedulePage
+            schedule={schedule}
+            onOpenPractical={handleOpenPractical}
+          />
+        );
+
+      case 'progress':
+        return (
+          <ProgressPage
+            progress={progress}
+            currentUser={currentUser}
+            onOpenPractical={handleOpenPractical}
+          />
+        );
+
+      case 'academic_approval':
+        return (
+          <AcademicApprovalHub
+            currentUser={currentUser}
+            practicals={practicals}
+            onUpdatePracticalStatus={handleUpdatePracticalStatus}
+            onViewPractical={handleOpenPractical}
+          />
+        );
+
+      case 'dashboard':
+      default:
+        return (
+          <DashboardView
+            currentUser={currentUser}
+            progress={progress}
+            schedule={schedule}
+            announcements={announcements}
+            onSelectLab={handleSelectLab}
+            onStartLabExam={handleStartLabExam}
+            onOpenPractical={handleOpenPractical}
+            onSelectTab={handleTabSelect}
+            onToggleTask={handleTogglePreparationTask}
+            onOpenAnnouncements={() => setIsAnnouncementsOpen(true)}
+            onOpenAiTutor={() => setIsAiTutorOpen(true)}
+            onOpenShareModal={() => setIsShareModalOpen(true)}
+            onOpenAboutModal={() => setIsAboutModalOpen(true)}
+          />
+        );
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-[#F8FAFC] text-[#1E293B] flex flex-col selection:bg-indigo-500 selection:text-white">
+      {/* Top Main Navigation */}
+      <Navbar
+        currentUser={currentUser}
+        onRoleChange={handleRoleChange}
+        onSwitchRole={handleRoleChange}
+        onOpenAiTutor={() => setIsAiTutorOpen(true)}
+        onOpenAskAI={() => setIsAiTutorOpen(true)}
+        onOpenAnnouncements={() => setIsAnnouncementsOpen(true)}
+        onOpenShareModal={() => setIsShareModalOpen(true)}
+        unreadAnnouncementsCount={announcements.length}
+        onSelectSearchResult={handleSearchSelect}
+        onSelectTab={handleTabSelect}
+        notifications={notifications}
+        onMarkNotificationRead={handleMarkNotificationRead}
+        onMarkAllNotificationsRead={handleMarkAllNotificationsRead}
+      />
+
+      {/* Main App Layout Grid */}
+      <div className="flex-1 flex max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-6 gap-8">
+        {/* Left Desktop Sidebar */}
+        <aside className="hidden lg:block w-64 shrink-0">
+          <div className="sticky top-24">
+            <Sidebar
+              activeTab={currentTab}
+              activeLabId={selectedLabId || undefined}
+              onSelectTab={handleTabSelect}
+              currentUser={currentUser}
+              userRole={currentUser.role}
+              onOpenAiTutor={() => setIsAiTutorOpen(true)}
+              onOpenAboutModal={() => setIsAboutModalOpen(true)}
+            />
+          </div>
+        </aside>
+
+        {/* Center Main Stage Content */}
+        <main className="flex-1 min-w-0 pb-20 lg:pb-10">
+          {renderCurrentView()}
+        </main>
+      </div>
+
+      {/* Mobile Bottom Navigation Bar */}
+      <MobileNav
+        activeTab={currentTab}
+        onSelectTab={handleTabSelect}
+        onOpenAiTutor={() => setIsAiTutorOpen(true)}
+      />
+
+      {/* AI Medical Lab Tutor Interactive Dialog */}
+      <AiLabTutorModal
+        isOpen={isAiTutorOpen}
+        onClose={() => setIsAiTutorOpen(false)}
+        currentSubject={selectedLabId || undefined}
+        currentTopic={currentPractical?.title}
+      />
+
+      {/* Laboratory Announcements Modal */}
+      <AnnouncementsModal
+        isOpen={isAnnouncementsOpen}
+        onClose={() => setIsAnnouncementsOpen(false)}
+        announcements={announcements}
+      />
+
+      {/* Student Portal Share Link Modal */}
+      <StudentPortalModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+      />
+
+      {/* About Platform & Creator Modal (سكينة أسعد) */}
+      <AboutPlatformModal
+        isOpen={isAboutModalOpen}
+        onClose={() => setIsAboutModalOpen(false)}
+        onOpenShareModal={() => {
+          setIsAboutModalOpen(false);
+          setIsShareModalOpen(true);
+        }}
+      />
+
+      {/* Biochemistry Detailed Tests Guide (9 Core Qualitative Tests) */}
+      <BiochemistryDetailsModal
+        isOpen={isBiochemistryModalOpen}
+        initialTestId={selectedBiochemistryTestId}
+        onClose={() => setIsBiochemistryModalOpen(false)}
+      />
+    </div>
+  );
+}
