@@ -1,3 +1,9 @@
+/*
+ * Copyright © 2026 سكينة أسعد
+ * LAB HUB — Original Educational Platform
+ * All Rights Reserved.
+ */
+
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';

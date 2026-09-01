@@ -1,3 +1,11 @@
+/*
+ * Copyright © 2026 سكينة أسعد
+ * LAB HUB — Original Educational Platform
+ * All Rights Reserved.
+ *
+ * Main Application Orchestrator & View Controller
+ */
+
 import React, { useState, useEffect } from 'react';
 import {
   User,
@@ -11,12 +19,14 @@ import {
   ExamAttempt
 } from './types';
 import { storageService } from './services/storageService';
+import { authService } from './services/authService';
 import { LAB_SUBJECTS } from './data/mockData';
 
 // Layout Components
 import { Navbar } from './components/layout/Navbar';
 import { Sidebar } from './components/layout/Sidebar';
 import { MobileNav } from './components/layout/MobileNav';
+import { PlatformFooter } from './components/common/PlatformFooter';
 
 // View Components
 import { DashboardView } from './components/dashboard/DashboardView';
@@ -37,23 +47,25 @@ import { ExamResultReviewPage } from './components/exam/ExamResultReviewPage';
 import { TeacherDashboard } from './components/teacher/TeacherDashboard';
 import { BiochemistryDetailsModal } from './components/labs/biochemistry/BiochemistryDetailsModal';
 
-// Modals
+// Modals & Security
 import { AiLabTutorModal } from './components/ai/AiLabTutorModal';
 import { AnnouncementsModal } from './components/announcements/AnnouncementsModal';
 import { StudentPortalModal } from './components/share/StudentPortalModal';
 import { AboutPlatformModal } from './components/about/AboutPlatformModal';
+import { SecurityAuditModal } from './components/security/SecurityAuditModal';
+import { AuthModal } from './components/auth/AuthModal';
 
 export default function App() {
   // Application State
-  const [currentUser, setCurrentUser] = useState<User>(storageService.getCurrentUser());
-  const [users, setUsers] = useState<User[]>(storageService.getUsers());
-  const [progress, setProgress] = useState(storageService.getStudentProgress(currentUser.id));
-  const [schedule, setSchedule] = useState(storageService.getSchedule());
-  const [practicals, setPracticals] = useState<Practical[]>(storageService.getPracticals());
-  const [spotters, setSpotters] = useState(storageService.getSpotters());
-  const [quizzes, setQuizzes] = useState(storageService.getQuizzes());
-  const [announcements, setAnnouncements] = useState(storageService.getAnnouncements());
-  const [notifications, setNotifications] = useState(storageService.getNotifications());
+  const [currentUser, setCurrentUser] = useState<User>(() => storageService.getCurrentUser());
+  const [users, setUsers] = useState<User[]>(() => storageService.getUsers());
+  const [progress, setProgress] = useState(() => storageService.getStudentProgress(currentUser.id));
+  const [schedule, setSchedule] = useState(() => storageService.getSchedule());
+  const [practicals, setPracticals] = useState<Practical[]>(() => storageService.getPracticals());
+  const [spotters, setSpotters] = useState(() => storageService.getSpotters());
+  const [quizzes, setQuizzes] = useState(() => storageService.getQuizzes());
+  const [announcements, setAnnouncements] = useState(() => storageService.getAnnouncements());
+  const [notifications, setNotifications] = useState(() => storageService.getNotifications());
 
   // Parse initial tab from URL hash or path
   const getInitialTabState = () => {
@@ -107,11 +119,13 @@ export default function App() {
   const [isBiochemistryModalOpen, setIsBiochemistryModalOpen] = useState(false);
   const [selectedBiochemistryTestId, setSelectedBiochemistryTestId] = useState<string | undefined>(undefined);
 
-  // Modals
+  // Modals & Security System State
   const [isAiTutorOpen, setIsAiTutorOpen] = useState(false);
   const [isAnnouncementsOpen, setIsAnnouncementsOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
+  const [isSecurityAuditOpen, setIsSecurityAuditOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [globalSearchQuery, setGlobalSearchQuery] = useState('');
 
   // Handle browser back/forward and hash changes
@@ -153,6 +167,12 @@ export default function App() {
   const handleRoleChange = (role: 'student' | 'instructor' | 'admin') => {
     const updatedUser = storageService.setCurrentUserRole(role);
     setCurrentUser(updatedUser);
+  };
+
+  const handleUserChange = (newUser: User) => {
+    storageService.setCurrentUser(newUser);
+    setCurrentUser(newUser);
+    setProgress(storageService.getStudentProgress(newUser.id));
   };
 
   const handleMarkNotificationRead = (id: string) => {
@@ -234,7 +254,8 @@ export default function App() {
       practicalId,
       status,
       currentUser.name,
-      comment
+      comment,
+      currentUser
     );
     setPracticals(updated);
   };
@@ -298,12 +319,31 @@ export default function App() {
     }
   };
 
-  // Find currently selected practical object
-  const currentPractical = practicals.find(p => p.id === selectedPracticalId) || practicals[0];
-  const currentLabInfo = LAB_SUBJECTS.find(l => l.id === selectedLabId) || LAB_SUBJECTS[0];
+  // Find currently selected practical if in practical_detail view
+  const currentPractical = selectedPracticalId
+    ? practicals.find(p => p.id === selectedPracticalId)
+    : undefined;
 
-  // Render View based on current tab
+  // View routing
   const renderCurrentView = () => {
+    // 1. Specific Lab Subjects
+    if (['anatomy', 'histology', 'bacteriology', 'biochemistry'].includes(currentTab)) {
+      const labInfo = LAB_SUBJECTS.find(l => l.id === currentTab) || LAB_SUBJECTS[0];
+      const labPracticals = practicals.filter(p => p.courseId === currentTab);
+
+      return (
+        <LabSubjectPage
+          labInfo={labInfo}
+          practicals={labPracticals}
+          onOpenPractical={handleOpenPractical}
+          onOpenSpotter={handleOpenSpotter}
+          onOpenQuiz={handleOpenQuiz}
+          onBackToDashboard={() => handleTabSelect('dashboard')}
+        />
+      );
+    }
+
+    // 2. Practical Detail View
     if (currentTab === 'practical_detail' && currentPractical) {
       return (
         <PracticalDetailPage
@@ -314,58 +354,51 @@ export default function App() {
           onOpenSpotter={handleOpenSpotter}
           onBack={() => {
             if (selectedLabId) {
-              setCurrentTab(selectedLabId);
+              handleSelectLab(selectedLabId);
             } else {
-              setCurrentTab('dashboard');
+              setCurrentTab('practicals');
             }
           }}
         />
       );
     }
 
+    // 3. Quiz Runner View
     if (currentTab === 'quiz_runner' && activeQuiz) {
       return (
         <QuizRunner
           quiz={activeQuiz}
           userId={currentUser.id}
           onCompleteQuiz={handleCompleteQuizAttempt}
-          onBack={() => setCurrentTab('quizzes')}
+          onBack={() => {
+            if (selectedLabId) {
+              handleSelectLab(selectedLabId);
+            } else {
+              setCurrentTab('quizzes');
+            }
+          }}
         />
       );
     }
 
-    if (['anatomy', 'histology', 'bacteriology', 'biochemistry'].includes(currentTab)) {
-      const labInfo = LAB_SUBJECTS.find(l => l.id === currentTab) || LAB_SUBJECTS[0];
-      return (
-        <LabSubjectPage
-          labInfo={labInfo}
-          practicals={practicals}
-          onOpenPractical={handleOpenPractical}
-          onOpenSpotter={handleOpenSpotter}
-          onOpenQuiz={handleOpenQuiz}
-          onBackToDashboard={() => setCurrentTab('dashboard')}
-        />
-      );
-    }
-
+    // 4. Primary Tabs
     switch (currentTab) {
       case 'medical_exams':
         return (
           <AvailableExamsPage
             onStartExam={handleStartMedicalExam}
+            onOpenLab={handleSelectLab}
             onOpenTeacherDashboard={() => handleTabSelect('teacher_dashboard')}
           />
         );
 
       case 'exam_runner':
         if (!activeMedicalExam) {
-          const defaultExam = storageService.getMedicalExams()[0];
           return (
-            <PracticalExamRunner
-              exam={defaultExam}
-              currentUser={currentUser}
-              onComplete={handleCompleteMedicalExam}
-              onExit={() => handleTabSelect('medical_exams')}
+            <AvailableExamsPage
+              onStartExam={handleStartMedicalExam}
+              onOpenLab={handleSelectLab}
+              onOpenTeacherDashboard={() => handleTabSelect('teacher_dashboard')}
             />
           );
         }
@@ -380,23 +413,10 @@ export default function App() {
 
       case 'exam_result':
         if (!completedExamAttempt) {
-          const defaultAttempt = storageService.getExamAttempts()[0];
-          if (defaultAttempt) {
-            return (
-              <ExamResultReviewPage
-                attempt={defaultAttempt}
-                onRetakeExam={() => {
-                  const exam = storageService.getMedicalExams().find(e => e.id === defaultAttempt.examId) || storageService.getMedicalExams()[0];
-                  handleStartMedicalExam(exam);
-                }}
-                onBackToExams={() => handleTabSelect('medical_exams')}
-                onReturnDashboard={() => handleTabSelect('dashboard')}
-              />
-            );
-          }
           return (
             <AvailableExamsPage
               onStartExam={handleStartMedicalExam}
+              onOpenLab={handleSelectLab}
               onOpenTeacherDashboard={() => handleTabSelect('teacher_dashboard')}
             />
           );
@@ -425,10 +445,10 @@ export default function App() {
         return (
           <div className="space-y-6 animate-in fade-in duration-300">
             <div className="space-y-1">
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-[#E5E7EB]">
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-[#1E293B]">
                 MEDICAL LABORATORIES
               </h1>
-              <p className="text-sm text-[#94A3B8]">
+              <p className="text-sm text-[#64748B]">
                 Select a discipline to access slides, models, cultures, and practical protocols.
               </p>
             </div>
@@ -437,24 +457,24 @@ export default function App() {
                 <div
                   key={lab.id}
                   onClick={() => handleSelectLab(lab.id)}
-                  className="bg-[#1E293B] hover:bg-[#243244] border border-[#334155] hover:border-[#5B9BD5]/60 rounded-3xl overflow-hidden cursor-pointer transition-all shadow-md group"
+                  className="bg-white hover:bg-slate-50 border border-[#E2E8F0] hover:border-indigo-500/60 rounded-3xl overflow-hidden cursor-pointer transition-all shadow-md group"
                 >
-                  <div className="h-44 bg-[#172235] relative">
+                  <div className="h-44 bg-slate-900 relative">
                     <img
                       src={lab.cardImage}
                       alt={lab.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-75"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#1E293B] to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent" />
                     <span className="absolute bottom-3 left-4 text-lg font-bold text-white">
                       {lab.name}
                     </span>
                   </div>
                   <div className="p-5 space-y-3">
-                    <p className="text-xs text-[#94A3B8] leading-relaxed line-clamp-3">
+                    <p className="text-xs text-[#64748B] leading-relaxed line-clamp-3">
                       {lab.description}
                     </p>
-                    <div className="text-xs text-[#5B9BD5] font-bold">
+                    <div className="text-xs text-indigo-600 font-bold">
                       Explore {lab.name} →
                     </div>
                   </div>
@@ -554,6 +574,7 @@ export default function App() {
         onOpenAskAI={() => setIsAiTutorOpen(true)}
         onOpenAnnouncements={() => setIsAnnouncementsOpen(true)}
         onOpenShareModal={() => setIsShareModalOpen(true)}
+        onOpenAuthModal={() => setIsAuthModalOpen(true)}
         unreadAnnouncementsCount={announcements.length}
         onSelectSearchResult={handleSearchSelect}
         onSelectTab={handleTabSelect}
@@ -584,6 +605,13 @@ export default function App() {
           {renderCurrentView()}
         </main>
       </div>
+
+      {/* Global Platform Footer with Mandated Ownership Notice */}
+      <PlatformFooter
+        onOpenAbout={() => setIsAboutModalOpen(true)}
+        onOpenSecurityAudit={() => setIsSecurityAuditOpen(true)}
+        onSelectTab={handleTabSelect}
+      />
 
       {/* Mobile Bottom Navigation Bar */}
       <MobileNav
@@ -621,6 +649,20 @@ export default function App() {
           setIsAboutModalOpen(false);
           setIsShareModalOpen(true);
         }}
+      />
+
+      {/* Production Security Audit Live Matrix Modal */}
+      <SecurityAuditModal
+        isOpen={isSecurityAuditOpen}
+        onClose={() => setIsSecurityAuditOpen(false)}
+      />
+
+      {/* Role-Based Authentication & Switch Portal Modal */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        currentUser={currentUser}
+        onUserChange={handleUserChange}
       />
 
       {/* Biochemistry Detailed Tests Guide (9 Core Qualitative Tests) */}

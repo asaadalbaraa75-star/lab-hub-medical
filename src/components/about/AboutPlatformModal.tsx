@@ -1,3 +1,11 @@
+/*
+ * Copyright © 2026 سكينة أسعد
+ * LAB HUB — Original Educational Platform
+ * All Rights Reserved.
+ *
+ * About Platform & Intellectual Property Modal
+ */
+
 import React from 'react';
 import {
   X,
@@ -11,7 +19,8 @@ import {
   Heart,
   Share2,
   ExternalLink,
-  ShieldCheck
+  ShieldCheck,
+  FlaskConical
 } from 'lucide-react';
 import { LabHubLogo } from '../common/LabHubLogo';
 
@@ -33,7 +42,6 @@ export const AboutPlatformModal: React.FC<AboutPlatformModalProps> = ({
       <div className="bg-white border border-[#E2E8F0] rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
         <div className="p-6 bg-gradient-to-r from-indigo-900 via-slate-900 to-indigo-950 text-white relative overflow-hidden flex items-center justify-between">
-          {/* Subtle decorative glow */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
 
           <div className="relative z-10 space-y-1 text-right flex-1 pl-4">
@@ -62,6 +70,40 @@ export const AboutPlatformModal: React.FC<AboutPlatformModalProps> = ({
 
         {/* Modal Scrollable Body */}
         <div className="p-6 space-y-6 overflow-y-auto text-right">
+          {/* Official Mandated Platform Branding Card */}
+          <div className="p-5 rounded-2xl bg-slate-900 text-white shadow-sm space-y-3 text-left">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-extrabold text-white tracking-tight">LAB HUB</h3>
+                <p className="text-xs font-semibold text-indigo-400">Medical Laboratory Learning Platform</p>
+              </div>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
+                v2.4.0 Production
+              </span>
+            </div>
+
+            <div className="text-xs text-slate-300 space-y-2 border-t border-slate-800 pt-3">
+              <div>
+                <span className="font-bold text-white uppercase text-[11px] tracking-wider block text-slate-400">Purpose:</span>
+                <p className="text-slate-200 mt-0.5">
+                  Educational platform designed to help first-year medical students study laboratory and medical sciences interactively.
+                </p>
+              </div>
+
+              <div className="pt-2 border-t border-slate-800/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                <div>
+                  <span className="font-bold text-white uppercase text-[11px] tracking-wider block text-slate-400">Ownership:</span>
+                  <p className="text-slate-200">
+                    © 2026 <strong>سكينة أسعد</strong>. All Rights Reserved.
+                  </p>
+                </div>
+                <div className="text-[11px] text-indigo-300 font-medium">
+                  Original Educational Project
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Creator Attribution Spotlight Box */}
           <div className="p-5 rounded-2xl bg-gradient-to-br from-indigo-50 via-white to-teal-50/40 border-2 border-indigo-200 shadow-sm relative overflow-hidden">
             <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-4">
@@ -89,7 +131,7 @@ export const AboutPlatformModal: React.FC<AboutPlatformModalProps> = ({
             </div>
 
             <p className="text-xs text-slate-700 leading-relaxed mt-3.5 pt-3 border-t border-indigo-100/80 font-medium">
-              تم تصميم وتطوير هذه المنصة الطبية بواسطة <strong>[سكينة أسعد]</strong> بهدف تيسير الوصول إلى المعامل العملية لجميع الطلاب، وتوفير مرجع علمي معتمد يجمع شرائح الهستولوجي، المحطات التشريحية، وبنك عينات البكتيريا مع اختبارات الـ OSPE التفاعلية في منصة واحدة.
+              تم تصميم وتطوير هذه المنصة الطبية بواسطة <strong>سكينة أسعد</strong> بهدف تيسير الوصول إلى المعامل العملية لجميع الطلاب، وتوفير مرجع علمي معتمد يجمع شرائح الهستولوجي، المحطات التشريحية، بنك عينات البكتيريا، واختبارات الكيمياء الحيوية مع اختبارات الـ OSPE التفاعلية في منصة واحدة.
             </p>
           </div>
 
@@ -100,14 +142,14 @@ export const AboutPlatformModal: React.FC<AboutPlatformModalProps> = ({
               <ShieldCheck className="w-4 h-4 text-indigo-600" />
             </h4>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
               <div className="p-3.5 rounded-xl bg-slate-50 border border-[#E2E8F0] space-y-1.5">
                 <div className="flex items-center justify-end gap-1.5 text-indigo-700 font-bold">
                   <span>معمل التشريح (Anatomy)</span>
                   <Bone className="w-4 h-4" />
                 </div>
                 <p className="text-slate-600 leading-relaxed">
-                  نماذج للجثث التعليمية، العظام، الأعصاب، والأوعية الدموية مع محطات Spotters للتعرف السريع.
+                  نماذج للجثث التعليمية، العظام، العضلات، الأعصاب، والأوعية الدموية مع محطات Spotters للتعرف السريع.
                 </p>
               </div>
 
@@ -128,6 +170,16 @@ export const AboutPlatformModal: React.FC<AboutPlatformModalProps> = ({
                 </div>
                 <p className="text-slate-600 leading-relaxed">
                   أطباق المزارع البكتيرية، صبغة جرام، الاختبارات الكيميائية الحيوية، واختبارات الحساسية.
+                </p>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-slate-50 border border-[#E2E8F0] space-y-1.5">
+                <div className="flex items-center justify-end gap-1.5 text-amber-700 font-bold">
+                  <span>معمل الكيمياء الحيوية</span>
+                  <FlaskConical className="w-4 h-4" />
+                </div>
+                <p className="text-slate-600 leading-relaxed">
+                  9 اختبارات نوعية للكربوهيدرات مع التدرج اللوني، التفاعلات الكيميائية، ودليل الكواشف.
                 </p>
               </div>
             </div>

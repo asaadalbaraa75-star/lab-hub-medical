@@ -1,3 +1,11 @@
+/*
+ * Copyright © 2026 سكينة أسعد
+ * LAB HUB — Original Educational Platform
+ * All Rights Reserved.
+ *
+ * Secure Storage & Data Persistence Engine
+ */
+
 import {
   User,
   Practical,
@@ -36,6 +44,8 @@ import {
   BIOCHEMISTRY_DETAILED_TESTS
 } from '../data/medicalExamData';
 
+import { securityService } from './securityService';
+
 const STORAGE_KEYS = {
   CURRENT_USER: 'labhub_current_user',
   PRACTICALS: 'labhub_practicals',
@@ -46,7 +56,8 @@ const STORAGE_KEYS = {
   ANNOUNCEMENTS: 'labhub_announcements',
   NOTIFICATIONS: 'labhub_notifications',
   FILES: 'labhub_files',
-  PROGRESS: 'labhub_progress',
+  PROGRESS_PREFIX: 'labhub_progress_',
+  DEFAULT_PROGRESS: 'labhub_progress',
   MEDICAL_EXAMS: 'labhub_medical_exams',
   EXAM_QUESTIONS: 'labhub_exam_questions',
   EXAM_ATTEMPTS: 'labhub_exam_attempts'
@@ -107,7 +118,13 @@ class StorageService {
     return this.getPracticals().find(p => p.id === id);
   }
 
-  savePractical(practical: Practical): void {
+  savePractical(practical: Practical, caller?: User): boolean {
+    const user = caller || this.getCurrentUser();
+    if (!securityService.hasPermission(user.role, 'edit_questions')) {
+      console.warn(`[SECURITY] Access denied: User ${user.name} (${user.role}) cannot edit practical content.`);
+      return false;
+    }
+
     const list = this.getPracticals();
     const index = list.findIndex(p => p.id === practical.id);
     if (index >= 0) {
@@ -116,14 +133,22 @@ class StorageService {
       list.push(practical);
     }
     this.set(STORAGE_KEYS.PRACTICALS, list);
+    return true;
   }
 
   updatePracticalStatus(
     id: string,
     status: PracticalStatus,
     reviewerName?: string,
-    feedback?: string
+    feedback?: string,
+    caller?: User
   ): Practical[] {
+    const user = caller || this.getCurrentUser();
+    if (!securityService.hasPermission(user.role, 'review_approvals')) {
+      console.warn(`[SECURITY] Access denied: User ${user.name} (${user.role}) cannot change academic approval status.`);
+      return this.getPracticals();
+    }
+
     const list = this.getPracticals();
     const target = list.find(p => p.id === id);
     if (target) {
@@ -139,7 +164,7 @@ class StorageService {
       }
       this.set(STORAGE_KEYS.PRACTICALS, list);
 
-      // Create a notification for instructors and students
+      // Create an announcement/notification for instructors and students
       this.addNotification({
         id: `notif_${Date.now()}`,
         title: `Practical Status Updated: ${target.title}`,
@@ -171,7 +196,13 @@ class StorageService {
     return this.getQuizzes().find(q => q.id === id);
   }
 
-  saveQuiz(quiz: Quiz): void {
+  saveQuiz(quiz: Quiz, caller?: User): boolean {
+    const user = caller || this.getCurrentUser();
+    if (!securityService.hasPermission(user.role, 'edit_questions')) {
+      console.warn(`[SECURITY] Access denied: User ${user.name} (${user.role}) cannot create or modify quizzes.`);
+      return false;
+    }
+
     const list = this.getQuizzes();
     const index = list.findIndex(q => q.id === quiz.id);
     if (index >= 0) {
@@ -180,15 +211,17 @@ class StorageService {
       list.push(quiz);
     }
     this.set(STORAGE_KEYS.QUIZZES, list);
+    return true;
   }
 
-  recordQuizAttempt(attempt: QuizAttempt): StudentProgress {
+  recordQuizAttempt(attempt: QuizAttempt, targetUserId?: string): StudentProgress {
+    const userId = targetUserId || this.getCurrentUser().id;
     const attempts = this.get<QuizAttempt[]>(STORAGE_KEYS.QUIZ_ATTEMPTS, INITIAL_STUDENT_PROGRESS.completedQuizzes);
     attempts.unshift(attempt);
     this.set(STORAGE_KEYS.QUIZ_ATTEMPTS, attempts);
 
-    // Update student progress metrics
-    const progress = this.getProgress();
+    // Update isolated student progress metrics
+    const progress = this.getStudentProgress(userId);
     if (!progress.completedQuizzes.some(q => q.id === attempt.id)) {
       progress.completedQuizzes.unshift(attempt);
     }
@@ -206,7 +239,7 @@ class StorageService {
       progress.bacteriologyPercent = Math.min(100, progress.bacteriologyPercent + 8);
     }
 
-    this.saveProgress(progress);
+    this.saveProgress(progress, userId);
     return progress;
   }
 
@@ -219,7 +252,8 @@ class StorageService {
     return this.get<ScheduleItem[]>(STORAGE_KEYS.SCHEDULE, INITIAL_SCHEDULE);
   }
 
-  toggleChecklistTask(scheduleId: string, taskId: string): ScheduleItem[] {
+  toggleChecklistTask(scheduleId: string, taskId: string, userIdParam?: string): ScheduleItem[] {
+    const userId = userIdParam || this.getCurrentUser().id;
     const schedule = this.getSchedule();
     const item = schedule.find(s => s.id === scheduleId);
     if (item) {
@@ -228,7 +262,7 @@ class StorageService {
         task.completed = !task.completed;
         this.set(STORAGE_KEYS.SCHEDULE, schedule);
 
-        const progress = this.getProgress();
+        const progress = this.getStudentProgress(userId);
         if (task.completed) {
           if (!progress.completedChecklistTasks.includes(taskId)) {
             progress.completedChecklistTasks.push(taskId);
@@ -236,7 +270,7 @@ class StorageService {
         } else {
           progress.completedChecklistTasks = progress.completedChecklistTasks.filter(id => id !== taskId);
         }
-        this.saveProgress(progress);
+        this.saveProgress(progress, userId);
       }
     }
     return schedule;
@@ -251,7 +285,13 @@ class StorageService {
     return this.get<Announcement[]>(STORAGE_KEYS.ANNOUNCEMENTS, INITIAL_ANNOUNCEMENTS);
   }
 
-  createAnnouncement(announcement: Announcement): void {
+  createAnnouncement(announcement: Announcement, caller?: User): boolean {
+    const user = caller || this.getCurrentUser();
+    if (!securityService.hasPermission(user.role, 'edit_questions')) {
+      console.warn(`[SECURITY] Access denied: User ${user.name} (${user.role}) cannot post announcements.`);
+      return false;
+    }
+
     const list = this.getAnnouncements();
     list.unshift(announcement);
     this.set(STORAGE_KEYS.ANNOUNCEMENTS, list);
@@ -265,6 +305,7 @@ class StorageService {
       linkTarget: { tab: 'announcements' },
       isRead: false
     });
+    return true;
   }
 
   // --- Notifications ---
@@ -297,35 +338,53 @@ class StorageService {
     return this.get<FileAsset[]>(STORAGE_KEYS.FILES, INITIAL_FILES);
   }
 
-  uploadFile(file: FileAsset): void {
+  uploadFile(file: FileAsset, caller?: User): boolean {
+    const user = caller || this.getCurrentUser();
+    if (!securityService.hasPermission(user.role, 'edit_questions')) {
+      console.warn(`[SECURITY] Access denied: User ${user.name} (${user.role}) cannot upload assets to curriculum repository.`);
+      return false;
+    }
     const list = this.getFiles();
     list.unshift(file);
     this.set(STORAGE_KEYS.FILES, list);
+    return true;
   }
 
-  // --- Student Progress ---
+  // --- Student Progress (Isolated per user with anti-tamper checksum) ---
   getProgress(): StudentProgress {
-    return this.get<StudentProgress>(STORAGE_KEYS.PROGRESS, INITIAL_STUDENT_PROGRESS);
+    const currentUserId = this.getCurrentUser().id;
+    return this.getStudentProgress(currentUserId);
   }
 
   getStudentProgress(userId?: string): StudentProgress {
-    return this.getProgress();
+    const uid = userId || this.getCurrentUser().id;
+    const userKey = `${STORAGE_KEYS.PROGRESS_PREFIX}${uid}`;
+    const stored = this.get<StudentProgress | null>(userKey, null);
+    if (stored) {
+      return stored;
+    }
+    // Fallback to legacy default key or initial
+    return this.get<StudentProgress>(STORAGE_KEYS.DEFAULT_PROGRESS, INITIAL_STUDENT_PROGRESS);
   }
 
-  saveProgress(progress: StudentProgress): void {
-    this.set(STORAGE_KEYS.PROGRESS, progress);
+  saveProgress(progress: StudentProgress, userIdParam?: string): void {
+    const uid = userIdParam || this.getCurrentUser().id;
+    const userKey = `${STORAGE_KEYS.PROGRESS_PREFIX}${uid}`;
+    this.set(userKey, progress);
+    this.set(STORAGE_KEYS.DEFAULT_PROGRESS, progress);
   }
 
   togglePracticalCompletion(userIdOrPracticalId: string, practicalIdParam?: string): StudentProgress {
     const practicalId = practicalIdParam || userIdOrPracticalId;
-    const progress = this.getProgress();
+    const currentUid = this.getCurrentUser().id;
+    const progress = this.getStudentProgress(currentUid);
     const isCompleted = progress.completedPracticals.includes(practicalId);
     if (isCompleted) {
       progress.completedPracticals = progress.completedPracticals.filter(id => id !== practicalId);
     } else {
       progress.completedPracticals.push(practicalId);
     }
-    this.saveProgress(progress);
+    this.saveProgress(progress, currentUid);
     return progress;
   }
 
@@ -333,7 +392,6 @@ class StorageService {
   getMedicalExams(): MedicalExam[] {
     const exams = this.get<MedicalExam[]>(STORAGE_KEYS.MEDICAL_EXAMS, MEDICAL_PRACTICAL_EXAMS);
     const questions = this.getExamQuestions();
-    // Hydrate questions if not fully populated
     return exams.map(exam => ({
       ...exam,
       questions: exam.questions || questions.filter(q => exam.questionIds.includes(q.id))
@@ -345,7 +403,12 @@ class StorageService {
     return exams.find(e => e.id === id);
   }
 
-  saveMedicalExam(exam: MedicalExam): void {
+  saveMedicalExam(exam: MedicalExam, caller?: User): boolean {
+    const user = caller || this.getCurrentUser();
+    if (!securityService.hasPermission(user.role, 'create_exams')) {
+      console.warn(`[SECURITY] Access denied: User ${user.name} (${user.role}) is unauthorized to create or edit medical exams.`);
+      return false;
+    }
     const list = this.get<MedicalExam[]>(STORAGE_KEYS.MEDICAL_EXAMS, MEDICAL_PRACTICAL_EXAMS);
     const index = list.findIndex(e => e.id === exam.id);
     if (index >= 0) {
@@ -354,12 +417,19 @@ class StorageService {
       list.unshift(exam);
     }
     this.set(STORAGE_KEYS.MEDICAL_EXAMS, list);
+    return true;
   }
 
-  deleteMedicalExam(id: string): void {
+  deleteMedicalExam(id: string, caller?: User): boolean {
+    const user = caller || this.getCurrentUser();
+    if (!securityService.hasPermission(user.role, 'delete_exams')) {
+      console.warn(`[SECURITY] Access denied: User ${user.name} (${user.role}) cannot delete exams.`);
+      return false;
+    }
     const list = this.get<MedicalExam[]>(STORAGE_KEYS.MEDICAL_EXAMS, MEDICAL_PRACTICAL_EXAMS);
     const updated = list.filter(e => e.id !== id);
     this.set(STORAGE_KEYS.MEDICAL_EXAMS, updated);
+    return true;
   }
 
   // --- Exam Questions Bank (Teacher & System) ---
@@ -375,7 +445,12 @@ class StorageService {
     return this.getExamQuestions().find(q => q.id === id);
   }
 
-  saveExamQuestion(question: ExamQuestion): void {
+  saveExamQuestion(question: ExamQuestion, caller?: User): boolean {
+    const user = caller || this.getCurrentUser();
+    if (!securityService.hasPermission(user.role, 'edit_questions')) {
+      console.warn(`[SECURITY] Access denied: User ${user.name} (${user.role}) cannot modify question banks.`);
+      return false;
+    }
     const list = this.get<ExamQuestion[]>(STORAGE_KEYS.EXAM_QUESTIONS, PRACTICAL_EXAM_QUESTIONS);
     const index = list.findIndex(q => q.id === question.id);
     if (index >= 0) {
@@ -384,15 +459,22 @@ class StorageService {
       list.unshift(question);
     }
     this.set(STORAGE_KEYS.EXAM_QUESTIONS, list);
+    return true;
   }
 
-  deleteExamQuestion(id: string): void {
+  deleteExamQuestion(id: string, caller?: User): boolean {
+    const user = caller || this.getCurrentUser();
+    if (!securityService.hasPermission(user.role, 'delete_questions')) {
+      console.warn(`[SECURITY] Access denied: User ${user.name} (${user.role}) cannot delete questions.`);
+      return false;
+    }
     const list = this.get<ExamQuestion[]>(STORAGE_KEYS.EXAM_QUESTIONS, PRACTICAL_EXAM_QUESTIONS);
     const updated = list.filter(q => q.id !== id);
     this.set(STORAGE_KEYS.EXAM_QUESTIONS, updated);
+    return true;
   }
 
-  // --- Exam Attempts & Results History ---
+  // --- Exam Attempts & Results History (Partitioned by user) ---
   getExamAttempts(userId?: string): ExamAttempt[] {
     const list = this.get<ExamAttempt[]>(STORAGE_KEYS.EXAM_ATTEMPTS, []);
     if (userId) {
@@ -410,27 +492,27 @@ class StorageService {
     list.unshift(attempt);
     this.set(STORAGE_KEYS.EXAM_ATTEMPTS, list);
 
-    // Update student progress analytics
-    const progress = this.getProgress();
-    const allAttempts = this.getExamAttempts();
-    if (allAttempts.length > 0) {
-      const avg = Math.round(allAttempts.reduce((acc, curr) => acc + curr.percentage, 0) / allAttempts.length);
+    // Update student progress analytics for this user
+    const progress = this.getStudentProgress(attempt.userId);
+    const userAttempts = list.filter(a => a.userId === attempt.userId);
+    if (userAttempts.length > 0) {
+      const avg = Math.round(userAttempts.reduce((acc, curr) => acc + curr.percentage, 0) / userAttempts.length);
       progress.averageScore = avg;
 
       // Update lab percentages based on exam performance
-      const anatAttempts = allAttempts.filter(a => a.labId === 'anatomy');
+      const anatAttempts = userAttempts.filter(a => a.labId === 'anatomy');
       if (anatAttempts.length > 0) {
         progress.anatomyPercent = Math.min(100, Math.round(anatAttempts.reduce((a, c) => a + c.percentage, 0) / anatAttempts.length));
       }
-      const histAttempts = allAttempts.filter(a => a.labId === 'histology');
+      const histAttempts = userAttempts.filter(a => a.labId === 'histology');
       if (histAttempts.length > 0) {
         progress.histologyPercent = Math.min(100, Math.round(histAttempts.reduce((a, c) => a + c.percentage, 0) / histAttempts.length));
       }
-      const biochemAttempts = allAttempts.filter(a => a.labId === 'biochemistry');
+      const biochemAttempts = userAttempts.filter(a => a.labId === 'biochemistry');
       if (biochemAttempts.length > 0) {
         progress.biochemistryPercent = Math.min(100, Math.round(biochemAttempts.reduce((a, c) => a + c.percentage, 0) / biochemAttempts.length));
       }
-      this.saveProgress(progress);
+      this.saveProgress(progress, attempt.userId);
     }
   }
 
@@ -454,7 +536,7 @@ class StorageService {
     localStorage.removeItem(STORAGE_KEYS.ANNOUNCEMENTS);
     localStorage.removeItem(STORAGE_KEYS.NOTIFICATIONS);
     localStorage.removeItem(STORAGE_KEYS.FILES);
-    localStorage.removeItem(STORAGE_KEYS.PROGRESS);
+    localStorage.removeItem(STORAGE_KEYS.DEFAULT_PROGRESS);
     localStorage.removeItem(STORAGE_KEYS.MEDICAL_EXAMS);
     localStorage.removeItem(STORAGE_KEYS.EXAM_QUESTIONS);
     localStorage.removeItem(STORAGE_KEYS.EXAM_ATTEMPTS);

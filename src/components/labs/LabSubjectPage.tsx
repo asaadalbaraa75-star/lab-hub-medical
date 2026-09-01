@@ -34,6 +34,7 @@ import {
 import { LabSubjectInfo, LabCategory, Practical, LabSubjectId } from '../../types';
 import { BIOCHEMISTRY_CARBOHYDRATE_TESTS } from '../../data/mockData';
 import { BiochemistryLabView } from './biochemistry/BiochemistryLabView';
+import { AnatomyLabView } from './anatomy/AnatomyLabView';
 
 interface LabSubjectPageProps {
   labInfo: LabSubjectInfo;
@@ -82,6 +83,7 @@ export const LabSubjectPage: React.FC<LabSubjectPageProps> = ({
   const safePracticals = Array.isArray(practicals) ? practicals : [];
 
   const isBiochemistry = labInfo?.id === 'biochemistry';
+  const isAnatomy = labInfo?.id === 'anatomy';
 
   const filteredBiochemTests = BIOCHEMISTRY_CARBOHYDRATE_TESTS.filter(test => {
     if (!searchQuery.trim()) return true;
@@ -247,8 +249,20 @@ export const LabSubjectPage: React.FC<LabSubjectPageProps> = ({
         </div>
       )}
 
-      {/* OTHER LABS: Visual Category Cards */}
-      {!isBiochemistry && activeFilter !== 'practicals' && (
+      {/* ANATOMY LAB: Comprehensive Visual Anatomy Atlas & Organ Systems Modules */}
+      {isAnatomy && (
+        <div id="anatomy-section">
+          <AnatomyLabView
+            searchQuery={searchQuery}
+            onOpenExam={() => onOpenQuiz(labInfo.id)}
+            onOpenSpotter={() => onOpenSpotter(labInfo.id)}
+            onOpenQuiz={() => onOpenQuiz(labInfo.id)}
+          />
+        </div>
+      )}
+
+      {/* OTHER LABS (Histology & Bacteriology): Visual Category Cards */}
+      {!isBiochemistry && !isAnatomy && activeFilter !== 'practicals' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-slate-900 tracking-tight">
