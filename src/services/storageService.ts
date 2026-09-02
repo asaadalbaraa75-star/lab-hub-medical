@@ -154,6 +154,18 @@ class StorageService {
     return true;
   }
 
+  deletePractical(id: string, caller?: User): boolean {
+    const user = this.getEffectiveUser(caller);
+    if (user.role !== 'admin') {
+      console.warn(`[SECURITY] Access denied: User ${user.name} (${user.role}) cannot delete practical content.`);
+      return false;
+    }
+    const list = this.getPracticals();
+    const filtered = list.filter(p => p.id !== id);
+    this.set(STORAGE_KEYS.PRACTICALS, filtered);
+    return true;
+  }
+
   updatePracticalStatus(
     id: string,
     status: PracticalStatus,

@@ -67,11 +67,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   const safeNotifications = Array.isArray(notifications) ? notifications : [];
   const unreadCount = safeNotifications.filter(n => !n.isRead).length;
 
-  const handleRoleSwitch = (role: 'student' | 'instructor' | 'admin') => {
-    if (onSwitchRole) onSwitchRole(role);
-    if (onRoleChange) onRoleChange(role);
-  };
-
   const handleOpenAi = () => {
     if (onOpenAskAI) onOpenAskAI();
     else if (onOpenAiTutor) onOpenAiTutor();
@@ -262,58 +257,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <span className="inline-block mt-1 text-[10px] px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-[#E2E8F0] font-mono">
                   {safeUser.studentId}
                 </span>
-              </div>
-
-              {/* Quick Role Switcher */}
-              <div className="py-2 border-b border-[#E2E8F0]">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-2.5 mb-1 block">
-                  Switch Demo Persona:
-                </span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    handleRoleSwitch('student');
-                    setShowUserMenu(false);
-                  }}
-                  className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-colors ${
-                    safeUser.role === 'student'
-                      ? 'bg-indigo-50 text-indigo-700 font-bold'
-                      : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-                  }`}
-                >
-                  <span>Student (Sarah Al-Mansoor)</span>
-                  {safeUser.role === 'student' && <CheckCircle2 className="w-3.5 h-3.5 text-indigo-600" />}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    handleRoleSwitch('instructor');
-                    setShowUserMenu(false);
-                  }}
-                  className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-colors ${
-                    safeUser.role === 'instructor'
-                      ? 'bg-teal-50 text-teal-700 font-bold'
-                      : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-                  }`}
-                >
-                  <span>Instructor (Dr. Tariq Vance)</span>
-                  {safeUser.role === 'instructor' && <CheckCircle2 className="w-3.5 h-3.5 text-teal-600" />}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    handleRoleSwitch('admin');
-                    setShowUserMenu(false);
-                  }}
-                  className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-colors ${
-                    safeUser.role === 'admin'
-                      ? 'bg-amber-50 text-amber-700 font-bold'
-                      : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-                  }`}
-                >
-                  <span>Admin / Dean (Prof. Hayes)</span>
-                  {safeUser.role === 'admin' && <CheckCircle2 className="w-3.5 h-3.5 text-amber-600" />}
-                </button>
               </div>
 
               <div className="pt-1.5 space-y-0.5">

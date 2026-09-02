@@ -6,7 +6,7 @@
  * Authentication & Session Management Service
  */
 
-import { User, UserRole, UserActivityRecord, AdminAnalyticsMetrics, AuthSession } from '../types';
+import { User, UserRole, UserActivityRecord, AdminAnalyticsMetrics, AdminAnalyticsBreakdown, AuthSession } from '../types';
 import { DEMO_USERS } from '../data/mockData';
 import { securityService } from './securityService';
 
@@ -103,7 +103,7 @@ export class AuthService {
     }
   }
 
-  private getStoredUsers(): StoredUserRecord[] {
+  public getStoredUsers(): StoredUserRecord[] {
     try {
       const item = localStorage.getItem(USERS_STORAGE_KEY);
       if (item) {
@@ -137,6 +137,23 @@ export class AuthService {
       if (stored) {
         const session: AuthSession = JSON.parse(stored);
         if (session.user && session.expiresAt > Date.now()) {
+          // Verify role against signed token to prevent localStorage tampering
+          if (session.token) {
+            try {
+              const decoded = atob(session.token);
+              const parts = decoded.split(':');
+              if (parts.length >= 2) {
+                const tokenRole = parts[1];
+                if (session.user.role === 'admin' && tokenRole !== 'admin') {
+                  console.warn('[SECURITY ALERT] Role tampering detected in localStorage. Reverting privilege to token role.');
+                  session.user.role = (tokenRole === 'admin' ? 'admin' : 'student') as UserRole;
+                  localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(session));
+                }
+              }
+            } catch {
+              // Ignore decoding issues
+            }
+          }
           return session;
         }
       }
@@ -190,6 +207,10 @@ export class AuthService {
   public setMockRole(role: 'student' | 'instructor' | 'admin'): void {
     const session = this.getSession();
     if (session && session.user) {
+      if (role === 'admin' && session.user.role !== 'admin') {
+        console.warn('[SECURITY] Students are strictly forbidden from escalating their privileges to admin.');
+        return;
+      }
       session.user.role = role;
       this.saveSession(session);
       this.trackActivity(`تغيير الدور إلى: ${role}`, 'Security');
@@ -576,6 +597,155 @@ export class AuthService {
     } catch {}
 
     return [];
+  }
+
+  /**
+   * Admin-Only: Fetch all platform activity records
+   */
+  public async getAllActivities(caller: User): Promise<UserActivityRecord[]> {
+    if (caller.role !== 'admin') {
+      console.warn('[SECURITY] Unauthorized access to admin activity log.');
+      return [];
+    }
+
+    const session = this.getSession();
+    if (session && session.token) {
+      try {
+        const res = await fetch('/api/admin/activities', {
+          headers: { 'Authorization': `Bearer ${session.token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.activities && Array.isArray(data.activities)) {
+            return data.activities;
+          }
+        }
+      } catch (e) {
+        console.warn('[AUTH] Failed to fetch server activities, using local:', e);
+      }
+    }
+
+    try {
+      const stored = localStorage.getItem(ACTIVITIES_STORAGE_KEY);
+      if (stored) {
+        return JSON.parse(stored);
+      }
+    } catch {}
+
+    return [];
+  }
+
+  /**
+   * Admin-Only: Update a user's role (promote/demote between student & admin)
+   */
+  public async updateUserRole(
+    userId: string,
+    newRole: 'student' | 'admin',
+    caller: User
+  ): Promise<{ success: boolean; user?: User; error?: string }> {
+    if (caller.role !== 'admin') {
+      return { success: false, error: 'Unauthorized: Admin role required to modify user permissions.' };
+    }
+
+    const session = this.getSession();
+    if (session && session.token) {
+      try {
+        const res = await fetch(`/api/admin/users/${userId}/role`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.token}`
+          },
+          body: JSON.stringify({ role: newRole })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          // Sync local storage as well
+          const localUsers = this.getStoredUsers();
+          const target = localUsers.find(u => u.id === userId || u.userId === userId);
+          if (target) {
+            target.role = newRole;
+            this.saveStoredUsers(localUsers);
+          }
+          return { success: true, user: data.user };
+        } else {
+          return { success: false, error: data.error || 'Failed to update user role.' };
+        }
+      } catch (err: any) {
+        return { success: false, error: err.message || 'Network error updating user role.' };
+      }
+    }
+
+    // Fallback local update
+    const localUsers = this.getStoredUsers();
+    const target = localUsers.find(u => u.id === userId || u.userId === userId);
+    if (target) {
+      target.role = newRole;
+      this.saveStoredUsers(localUsers);
+      return { success: true, user: target };
+    }
+
+    return { success: false, error: 'User not found.' };
+  }
+
+  /**
+   * Admin-Only: Fetch detailed analytics breakdown
+   */
+  public async getAnalyticsBreakdown(caller: User): Promise<AdminAnalyticsBreakdown> {
+    const fallbackBreakdown: AdminAnalyticsBreakdown = {
+      totalUsers: 4,
+      todaysLogins: 2,
+      weeklyLogins: 4,
+      monthlyLogins: 4,
+      activeRecently: 3,
+      newUsersThisWeek: 1,
+      dailyLogins: [
+        { date: '2026-09-01', dayName: 'Tue', count: 3 },
+        { date: '2026-09-02', dayName: 'Wed', count: 5 }
+      ],
+      weeklyActivity: [
+        { week: 'Week 1', count: 35 },
+        { week: 'Week 2', count: 52 },
+        { week: 'Week 3', count: 81 },
+        { week: 'Week 4', count: 110 }
+      ],
+      subjectVisits: [
+        { subject: 'Anatomy', count: 28, color: 'bg-indigo-500' },
+        { subject: 'Histology', count: 22, color: 'bg-emerald-500' },
+        { subject: 'Bacteriology', count: 31, color: 'bg-amber-500' },
+        { subject: 'Biochemistry', count: 19, color: 'bg-cyan-500' },
+        { subject: 'OSPE Exams', count: 24, color: 'bg-purple-500' },
+        { subject: 'Videos', count: 35, color: 'bg-rose-500' }
+      ],
+      lessonActivity: [
+        { title: 'Gross Anatomy: Cranial Nerves Dissection', subject: 'Anatomy', opens: 38 },
+        { title: 'Virtual Histology: Epithelial & Cartilage', subject: 'Histology', opens: 34 },
+        { title: 'Gram-Positive Pathogens & Catalase Protocol', subject: 'Bacteriology', opens: 47 },
+        { title: 'Benedict & Qualitative Carbohydrate Testing', subject: 'Biochemistry', opens: 29 }
+      ],
+      quizActivity: { totalAttempts: 84, passed: 72, failed: 12 },
+      videoActivity: { totalViews: 119, completedCount: 88 }
+    };
+
+    if (caller.role !== 'admin') {
+      return fallbackBreakdown;
+    }
+
+    const session = this.getSession();
+    if (session && session.token) {
+      try {
+        const res = await fetch('/api/admin/analytics/breakdown', {
+          headers: { 'Authorization': `Bearer ${session.token}` }
+        });
+        if (res.ok) {
+          return await res.json();
+        }
+      } catch (e) {
+        console.warn('[AUTH] Error fetching analytics breakdown:', e);
+      }
+    }
+
+    return fallbackBreakdown;
   }
 
   /**

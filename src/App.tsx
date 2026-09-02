@@ -89,6 +89,10 @@ export default function App() {
         return 'organism_detail';
       }
 
+      if (target.startsWith('admin/') || target === 'admin' || target === 'admin_dashboard') {
+        return 'admin';
+      }
+
       const validTabs = [
         'dashboard',
         'laboratories',
@@ -220,12 +224,6 @@ export default function App() {
     await authService.logout();
     setCurrentUser(null);
     window.location.hash = '';
-  };
-
-  const handleRoleChange = (role: 'student' | 'instructor' | 'admin') => {
-    const updatedUser = storageService.setCurrentUserRole(role);
-    setCurrentUser(updatedUser);
-    authService.setMockRole(role);
   };
 
   const handleUserChange = (newUser: User) => {
@@ -723,7 +721,12 @@ export default function App() {
         }
         return (
           <div className="animate-in fade-in duration-300">
-            <AdminDashboard currentUser={currentUser} />
+            <AdminDashboard
+              currentUser={currentUser}
+              onSelectLab={handleSelectLab}
+              onOpenPractical={handleOpenPractical}
+              onReturnToStudent={() => handleTabSelect('dashboard')}
+            />
           </div>
         );
 
@@ -759,7 +762,7 @@ export default function App() {
           storageService.setCurrentUser(user);
           setProgress(storageService.getStudentProgress(user.id));
           authService.trackActivity('تسجيل الدخول للمنصة', 'Authentication', 'تم تسجيل الدخول بنجاح');
-          if (currentTab && currentTab !== 'dashboard' && currentTab !== 'login') {
+          if (currentTab && currentTab !== 'dashboard' && currentTab !== 'login' && (!currentTab.startsWith('admin') || user.role === 'admin')) {
             updateTabWithHash(currentTab);
           } else {
             setCurrentTab('dashboard');
@@ -776,8 +779,6 @@ export default function App() {
       {/* Top Main Navigation */}
       <Navbar
         currentUser={currentUser}
-        onRoleChange={handleRoleChange}
-        onSwitchRole={handleRoleChange}
         onOpenAiTutor={() => setIsAiTutorOpen(true)}
         onOpenAskAI={() => setIsAiTutorOpen(true)}
         onOpenAnnouncements={() => setIsAnnouncementsOpen(true)}

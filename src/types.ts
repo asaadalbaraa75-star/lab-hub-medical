@@ -49,11 +49,36 @@ export interface AuthSession {
   expiresAt: number;
 }
 
+export type AdminSubPage = 
+  | 'overview' 
+  | 'users' 
+  | 'activity' 
+  | 'analytics' 
+  | 'content' 
+  | 'videos' 
+  | 'security';
+
 export interface AdminAnalyticsMetrics {
   totalUsers: number;
   todaysLogins: number;
   activeRecently: number;
   newUsersThisWeek: number;
+  totalActivities?: number;
+}
+
+export interface AdminAnalyticsBreakdown {
+  totalUsers: number;
+  todaysLogins: number;
+  weeklyLogins: number;
+  monthlyLogins: number;
+  activeRecently: number;
+  newUsersThisWeek: number;
+  dailyLogins: { date: string; dayName: string; count: number }[];
+  weeklyActivity: { week: string; count: number }[];
+  subjectVisits: { subject: string; count: number; color: string }[];
+  lessonActivity: { title: string; subject: string; opens: number }[];
+  quizActivity: { totalAttempts: number; passed: number; failed: number };
+  videoActivity: { totalViews: number; completedCount: number };
 }
 
 export interface LabCategory {
