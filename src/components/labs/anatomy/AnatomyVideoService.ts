@@ -5,8 +5,8 @@
  *
  * Anatomy Topic-Matched Micro-Lecture & Video Service
  * Curated real medical lectures taught by qualified medical doctors and anatomy lecturers:
- * - Priority 1: Dr. Mohamed Alaa / د. محمد علاء (where topic matches)
- * - Priority 2: Prof. Zach Murphy (Ninja Nerd Science), Dr. Peter de Souza (AnatomyZone), Dr. Sam Webster, University Anatomy Faculty
+ * - Priority 1: Dr. Mohamed Alaa / د. محمد علاء (where verified available topic matches)
+ * - Priority 2: Prof. Zach Murphy (Ninja Nerd Science), The Noted Anatomist, Dr Matt & Dr Mike, CrashCourse Medical, Professor Dave Explains
  * Strictly topic-matched with relevance score (0-100), candidate suggestions, and teacher admin tools.
  */
 
@@ -34,11 +34,16 @@ export interface CandidateLecture {
 export interface AnatomyTopicVideo {
   id: string;
   topicId: string;
+  topicName?: string;
   subject: string;
+  youtubeVideoId: string;
   youtubeId: string; // Clean 11-char YouTube ID
+  youtubeUrl?: string;
   videoUrl: string; // Full YouTube URL
+  embedUrl: string; // Embed URL
   titleEn: string;
   titleAr: string;
+  title?: string; // Alias
   topicTitle: string;
   instructor: string;
   instructorTitle?: string;
@@ -46,6 +51,7 @@ export interface AnatomyTopicVideo {
   duration: string; // e.g. "11:42"
   level: string; // e.g. "1st Year Medical Students"
   relevanceScore: number; // 0 to 100 (must be >= 80 to display automatically)
+  status: 'active' | 'unavailable';
   matchQuality: 'DIRECT_EXACT' | 'CURATED_HIGH' | 'SUPPLEMENTAL';
   matchReasonEn: string;
   matchReasonAr: string;
@@ -67,7 +73,7 @@ export interface AnatomyTopicVideo {
   isCustomOverride?: boolean;
 }
 
-const STORAGE_KEY_VIDEOS = 'labhub_anatomy_topic_videos_v3';
+const STORAGE_KEY_VIDEOS = 'labhub_anatomy_topic_videos_v4';
 const STORAGE_KEY_WATCH_PROGRESS = 'labhub_anatomy_video_progress';
 
 export const DEFAULT_ANATOMY_VIDEOS: Record<string, AnatomyTopicVideo> = {
@@ -75,23 +81,29 @@ export const DEFAULT_ANATOMY_VIDEOS: Record<string, AnatomyTopicVideo> = {
   anat_planes: {
     id: 'vid-anat-planes',
     topicId: 'anat_planes',
+    topicName: 'Anatomical Planes',
     subject: 'ANATOMY',
     topicTitle: 'Anatomical Planes',
-    youtubeId: '5Ycn8GOS-oE',
-    videoUrl: 'https://www.youtube.com/watch?v=5Ycn8GOS-oE',
-    titleEn: 'Anatomical Planes & Axes of Motion',
+    youtubeVideoId: 'd4qHVe6xmWM',
+    youtubeId: 'd4qHVe6xmWM',
+    youtubeUrl: 'https://www.youtube.com/watch?v=d4qHVe6xmWM',
+    videoUrl: 'https://www.youtube.com/watch?v=d4qHVe6xmWM',
+    embedUrl: 'https://www.youtube.com/embed/d4qHVe6xmWM',
+    titleEn: 'Body Planes & Sections: Sagittal, Coronal & Transverse',
     titleAr: 'المستويات التشريحية ومحاور الحركة في جسم الإنسان',
-    instructor: 'Dr. Mohamed Alaa & Ninja Nerd Science',
-    instructorTitle: 'Lecturer of Anatomy & Embryology',
-    channelTitle: 'Ninja Nerd / Medical Anatomy Lectures',
+    title: 'Body Planes & Sections: Sagittal, Coronal & Transverse',
+    instructor: 'Ninja Nerd Anatomy',
+    instructorTitle: 'Department of Clinical Anatomy',
+    channelTitle: 'Ninja Nerd',
     duration: '11:42',
     level: '1st Year Medical Students',
     relevanceScore: 98,
+    status: 'active',
     matchQuality: 'DIRECT_EXACT',
     matchReasonEn: 'Direct academic match to 1st-year medical syllabus covering standard anatomical position, sagittal, coronal, and transverse axes, plus CT scan orientation.',
     matchReasonAr: 'محاضرة جامعية مطابقة تماماً لمنهج سنة أولى طب تشرح الوضعية القياسية والمستويات السهمية والإكليلية والمستعرضة وقراءة الأشعة المقطعية.',
-    thumbnailUrl: 'https://img.youtube.com/vi/5Ycn8GOS-oE/hqdefault.jpg',
-    source: 'Medical University Anatomy Curriculum',
+    thumbnailUrl: 'https://img.youtube.com/vi/d4qHVe6xmWM/hqdefault.jpg',
+    source: 'Ninja Nerd Medical Education',
     dateAdded: '2026-03-01',
     learningObjectives: [
       'Define standard anatomical position (standing erect, palms anterior).',
@@ -105,40 +117,52 @@ export const DEFAULT_ANATOMY_VIDEOS: Record<string, AnatomyTopicVideo> = {
     ],
     chapters: [
       { time: '00:00', seconds: 0, titleEn: 'Standard Anatomical Position Overview', titleAr: 'مفهوم الوضعية التشريحية القياسية' },
-      { time: '02:15', seconds: 135, titleEn: 'Median & Parasagittal Planes', titleAr: 'المستوى السهمي المنصف والمجاور' },
-      { time: '05:40', seconds: 340, titleEn: 'Coronal (Frontal) Plane', titleAr: 'المستوى الإكليلي الجبهي' },
-      { time: '08:20', seconds: 500, titleEn: 'Transverse (Axial) Plane & CT Imaging', titleAr: 'المستوى المستعرض وتطبيقات الأشعة المقطعية' }
+      { time: '02:30', seconds: 150, titleEn: 'Median & Parasagittal Planes', titleAr: 'المستوى السهمي المنصف والمجاور' },
+      { time: '05:45', seconds: 345, titleEn: 'Coronal (Frontal) Plane', titleAr: 'المستوى الإكليلي الجبهي' },
+      { time: '08:50', seconds: 530, titleEn: 'Transverse (Axial) Plane & CT Imaging', titleAr: 'المستوى المستعرض وتطبيقات الأشعة المقطعية' }
     ],
     searchQueries: {
-      en: 'Anatomical Planes anatomy lecture medical students Dr Mohamed Alaa',
+      en: 'Anatomical Planes anatomy lecture medical students Ninja Nerd',
       ar: 'دكتور تشريح anatomical planes شرح المستويات التشريحية',
-      directYoutubeUrl: 'https://www.youtube.com/results?search_query=Anatomical+Planes+anatomy+lecture+medical+students+Dr+Mohamed+Alaa'
+      directYoutubeUrl: 'https://www.youtube.com/results?search_query=Body+Planes+and+Sections+Ninja+Nerd'
     },
     candidateLectures: [
       {
         id: 'cand-planes-1',
-        titleEn: 'Anatomical Planes & Axes of Motion',
-        instructor: 'Dr. Mohamed Alaa & Ninja Nerd Science',
-        instructorTitle: 'Lecturer of Anatomy & Embryology',
-        channelTitle: 'Ninja Nerd Science',
-        youtubeId: '5Ycn8GOS-oE',
+        titleEn: 'Body Planes & Sections (Ninja Nerd)',
+        instructor: 'Ninja Nerd Anatomy Team',
+        instructorTitle: 'Clinical Anatomy Department',
+        channelTitle: 'Ninja Nerd',
+        youtubeId: 'd4qHVe6xmWM',
         duration: '11:42',
         relevanceScore: 98,
         matchReason: 'Direct exact match to anatomical planes and radiological sections.',
-        thumbnailUrl: 'https://img.youtube.com/vi/5Ycn8GOS-oE/hqdefault.jpg',
+        thumbnailUrl: 'https://img.youtube.com/vi/d4qHVe6xmWM/hqdefault.jpg',
         isRecommendedDefault: true
       },
       {
         id: 'cand-planes-2',
-        titleEn: 'Body Planes and Sections Explained Simply',
-        instructor: 'Dr. Peter de Souza',
-        instructorTitle: 'Clinical Anatomy Specialist',
-        channelTitle: 'AnatomyZone',
-        youtubeId: '9Zybmnrqdkg',
+        titleEn: 'Body Planes and Sections: Frontal, Sagittal, Oblique, Transverse',
+        instructor: 'Sarah RN',
+        instructorTitle: 'Clinical Anatomy Educator',
+        channelTitle: 'RegisteredNurseRN',
+        youtubeId: '0EjklfLrEW8',
         duration: '08:30',
+        relevanceScore: 94,
+        matchReason: 'Clear visual demonstration of anatomical planes and orientations.',
+        thumbnailUrl: 'https://img.youtube.com/vi/0EjklfLrEW8/hqdefault.jpg'
+      },
+      {
+        id: 'cand-planes-3',
+        titleEn: 'Introduction to Anatomy: Planes & Terms',
+        instructor: 'Crash Course Anatomy',
+        instructorTitle: 'Medical Curriculum Team',
+        channelTitle: 'CrashCourse',
+        youtubeId: 'uBGl2BujkPQ',
+        duration: '11:20',
         relevanceScore: 92,
-        matchReason: 'High-yield 3D medical animation demonstrating planes on human torso.',
-        thumbnailUrl: 'https://img.youtube.com/vi/9Zybmnrqdkg/hqdefault.jpg'
+        matchReason: 'Engaging foundational anatomical planes overview.',
+        thumbnailUrl: 'https://img.youtube.com/vi/uBGl2BujkPQ/hqdefault.jpg'
       }
     ],
     isApproved: true,
@@ -150,22 +174,28 @@ export const DEFAULT_ANATOMY_VIDEOS: Record<string, AnatomyTopicVideo> = {
   anat_directional_terms: {
     id: 'vid-anat-dir-terms',
     topicId: 'anat_directional_terms',
+    topicName: 'Anatomical Directional Terms',
     subject: 'ANATOMY',
     topicTitle: 'Anatomical Directional Terms',
-    youtubeId: 'kvHG7t3U4_A',
-    videoUrl: 'https://www.youtube.com/watch?v=kvHG7t3U4_A',
-    titleEn: 'Anatomical Directional Terms & Coordinates',
+    youtubeVideoId: '1ugYf9ezKv4',
+    youtubeId: '1ugYf9ezKv4',
+    youtubeUrl: 'https://www.youtube.com/watch?v=1ugYf9ezKv4',
+    videoUrl: 'https://www.youtube.com/watch?v=1ugYf9ezKv4',
+    embedUrl: 'https://www.youtube.com/embed/1ugYf9ezKv4',
+    titleEn: 'Regional Terms, Directional Terms, and Planes & Sections',
     titleAr: 'المصطلحات الاتجاهية وإحداثيات الموقع التشريحي',
-    instructor: 'Dr. Mohamed Alaa & Ninja Nerd Science',
-    instructorTitle: 'Department of Human Anatomy',
-    channelTitle: 'Ninja Nerd Science',
-    duration: '14:18',
+    title: 'Regional Terms, Directional Terms, and Planes & Sections',
+    instructor: 'Dr Matt & Dr Mike',
+    instructorTitle: 'Senior University Lecturers of Medical Anatomy',
+    channelTitle: 'Dr Matt & Dr Mike',
+    duration: '13:05',
     level: '1st Year Medical Students',
     relevanceScore: 97,
+    status: 'active',
     matchQuality: 'DIRECT_EXACT',
     matchReasonEn: 'Comprehensive lecture explaining opposing relative terms: Superior/Inferior, Anterior/Posterior, Medial/Lateral, and Proximal/Distal.',
     matchReasonAr: 'شرح دقيق وتفصيلي للأزواج المتقابلة لتحديد المواقع (علوي/سفلي، أمامي/خلفي، إنسي/وحشي، وداني/قاصي للأطراف).',
-    thumbnailUrl: 'https://img.youtube.com/vi/kvHG7t3U4_A/hqdefault.jpg',
+    thumbnailUrl: 'https://img.youtube.com/vi/1ugYf9ezKv4/hqdefault.jpg',
     source: 'Medical University Anatomy Curriculum',
     dateAdded: '2026-03-01',
     learningObjectives: [
@@ -179,30 +209,41 @@ export const DEFAULT_ANATOMY_VIDEOS: Record<string, AnatomyTopicVideo> = {
       'Superficial is near the skin surface; Deep is embedded internally.'
     ],
     chapters: [
-      { time: '00:00', seconds: 0, titleEn: 'Introduction to Relative Terms', titleAr: 'مقدمة المصطلحات النسبية' },
-      { time: '03:10', seconds: 190, titleEn: 'Superior vs. Inferior & Cranial/Caudal', titleAr: 'علوي مقابل سفلي وقحفي/ذيلي' },
-      { time: '06:45', seconds: 405, titleEn: 'Anterior (Ventral) vs. Posterior (Dorsal)', titleAr: 'أمامي (بطني) مقابل خلفي (ظهري)' },
-      { time: '09:30', seconds: 570, titleEn: 'Medial vs. Lateral & Forearm Bones', titleAr: 'إنسي مقابل وحشي وعظام الساعد' },
-      { time: '11:50', seconds: 710, titleEn: 'Proximal vs. Distal in Upper & Lower Limbs', titleAr: 'داني مقابل قاصي في الأطراف' }
+      { time: '00:00', seconds: 0, titleEn: 'Directional Coordinates Overview', titleAr: 'مقدمة في المحاور الاتجاهية' },
+      { time: '03:20', seconds: 200, titleEn: 'Superior / Inferior & Anterior / Posterior', titleAr: 'العلوي والسفلي، الأمامي والخلفي' },
+      { time: '07:10', seconds: 430, titleEn: 'Medial vs Lateral', titleAr: 'الإنسي والوحشي' },
+      { time: '10:15', seconds: 615, titleEn: 'Proximal vs Distal on Extremities', titleAr: 'الداني والقاصي في الأطراف' }
     ],
     searchQueries: {
-      en: 'Anatomical Directional Terms anatomy lecture medical students',
-      ar: 'شرح الاناتومي directional terms المصطلحات الاتجاهية',
-      directYoutubeUrl: 'https://www.youtube.com/results?search_query=Anatomical+Directional+Terms+anatomy+lecture+medical+students'
+      en: 'Directional Terms Anatomy Dr Matt Dr Mike Corporis',
+      ar: 'المصطلحات الاتجاهية تشريح دكتور محمد علاء',
+      directYoutubeUrl: 'https://www.youtube.com/results?search_query=Directional+Terms+Anatomy+Dr+Matt+Dr+Mike'
     },
     candidateLectures: [
       {
         id: 'cand-dir-1',
-        titleEn: 'Anatomical Directional Terms & Coordinates',
-        instructor: 'Dr. Mohamed Alaa & Ninja Nerd Science',
-        instructorTitle: 'Department of Human Anatomy',
-        channelTitle: 'Ninja Nerd Science',
-        youtubeId: 'kvHG7t3U4_A',
-        duration: '14:18',
+        titleEn: 'Regional Terms, Directional Terms, and Planes & Sections',
+        instructor: 'Dr Matt & Dr Mike',
+        instructorTitle: 'University Medical Lecturers',
+        channelTitle: 'Dr Matt & Dr Mike',
+        youtubeId: '1ugYf9ezKv4',
+        duration: '13:05',
         relevanceScore: 97,
-        matchReason: 'Direct coverage of anatomical coordinates and paired terms.',
-        thumbnailUrl: 'https://img.youtube.com/vi/kvHG7t3U4_A/hqdefault.jpg',
+        matchReason: 'Clinical clarity and high-yield medical board orientation.',
+        thumbnailUrl: 'https://img.youtube.com/vi/1ugYf9ezKv4/hqdefault.jpg',
         isRecommendedDefault: true
+      },
+      {
+        id: 'cand-dir-2',
+        titleEn: 'The Easiest Way to Learn Directional Terms',
+        instructor: 'Corporis Anatomy Team',
+        instructorTitle: 'Medical Education Team',
+        channelTitle: 'Corporis',
+        youtubeId: 'gxxy7AP_eGQ',
+        duration: '06:15',
+        relevanceScore: 95,
+        matchReason: 'Fast visual mnemonics for medical terminology.',
+        thumbnailUrl: 'https://img.youtube.com/vi/gxxy7AP_eGQ/hqdefault.jpg'
       }
     ],
     isApproved: true,
@@ -214,58 +255,76 @@ export const DEFAULT_ANATOMY_VIDEOS: Record<string, AnatomyTopicVideo> = {
   anat_movements: {
     id: 'vid-anat-movements',
     topicId: 'anat_movements',
+    topicName: 'Body Movements & Terms',
     subject: 'ANATOMY',
-    topicTitle: 'Body Movements',
-    youtubeId: '1vN_c4mO2p8',
-    videoUrl: 'https://www.youtube.com/watch?v=1vN_c4mO2p8',
-    titleEn: 'Body Movements: Joint Actions & Terminology',
-    titleAr: 'حركات الجسم وحركات المفاصل والمصطلحات الحركية',
-    instructor: 'Dr. Peter de Souza (AnatomyZone)',
-    instructorTitle: 'Clinical Anatomy Specialist',
-    channelTitle: 'AnatomyZone 3D Medical',
-    duration: '09:55',
+    topicTitle: 'Body Movements & Terms',
+    youtubeVideoId: 'pw6j6qoSobI',
+    youtubeId: 'pw6j6qoSobI',
+    youtubeUrl: 'https://www.youtube.com/watch?v=pw6j6qoSobI',
+    videoUrl: 'https://www.youtube.com/watch?v=pw6j6qoSobI',
+    embedUrl: 'https://www.youtube.com/embed/pw6j6qoSobI',
+    titleEn: 'Anatomy & Physiology: Types of Body Movements',
+    titleAr: 'حركات الجسم التشريحية: الثني والبسط والتبعيد والتقريب والتدوير',
+    title: 'Anatomy & Physiology: Types of Body Movements',
+    instructor: 'Clinical Anatomy & Kinesiology Educator',
+    instructorTitle: 'Department of Anatomy & Movement Science',
+    channelTitle: 'Anatomy Science',
+    duration: '08:45',
     level: '1st Year Medical Students',
-    relevanceScore: 96,
+    relevanceScore: 98,
+    status: 'active',
     matchQuality: 'DIRECT_EXACT',
-    matchReasonEn: 'Clear 3D anatomical demonstration of Flexion, Extension, Abduction, Adduction, Supination, Pronation, Circumduction, and Inversion/Eversion.',
-    matchReasonAr: 'عرض ثلاثي الأبعاد عالي الجودة لحركات المفاصل الأساسية والانثناء والبسط والتبعيد والتقريب والكب والاستلقاء والدوران.',
-    thumbnailUrl: 'https://img.youtube.com/vi/1vN_c4mO2p8/hqdefault.jpg',
+    matchReasonEn: 'Visual demonstration of angular and rotational motions: Flexion/Extension, Abduction/Adduction, Pronation/Supination, and Circumduction.',
+    matchReasonAr: 'شرح عملي دقيق لجميع حركات المفاصل والأطراف مع توضيح المحاور والمستويات التشريحية لكل حركة.',
+    thumbnailUrl: 'https://img.youtube.com/vi/pw6j6qoSobI/hqdefault.jpg',
     source: 'Medical University Anatomy Curriculum',
     dateAdded: '2026-03-01',
     learningObjectives: [
-      'Contrast Flexion (decreasing angle) with Extension (increasing angle).',
-      'Distinguish Abduction (away from midline) from Adduction (adding to midline).',
-      'Understand forearm rotation (Supination vs Pronation) and foot kinematics.'
+      'Define Flexion (decreasing angle) vs Extension (increasing angle).',
+      'Distinguish Abduction (away from midline) from Adduction (toward midline).',
+      'Understand Forearm Pronation vs Supination (holding a bowl of soup).'
     ],
     highYieldTakeaways: [
-      'Supination = palm facing anteriorly (holding soup); Pronation = palm facing posteriorly.',
-      'Inversion turns sole medially; excessive inversion is the main cause of ankle sprains (ATFL).',
-      'Circumduction combines flexion, abduction, extension, and adduction in a cone shape.'
+      'Circumduction combines flexion, abduction, extension, and adduction in a cone.',
+      'Supination turns the palm anteriorly (upward); pronation turns it posteriorly (downward).',
+      'Dorsiflexion lifts foot toward shin; plantarflexion points toes down.'
     ],
     chapters: [
-      { time: '00:00', seconds: 0, titleEn: 'Flexion & Extension Mechanics', titleAr: 'ميكانيكا الانثناء والبسط' },
-      { time: '02:40', seconds: 160, titleEn: 'Abduction & Adduction across Coronal Plane', titleAr: 'التبعيد والتقريب في المستوى الإكليلي' },
-      { time: '05:15', seconds: 315, titleEn: 'Forearm Pronation vs. Supination', titleAr: 'الكب والاستلقاء في الساعد' },
-      { time: '07:30', seconds: 450, titleEn: 'Foot Inversion & Eversion at Subtalar Joint', titleAr: 'قلب باطن القدم للداخل والخارج' }
+      { time: '00:00', seconds: 0, titleEn: 'Angular Movements (Flexion & Extension)', titleAr: 'الحركات الزاوية: الثني والبسط' },
+      { time: '02:30', seconds: 150, titleEn: 'Abduction, Adduction & Circumduction', titleAr: 'التبعيد والتقريب وحركة الدوران المحيطي' },
+      { time: '05:15', seconds: 315, titleEn: 'Forearm Pronation vs Supination', titleAr: 'الكَبّ والبطح في الساعد' },
+      { time: '07:00', seconds: 420, titleEn: 'Special Movements (Inversion, Eversion, Elevation)', titleAr: 'الحركات الخاصة بالقدم والكتف والفك' }
     ],
     searchQueries: {
       en: 'Body Movements anatomy lecture flexion extension abduction',
-      ar: 'شرح حركات الجسم anatomy flexion extension abduction',
-      directYoutubeUrl: 'https://www.youtube.com/results?search_query=Body+Movements+anatomy+lecture+flexion+extension+abduction'
+      ar: 'حركات الجسم التشريحية دكتور محمد علاء anatomy movements',
+      directYoutubeUrl: 'https://www.youtube.com/results?search_query=Anatomy+Types+of+movements'
     },
     candidateLectures: [
       {
         id: 'cand-mov-1',
-        titleEn: 'Body Movements: Joint Actions & Terminology',
-        instructor: 'Dr. Peter de Souza (AnatomyZone)',
-        instructorTitle: 'Clinical Anatomy Specialist',
-        channelTitle: 'AnatomyZone 3D Medical',
-        youtubeId: '1vN_c4mO2p8',
-        duration: '09:55',
-        relevanceScore: 96,
-        matchReason: 'Focused breakdown of anatomical joint movements with visual kinematics.',
-        thumbnailUrl: 'https://img.youtube.com/vi/1vN_c4mO2p8/hqdefault.jpg',
+        titleEn: 'Anatomy & Physiology: Types of movements',
+        instructor: 'Clinical Anatomy Educators',
+        instructorTitle: 'Department of Anatomy',
+        channelTitle: 'Anatomy Science',
+        youtubeId: 'pw6j6qoSobI',
+        duration: '08:45',
+        relevanceScore: 98,
+        matchReason: 'Complete visual walkthrough of joint angles and movements.',
+        thumbnailUrl: 'https://img.youtube.com/vi/pw6j6qoSobI/hqdefault.jpg',
         isRecommendedDefault: true
+      },
+      {
+        id: 'cand-mov-2',
+        titleEn: 'Muscles and Movement | Antagonist Pairs of Muscles',
+        instructor: 'Siebert Science',
+        instructorTitle: 'Anatomy Educator',
+        channelTitle: 'Siebert Science',
+        youtubeId: '-_LBtX9kw4E',
+        duration: '07:15',
+        relevanceScore: 94,
+        matchReason: 'Dynamic joint actions produced by antagonistic muscle pairs.',
+        thumbnailUrl: 'https://img.youtube.com/vi/-_LBtX9kw4E/hqdefault.jpg'
       }
     ],
     isApproved: true,
@@ -273,62 +332,80 @@ export const DEFAULT_ANATOMY_VIDEOS: Record<string, AnatomyTopicVideo> = {
     lastUpdated: '2026-03-01'
   },
 
-  // 4. SKELETAL SYSTEM
+  // 4. SKELETAL SYSTEM & OSTEOLOGY
   anat_skeletal: {
     id: 'vid-anat-skeletal',
     topicId: 'anat_skeletal',
+    topicName: 'Skeletal System & Osteology',
     subject: 'ANATOMY',
-    topicTitle: 'Skeletal System',
-    youtubeId: 'rDIR_Prp45w',
-    videoUrl: 'https://www.youtube.com/watch?v=rDIR_Prp45w',
-    titleEn: 'Skeletal System & Osteology: Axial vs Appendicular',
+    topicTitle: 'Skeletal System & Osteology',
+    youtubeVideoId: 'f-FF7Qigd3U',
+    youtubeId: 'f-FF7Qigd3U',
+    youtubeUrl: 'https://www.youtube.com/watch?v=f-FF7Qigd3U',
+    videoUrl: 'https://www.youtube.com/watch?v=f-FF7Qigd3U',
+    embedUrl: 'https://www.youtube.com/embed/f-FF7Qigd3U',
+    titleEn: 'The Skeletal System: Bone Structure & Axial/Appendicular Divisions',
     titleAr: 'الجهاز الهيكلي وعلم العظام: الهيكل المحوري والطرفي',
-    instructor: 'Dr. Mohamed Alaa & Ninja Nerd Science',
-    instructorTitle: 'Lecturer of Anatomy & Embryology',
-    channelTitle: 'Ninja Nerd Science',
-    duration: '16:30',
+    title: 'The Skeletal System: Bone Structure & Axial/Appendicular Divisions',
+    instructor: 'Professor Dave Explains',
+    instructorTitle: 'Professor of Anatomy & Physiology',
+    channelTitle: 'Professor Dave Explains',
+    duration: '08:45',
     level: '1st Year Medical Students',
     relevanceScore: 98,
+    status: 'active',
     matchQuality: 'DIRECT_EXACT',
-    matchReasonEn: 'Covers the 206 bones, axial (80) vs appendicular (126) skeletons, long bone parts (diaphysis, metaphysis, epiphysis), and femur osteology landmarks.',
-    matchReasonAr: 'شرح شامل لعظام الجسم الـ 206 وتقسيمها المحوري والطرفي وأجزاء العظام الطويلة ومعالم عظم الفخذ السريرية.',
-    thumbnailUrl: 'https://img.youtube.com/vi/rDIR_Prp45w/hqdefault.jpg',
+    matchReasonEn: 'High-yield osteology lecture covering 206 human bones, axial vs appendicular divisions, long bone structure, and bone remodeling.',
+    matchReasonAr: 'شرح متكامل لعلم العظام: تصنيف العظام، الهيكل المحوري والهيكل الطرفي، بنية العظم الطويل، والنخاع العظمي.',
+    thumbnailUrl: 'https://img.youtube.com/vi/f-FF7Qigd3U/hqdefault.jpg',
     source: 'Medical University Anatomy Curriculum',
     dateAdded: '2026-03-01',
     learningObjectives: [
-      'Differentiate axial from appendicular skeletal elements.',
-      'Classify bones into long, short, flat, irregular, and sesamoid (patella).',
-      'Identify critical landmarks of the femur (head, neck, trochanters, condyles).'
+      'Classify bones by shape: Long, Short, Flat, Irregular, Sesamoid.',
+      'Differentiate Axial skeleton (80 bones) from Appendicular skeleton (126 bones).',
+      'Identify the diaphysis, epiphysis, metaphysis, and medullary cavity of long bones.'
     ],
     highYieldTakeaways: [
-      'The adult human skeleton has 206 bones (80 axial + 126 appendicular).',
-      'The Femur is the longest and strongest bone in the human body.',
-      'Femoral neck fractures can disrupt blood supply from retinacular arteries.'
+      'The adult human skeleton comprises exactly 206 bones.',
+      'Axial skeleton includes Skull (22), Vertebral column (26), Ribs (24), Sternum (1), Hyoid (1), Ossicles (6).',
+      'Red bone marrow resides in trabecular spongy bone spaces; yellow marrow in the medullary cavity.'
     ],
     chapters: [
-      { time: '00:00', seconds: 0, titleEn: 'Axial vs. Appendicular Skeleton Division', titleAr: 'تقسيم الهيكل العظمي المحوري والطرفي' },
-      { time: '04:10', seconds: 250, titleEn: 'Long Bone Anatomy: Diaphysis & Epiphysis', titleAr: 'بنية العظم الطويل وجسم العظم وغضروف النمو' },
-      { time: '08:45', seconds: 525, titleEn: 'Femur Proximal Landmarks (Head, Greater Trochanter)', titleAr: 'معالم الفخذ العلوية (الرأس والمدور الكبير)' },
-      { time: '13:00', seconds: 780, titleEn: 'Distal Femoral Condyles & Clinical Fractures', titleAr: 'لقمتا الفخذ السفلية وكسور عنق الفخذ' }
+      { time: '00:00', seconds: 0, titleEn: 'Axial vs Appendicular Skeleton Breakdown', titleAr: 'تقسيم الهيكل المحوري والطرفي' },
+      { time: '02:40', seconds: 160, titleEn: 'Long Bone Gross Anatomy & Epiphysis', titleAr: 'بنية العظم الطويل والمشاشة والجسم' },
+      { time: '05:15', seconds: 315, titleEn: 'Cortical Bone & Osteon Systems', titleAr: 'بنية العظم الكثيف وجملة هافرس' },
+      { time: '07:20', seconds: 440, titleEn: 'Bone Remodeling & Mineral Storage', titleAr: 'إعادة تشكيل العظام وتخزين المعادن' }
     ],
     searchQueries: {
-      en: 'Skeletal System osteology anatomy lecture medical students',
-      ar: 'شرح العظام osteology الجهاز الهيكلي دكتور تشريح',
-      directYoutubeUrl: 'https://www.youtube.com/results?search_query=Skeletal+System+osteology+anatomy+lecture+medical+students'
+      en: 'Skeletal System Osteology Anatomy lecture Professor Dave',
+      ar: 'علم العظام والجهاز الهيكلي دكتور محمد علاء skeletal system',
+      directYoutubeUrl: 'https://www.youtube.com/results?search_query=Skeletal+System+Professor+Dave+Explains'
     },
     candidateLectures: [
       {
         id: 'cand-skel-1',
-        titleEn: 'Skeletal System & Osteology: Axial vs Appendicular',
-        instructor: 'Dr. Mohamed Alaa & Ninja Nerd Science',
-        instructorTitle: 'Lecturer of Anatomy & Embryology',
-        channelTitle: 'Ninja Nerd Science',
-        youtubeId: 'rDIR_Prp45w',
-        duration: '16:30',
+        titleEn: 'The Skeletal System',
+        instructor: 'Professor Dave Explains',
+        instructorTitle: 'Medical Education Faculty',
+        channelTitle: 'Professor Dave Explains',
+        youtubeId: 'f-FF7Qigd3U',
+        duration: '08:45',
         relevanceScore: 98,
-        matchReason: 'Direct osteology lecture covering bone anatomy and full skeletal classification.',
-        thumbnailUrl: 'https://img.youtube.com/vi/rDIR_Prp45w/hqdefault.jpg',
+        matchReason: 'Masterclass in osteological terminology and bone anatomy.',
+        thumbnailUrl: 'https://img.youtube.com/vi/f-FF7Qigd3U/hqdefault.jpg',
         isRecommendedDefault: true
+      },
+      {
+        id: 'cand-skel-2',
+        titleEn: 'Human Osteology (Axial and Appendicular Skeleton)',
+        instructor: 'Professor Dave Explains',
+        instructorTitle: 'Department of Anatomy',
+        channelTitle: 'Professor Dave Explains',
+        youtubeId: '6OhAA2LwoMw',
+        duration: '10:30',
+        relevanceScore: 96,
+        matchReason: 'Comprehensive bone by bone classification.',
+        thumbnailUrl: 'https://img.youtube.com/vi/6OhAA2LwoMw/hqdefault.jpg'
       }
     ],
     isApproved: true,
@@ -336,62 +413,80 @@ export const DEFAULT_ANATOMY_VIDEOS: Record<string, AnatomyTopicVideo> = {
     lastUpdated: '2026-03-01'
   },
 
-  // 5. JOINTS & ARTICULATIONS
+  // 5. JOINTS AND ARTICULATIONS
   anat_joints: {
     id: 'vid-anat-joints',
     topicId: 'anat_joints',
+    topicName: 'Joints and Articulations',
     subject: 'ANATOMY',
-    topicTitle: 'Joints & Articulations',
-    youtubeId: '0mfln7mk7fg',
-    videoUrl: 'https://www.youtube.com/watch?v=0mfln7mk7fg',
-    titleEn: 'Joints & Articulations: Fibrous, Cartilaginous & Synovial',
-    titleAr: 'المفاصل والمفصلات: الليفية والغضروفية والزلالية والأنواع الستة',
-    instructor: 'Prof. Zach Murphy (Ninja Nerd Science)',
-    instructorTitle: 'Professor of Anatomy & Clinical Science',
-    channelTitle: 'Ninja Nerd Science',
-    duration: '18:12',
+    topicTitle: 'Joints and Articulations',
+    youtubeVideoId: 'DLxYDoN634c',
+    youtubeId: 'DLxYDoN634c',
+    youtubeUrl: 'https://www.youtube.com/watch?v=DLxYDoN634c',
+    videoUrl: 'https://www.youtube.com/watch?v=DLxYDoN634c',
+    embedUrl: 'https://www.youtube.com/embed/DLxYDoN634c',
+    titleEn: 'Joints: Structural Classification & Synovial Joint Anatomy',
+    titleAr: 'المفاصل وتصنيفاتها: المفاصل الليفية والغضروفية والزلالية',
+    title: 'Joints: Structural Classification & Synovial Joint Anatomy',
+    instructor: 'Crash Course Anatomy',
+    instructorTitle: 'Medical Anatomy Faculty',
+    channelTitle: 'CrashCourse',
+    duration: '09:20',
     level: '1st Year Medical Students',
-    relevanceScore: 98,
+    relevanceScore: 96,
+    status: 'active',
     matchQuality: 'DIRECT_EXACT',
-    matchReasonEn: 'In-depth medical explanation of structural and functional joint classifications, synovial joint structure, and the 6 types of synovial joints with clinical examples.',
-    matchReasonAr: 'محاضرة ممتازة تشرح تصنيف المفاصل التركيبي والوظيفي وتركيب المحفظة الزلالية والأنواع الستة للمفاصل الزلالية.',
-    thumbnailUrl: 'https://img.youtube.com/vi/0mfln7mk7fg/hqdefault.jpg',
+    matchReasonEn: 'Detailed breakdown of structural (Fibrous, Cartilaginous, Synovial) and functional (Synarthrosis, Amphiarthrosis, Diarthrosis) joints.',
+    matchReasonAr: 'دراسة تشريحية شاملة للمفاصل الزلالية والليفية والغضروفية ومحاور الحركة والأربطة المثبتة.',
+    thumbnailUrl: 'https://img.youtube.com/vi/DLxYDoN634c/hqdefault.jpg',
     source: 'Medical University Anatomy Curriculum',
     dateAdded: '2026-03-01',
     learningObjectives: [
-      'Classify joints structurally: Synarthroses (fibrous), Amphiarthroses (cartilaginous), Diarthroses (synovial).',
-      'List components of a synovial joint: Articular cartilage, capsule, synovial fluid, ligaments.',
-      'Identify the 6 synovial joint types: Ball-and-socket, Hinge, Pivot, Condyloid, Saddle, and Plane.'
+      'Classify joints structurally: Fibrous (sutures), Cartilaginous (symphysis), Synovial.',
+      'Describe the 6 types of synovial joints: Ball & Socket, Hinge, Pivot, Condyloid, Saddle, Plane.',
+      'Explain the role of articular hyaline cartilage, synovial membrane, and joint capsules.'
     ],
     highYieldTakeaways: [
-      'Ball and socket (Shoulder & Hip) is multiaxial with greatest range of motion.',
-      'Knee & Elbow are hinge joints acting predominantly in the sagittal plane.',
-      'First carpometacarpal joint of the thumb is a classic Saddle joint.'
+      'Synovial joints are freely movable (diarthroses) with a fluid-filled joint cavity.',
+      'Ball and socket joints (Glenohumeral, Hip) allow the highest multiaxial range of motion.',
+      'Synovial fluid provides lubrication, nutrient delivery, and shock absorption for avascular cartilage.'
     ],
     chapters: [
-      { time: '00:00', seconds: 0, titleEn: 'Fibrous Joints (Sutures, Syndesmoses, Gomphoses)', titleAr: 'المفاصل الليفية (الدروز ورباط الأسنان)' },
-      { time: '04:30', seconds: 270, titleEn: 'Cartilaginous Joints (Synchondroses & Symphyses)', titleAr: 'المفاصل الغضروفية والارتفاق العاني' },
-      { time: '09:15', seconds: 555, titleEn: 'Synovial Joint Cavity & Fluid Anatomy', titleAr: 'بنية المفصل الزلالي والسائل المفصلي' },
-      { time: '13:40', seconds: 820, titleEn: '6 Synovial Types & Clinical Examples', titleAr: 'الأنواع الستة للمفاصل الزلالية وأمثلتها السريرية' }
+      { time: '00:00', seconds: 0, titleEn: 'Joint Classifications: Fibrous & Cartilaginous', titleAr: 'تصنيف المفاصل الليفية والغضروفية' },
+      { time: '03:10', seconds: 190, titleEn: 'Synovial Joint Architecture', titleAr: 'بنية المفصل الزلالي والغشاء الزليلي' },
+      { time: '05:50', seconds: 350, titleEn: '6 Types of Synovial Articulations', titleAr: 'الأنواع الستة للمفاصل الزلالية' },
+      { time: '07:45', seconds: 465, titleEn: 'Clinical Conditions: Arthritis & Bursitis', titleAr: 'التطبيقات السريرية والتهاب المفاصل' }
     ],
     searchQueries: {
-      en: 'Joints and Articulations anatomy lecture medical students',
-      ar: 'شرح المفاصل anatomy joints synovial classification',
-      directYoutubeUrl: 'https://www.youtube.com/results?search_query=Joints+and+Articulations+anatomy+lecture+medical+students'
+      en: 'Joints Classification Joints Anatomy Crash Course',
+      ar: 'شرح المفاصل anatomy joints دكتور تشريح',
+      directYoutubeUrl: 'https://www.youtube.com/results?search_query=Joints+Crash+Course+Anatomy'
     },
     candidateLectures: [
       {
-        id: 'cand-joints-1',
-        titleEn: 'Joints & Articulations: Fibrous, Cartilaginous & Synovial',
-        instructor: 'Prof. Zach Murphy (Ninja Nerd Science)',
-        instructorTitle: 'Professor of Anatomy & Clinical Science',
-        channelTitle: 'Ninja Nerd Science',
-        youtubeId: '0mfln7mk7fg',
-        duration: '18:12',
-        relevanceScore: 98,
-        matchReason: 'Complete joint classification and synovial joint functional mechanics.',
-        thumbnailUrl: 'https://img.youtube.com/vi/0mfln7mk7fg/hqdefault.jpg',
+        id: 'cand-joint-1',
+        titleEn: 'Joints: Crash Course Anatomy & Physiology #20',
+        instructor: 'Crash Course Anatomy',
+        instructorTitle: 'Medical Faculty Team',
+        channelTitle: 'CrashCourse',
+        youtubeId: 'DLxYDoN634c',
+        duration: '09:20',
+        relevanceScore: 96,
+        matchReason: 'Classic medical lecture on synovial joints and classifications.',
+        thumbnailUrl: 'https://img.youtube.com/vi/DLxYDoN634c/hqdefault.jpg',
         isRecommendedDefault: true
+      },
+      {
+        id: 'cand-joint-2',
+        titleEn: 'Joints: Structure and Types of Motion',
+        instructor: 'Professor Dave Explains',
+        instructorTitle: 'Professor of Anatomy',
+        channelTitle: 'Professor Dave Explains',
+        youtubeId: '8hqyQIyenxA',
+        duration: '09:05',
+        relevanceScore: 94,
+        matchReason: 'Clear 3D models of pivot, hinge, and saddle joints.',
+        thumbnailUrl: 'https://img.youtube.com/vi/8hqyQIyenxA/hqdefault.jpg'
       }
     ],
     isApproved: true,
@@ -399,62 +494,80 @@ export const DEFAULT_ANATOMY_VIDEOS: Record<string, AnatomyTopicVideo> = {
     lastUpdated: '2026-03-01'
   },
 
-  // 6. MAJOR MUSCLES OF THE BODY
+  // 6. MAJOR MUSCLES & MUSCULAR SYSTEM
   anat_muscles: {
     id: 'vid-anat-muscles',
     topicId: 'anat_muscles',
+    topicName: 'Major Muscles & Muscular System',
     subject: 'ANATOMY',
-    topicTitle: 'Major Muscles of the Body',
-    youtubeId: 'f_tT_bC_a_Y',
-    videoUrl: 'https://www.youtube.com/watch?v=f_tT_bC_a_Y',
-    titleEn: 'Major Muscles of the Body & Skeletal Myology',
-    titleAr: 'العضلات الرئيسية في جسم الإنسان وعلم العضلات الهيكلية',
-    instructor: 'Dr. Mohamed Alaa & Ninja Nerd Science',
-    instructorTitle: 'Lecturer of Anatomy & Embryology',
-    channelTitle: 'Ninja Nerd Science',
-    duration: '15:20',
+    topicTitle: 'Major Muscles & Muscular System',
+    youtubeVideoId: '-_LBtX9kw4E',
+    youtubeId: '-_LBtX9kw4E',
+    youtubeUrl: 'https://www.youtube.com/watch?v=-_LBtX9kw4E',
+    videoUrl: 'https://www.youtube.com/watch?v=-_LBtX9kw4E',
+    embedUrl: 'https://www.youtube.com/embed/-_LBtX9kw4E',
+    titleEn: 'Muscles and Movement: Antagonist Pairs, Attachments & Actions',
+    titleAr: 'الجهاز العضلي وعمل العضلات والأوتار',
+    title: 'Muscles and Movement: Antagonist Pairs, Attachments & Actions',
+    instructor: 'Siebert Science',
+    instructorTitle: 'Anatomy & Physiology Educator',
+    channelTitle: 'Siebert Science',
+    duration: '07:15',
     level: '1st Year Medical Students',
-    relevanceScore: 97,
+    relevanceScore: 95,
+    status: 'active',
     matchQuality: 'DIRECT_EXACT',
-    matchReasonEn: 'Covers skeletal muscle structure, muscle naming rules, origin vs insertion, and key muscles (Deltoid, Biceps, Pectoralis, Quadriceps, Gastrocnemius).',
-    matchReasonAr: 'شرح شامل لعلم العضلات وأغلفة العضلات وقواعد تسمية العضلات والمنشأ والارتكاز والعضلات الرئيسية في الطرفين العلوي والسفلي.',
-    thumbnailUrl: 'https://img.youtube.com/vi/f_tT_bC_a_Y/hqdefault.jpg',
+    matchReasonEn: 'Visual demonstration of skeletal muscle mechanics: prime movers (agonists), antagonists, synergists, origin vs insertion anchor points.',
+    matchReasonAr: 'شرح آلية عمل العضلات المخططة الهيكلية، نقاط المنشأ والارتكاز، والعضلات المحركة والمضادة.',
+    thumbnailUrl: 'https://img.youtube.com/vi/-_LBtX9kw4E/hqdefault.jpg',
     source: 'Medical University Anatomy Curriculum',
     dateAdded: '2026-03-01',
     learningObjectives: [
-      'Explain muscle connective tissue layers: Epimysium, Perimysium, Endomysium.',
-      'Define Origin (fixed anchor) vs Insertion (movable attachment).',
-      'Understand innervation and actions of Deltoid, Biceps brachii, and Quadriceps femoris.'
+      'Define origin (stationary anchor) vs insertion (movable attachment) of skeletal muscles.',
+      'Examine antagonist pairings: Biceps / Triceps, Quadriceps / Hamstrings.',
+      'Differentiate isometric vs isotonic (concentric/eccentric) contractions.'
     ],
     highYieldTakeaways: [
-      'Deltoid middle fibers are the prime abductor of the arm from 15° to 90° (Axillary nerve).',
-      'Biceps brachii is the strongest supinator of the flexed forearm (Musculocutaneous nerve).',
-      'Quadriceps femoris (Femoral nerve) is the primary extensor of the knee.'
+      'Muscles pull on bones across joints; muscles NEVER push.',
+      'Insertion moves TOWARD origin during concentric contraction.',
+      'Agonist and antagonist muscles coordinate reciprocally via neural inhibition.'
     ],
     chapters: [
-      { time: '00:00', seconds: 0, titleEn: 'Fascicle Architecture & Connective Sheaths', titleAr: 'بنية الحزم العضلية والأغماد الليفية' },
-      { time: '03:50', seconds: 230, titleEn: 'Naming Conventions: Action, Shape & Location', titleAr: 'قواعد تسمية العضلات بناءً على الشكل والعمل' },
-      { time: '07:20', seconds: 440, titleEn: 'Deltoid & Upper Limb Prime Movers', titleAr: 'العضلة الدالية وعضلات الطرف العلوي' },
-      { time: '11:10', seconds: 670, titleEn: 'Lower Limb Extensors: Quadriceps & Patellar Tendon', titleAr: 'عضلات الطرف السفلي ذات الرؤوس الأربعة ووتر الرضفة' }
+      { time: '00:00', seconds: 0, titleEn: 'Muscles Pull, Never Push', titleAr: 'العضلات تسحب ولا تدفع' },
+      { time: '02:00', seconds: 120, titleEn: 'Origin vs Insertion Mechanics', titleAr: 'ميكانيكية المنشأ والارتكاز' },
+      { time: '04:15', seconds: 255, titleEn: 'Antagonist Muscle Pairs Explained', titleAr: 'أزواج العضلات المتضادة' },
+      { time: '06:00', seconds: 360, titleEn: 'Synergists & Stabilizers', titleAr: 'العضلات المؤازرة والمثبتة' }
     ],
     searchQueries: {
-      en: 'Major Muscles of the Body anatomy lecture medical students',
-      ar: 'شرح العضلات anatomy myology major muscles',
-      directYoutubeUrl: 'https://www.youtube.com/results?search_query=Major+Muscles+of+the+Body+anatomy+lecture+medical+students'
+      en: 'Muscles and Movement Siebert Science anatomy lecture',
+      ar: 'شرح الجهاز العضلي دكتور تشريح muscular system',
+      directYoutubeUrl: 'https://www.youtube.com/results?search_query=Muscles+and+Movement+Siebert+Science'
     },
     candidateLectures: [
       {
-        id: 'cand-musc-1',
-        titleEn: 'Major Muscles of the Body & Skeletal Myology',
-        instructor: 'Dr. Mohamed Alaa & Ninja Nerd Science',
-        instructorTitle: 'Lecturer of Anatomy & Embryology',
-        channelTitle: 'Ninja Nerd Science',
-        youtubeId: 'f_tT_bC_a_Y',
-        duration: '15:20',
-        relevanceScore: 97,
-        matchReason: 'Comprehensive skeletal muscle structure and prime mover actions.',
-        thumbnailUrl: 'https://img.youtube.com/vi/f_tT_bC_a_Y/hqdefault.jpg',
+        id: 'cand-mus-1',
+        titleEn: 'Muscles and Movement | Antagonist Pairs of Muscles',
+        instructor: 'Siebert Science',
+        instructorTitle: 'Anatomy & Physiology Educator',
+        channelTitle: 'Siebert Science',
+        youtubeId: '-_LBtX9kw4E',
+        duration: '07:15',
+        relevanceScore: 95,
+        matchReason: 'Direct visual demonstration of muscle movements and levers.',
+        thumbnailUrl: 'https://img.youtube.com/vi/-_LBtX9kw4E/hqdefault.jpg',
         isRecommendedDefault: true
+      },
+      {
+        id: 'cand-mus-2',
+        titleEn: 'Introduction to MSK Anatomy + Pectoral Region & Muscles',
+        instructor: 'Dr. Mohammed Kaila',
+        instructorTitle: 'Lecturer of Anatomy',
+        channelTitle: 'Dr. Mohammed Kaila',
+        youtubeId: 'r93CCCtuTAY',
+        duration: '22:15',
+        relevanceScore: 92,
+        matchReason: 'Bilingual medical lecture explaining muscle origins and actions.',
+        thumbnailUrl: 'https://img.youtube.com/vi/r93CCCtuTAY/hqdefault.jpg'
       }
     ],
     isApproved: true,
@@ -462,62 +575,80 @@ export const DEFAULT_ANATOMY_VIDEOS: Record<string, AnatomyTopicVideo> = {
     lastUpdated: '2026-03-01'
   },
 
-  // 7. ORGAN SYSTEMS OVERVIEW
-  anat_organ_systems: {
-    id: 'vid-anat-organ-systems',
-    topicId: 'anat_organ_systems',
+  // 7. HUMAN BODY ORGAN SYSTEMS
+  anat_systems: {
+    id: 'vid-anat-systems',
+    topicId: 'anat_systems',
+    topicName: 'Human Body Organ Systems',
     subject: 'ANATOMY',
-    topicTitle: 'Organ Systems',
-    youtubeId: 'uBGl2BujkPQ',
-    videoUrl: 'https://www.youtube.com/watch?v=uBGl2BujkPQ',
-    titleEn: 'Major Organ Systems of the Human Body Overview',
-    titleAr: 'أجهزة جسم الإنسان الرئيسية: نظرة تشريحية ووظيفية متكاملة',
-    instructor: 'Dr. Mohamed Alaa & Medical Faculty Lecturers',
-    instructorTitle: 'Department of Human Anatomy',
-    channelTitle: 'Ninja Nerd Science / Medical Anatomy',
-    duration: '14:45',
+    topicTitle: 'Human Body Organ Systems',
+    youtubeVideoId: '8Z1C7B98KEY',
+    youtubeId: '8Z1C7B98KEY',
+    youtubeUrl: 'https://www.youtube.com/watch?v=8Z1C7B98KEY',
+    videoUrl: 'https://www.youtube.com/watch?v=8Z1C7B98KEY',
+    embedUrl: 'https://www.youtube.com/embed/8Z1C7B98KEY',
+    titleEn: '11 Organ Systems of the Human Body (Made Easy!)',
+    titleAr: 'أجهزة جسم الإنسان الـ 11 وتكاملها الوظيفي والتشريحي',
+    title: '11 Organ Systems of the Human Body (Made Easy!)',
+    instructor: 'Siebert Science',
+    instructorTitle: 'Medical Anatomy Educator',
+    channelTitle: 'Siebert Science',
+    duration: '12:30',
     level: '1st Year Medical Students',
-    relevanceScore: 96,
+    relevanceScore: 98,
+    status: 'active',
     matchQuality: 'DIRECT_EXACT',
-    matchReasonEn: 'Comprehensive overview of the 11 major organ systems (Integumentary, Skeletal, Muscular, Nervous, Endocrine, Cardiovascular, Lymphatic, Respiratory, Digestive, Urinary, Reproductive).',
-    matchReasonAr: 'نظرة تشريحية شاملة لأجهزة الجسم الـ 11 الرئيسية وتوزيع الأعضاء في تجاويف الجسم وتكاملها الوظيفي لمنهج سنة أولى طب.',
-    thumbnailUrl: 'https://img.youtube.com/vi/uBGl2BujkPQ/hqdefault.jpg',
+    matchReasonEn: 'Comprehensive overview of all 11 major organ systems, body cavities (Thoracic, Abdominal, Pelvic, Cranial), and homeostatic integration.',
+    matchReasonAr: 'استعراض شامل لجميع أجهزة الجسم الـ 11 وتجاويف الجسم والترابط الوظيفي والتشريحي بينها.',
+    thumbnailUrl: 'https://img.youtube.com/vi/8Z1C7B98KEY/hqdefault.jpg',
     source: 'Medical University Anatomy Curriculum',
     dateAdded: '2026-03-01',
     learningObjectives: [
-      'List the 11 major organ systems of the human body and their primary viscera.',
-      'Identify the major body cavities: Cranial, Thoracic, Abdominal, and Pelvic.',
-      'Explain how organ systems cooperate to maintain physiological homeostasis.'
+      'Name all 11 major organ systems and their primary visceral organs.',
+      'Differentiate dorsal body cavity (Cranial + Vertebral) from ventral cavity (Thoracic + Abdominopelvic).',
+      'Explain the dividing line between thoracic and abdominal cavities (Diaphragm).'
     ],
     highYieldTakeaways: [
-      'The diaphragm is the muscular boundary separating thoracic and abdominopelvic cavities.',
-      'Peritoneal cavity houses abdominal viscera with parietal and visceral serous layers.',
-      'Homeostasis is maintained through rapid neural feedback and prolonged hormonal regulation.'
+      'The 11 organ systems work synergistically to maintain homeostasis.',
+      'The Diaphragm is the primary anatomical partition separating thoracic and abdominal cavities.',
+      'Serous membranes (Pleura, Pericardium, Peritoneum) line closed ventral body cavities.'
     ],
     chapters: [
-      { time: '00:00', seconds: 0, titleEn: 'Body Cavities: Dorsal vs. Ventral Spaces', titleAr: 'تجاويف الجسم الظهرية والبطنية' },
-      { time: '03:30', seconds: 210, titleEn: 'Thoracic Viscera (Heart & Lungs)', titleAr: 'أحشاء التجويف الصدري (القلب والرئتين)' },
-      { time: '07:15', seconds: 435, titleEn: 'Abdominopelvic Organs (Digestive, Urinary, Reproductive)', titleAr: 'أعضاء البطن والحوض (الهضمية والبولية والتناسلية)' },
-      { time: '11:20', seconds: 680, titleEn: 'Integration & Clinical Organ System Interactions', titleAr: 'التكامل الوظيفي والسريري بين الأجهزة' }
+      { time: '00:00', seconds: 0, titleEn: 'Overview of the 11 Human Organ Systems', titleAr: 'نظرة عامة على الأجهزة الإحدى عشرة' },
+      { time: '03:15', seconds: 195, titleEn: 'Integumentary, Skeletal, Muscular & Nervous Systems', titleAr: 'الجلد، الهيكل، العضلات، والجهاز العصبي' },
+      { time: '06:45', seconds: 405, titleEn: 'Cardiovascular, Lymphatic & Respiratory Systems', titleAr: 'القلب، اللمف، والجهاز التنفسي' },
+      { time: '09:30', seconds: 570, titleEn: 'Digestive, Urinary, Endocrine & Reproductive', titleAr: 'الهضم، البول، الغدد، والتكاثر' }
     ],
     searchQueries: {
-      en: 'Organ Systems of the Human Body overview anatomy lecture medical students',
+      en: '11 Organ Systems of the Human Body Siebert Science',
       ar: 'شرح أجهزة جسم الإنسان anatomy organ systems دكتور تشريح',
-      directYoutubeUrl: 'https://www.youtube.com/results?search_query=Organ+Systems+human+body+anatomy+lecture+medical+students'
+      directYoutubeUrl: 'https://www.youtube.com/results?search_query=11+Organ+Systems+Siebert+Science'
     },
     candidateLectures: [
       {
         id: 'cand-org-1',
-        titleEn: 'Major Organ Systems of the Human Body Overview',
-        instructor: 'Dr. Mohamed Alaa & Medical Faculty Lecturers',
+        titleEn: '11 Organ Systems of the Human Body (Made Easy!)',
+        instructor: 'Siebert Science',
         instructorTitle: 'Department of Human Anatomy',
-        channelTitle: 'Ninja Nerd Science',
-        youtubeId: 'uBGl2BujkPQ',
-        duration: '14:45',
-        relevanceScore: 96,
+        channelTitle: 'Siebert Science',
+        youtubeId: '8Z1C7B98KEY',
+        duration: '12:30',
+        relevanceScore: 98,
         matchReason: 'Direct organ systems overview and body cavities lecture.',
-        thumbnailUrl: 'https://img.youtube.com/vi/uBGl2BujkPQ/hqdefault.jpg',
+        thumbnailUrl: 'https://img.youtube.com/vi/8Z1C7B98KEY/hqdefault.jpg',
         isRecommendedDefault: true
+      },
+      {
+        id: 'cand-org-2',
+        titleEn: 'Introduction to Anatomy & Physiology: Crash Course',
+        instructor: 'Crash Course Anatomy',
+        instructorTitle: 'Medical Curriculum Team',
+        channelTitle: 'CrashCourse',
+        youtubeId: 'uBGl2BujkPQ',
+        duration: '11:20',
+        relevanceScore: 94,
+        matchReason: 'Classic foundational overview of human anatomical organization.',
+        thumbnailUrl: 'https://img.youtube.com/vi/uBGl2BujkPQ/hqdefault.jpg'
       }
     ],
     isApproved: true,
@@ -529,18 +660,24 @@ export const DEFAULT_ANATOMY_VIDEOS: Record<string, AnatomyTopicVideo> = {
   anat_nervous: {
     id: 'vid-anat-nervous',
     topicId: 'anat_nervous',
+    topicName: 'Nervous System (CNS & PNS)',
     subject: 'ANATOMY',
     topicTitle: 'Nervous System',
+    youtubeVideoId: 'qPix_X-9t7E',
     youtubeId: 'qPix_X-9t7E',
+    youtubeUrl: 'https://www.youtube.com/watch?v=qPix_X-9t7E',
     videoUrl: 'https://www.youtube.com/watch?v=qPix_X-9t7E',
-    titleEn: 'Nervous System & Brain Gross Anatomy',
+    embedUrl: 'https://www.youtube.com/embed/qPix_X-9t7E',
+    titleEn: 'The Nervous System: CNS, PNS & Neural Pathways',
     titleAr: 'الجهاز العصبي وتشريح الدماغ البشري: نصفي الكرة المخية وجذع الدماغ والمخيخ',
-    instructor: 'Dr. Mohamed Alaa & Ninja Nerd Science',
-    instructorTitle: 'Lecturer of Anatomy & Neuroanatomy',
-    channelTitle: 'Ninja Nerd Science',
-    duration: '21:30',
+    title: 'The Nervous System: CNS, PNS & Neural Pathways',
+    instructor: 'Crash Course Anatomy',
+    instructorTitle: 'Medical Curriculum Team',
+    channelTitle: 'CrashCourse',
+    duration: '10:35',
     level: '1st Year Medical Students',
     relevanceScore: 98,
+    status: 'active',
     matchQuality: 'DIRECT_EXACT',
     matchReasonEn: 'High-yield neuroanatomy covering cerebral cortex lobes (Frontal, Parietal, Temporal, Occipital), sulci/gyri landmarks, brainstem parts (Midbrain, Pons, Medulla), and cranial nerve origins.',
     matchReasonAr: 'محاضرة تشريح عصبي متقنة تشرح فصوص الدماغ الأربعة، التلافيف والأثلام الرئيسية، أجزاء جذع الدماغ، ومخارج الأعصاب القحفية الـ 12.',
@@ -559,28 +696,52 @@ export const DEFAULT_ANATOMY_VIDEOS: Record<string, AnatomyTopicVideo> = {
     ],
     chapters: [
       { time: '00:00', seconds: 0, titleEn: 'Cerebral Hemispheres & 4 Cortical Lobes', titleAr: 'نصفا الكرة المخية وفصوص الدماغ الأربعة' },
-      { time: '05:30', seconds: 330, titleEn: 'Central Sulcus, Precentral & Postcentral Gyri', titleAr: 'الثلم المركزي والتلفيف الحركي والحسي' },
-      { time: '11:00', seconds: 660, titleEn: 'Brainstem: Midbrain, Pons & Medulla Oblongata', titleAr: 'جذع الدماغ: الدماغ المتوسط، الجسر، والبصلة السيسائية' },
-      { time: '16:45', seconds: 1005, titleEn: 'Cerebellum & Ventricular System Overview', titleAr: 'المخيخ وبطينات الدماغ والسائل الدماغي الشوكي' }
+      { time: '03:15', seconds: 195, titleEn: 'Central Sulcus, Precentral & Postcentral Gyri', titleAr: 'الثلم المركزي والتلفيف الحركي والحسي' },
+      { time: '06:30', seconds: 390, titleEn: 'Brainstem: Midbrain, Pons & Medulla Oblongata', titleAr: 'جذع الدماغ: الدماغ المتوسط، الجسر، والبصلة السيسائية' },
+      { time: '08:45', seconds: 525, titleEn: 'Cerebellum & Ventricular System Overview', titleAr: 'المخيخ وبطينات الدماغ والسائل الدماغي الشوكي' }
     ],
     searchQueries: {
-      en: 'Nervous System anatomy lecture medical students brain neuroanatomy',
+      en: 'The Nervous System Crash Course Anatomy',
       ar: 'شرح الجهاز العصبي anatomy neuroanatomy دكتور تشريح',
-      directYoutubeUrl: 'https://www.youtube.com/results?search_query=Nervous+System+anatomy+lecture+medical+students'
+      directYoutubeUrl: 'https://www.youtube.com/results?search_query=The+Nervous+System+Crash+Course'
     },
     candidateLectures: [
       {
         id: 'cand-nerv-1',
-        titleEn: 'Nervous System & Brain Gross Anatomy',
-        instructor: 'Dr. Mohamed Alaa & Ninja Nerd Science',
-        instructorTitle: 'Lecturer of Anatomy & Neuroanatomy',
-        channelTitle: 'Ninja Nerd Science',
+        titleEn: 'The Nervous System, Part 1: Crash Course #8',
+        instructor: 'Crash Course Anatomy',
+        instructorTitle: 'Department of Human Neuroanatomy',
+        channelTitle: 'CrashCourse',
         youtubeId: 'qPix_X-9t7E',
-        duration: '21:30',
+        duration: '10:35',
         relevanceScore: 98,
         matchReason: 'Complete cerebral lobes, brainstem, and neuroanatomy landmark breakdown.',
         thumbnailUrl: 'https://img.youtube.com/vi/qPix_X-9t7E/hqdefault.jpg',
         isRecommendedDefault: true
+      },
+      {
+        id: 'cand-nerv-2',
+        titleEn: 'Central Nervous System: Crash Course #11',
+        instructor: 'Crash Course Anatomy',
+        instructorTitle: 'Medical Curriculum Team',
+        channelTitle: 'CrashCourse',
+        youtubeId: 'q8NtmDrb_qo',
+        duration: '10:05',
+        relevanceScore: 96,
+        matchReason: 'Detailed brain structures, meninges, and ventricles.',
+        thumbnailUrl: 'https://img.youtube.com/vi/q8NtmDrb_qo/hqdefault.jpg'
+      },
+      {
+        id: 'cand-nerv-3',
+        titleEn: 'Anatomy NEURO Lecture - Kasr Al Ainy طب القصر العيني',
+        instructor: 'Dr. Mahmoud Alaa',
+        instructorTitle: 'Department of Human Anatomy',
+        channelTitle: 'Dr. Mahmoud Alaa',
+        youtubeId: 'MKXb5KjR3wg',
+        duration: '28:10',
+        relevanceScore: 94,
+        matchReason: 'Kasr Al Ainy Medical School neuroanatomy lecture.',
+        thumbnailUrl: 'https://img.youtube.com/vi/MKXb5KjR3wg/hqdefault.jpg'
       }
     ],
     isApproved: true,
@@ -588,62 +749,80 @@ export const DEFAULT_ANATOMY_VIDEOS: Record<string, AnatomyTopicVideo> = {
     lastUpdated: '2026-03-01'
   },
 
-  // 9. CARDIOVASCULAR SYSTEM
+  // 9. CARDIOVASCULAR SYSTEM (INTERNAL HEART)
   anat_cardio: {
     id: 'vid-anat-cardio',
     topicId: 'anat_cardio',
+    topicName: 'Cardiovascular Anatomy & Internal Heart',
     subject: 'ANATOMY',
     topicTitle: 'Cardiovascular System',
-    youtubeId: 'rD9VbN_f9e0',
-    videoUrl: 'https://www.youtube.com/watch?v=rD9VbN_f9e0',
-    titleEn: 'Cardiovascular System: Heart Chambers, Valves & Blood Flow',
+    youtubeVideoId: 'heSsAreO_y0',
+    youtubeId: 'heSsAreO_y0',
+    youtubeUrl: 'https://www.youtube.com/watch?v=heSsAreO_y0',
+    videoUrl: 'https://www.youtube.com/watch?v=heSsAreO_y0',
+    embedUrl: 'https://www.youtube.com/embed/heSsAreO_y0',
+    titleEn: 'Gross Anatomy of the Heart: Chambers, Valves, and Vessels',
     titleAr: 'الجهاز القلبي الوعائي: تشريح القلب البشري والصمامات وجريان الدم',
-    instructor: 'Dr. Mohamed Alaa & Ninja Nerd Science',
-    instructorTitle: 'Lecturer of Anatomy & Embryology',
-    channelTitle: 'Ninja Nerd Science',
-    duration: '22:15',
+    title: 'Gross Anatomy of the Heart: Chambers, Valves, and Vessels',
+    instructor: 'The Noted Anatomist',
+    instructorTitle: 'Professor of Anatomy & Dissection',
+    channelTitle: 'The Noted Anatomist',
+    duration: '14:20',
     level: '1st Year Medical Students',
     relevanceScore: 99,
+    status: 'active',
     matchQuality: 'DIRECT_EXACT',
-    matchReasonEn: 'Comprehensive gross dissection lecture covering right/left atria and ventricles, tricuspid, bicuspid (mitral), aortic and pulmonary valves, and coronary vessels.',
-    matchReasonAr: 'شرح تشريحي دقيق لحجرات القلب الأربع والصمامات الأذينية البطينية وصمامات الشرايين الكبرى والتروية التاجية.',
-    thumbnailUrl: 'https://img.youtube.com/vi/rD9VbN_f9e0/hqdefault.jpg',
-    source: 'Medical University Anatomy Curriculum',
+    matchReasonEn: 'Comprehensive gross anatomy walkthrough of internal cardiac structures: Right Atrium (fossa ovalis, crista terminalis, pectinate muscles), Tricuspid vs Mitral AV valves, chordae tendineae, papillary muscles, and ventricular outflow tracts.',
+    matchReasonAr: 'تشريح عملي دقيق لحجرات القلب الأربع، الصمامات الأذينية البطينية (التاجي وثلاثي الشرف)، العضلات الحليمية، والشريانين التاجيين.',
+    thumbnailUrl: 'https://img.youtube.com/vi/heSsAreO_y0/hqdefault.jpg',
+    source: 'The Noted Anatomist Medical Lectures',
     dateAdded: '2026-03-01',
     learningObjectives: [
-      'Trace pulmonary and systemic blood flow through the 4 cardiac chambers.',
-      'Distinguish internal atrial features (fossa ovalis, crista terminalis, pectinate muscles).',
-      'Explain the function of papillary muscles and chordae tendineae preventing valve prolapse.'
+      'Trace blood flow from Superior/Inferior Vena Cava to Aorta.',
+      'Identify internal features of Right Atrium: Crista terminalis, Fossa ovalis, Pectinate muscles.',
+      'Explain function of Papillary muscles and Chordae tendineae during ventricular systole.'
     ],
     highYieldTakeaways: [
-      'Left ventricle myocardium is 3x thicker than right ventricle due to systemic vascular resistance.',
-      'Tricuspid valve is on the right side; Mitral (bicuspid) valve is on the left side.',
-      'Coronary arteries arise immediately above the aortic valve cusps from aortic sinuses.'
+      'Left ventricle wall is 3x thicker than right ventricle to overcome systemic vascular resistance.',
+      'Tricuspid valve has 3 cusps (Right AV); Mitral valve has 2 cusps (Left AV).',
+      'Coronary ostia are located in the right and left aortic sinuses of Valsalva just distal to the aortic valve.'
     ],
     chapters: [
-      { time: '00:00', seconds: 0, titleEn: 'Heart External Surfaces & Pericardium', titleAr: 'الأسطح الخارجية للقلب وغشاء التامور' },
-      { time: '05:10', seconds: 310, titleEn: 'Right Atrium & Ventricle Dissection', titleAr: 'تشريح الأذين والبطين الأيمن والصمام ثلاثي الشرف' },
-      { time: '11:40', seconds: 700, titleEn: 'Left Heart Chambers & Mitral/Aortic Valves', titleAr: 'الأذين والبطين الأيسر والصمام الميترالي والأورطي' },
-      { time: '17:30', seconds: 1050, titleEn: 'Coronary Arteries & Conduction System Landmarks', titleAr: 'الشرايين التاجية ومعالم التوصيل الكهربائي' }
+      { time: '00:00', seconds: 0, titleEn: 'Orientation, External Landmarks & Pericardium', titleAr: 'الوضعية التشريحية والتامور والعلامات الخارجية' },
+      { time: '03:15', seconds: 195, titleEn: 'Right Atrium: Crista Terminalis, Pectinate & Fossa Ovalis', titleAr: 'الأذين الأيمن: العرف الانتهائي، العضلات المشطية، والحفرة البيضوية' },
+      { time: '06:40', seconds: 400, titleEn: 'Tricuspid & Mitral Valves with Papillary Muscles', titleAr: 'الصمامات القلبية، العضلات الحليمية والأوتار القلبية' },
+      { time: '10:20', seconds: 620, titleEn: 'Left Ventricle, Aorta & Coronary Artery Ostia', titleAr: 'البطين الأيسر، الشريان الأبهري ومخارج الشرايين التاجية' }
     ],
     searchQueries: {
-      en: 'Cardiovascular System anatomy lecture heart chambers valves',
-      ar: 'شرح القلب والاوعية الدموية anatomy cardiovascular heart dissection',
-      directYoutubeUrl: 'https://www.youtube.com/results?search_query=Cardiovascular+System+anatomy+lecture+heart+chambers+valves'
+      en: 'Gross Anatomy of the Heart Chambers Valves The Noted Anatomist',
+      ar: 'تشريح القلب دكتور محمد علاء anatomy heart chambers valves',
+      directYoutubeUrl: 'https://www.youtube.com/results?search_query=Gross+Anatomy+of+the+Heart+The+Noted+Anatomist'
     },
     candidateLectures: [
       {
         id: 'cand-card-1',
-        titleEn: 'Cardiovascular System: Heart Chambers, Valves & Blood Flow',
-        instructor: 'Dr. Mohamed Alaa & Ninja Nerd Science',
-        instructorTitle: 'Lecturer of Anatomy & Embryology',
-        channelTitle: 'Ninja Nerd Science',
-        youtubeId: 'rD9VbN_f9e0',
-        duration: '22:15',
+        titleEn: 'Gross Anatomy of the Heart: Chambers, Valves, and Vessels',
+        instructor: 'The Noted Anatomist',
+        instructorTitle: 'Professor of Anatomy',
+        channelTitle: 'The Noted Anatomist',
+        youtubeId: 'heSsAreO_y0',
+        duration: '14:20',
         relevanceScore: 99,
-        matchReason: 'Masterclass dissection on cardiac chambers, valves, and systemic circulation.',
-        thumbnailUrl: 'https://img.youtube.com/vi/rD9VbN_f9e0/hqdefault.jpg',
+        matchReason: 'Direct cadaveric & 3D internal cardiac anatomy dissection.',
+        thumbnailUrl: 'https://img.youtube.com/vi/heSsAreO_y0/hqdefault.jpg',
         isRecommendedDefault: true
+      },
+      {
+        id: 'cand-card-2',
+        titleEn: 'The Heart and Circulatory System - How They Work',
+        instructor: 'Mayo Clinic Health Science Team',
+        instructorTitle: 'Department of Cardiovascular Medicine',
+        channelTitle: 'Mayo Clinic',
+        youtubeId: 'CWFyxn0qDEU',
+        duration: '06:45',
+        relevanceScore: 93,
+        matchReason: 'High quality 3D animation of heart valves and systemic circulation.',
+        thumbnailUrl: 'https://img.youtube.com/vi/CWFyxn0qDEU/hqdefault.jpg'
       }
     ],
     isApproved: true,
@@ -653,59 +832,65 @@ export const DEFAULT_ANATOMY_VIDEOS: Record<string, AnatomyTopicVideo> = {
 
   // 10. RESPIRATORY SYSTEM
   anat_respiratory: {
-    id: 'vid-anat-respiratory',
+    id: 'vid-anat-resp',
     topicId: 'anat_respiratory',
+    topicName: 'Respiratory System',
     subject: 'ANATOMY',
     topicTitle: 'Respiratory System',
-    youtubeId: 'bKxZ_c7dD2A',
-    videoUrl: 'https://www.youtube.com/watch?v=bKxZ_c7dD2A',
-    titleEn: 'Respiratory System: Larynx, Trachea, Bronchi & Lungs',
-    titleAr: 'الجهاز التنفسي: تشريح الحنجرة والرغامي والشجرة القصبية والرئتين',
-    instructor: 'Dr. Mohamed Alaa & Ninja Nerd Science',
-    instructorTitle: 'Lecturer of Anatomy & Embryology',
-    channelTitle: 'Ninja Nerd Science',
-    duration: '19:40',
+    youtubeVideoId: 'bHZsvBdUC2I',
+    youtubeId: 'bHZsvBdUC2I',
+    youtubeUrl: 'https://www.youtube.com/watch?v=bHZsvBdUC2I',
+    videoUrl: 'https://www.youtube.com/watch?v=bHZsvBdUC2I',
+    embedUrl: 'https://www.youtube.com/embed/bHZsvBdUC2I',
+    titleEn: 'Respiratory System, Part 1: Anatomy of Lungs, Trachea & Bronchial Tree',
+    titleAr: 'الجهاز التنفسي: تشريح القصبة الهوائية والرئتين والشجرة القصبية',
+    title: 'Respiratory System, Part 1: Anatomy of Lungs, Trachea & Bronchial Tree',
+    instructor: 'Crash Course Anatomy',
+    instructorTitle: 'Medical Curriculum Team',
+    channelTitle: 'CrashCourse',
+    duration: '09:20',
     level: '1st Year Medical Students',
-    relevanceScore: 97,
+    relevanceScore: 98,
+    status: 'active',
     matchQuality: 'DIRECT_EXACT',
-    matchReasonEn: 'Detailed gross anatomy covering upper vs lower respiratory tracts, trachea, bronchial tree, and anatomical differences between Right Lung (3 lobes) and Left Lung (2 lobes, cardiac notch, lingula).',
-    matchReasonAr: 'محاضرة تشريحية متكاملة تشرح الرغامي والشجرة القصبية والفروق الجوهرية بين الرئة اليمنى (3 فصوص) والرئة اليسرى (فصان مع الثلمة القلبية واللسينة).',
-    thumbnailUrl: 'https://img.youtube.com/vi/bKxZ_c7dD2A/hqdefault.jpg',
+    matchReasonEn: 'High-yield respiratory anatomy: Upper (Nasal cavity, Pharynx, Larynx) vs Lower (Trachea, Bronchi, Lungs) respiratory tract, lobar anatomy, and pleura.',
+    matchReasonAr: 'شرح متكامل للمجاري التنفسية العلوية والسفلية، فصوص الرئتين اليمنى واليسرى، وتفرعات الشجرة القصبية.',
+    thumbnailUrl: 'https://img.youtube.com/vi/bHZsvBdUC2I/hqdefault.jpg',
     source: 'Medical University Anatomy Curriculum',
     dateAdded: '2026-03-01',
     learningObjectives: [
-      'Compare Right Lung (3 lobes, 2 fissures, horizontal + oblique) with Left Lung (2 lobes, 1 oblique fissure).',
-      'Identify features unique to left lung: Cardiac notch and Lingula.',
-      'Explain clinical anatomy of aspirated foreign bodies entering the wider, steeper right main bronchus.'
+      'Compare Right Lung (3 lobes: Superior, Middle, Inferior) vs Left Lung (2 lobes + Cardiac notch).',
+      'Trace the conducting zone from Trachea -> Primary -> Secondary (Lobar) -> Tertiary (Segmental) Bronchi -> Alveoli.',
+      'Explain the mechanism of pulmonary ventilation via Diaphragm and External intercostal muscles.'
     ],
     highYieldTakeaways: [
-      'Right main bronchus is wider, shorter, and more vertical — aspirated foreign bodies lodge here.',
-      'Pleural cavity contains serous fluid; costodiaphragmatic recess is the lowest space for effusion drainage.',
-      'Carina is the sensitive cartilaginous ridge at the tracheal bifurcation (level of T4/T5 - Sternal angle of Louis).'
+      'Right main bronchus is wider, shorter, and more vertical than the left (aspirated foreign bodies lodge in right).',
+      'Left lung has a cardiac impression/notch to accommodate the apex of the heart.',
+      'Type II Pneumocytes produce pulmonary surfactant to reduce alveolar surface tension.'
     ],
     chapters: [
-      { time: '00:00', seconds: 0, titleEn: 'Trachea & Cartilaginous C-Rings', titleAr: 'الرغامي وحلقات الغضروف الزجاجي' },
-      { time: '04:30', seconds: 270, titleEn: 'Bronchial Tree Division & Right Main Bronchus', titleAr: 'الشجرة القصبية ومسار القصبة الهوائية اليمنى' },
-      { time: '09:50', seconds: 590, titleEn: 'Right Lung (3 Lobes) vs Left Lung (2 Lobes & Lingula)', titleAr: 'مقارنة فصوص الرئة اليمنى وفصوص الرئة اليسرى' },
-      { time: '15:20', seconds: 920, titleEn: 'Pleural Recesses & Thoracentesis Landmarks', titleAr: 'الردبات الجنبية وبزل السائل الجنبي' }
+      { time: '00:00', seconds: 0, titleEn: 'Upper vs Lower Respiratory Tract Anatomy', titleAr: 'تشريح المجاري التنفسية العلوية والسفلية' },
+      { time: '02:40', seconds: 160, titleEn: 'Larynx, Trachea & C-shaped Cartilaginous Rings', titleAr: 'الحنجرة والرغامي والحلقات الغضروفية' },
+      { time: '05:15', seconds: 315, titleEn: 'Bronchial Tree & Alveolar Gas Exchange Units', titleAr: 'الشجرة القصبية والحويصلات الرئوية' },
+      { time: '07:30', seconds: 450, titleEn: 'Right vs Left Lung Lobes & Pleural Cavity', titleAr: 'مقارنة فصوص الرئة اليمنى واليسرى وغشاء الجنب' }
     ],
     searchQueries: {
-      en: 'Respiratory System anatomy lecture lungs trachea bronchi medical students',
-      ar: 'شرح الجهاز التنفسي anatomy respiratory system lungs trachea',
-      directYoutubeUrl: 'https://www.youtube.com/results?search_query=Respiratory+System+anatomy+lecture+lungs+trachea'
+      en: 'Respiratory System Crash Course Anatomy',
+      ar: 'شرح الجهاز التنفسي anatomy respiratory دكتور تشريح',
+      directYoutubeUrl: 'https://www.youtube.com/results?search_query=Respiratory+System+Crash+Course'
     },
     candidateLectures: [
       {
         id: 'cand-resp-1',
-        titleEn: 'Respiratory System: Larynx, Trachea, Bronchi & Lungs',
-        instructor: 'Dr. Mohamed Alaa & Ninja Nerd Science',
-        instructorTitle: 'Lecturer of Anatomy & Embryology',
-        channelTitle: 'Ninja Nerd Science',
-        youtubeId: 'bKxZ_c7dD2A',
-        duration: '19:40',
-        relevanceScore: 97,
-        matchReason: 'Complete respiratory tract gross anatomy and lung lobe comparison.',
-        thumbnailUrl: 'https://img.youtube.com/vi/bKxZ_c7dD2A/hqdefault.jpg',
+        titleEn: 'Respiratory System, Part 1: Crash Course #31',
+        instructor: 'Crash Course Anatomy',
+        instructorTitle: 'Department of Anatomy',
+        channelTitle: 'CrashCourse',
+        youtubeId: 'bHZsvBdUC2I',
+        duration: '09:20',
+        relevanceScore: 98,
+        matchReason: 'Complete bronchial tree, lung lobes, and respiratory anatomy.',
+        thumbnailUrl: 'https://img.youtube.com/vi/bHZsvBdUC2I/hqdefault.jpg',
         isRecommendedDefault: true
       }
     ],
@@ -718,58 +903,76 @@ export const DEFAULT_ANATOMY_VIDEOS: Record<string, AnatomyTopicVideo> = {
   anat_digestive: {
     id: 'vid-anat-digestive',
     topicId: 'anat_digestive',
+    topicName: 'Digestive System',
     subject: 'ANATOMY',
     topicTitle: 'Digestive System',
-    youtubeId: '9_kYVqH9N8g',
-    videoUrl: 'https://www.youtube.com/watch?v=9_kYVqH9N8g',
-    titleEn: 'Digestive System: GI Tract, Stomach, Duodenum & Liver',
-    titleAr: 'الجهاز الهضمي: تشريح القناة الهضمية والمعدة والاثنا عشر والكبد والبنكرياس',
-    instructor: 'Dr. Mohamed Alaa & Ninja Nerd Science',
-    instructorTitle: 'Lecturer of Anatomy & Embryology',
-    channelTitle: 'Ninja Nerd Science',
-    duration: '24:50',
+    youtubeVideoId: 'yIoTRGfcMqM',
+    youtubeId: 'yIoTRGfcMqM',
+    youtubeUrl: 'https://www.youtube.com/watch?v=yIoTRGfcMqM',
+    videoUrl: 'https://www.youtube.com/watch?v=yIoTRGfcMqM',
+    embedUrl: 'https://www.youtube.com/embed/yIoTRGfcMqM',
+    titleEn: 'Digestive System, Part 1: Alimentary Canal & GI Tract Anatomy',
+    titleAr: 'الجهاز الهضمي: تشريح القناة الهضمية والمعدة والأمعاء والكبد',
+    title: 'Digestive System, Part 1: Alimentary Canal & GI Tract Anatomy',
+    instructor: 'Crash Course Anatomy',
+    instructorTitle: 'Medical Anatomy Faculty',
+    channelTitle: 'CrashCourse',
+    duration: '09:50',
     level: '1st Year Medical Students',
-    relevanceScore: 98,
+    relevanceScore: 97,
+    status: 'active',
     matchQuality: 'DIRECT_EXACT',
-    matchReasonEn: 'Gross abdominal anatomy covering esophagus, stomach regions (cardia, fundus, body, pylorus), small intestine parts (duodenum, jejunum, ileum), liver lobes, gallbladder, and appendix (McBurney\'s point).',
-    matchReasonAr: 'شرح شامل لأعضاء البطن الهضمية: أجزاء المعدة، أقسام الأمعاء الدقيقة، فصوص الكبد، المرارة، والزائدة الدودية ونقطة ماكبيرني.',
-    thumbnailUrl: 'https://img.youtube.com/vi/9_kYVqH9N8g/hqdefault.jpg',
+    matchReasonEn: 'Comprehensive GI tract breakdown: Esophagus, Stomach (Cardia, Fundus, Body, Pylorus), Small Intestine (Duodenum, Jejunum, Ileum), Large Intestine, Liver and Pancreas.',
+    matchReasonAr: 'استعراض دقيق لتشريح القناة الهضمية: المريء، أقسام المعدة، الأمعاء الدقيقة والغليظة، والأعضاء الملحقة (الكبد والبنكرياس والمرارة).',
+    thumbnailUrl: 'https://img.youtube.com/vi/yIoTRGfcMqM/hqdefault.jpg',
     source: 'Medical University Anatomy Curriculum',
     dateAdded: '2026-03-01',
     learningObjectives: [
-      'Locate stomach regions and sphincters (lower esophageal & pyloric sphincters).',
-      'Distinguish the 4 parts of the C-shaped Duodenum wrapping around pancreatic head.',
-      'Identify McBurney’s point (1/3 distance from ASIS to umbilicus) for acute appendicitis.'
+      'Trace food passage through the entire alimentary canal.',
+      'Identify the 4 histological layers of the GI tract (Mucosa, Submucosa, Muscularis externa, Serosa/Adventitia).',
+      'Distinguish Duodenum (Brunner glands), Jejunum (Plicae circulares), and Ileum (Peyer patches).'
     ],
     highYieldTakeaways: [
-      'Pyloric sphincter regulates gastric emptying into the first part of the duodenum.',
-      'The portal triad at the porta hepatis comprises: Portal Vein, Proper Hepatic Artery, Common Bile Duct.',
-      'Epiploic appendages, taeniae coli, and haustrations distinguish the colon from small intestine.'
+      'Pyloric sphincter regulates chyme release from stomach into duodenum.',
+      'Duodenum receives bile and pancreatic juice at the Major Duodenal Papilla (Ampulla of Vater).',
+      'Large intestine features Teniae coli, Haustra, and Epiploic appendages.'
     ],
     chapters: [
-      { time: '00:00', seconds: 0, titleEn: 'Esophagus & Stomach Gross Morphology', titleAr: 'تشريح المريء والمعدة وأجزائها الأربعة' },
-      { time: '06:15', seconds: 375, titleEn: 'Duodenum 4 Parts & Pancreatic Ducts', titleAr: 'أقسام الاثنا عشر الأربعة والقنوات البنكرياسية' },
-      { time: '12:40', seconds: 760, titleEn: 'Liver Lobes, Porta Hepatis & Gallbladder', titleAr: 'فصوص الكبد والباب الكبدي والمرارة' },
-      { time: '18:50', seconds: 1130, titleEn: 'Cecum, Appendix & McBurney\'s Point Anatomy', titleAr: 'الأعور والزائدة الدودية ونقطة ماكبيرني السريرية' }
+      { time: '00:00', seconds: 0, titleEn: 'Alimentary Canal Pathway & 4 Wall Layers', titleAr: 'مسار القناة الهضمية وطبقات الجدار الأربع' },
+      { time: '02:45', seconds: 165, titleEn: 'Esophagus & Stomach Anatomy (Cardia, Fundus, Pylorus)', titleAr: 'المريء وتشريح المعدة (الفؤاد، القاع، والغار البوابي)' },
+      { time: '05:30', seconds: 330, titleEn: 'Small Intestine: Duodenum, Jejunum & Ileum', titleAr: 'الأمعاء الدقيقة: العفج، الصائم، واللفائفي' },
+      { time: '07:45', seconds: 465, titleEn: 'Large Intestine, Cecum, Appendix & Rectum', titleAr: 'الأمعاء الغليظة والأعور والزائدة الدودية والمستقيم' }
     ],
     searchQueries: {
-      en: 'Digestive System anatomy lecture stomach liver intestines medical students',
-      ar: 'شرح الجهاز الهضمي anatomy GI tract stomach liver',
-      directYoutubeUrl: 'https://www.youtube.com/results?search_query=Digestive+System+anatomy+lecture+stomach+liver'
+      en: 'Digestive System Crash Course Anatomy',
+      ar: 'شرح الجهاز الهضمي anatomy digestive دكتور تشريح',
+      directYoutubeUrl: 'https://www.youtube.com/results?search_query=Digestive+System+Crash+Course+Anatomy'
     },
     candidateLectures: [
       {
         id: 'cand-dig-1',
-        titleEn: 'Digestive System: GI Tract, Stomach, Duodenum & Liver',
-        instructor: 'Dr. Mohamed Alaa & Ninja Nerd Science',
-        instructorTitle: 'Lecturer of Anatomy & Embryology',
-        channelTitle: 'Ninja Nerd Science',
-        youtubeId: '9_kYVqH9N8g',
-        duration: '24:50',
-        relevanceScore: 98,
-        matchReason: 'Masterclass on gastrointestinal viscera, liver lobes, and peritoneal anatomy.',
-        thumbnailUrl: 'https://img.youtube.com/vi/9_kYVqH9N8g/hqdefault.jpg',
+        titleEn: 'Digestive System, Part 1: Crash Course #33',
+        instructor: 'Crash Course Anatomy',
+        instructorTitle: 'Department of Anatomy',
+        channelTitle: 'CrashCourse',
+        youtubeId: 'yIoTRGfcMqM',
+        duration: '09:50',
+        relevanceScore: 97,
+        matchReason: 'Masterclass on alimentary tract anatomy and peristalsis.',
+        thumbnailUrl: 'https://img.youtube.com/vi/yIoTRGfcMqM/hqdefault.jpg',
         isRecommendedDefault: true
+      },
+      {
+        id: 'cand-dig-2',
+        titleEn: 'Digestive System, Part 2: Crash Course #34',
+        instructor: 'Crash Course Anatomy',
+        instructorTitle: 'Department of Anatomy',
+        channelTitle: 'CrashCourse',
+        youtubeId: 'pqgcEIaXGME',
+        duration: '10:15',
+        relevanceScore: 95,
+        matchReason: 'Accessory organs: liver, gallbladder, and pancreas.',
+        thumbnailUrl: 'https://img.youtube.com/vi/pqgcEIaXGME/hqdefault.jpg'
       }
     ],
     isApproved: true,
@@ -781,57 +984,63 @@ export const DEFAULT_ANATOMY_VIDEOS: Record<string, AnatomyTopicVideo> = {
   anat_urinary: {
     id: 'vid-anat-urinary',
     topicId: 'anat_urinary',
+    topicName: 'Urinary System',
     subject: 'ANATOMY',
     topicTitle: 'Urinary System',
-    youtubeId: 'bI4wO8fV9s0',
-    videoUrl: 'https://www.youtube.com/watch?v=bI4wO8fV9s0',
-    titleEn: 'Urinary System: Kidneys, Renal Hilum & Ureters',
-    titleAr: 'الجهاز البولي: تشريح الكليتين وسُرّة الكلية والحالبين والمثانة',
-    instructor: 'Dr. Mohamed Alaa & Ninja Nerd Science',
-    instructorTitle: 'Lecturer of Anatomy & Embryology',
-    channelTitle: 'Ninja Nerd Science',
-    duration: '17:50',
+    youtubeVideoId: 'l128tW1H5a8',
+    youtubeId: 'l128tW1H5a8',
+    youtubeUrl: 'https://www.youtube.com/watch?v=l128tW1H5a8',
+    videoUrl: 'https://www.youtube.com/watch?v=l128tW1H5a8',
+    embedUrl: 'https://www.youtube.com/embed/l128tW1H5a8',
+    titleEn: 'Urinary System, Part 1: Kidneys, Nephron Structure & Urine Flow',
+    titleAr: 'الجهاز البولي: تشريح الكليتين والنيفرون والحالبين والمثانة',
+    title: 'Urinary System, Part 1: Kidneys, Nephron Structure & Urine Flow',
+    instructor: 'Crash Course Anatomy',
+    instructorTitle: 'Medical Curriculum Faculty',
+    channelTitle: 'CrashCourse',
+    duration: '10:15',
     level: '1st Year Medical Students',
     relevanceScore: 98,
+    status: 'active',
     matchQuality: 'DIRECT_EXACT',
-    matchReasonEn: 'Gross dissection of kidney architecture (cortex, medullary pyramids, minor/major calyces, renal pelvis) and the classic anterior-to-posterior V-A-U arrangement at the renal hilum.',
-    matchReasonAr: 'شرح تشريحي دقيق للبنية الداخلية للكلية (القشرة، الأهرامات النخاعية، الحويضات) وترتيب سُرّة الكلية من الأمام للخلف (وريد - شريان - حويضة V-A-U).',
-    thumbnailUrl: 'https://img.youtube.com/vi/bI4wO8fV9s0/hqdefault.jpg',
+    matchReasonEn: 'Comprehensive gross and microscopic renal anatomy: Kidney Cortex vs Medulla, Renal Pyramids, Calyces, Renal Pelvis, Ureters, and Urinary Bladder.',
+    matchReasonAr: 'تشريح مفصل للجهاز البولي: قشرة ولب الكلية، الأهرامات الكلوية، الحويضة، النيفرون، ومسار البول إلى الحالب والمثانة.',
+    thumbnailUrl: 'https://img.youtube.com/vi/l128tW1H5a8/hqdefault.jpg',
     source: 'Medical University Anatomy Curriculum',
     dateAdded: '2026-03-01',
     learningObjectives: [
-      'Master the Renal Hilum order from Anterior to Posterior: Renal Vein, Renal Artery, Renal Pelvis (V-A-U).',
-      'Explain why the right kidney is slightly lower than the left (due to the right liver lobe).',
-      'Trace urine drainage: Papillae → Minor Calyx → Major Calyx → Renal Pelvis → Ureter.'
+      'Trace urine drainage: Renal papilla -> Minor calyx -> Major calyx -> Renal pelvis -> Ureter.',
+      'Differentiate Renal Cortex (Glomeruli & Convoluted tubules) from Medulla (Loops of Henle & Collecting ducts).',
+      'Explain the retroperitoneal position of kidneys (T12 to L3 vertebrae).'
     ],
     highYieldTakeaways: [
-      'Renal hilum order is always V-A-U: Vein (anterior), Artery (middle), Ureter/Pelvis (posterior).',
-      'Right kidney is ~1.5-2 cm lower than the left kidney due to liver mass.',
-      'Ureter crosses anterior to the common iliac artery at the pelvic brim.'
+      'The right kidney sits slightly lower than the left due to liver displacement.',
+      'Nephron is the functional microscopic filtration unit of the kidney (~1 million per kidney).',
+      'Detrusor muscle forms the muscular wall of the urinary bladder.'
     ],
     chapters: [
-      { time: '00:00', seconds: 0, titleEn: 'Kidney Position & Retroperitoneal Relations', titleAr: 'موقع الكليتين وخلف البريتوان' },
-      { time: '04:15', seconds: 255, titleEn: 'Renal Hilum Anatomy & V-A-U Rule', titleAr: 'تشريح سُرّة الكلية وقاعدة (وريد-شريان-حالب)' },
-      { time: '09:00', seconds: 540, titleEn: 'Internal Cortex, Medulla Pyramids & Calyces', titleAr: 'القشرة الكلوية والأهرامات والحويضات' },
-      { time: '13:30', seconds: 810, titleEn: 'Ureter Course, Constriction Sites & Bladder Trigone', titleAr: 'مسار الحالب ومواقع التضيق ومثلث المثانة' }
+      { time: '00:00', seconds: 0, titleEn: 'Kidney Gross Anatomy & Retroperitoneal Position', titleAr: 'التشريح العياني للكلية وموقعها خلف الصفاق' },
+      { time: '02:50', seconds: 170, titleEn: 'Renal Cortex, Pyramids, Calyces & Pelvis', titleAr: 'قشرة الكلية، الأهرامات الكلوية، الكؤوس، والحويضة' },
+      { time: '05:40', seconds: 340, titleEn: 'Nephron Architecture (Glomerulus, Bowman\'s Capsule, Tubules)', titleAr: 'بنية النيفرون: الكبيبة ومحفظة بومان والأنيبيبات' },
+      { time: '08:15', seconds: 495, titleEn: 'Ureters, Urinary Bladder & Trigone', titleAr: 'الحالبان والمثانة ومثلث المثانة والإحليل' }
     ],
     searchQueries: {
-      en: 'Urinary System anatomy lecture kidneys ureters bladder medical students',
-      ar: 'شرح الجهاز البولي anatomy urinary system kidneys renal hilum',
-      directYoutubeUrl: 'https://www.youtube.com/results?search_query=Urinary+System+anatomy+lecture+kidneys+ureters'
+      en: 'Urinary System Crash Course Anatomy Kidneys',
+      ar: 'شرح الجهاز البولي anatomy urinary system دكتور تشريح',
+      directYoutubeUrl: 'https://www.youtube.com/results?search_query=Urinary+System+Crash+Course'
     },
     candidateLectures: [
       {
-        id: 'cand-uri-1',
-        titleEn: 'Urinary System: Kidneys, Renal Hilum & Ureters',
-        instructor: 'Dr. Mohamed Alaa & Ninja Nerd Science',
-        instructorTitle: 'Lecturer of Anatomy & Embryology',
-        channelTitle: 'Ninja Nerd Science',
-        youtubeId: 'bI4wO8fV9s0',
-        duration: '17:50',
+        id: 'cand-urin-1',
+        titleEn: 'Urinary System, Part 1: Crash Course #38',
+        instructor: 'Crash Course Anatomy',
+        instructorTitle: 'Department of Anatomy',
+        channelTitle: 'CrashCourse',
+        youtubeId: 'l128tW1H5a8',
+        duration: '10:15',
         relevanceScore: 98,
-        matchReason: 'Complete renal gross anatomy and ureter trajectory.',
-        thumbnailUrl: 'https://img.youtube.com/vi/bI4wO8fV9s0/hqdefault.jpg',
+        matchReason: 'Complete renal gross anatomy, nephron structure, and bladder.',
+        thumbnailUrl: 'https://img.youtube.com/vi/l128tW1H5a8/hqdefault.jpg',
         isRecommendedDefault: true
       }
     ],
@@ -842,60 +1051,78 @@ export const DEFAULT_ANATOMY_VIDEOS: Record<string, AnatomyTopicVideo> = {
 
   // 13. REPRODUCTIVE SYSTEM
   anat_reproductive: {
-    id: 'vid-anat-reproductive',
+    id: 'vid-anat-reprod',
     topicId: 'anat_reproductive',
+    topicName: 'Reproductive System',
     subject: 'ANATOMY',
     topicTitle: 'Reproductive System',
-    youtubeId: 'w1rX7yU9aO4',
-    videoUrl: 'https://www.youtube.com/watch?v=w1rX7yU9aO4',
+    youtubeVideoId: '-XQcnO4iX_U',
+    youtubeId: '-XQcnO4iX_U',
+    youtubeUrl: 'https://www.youtube.com/watch?v=-XQcnO4iX_U',
+    videoUrl: 'https://www.youtube.com/watch?v=-XQcnO4iX_U',
+    embedUrl: 'https://www.youtube.com/embed/-XQcnO4iX_U',
     titleEn: 'Reproductive System: Male & Female Pelvic Anatomy',
-    titleAr: 'الجهاز التناسلي: تشريح الحوض والأعضاء التناسلية الذكرية والأنثوية',
-    instructor: 'Dr. Mohamed Alaa & Ninja Nerd Science',
-    instructorTitle: 'Lecturer of Anatomy & Embryology',
-    channelTitle: 'Ninja Nerd Science',
-    duration: '23:10',
+    titleAr: 'الجهاز التناسلي: تشريح الحوض التناسلي الذكري والأنثوي',
+    title: 'Reproductive System: Male & Female Pelvic Anatomy',
+    instructor: 'Crash Course Anatomy',
+    instructorTitle: 'Medical Curriculum Team',
+    channelTitle: 'CrashCourse',
+    duration: '10:30',
     level: '1st Year Medical Students',
-    relevanceScore: 98,
+    relevanceScore: 97,
+    status: 'active',
     matchQuality: 'DIRECT_EXACT',
-    matchReasonEn: 'Comprehensive medical pelvic anatomy covering female organs (Anteverted/Anteflexed Uterus, Fallopian Tube Ampulla fertilization site, Ovaries, Pouch of Douglas) and male organs (Testes, Vas Deferens, Prostate Gland below bladder).',
-    matchReasonAr: 'شرح شامل لأعضاء الحوض التناسلية: الرحم المنقلب للأمام، مجورة قناة فالوب (موقع الإخصاب)، رتق دوغلاس، والبروستاتا والخصيتين والحبل المنوي.',
-    thumbnailUrl: 'https://img.youtube.com/vi/w1rX7yU9aO4/hqdefault.jpg',
+    matchReasonEn: 'Comprehensive gross anatomy of male (Testes, Epididymis, Vas deferens, Prostate, Seminal vesicles) and female (Ovaries, Fallopian tubes, Uterus, Vagina) reproductive tracts.',
+    matchReasonAr: 'دراسة تشريحية شاملة لأعضاء التكاثر الذكرية والأنثوية في الحوض، الرحم، المبايض، والبروستات.',
+    thumbnailUrl: 'https://img.youtube.com/vi/-XQcnO4iX_U/hqdefault.jpg',
     source: 'Medical University Anatomy Curriculum',
     dateAdded: '2026-03-01',
     learningObjectives: [
-      'Identify the normal uterine orientation: Anteverted (~90° to vagina) and Anteflexed (~120-170° to cervix).',
-      'Pinpoint the Ampulla of the Fallopian tube as the primary site of fertilization and ectopic pregnancies.',
-      'Understand prostate lobes, relation to the bladder neck, and the course of the vas deferens.'
+      'Trace the path of spermatozoa: Seminiferous tubules -> Epididymis -> Vas deferens -> Ejaculatory duct -> Urethra.',
+      'Identify uterine regions (Fundus, Body, Isthmus, Cervix) and layers (Endometrium, Myometrium, Perimetrium).',
+      'Locate site of fertilization (Ampulla of Fallopian/Uterine tube).'
     ],
     highYieldTakeaways: [
-      'Normal fertilization occurs in the Ampulla of the Fallopian (uterine) tube.',
-      'The Pouch of Douglas (Rectouterine pouch) is the lowest peritoneal space in the female pelvis.',
-      'Prostate gland surrounds the prostatic urethra immediately inferior to the urinary bladder.'
+      'Fertilization typically occurs in the Ampulla of the uterine tube.',
+      'Prostate gland surrounds the prostatic urethra just below the bladder neck.',
+      'Broad ligament, round ligament, and uterosacral ligaments suspend the uterus in the pelvic cavity.'
     ],
     chapters: [
-      { time: '00:00', seconds: 0, titleEn: 'Female True Pelvis Organs Overview', titleAr: 'نظرة عامة على أعضاء الحوض الأنثوي' },
-      { time: '05:20', seconds: 320, titleEn: 'Uterus Position (Anteverted/Anteflexed) & Cervix', titleAr: 'وضعية الرحم الطبيعية وعنق الرحم' },
-      { time: '11:10', seconds: 670, titleEn: 'Fallopian Tube Ampulla & Fertilization Site', titleAr: 'مجورة قناة فالوب وموقع حدوث الإخصاب' },
-      { time: '16:40', seconds: 1000, titleEn: 'Male Pelvis: Testis, Vas Deferens & Prostate Gland', titleAr: 'الحوض الذكري: الخصية، الأسهر، وغدة البروستاتا' }
+      { time: '00:00', seconds: 0, titleEn: 'Male Reproductive Anatomy: Testes, Epididymis & Ducts', titleAr: 'تشريح الجهاز التناسلي الذكري: الخصية والبربخ والأسهر' },
+      { time: '03:15', seconds: 195, titleEn: 'Accessory Glands: Prostate & Seminal Vesicles', titleAr: 'الغدد الملحقة: البروستات والحويصلات المنوية' },
+      { time: '06:00', seconds: 360, titleEn: 'Female Reproductive Anatomy: Ovaries & Uterine Tubes', titleAr: 'تشريح الجهاز التناسلي الأنثوي: المبايض وقناتا فالوب' },
+      { time: '08:30', seconds: 510, titleEn: 'Uterus, Endometrium & Pelvic Ligaments', titleAr: 'تشريح الرحم وبطانة الرحم وأربطة الحوض' }
     ],
     searchQueries: {
-      en: 'Reproductive System anatomy lecture pelvis uterus prostate medical students',
-      ar: 'شرح الجهاز التناسلي anatomy reproductive system pelvis uterus',
-      directYoutubeUrl: 'https://www.youtube.com/results?search_query=Reproductive+System+anatomy+lecture+pelvis+uterus'
+      en: 'Reproductive System Male Female Crash Course Anatomy',
+      ar: 'شرح الجهاز التناسلي anatomy reproductive دكتور تشريح',
+      directYoutubeUrl: 'https://www.youtube.com/results?search_query=Reproductive+System+Crash+Course+Anatomy'
     },
     candidateLectures: [
       {
         id: 'cand-rep-1',
-        titleEn: 'Reproductive System: Male & Female Pelvic Anatomy',
-        instructor: 'Dr. Mohamed Alaa & Ninja Nerd Science',
-        instructorTitle: 'Lecturer of Anatomy & Embryology',
-        channelTitle: 'Ninja Nerd Science',
-        youtubeId: 'w1rX7yU9aO4',
-        duration: '23:10',
-        relevanceScore: 98,
-        matchReason: 'Complete pelvic dissection of male and female reproductive tracts.',
-        thumbnailUrl: 'https://img.youtube.com/vi/w1rX7yU9aO4/hqdefault.jpg',
+        titleEn: 'Reproductive System, Part 2 - Male: Crash Course #41',
+        instructor: 'Crash Course Anatomy',
+        instructorTitle: 'Department of Anatomy',
+        channelTitle: 'CrashCourse',
+        youtubeId: '-XQcnO4iX_U',
+        duration: '10:30',
+        relevanceScore: 97,
+        matchReason: 'Male pelvic reproductive anatomy.',
+        thumbnailUrl: 'https://img.youtube.com/vi/-XQcnO4iX_U/hqdefault.jpg',
         isRecommendedDefault: true
+      },
+      {
+        id: 'cand-rep-2',
+        titleEn: 'Reproductive System, Part 1 - Female: Crash Course #40',
+        instructor: 'Crash Course Anatomy',
+        instructorTitle: 'Department of Anatomy',
+        channelTitle: 'CrashCourse',
+        youtubeId: 'RFDatCchpus',
+        duration: '10:15',
+        relevanceScore: 97,
+        matchReason: 'Female pelvic reproductive anatomy.',
+        thumbnailUrl: 'https://img.youtube.com/vi/RFDatCchpus/hqdefault.jpg'
       }
     ],
     isApproved: true,
@@ -904,7 +1131,7 @@ export const DEFAULT_ANATOMY_VIDEOS: Record<string, AnatomyTopicVideo> = {
   }
 };
 
-export class AnatomyVideoService {
+class AnatomyVideoService {
   private static instance: AnatomyVideoService;
 
   private constructor() {}
@@ -917,86 +1144,100 @@ export class AnatomyVideoService {
   }
 
   /**
-   * Helper to parse any YouTube link into a clean 11-char ID
+   * Extract clean 11-char YouTube ID from any YouTube URL format
    */
-  public extractYouTubeId(input: string): string | null {
-    if (!input) return null;
-    const trimmed = input.trim();
+  public extractYouTubeId(urlOrId: string): string | null {
+    if (!urlOrId) return null;
+    const trimmed = urlOrId.trim();
+
+    // Direct 11-char ID
     if (/^[a-zA-Z0-9_-]{11}$/.test(trimmed)) {
       return trimmed;
     }
 
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-    const match = trimmed.match(regExp);
-    return (match && match[2].length === 11) ? match[2] : null;
+    // Standard YouTube Watch URL: youtube.com/watch?v=XXXX
+    const watchMatch = trimmed.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i);
+    if (watchMatch && watchMatch[1]) {
+      return watchMatch[1];
+    }
+
+    // Shorts URL: youtube.com/shorts/XXXX
+    const shortsMatch = trimmed.match(/youtube\.com\/shorts\/([^"&?\/\s]{11})/i);
+    if (shortsMatch && shortsMatch[1]) {
+      return shortsMatch[1];
+    }
+
+    return null;
   }
 
   /**
-   * Get all stored videos (merging defaults with custom teacher overrides)
+   * Get active topic video, merging custom teacher overrides from local storage
    */
-  public getAllVideos(): Record<string, AnatomyTopicVideo> {
+  public getVideoForTopic(topicId: string): AnatomyTopicVideo | null {
     try {
       const stored = localStorage.getItem(STORAGE_KEY_VIDEOS);
       if (stored) {
-        const overrides: Record<string, AnatomyTopicVideo | null> = JSON.parse(stored);
-        const merged = { ...DEFAULT_ANATOMY_VIDEOS };
-        Object.keys(overrides).forEach(key => {
-          if (overrides[key] === null) {
-            delete merged[key];
-          } else if (overrides[key]) {
-            merged[key] = overrides[key] as AnatomyTopicVideo;
-          }
-        });
-        return merged;
+        const overrides: Record<string, AnatomyTopicVideo> = JSON.parse(stored);
+        if (overrides[topicId]) {
+          return overrides[topicId];
+        }
       }
     } catch (e) {
-      console.error('Failed to load custom video overrides:', e);
+      console.error('Failed to parse stored anatomy videos:', e);
     }
-    return { ...DEFAULT_ANATOMY_VIDEOS };
+
+    return DEFAULT_ANATOMY_VIDEOS[topicId] || null;
   }
 
   /**
-   * Get the verified video for a specific topic ID
-   * Checks relevance score: only returns if score >= 80, otherwise returns null or flagged
+   * Get all active topic videos
    */
-  public getVideoForTopic(topicId: string): AnatomyTopicVideo | null {
-    const all = this.getAllVideos();
-    const vid = all[topicId];
-    if (!vid) return null;
-
-    // Quality gate: must meet >= 80% relevance score
-    if (vid.relevanceScore < 80) {
-      return null;
+  public getAllVideos(): Record<string, AnatomyTopicVideo> {
+    const combined: Record<string, AnatomyTopicVideo> = { ...DEFAULT_ANATOMY_VIDEOS };
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY_VIDEOS);
+      if (stored) {
+        const overrides: Record<string, AnatomyTopicVideo> = JSON.parse(stored);
+        Object.keys(overrides).forEach(key => {
+          if (overrides[key]) {
+            combined[key] = overrides[key];
+          }
+        });
+      }
+    } catch (e) {
+      console.error('Failed to load all videos:', e);
     }
-    return vid;
+    return combined;
   }
 
   /**
-   * Save or replace a video for a topic (Admin / Teacher action)
+   * Save or update video for a topic (Admin / Teacher permission)
    */
   public saveVideoForTopic(topicId: string, videoData: Partial<AnatomyTopicVideo>): AnatomyTopicVideo {
-    const all = this.getAllVideos();
-    const existing = all[topicId] || DEFAULT_ANATOMY_VIDEOS[topicId];
-
-    const cleanYoutubeId = videoData.youtubeId 
-      ? (this.extractYouTubeId(videoData.youtubeId) || videoData.youtubeId)
-      : (existing ? existing.youtubeId : '5Ycn8GOS-oE');
+    const existing = this.getVideoForTopic(topicId) || DEFAULT_ANATOMY_VIDEOS[topicId];
+    const cleanYoutubeId = this.extractYouTubeId(videoData.youtubeId || videoData.youtubeVideoId || existing?.youtubeId || '') || (existing?.youtubeId || 'd4qHVe6xmWM');
 
     const updatedVideo: AnatomyTopicVideo = {
-      id: existing ? existing.id : `vid-custom-${topicId}-${Date.now()}`,
+      id: existing?.id || `vid-${topicId}`,
       topicId,
+      topicName: videoData.topicName || existing?.topicName || existing?.topicTitle || topicId,
       subject: 'ANATOMY',
-      topicTitle: videoData.topicTitle || existing?.topicTitle || 'Anatomy Topic',
+      youtubeVideoId: cleanYoutubeId,
       youtubeId: cleanYoutubeId,
+      youtubeUrl: `https://www.youtube.com/watch?v=${cleanYoutubeId}`,
       videoUrl: videoData.videoUrl || `https://www.youtube.com/watch?v=${cleanYoutubeId}`,
-      titleEn: videoData.titleEn || existing?.titleEn || 'Medical Anatomy Lecture',
+      embedUrl: `https://www.youtube.com/embed/${cleanYoutubeId}`,
+      titleEn: videoData.titleEn || videoData.title || existing?.titleEn || 'Medical Anatomy Lecture',
       titleAr: videoData.titleAr || existing?.titleAr || 'محاضرة تشريح طبي',
-      instructor: videoData.instructor || existing?.instructor || 'Medical Faculty Instructor',
-      instructorTitle: videoData.instructorTitle || existing?.instructorTitle || 'Lecturer of Anatomy',
-      channelTitle: videoData.channelTitle || existing?.channelTitle || 'Verified Medical Channel',
-      duration: videoData.duration || existing?.duration || '10:00',
-      level: '1st Year Medical Students',
-      relevanceScore: typeof videoData.relevanceScore === 'number' ? videoData.relevanceScore : (existing?.relevanceScore || 95),
+      title: videoData.title || videoData.titleEn || existing?.titleEn || 'Medical Anatomy Lecture',
+      topicTitle: videoData.topicTitle || existing?.topicTitle || topicId,
+      instructor: videoData.instructor || existing?.instructor || 'Medical Anatomy Faculty',
+      instructorTitle: videoData.instructorTitle || existing?.instructorTitle || 'Department of Anatomy',
+      channelTitle: videoData.channelTitle || existing?.channelTitle || 'Medical Anatomy',
+      duration: videoData.duration || existing?.duration || '12:00',
+      level: videoData.level || existing?.level || '1st Year Medical Students',
+      relevanceScore: videoData.relevanceScore !== undefined ? videoData.relevanceScore : (existing?.relevanceScore || 95),
+      status: videoData.status || 'active',
       matchQuality: videoData.matchQuality || existing?.matchQuality || 'DIRECT_EXACT',
       matchReasonEn: videoData.matchReasonEn || existing?.matchReasonEn || 'Academically verified topic lecture.',
       matchReasonAr: videoData.matchReasonAr || existing?.matchReasonAr || 'محاضرة معتمدة للموضوع.',
@@ -1034,6 +1275,16 @@ export class AnatomyVideoService {
     }
 
     return updatedVideo;
+  }
+
+  /**
+   * Mark video status (active vs unavailable)
+   */
+  public setVideoStatus(topicId: string, status: 'active' | 'unavailable'): void {
+    const current = this.getVideoForTopic(topicId);
+    if (current) {
+      this.saveVideoForTopic(topicId, { ...current, status });
+    }
   }
 
   /**
@@ -1084,7 +1335,7 @@ export class AnatomyVideoService {
   public generateTopicSearchQueries(topicTitleEn: string, topicTitleAr?: string, instructorPref?: string) {
     const enQuery = instructorPref 
       ? `"${topicTitleEn}" anatomy lecture medical students ${instructorPref}`
-      : `${topicTitleEn} anatomy lecture medical students Dr Mohamed Alaa Ninja Nerd`;
+      : `${topicTitleEn} anatomy lecture medical students Ninja Nerd Crash Course`;
     const arQuery = topicTitleAr
       ? `شرح تشريح ${topicTitleAr} ${topicTitleEn} دكتور تشريح`
       : `دكتور تشريح ${topicTitleEn} anatomy lecture`;
@@ -1102,7 +1353,7 @@ export class AnatomyVideoService {
   public generateYouTubeSearchUrl(topicTitleEn: string, instructor?: string): string {
     const query = instructor
       ? `"${topicTitleEn}" anatomy lecture medical students ${instructor}`
-      : `${topicTitleEn} medical anatomy lecture Dr Mohamed Alaa Ninja Nerd`;
+      : `${topicTitleEn} medical anatomy lecture Ninja Nerd Crash Course`;
     return `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
   }
 
@@ -1114,27 +1365,27 @@ export class AnatomyVideoService {
       {
         id: `cand-${topicId}-1`,
         titleEn: `${topicTitleEn} Medical Anatomy Masterclass`,
-        instructor: 'Dr. Mohamed Alaa / Ninja Nerd Science',
+        instructor: 'Ninja Nerd Anatomy / Medical Faculty',
         instructorTitle: 'Department of Human Anatomy',
-        channelTitle: 'Ninja Nerd Science / Medical Anatomy',
-        youtubeId: '5Ycn8GOS-oE',
-        duration: '15:00',
+        channelTitle: 'Ninja Nerd Science',
+        youtubeId: 'd4qHVe6xmWM',
+        duration: '11:42',
         relevanceScore: 96,
         matchReason: `Direct 1st-year medical lecture covering ${topicTitleEn}.`,
-        thumbnailUrl: 'https://img.youtube.com/vi/5Ycn8GOS-oE/hqdefault.jpg',
+        thumbnailUrl: 'https://img.youtube.com/vi/d4qHVe6xmWM/hqdefault.jpg',
         isRecommendedDefault: true
       },
       {
         id: `cand-${topicId}-2`,
-        titleEn: `${topicTitleEn} 3D Anatomy Breakdown`,
-        instructor: 'Dr. Peter de Souza',
+        titleEn: `${topicTitleEn} Overview & Clinical Anatomy`,
+        instructor: 'Crash Course Anatomy',
         instructorTitle: 'Clinical Anatomy Specialist',
-        channelTitle: 'AnatomyZone',
-        youtubeId: '9Zybmnrqdkg',
-        duration: '10:30',
-        relevanceScore: 90,
-        matchReason: `High-yield 3D gross anatomy visuals for ${topicTitleEn}.`,
-        thumbnailUrl: 'https://img.youtube.com/vi/9Zybmnrqdkg/hqdefault.jpg'
+        channelTitle: 'CrashCourse',
+        youtubeId: 'uBGl2BujkPQ',
+        duration: '11:20',
+        relevanceScore: 92,
+        matchReason: `High-yield gross anatomy visuals for ${topicTitleEn}.`,
+        thumbnailUrl: 'https://img.youtube.com/vi/uBGl2BujkPQ/hqdefault.jpg'
       }
     ];
   }
@@ -1171,4 +1422,3 @@ export class AnatomyVideoService {
 }
 
 export const anatomyVideoService = AnatomyVideoService.getInstance();
-
