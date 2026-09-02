@@ -17,7 +17,11 @@ import {
   Bug,
   GraduationCap,
   Award,
-  Info
+  Info,
+  Network,
+  Video,
+  HelpCircle,
+  Sparkles
 } from 'lucide-react';
 import { LabHubLogo } from '../common/LabHubLogo';
 import { User as UserType, LabSubjectId } from '../../types';
@@ -62,6 +66,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
         { id: 'biochemistry', label: 'Biochemistry Lab', icon: FlaskConical, color: 'text-amber-600' }
       ]
     },
+    { id: 'histology_microscope', label: 'Virtual Microscope Viewer', icon: Microscope },
+    { id: 'mcq_bank', label: 'MCQ Bank (200+ Questions)', icon: HelpCircle },
+    { id: 'bacteriology_concept_map', label: 'Bacteriology Mental Map', icon: Network },
+    { id: 'educational_videos', label: '3-Min Micro-Lectures', icon: Video },
     { id: 'medical_exams', label: 'الامتحانات العملية (OSPE)', icon: Award },
     { id: 'biochemistry_guide', label: 'دليل الكيمياء الحيوية (9 Tests)', icon: FlaskConical },
     { id: 'teacher_dashboard', label: 'بنك الأسئلة ولوحة الأستاذ', icon: GraduationCap },

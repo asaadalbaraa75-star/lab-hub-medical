@@ -33,6 +33,7 @@ import {
 } from 'lucide-react';
 import { LabSubjectInfo, LabCategory, Practical, LabSubjectId } from '../../types';
 import { BIOCHEMISTRY_CARBOHYDRATE_TESTS } from '../../data/mockData';
+import { BACTERIOLOGY_CONCEPT_ORGANISMS } from '../../data/bacteriologyConceptMapData';
 import { BiochemistryLabView } from './biochemistry/BiochemistryLabView';
 import { AnatomyLabView } from './anatomy/AnatomyLabView';
 
@@ -43,6 +44,8 @@ interface LabSubjectPageProps {
   onOpenSpotter: (labId: LabSubjectId, categoryId?: string) => void;
   onOpenQuiz: (labId: LabSubjectId, practicalId?: string) => void;
   onBackToDashboard: () => void;
+  onOpenOrganism?: (organismId: string) => void;
+  onOpenConceptMap?: () => void;
 }
 
 export const LabSubjectPage: React.FC<LabSubjectPageProps> = ({
@@ -51,10 +54,12 @@ export const LabSubjectPage: React.FC<LabSubjectPageProps> = ({
   onOpenPractical,
   onOpenSpotter,
   onOpenQuiz,
-  onBackToDashboard
+  onBackToDashboard,
+  onOpenOrganism,
+  onOpenConceptMap
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeFilter, setActiveFilter] = useState<'all' | 'categories' | 'practicals'>('all');
+  const [activeFilter, setActiveFilter] = useState<'all' | 'categories' | 'practicals' | 'organisms'>('all');
 
   const iconComponents: Record<string, any> = {
     Bone,
@@ -84,6 +89,7 @@ export const LabSubjectPage: React.FC<LabSubjectPageProps> = ({
 
   const isBiochemistry = labInfo?.id === 'biochemistry';
   const isAnatomy = labInfo?.id === 'anatomy';
+  const isBacteriology = labInfo?.id === 'bacteriology';
 
   const filteredBiochemTests = BIOCHEMISTRY_CARBOHYDRATE_TESTS.filter(test => {
     if (!searchQuery.trim()) return true;
@@ -94,6 +100,17 @@ export const LabSubjectPage: React.FC<LabSubjectPageProps> = ({
       test.positive.toLowerCase().includes(q) ||
       test.negative.toLowerCase().includes(q) ||
       test.reagents.some(r => r.toLowerCase().includes(q))
+    );
+  });
+
+  const filteredBacteriologyOrganisms = BACTERIOLOGY_CONCEPT_ORGANISMS.filter(org => {
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase();
+    return (
+      org.scientificName.toLowerCase().includes(q) ||
+      org.commonName.toLowerCase().includes(q) ||
+      org.majorDiseases.some(d => d.toLowerCase().includes(q)) ||
+      org.gramCategory.toLowerCase().includes(q)
     );
   });
 
@@ -115,6 +132,14 @@ export const LabSubjectPage: React.FC<LabSubjectPageProps> = ({
     }
     if (category.title === 'QUIZ') {
       onOpenQuiz(labInfo.id);
+      return;
+    }
+    if (category.title === 'BACTERIA' && isBacteriology) {
+      if (onOpenOrganism) {
+        onOpenOrganism('staph-aureus');
+      } else if (onOpenConceptMap) {
+        onOpenConceptMap();
+      }
       return;
     }
     if (category.title === 'PRACTICALS') {
@@ -258,6 +283,91 @@ export const LabSubjectPage: React.FC<LabSubjectPageProps> = ({
             onOpenSpotter={() => onOpenSpotter(labInfo.id)}
             onOpenQuiz={() => onOpenQuiz(labInfo.id)}
           />
+        </div>
+      )}
+
+      {/* BACTERIOLOGY LAB: Interactive Clinical Organisms Suite */}
+      {isBacteriology && (activeFilter === 'all' || activeFilter === 'categories' || activeFilter === 'organisms') && (
+        <div id="bacteriology-organisms-section" className="space-y-4 pt-2">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h2 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                <Bug className="w-5 h-5 text-teal-600" />
+                <span>PATHOGENIC BACTERIA & CLINICAL SPECIES</span>
+              </h2>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Core Gram-positive, Gram-negative, and Acid-Fast bacilli with diagnostic hallmarks
+              </p>
+            </div>
+            {onOpenConceptMap && (
+              <button
+                type="button"
+                onClick={onOpenConceptMap}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-teal-50 hover:bg-teal-100 text-teal-800 text-xs font-bold border border-teal-200 transition cursor-pointer self-start sm:self-auto"
+              >
+                <span>Full Concept Map</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            {filteredBacteriologyOrganisms.map(org => {
+              const gramBadge =
+                org.gramCategory === 'gram_positive'
+                  ? 'bg-purple-100 text-purple-800 border-purple-200'
+                  : org.gramCategory === 'gram_negative'
+                  ? 'bg-pink-100 text-pink-800 border-pink-200'
+                  : 'bg-red-100 text-red-800 border-red-200';
+
+              return (
+                <div
+                  key={org.id}
+                  id={`lab-organism-card-${org.id}`}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => onOpenOrganism && onOpenOrganism(org.id)}
+                  className="bg-white hover:bg-slate-50 border border-[#E2E8F0] hover:border-teal-400 p-4 rounded-2xl cursor-pointer transition-all duration-200 flex flex-col justify-between space-y-3 group shadow-xs hover:shadow-md touch-manipulation select-none active:scale-[0.98]"
+                >
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between pointer-events-none">
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase border ${gramBadge}`}>
+                        {org.gramCategory === 'gram_positive' ? 'Gram +' : org.gramCategory === 'gram_negative' ? 'Gram -' : 'AFB'}
+                      </span>
+                      <span className="text-[11px] text-slate-500 capitalize font-medium">
+                        {org.shape}
+                      </span>
+                    </div>
+
+                    <h3 className="text-sm font-bold text-slate-900 group-hover:text-teal-700 italic tracking-tight pointer-events-none">
+                      {org.scientificName}
+                    </h3>
+                    <p className="text-xs text-slate-500 font-medium pointer-events-none">
+                      {org.commonName}
+                    </p>
+                    <p className="text-[11px] text-slate-400 line-clamp-2 leading-relaxed pointer-events-none">
+                      {org.diagnosticHallmarks.gramStainDescription}
+                    </p>
+                  </div>
+
+                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-teal-600">
+                    <button
+                      type="button"
+                      id={`lab-explore-btn-${org.id}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onOpenOrganism && onOpenOrganism(org.id);
+                      }}
+                      className="inline-flex items-center gap-1 text-teal-600 group-hover:text-teal-800 font-bold hover:underline cursor-pointer"
+                    >
+                      <span>Explore Organism</span>
+                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
 

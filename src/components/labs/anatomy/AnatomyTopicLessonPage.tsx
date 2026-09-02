@@ -6,6 +6,7 @@ import {
   ANATOMY_TOPICS
 } from './AnatomyData';
 import { AnatomyTopicVisual } from './AnatomyTopicVisuals';
+import { AnatomyTopicVideoSection } from './AnatomyTopicVideoSection';
 import { anatomyProgressService } from './AnatomyStudentProgressService';
 import {
   ArrowLeft,
@@ -40,7 +41,8 @@ import {
   Stethoscope,
   Clock,
   Eye,
-  Share2
+  Share2,
+  Youtube
 } from 'lucide-react';
 
 interface AnatomyTopicLessonPageProps {
@@ -57,7 +59,7 @@ export const AnatomyTopicLessonPage: React.FC<AnatomyTopicLessonPageProps> = ({
   onLaunchOSPEExam
 }) => {
   // Navigation Section State
-  const [activeSection, setActiveSection] = useState<'overview' | 'interactive' | 'structures' | 'clinical' | 'interactive_mode' | 'quiz'>('overview');
+  const [activeSection, setActiveSection] = useState<'overview' | 'interactive' | 'lecture' | 'structures' | 'clinical' | 'interactive_mode' | 'quiz'>('overview');
 
   // Interactive Pin / Hotspot State
   const [selectedPin, setSelectedPin] = useState<AnatomySpotterItem | null>(
@@ -85,6 +87,7 @@ export const AnatomyTopicLessonPage: React.FC<AnatomyTopicLessonPageProps> = ({
   // Section refs for smooth scrolling
   const overviewRef = useRef<HTMLDivElement>(null);
   const interactiveRef = useRef<HTMLDivElement>(null);
+  const lectureRef = useRef<HTMLDivElement>(null);
   const structuresRef = useRef<HTMLDivElement>(null);
   const clinicalRef = useRef<HTMLDivElement>(null);
   const quizRef = useRef<HTMLDivElement>(null);
@@ -117,7 +120,7 @@ export const AnatomyTopicLessonPage: React.FC<AnatomyTopicLessonPageProps> = ({
     setIsBookmarked(newState);
   };
 
-  const handleScrollToSection = (section: 'overview' | 'interactive' | 'structures' | 'clinical' | 'interactive_mode' | 'quiz') => {
+  const handleScrollToSection = (section: 'overview' | 'interactive' | 'lecture' | 'structures' | 'clinical' | 'interactive_mode' | 'quiz') => {
     setActiveSection(section);
     if (section === 'interactive_mode') {
       setIsInteractiveModeActive(true);
@@ -130,6 +133,7 @@ export const AnatomyTopicLessonPage: React.FC<AnatomyTopicLessonPageProps> = ({
     
     const targetRef = 
       section === 'overview' ? overviewRef :
+      section === 'lecture' ? lectureRef :
       section === 'interactive' || section === 'interactive_mode' ? interactiveRef :
       section === 'structures' ? structuresRef :
       section === 'clinical' ? clinicalRef : quizRef;
@@ -384,7 +388,7 @@ export const AnatomyTopicLessonPage: React.FC<AnatomyTopicLessonPageProps> = ({
           </div>
         </div>
 
-        {/* Sticky Section Sub-Navigation Tabs */}
+          {/* Sticky Section Sub-Navigation Tabs */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center gap-2 overflow-x-auto no-scrollbar py-2 border-t border-slate-800/60">
           <button
             type="button"
@@ -410,6 +414,19 @@ export const AnatomyTopicLessonPage: React.FC<AnatomyTopicLessonPageProps> = ({
           >
             <Target className="w-3.5 h-3.5" />
             <span>Interactive Anatomy</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleScrollToSection('lecture')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors cursor-pointer flex items-center gap-1.5 ${
+              activeSection === 'lecture'
+                ? 'bg-rose-600 text-white shadow-xs'
+                : 'text-rose-400 hover:bg-rose-500/10'
+            }`}
+          >
+            <Youtube className="w-3.5 h-3.5" />
+            <span>Topic Lecture</span>
           </button>
 
           <button
@@ -494,15 +511,26 @@ export const AnatomyTopicLessonPage: React.FC<AnatomyTopicLessonPageProps> = ({
                 </p>
               </div>
 
-              {/* Action Trigger */}
-              <button
-                type="button"
-                onClick={() => handleScrollToSection('interactive_mode')}
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white font-bold text-xs sm:text-sm shadow-xl shadow-indigo-600/25 transition-all hover:scale-102 cursor-pointer shrink-0"
-              >
-                <Play className="w-4 h-4 fill-current" />
-                <span>Start Interactive Learning</span>
-              </button>
+              {/* Action Triggers */}
+              <div className="flex items-center gap-2.5 flex-wrap shrink-0">
+                <button
+                  type="button"
+                  onClick={() => handleScrollToSection('lecture')}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-rose-600/20 hover:bg-rose-600 border border-rose-500/40 text-rose-300 hover:text-white font-bold text-xs sm:text-sm transition-all cursor-pointer"
+                >
+                  <Youtube className="w-4 h-4" />
+                  <span>Watch Topic Lecture</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleScrollToSection('interactive_mode')}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white font-bold text-xs sm:text-sm shadow-xl shadow-indigo-600/25 transition-all hover:scale-102 cursor-pointer"
+                >
+                  <Play className="w-4 h-4 fill-current" />
+                  <span>Interactive Learning</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -831,7 +859,12 @@ export const AnatomyTopicLessonPage: React.FC<AnatomyTopicLessonPageProps> = ({
           </div>
         </section>
 
-        {/* SECTION 3: KEY STRUCTURES (Bite-Sized Cards Grid) */}
+        {/* SECTION 3: TOPIC-MATCHED MICRO-LECTURE & CLINICAL DEMONSTRATION */}
+        <section ref={lectureRef} className="space-y-4 pt-2" id="section-micro-lecture">
+          <AnatomyTopicVideoSection topic={topic} />
+        </section>
+
+        {/* SECTION 4: KEY STRUCTURES (Bite-Sized Cards Grid) */}
         <section ref={structuresRef} className="space-y-4" id="section-structures">
           <div className="flex items-center justify-between border-b border-slate-800 pb-2">
             <div className="flex items-center gap-2">

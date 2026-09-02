@@ -47,6 +47,13 @@ import { ExamResultReviewPage } from './components/exam/ExamResultReviewPage';
 import { TeacherDashboard } from './components/teacher/TeacherDashboard';
 import { BiochemistryDetailsModal } from './components/labs/biochemistry/BiochemistryDetailsModal';
 
+// Interactive Modules
+import { VirtualHistologyViewer } from './components/interactive/VirtualHistologyViewer';
+import { McqQuestionBank } from './components/quiz/McqQuestionBank';
+import { BacteriologyConceptMap } from './components/interactive/BacteriologyConceptMap';
+import { BacteriologyOrganismDetailPage } from './components/labs/bacteriology/BacteriologyOrganismDetailPage';
+import { EducationalVideosSection } from './components/video/EducationalVideosSection';
+
 // Modals & Security
 import { AiLabTutorModal } from './components/ai/AiLabTutorModal';
 import { AnnouncementsModal } from './components/announcements/AnnouncementsModal';
@@ -73,6 +80,11 @@ export default function App() {
       const hash = window.location.hash.replace('#', '').trim().toLowerCase();
       const path = window.location.pathname.replace('/', '').trim().toLowerCase();
       const target = hash || path;
+
+      if (target.startsWith('organism/') || target.startsWith('bacteriology/')) {
+        return 'organism_detail';
+      }
+
       const validTabs = [
         'dashboard',
         'laboratories',
@@ -88,7 +100,12 @@ export default function App() {
         'quizzes',
         'schedule',
         'progress',
-        'academic_approval'
+        'academic_approval',
+        'histology_microscope',
+        'mcq_bank',
+        'bacteriology_concept_map',
+        'educational_videos',
+        'organism_detail'
       ];
       if (validTabs.includes(target)) {
         return target;
@@ -99,8 +116,25 @@ export default function App() {
     return 'dashboard';
   };
 
+  // Parse initial organism ID if any
+  const getInitialOrganismId = () => {
+    try {
+      const hash = window.location.hash.replace('#', '').trim().toLowerCase();
+      if (hash.startsWith('organism/')) {
+        return hash.split('/')[1] || 'staph-aureus';
+      }
+      if (hash.startsWith('bacteriology/')) {
+        return hash.split('/')[1] || 'staph-aureus';
+      }
+    } catch {
+      // Fallback
+    }
+    return 'staph-aureus';
+  };
+
   // Navigation State
   const [currentTab, setCurrentTab] = useState<string>(getInitialTabState);
+  const [selectedOrganismId, setSelectedOrganismId] = useState<string>(getInitialOrganismId);
   const [selectedLabId, setSelectedLabId] = useState<LabSubjectId | null>(() => {
     const initial = getInitialTabState();
     if (['anatomy', 'histology', 'bacteriology', 'biochemistry'].includes(initial)) {
@@ -131,6 +165,16 @@ export default function App() {
   // Handle browser back/forward and hash changes
   useEffect(() => {
     const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '').trim().toLowerCase();
+      if (hash.startsWith('organism/') || hash.startsWith('bacteriology/')) {
+        const orgId = hash.split('/')[1] || 'staph-aureus';
+        setSelectedOrganismId(orgId);
+        setCurrentTab('organism_detail');
+        setSelectedPracticalId(null);
+        setActiveQuiz(null);
+        return;
+      }
+
       const target = getInitialTabState();
       if (['anatomy', 'histology', 'bacteriology', 'biochemistry'].includes(target)) {
         setSelectedLabId(target as LabSubjectId);
@@ -287,6 +331,13 @@ export default function App() {
     setIsBiochemistryModalOpen(true);
   };
 
+  const handleOpenOrganismDetail = (organismId: string) => {
+    setSelectedOrganismId(organismId);
+    setCurrentTab('organism_detail');
+    updateTabWithHash(`organism/${organismId}`);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const handleTabSelect = (tab: string) => {
     if (['anatomy', 'histology', 'bacteriology', 'biochemistry'].includes(tab)) {
       handleSelectLab(tab as LabSubjectId);
@@ -339,6 +390,31 @@ export default function App() {
           onOpenSpotter={handleOpenSpotter}
           onOpenQuiz={handleOpenQuiz}
           onBackToDashboard={() => handleTabSelect('dashboard')}
+          onOpenOrganism={handleOpenOrganismDetail}
+          onOpenConceptMap={() => {
+            setCurrentTab('bacteriology_concept_map');
+            updateTabWithHash('bacteriology_concept_map');
+          }}
+        />
+      );
+    }
+
+    // 2. Organism Detail View (Bacteriology Pathogens)
+    if (currentTab === 'organism_detail' && selectedOrganismId) {
+      return (
+        <BacteriologyOrganismDetailPage
+          organismId={selectedOrganismId}
+          onBack={() => {
+            if (selectedLabId === 'bacteriology') {
+              handleSelectLab('bacteriology');
+            } else {
+              setCurrentTab('bacteriology_concept_map');
+              updateTabWithHash('bacteriology_concept_map');
+            }
+          }}
+          onSelectOrganism={handleOpenOrganismDetail}
+          onOpenQuiz={() => handleOpenQuiz('bacteriology')}
+          onOpenSpotter={() => handleOpenSpotter('bacteriology')}
         />
       );
     }
@@ -539,6 +615,37 @@ export default function App() {
             onUpdatePracticalStatus={handleUpdatePracticalStatus}
             onViewPractical={handleOpenPractical}
           />
+        );
+
+      case 'histology_microscope':
+        return (
+          <div className="animate-in fade-in duration-300">
+            <VirtualHistologyViewer />
+          </div>
+        );
+
+      case 'mcq_bank':
+        return (
+          <div className="animate-in fade-in duration-300">
+            <McqQuestionBank onBackToHub={() => handleTabSelect('dashboard')} />
+          </div>
+        );
+
+      case 'bacteriology_concept_map':
+        return (
+          <div className="animate-in fade-in duration-300">
+            <BacteriologyConceptMap
+              onOpenOrganism={handleOpenOrganismDetail}
+              initialOrganismId={selectedOrganismId || undefined}
+            />
+          </div>
+        );
+
+      case 'educational_videos':
+        return (
+          <div className="animate-in fade-in duration-300">
+            <EducationalVideosSection />
+          </div>
         );
 
       case 'dashboard':

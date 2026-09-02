@@ -27,10 +27,12 @@ import {
   FileQuestion,
   GraduationCap,
   ListOrdered,
-  ChevronRight
+  ChevronRight,
+  Youtube
 } from 'lucide-react';
 import { AnatomyTopic } from './AnatomyData';
 import { AnatomyDiagramViewer } from './AnatomyDiagramViewer';
+import { AnatomyTopicVideoSection } from './AnatomyTopicVideoSection';
 
 interface AnatomyTopicDetailModalProps {
   topic: AnatomyTopic | null;
@@ -49,7 +51,7 @@ export const AnatomyTopicDetailModal: React.FC<AnatomyTopicDetailModalProps> = (
   onOpenPracticeQuiz,
   onOpenPracticalExam
 }) => {
-  const [activeTab, setActiveTab] = useState<'learn' | 'spotter' | 'mistakes' | 'exam' | 'terms'>('learn');
+  const [activeTab, setActiveTab] = useState<'learn' | 'spotter' | 'lecture' | 'mistakes' | 'exam' | 'terms'>('learn');
   const [levelFilter, setLevelFilter] = useState<'ALL' | 'CORE' | 'HIGH_YIELD' | 'EXTRA'>('ALL');
   const [selectedQuestionAnswers, setSelectedQuestionAnswers] = useState<Record<string, string>>({});
   const [revealedQuestionExplanations, setRevealedQuestionExplanations] = useState<Record<string, boolean>>({});
@@ -186,6 +188,19 @@ export const AnatomyTopicDetailModal: React.FC<AnatomyTopicDetailModalProps> = (
 
           <button
             type="button"
+            onClick={() => setActiveTab('lecture')}
+            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bold whitespace-nowrap transition-all ${
+              activeTab === 'lecture'
+                ? 'bg-rose-600 text-white shadow-xs'
+                : 'text-rose-700 hover:bg-rose-50'
+            }`}
+          >
+            <Youtube className="w-4 h-4" />
+            <span>3. المحاضرة المطابقة (Micro-Lecture)</span>
+          </button>
+
+          <button
+            type="button"
             onClick={() => setActiveTab('mistakes')}
             className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bold whitespace-nowrap transition-all ${
               activeTab === 'mistakes'
@@ -194,7 +209,7 @@ export const AnatomyTopicDetailModal: React.FC<AnatomyTopicDetailModalProps> = (
             }`}
           >
             <AlertTriangle className="w-4 h-4 text-amber-600" />
-            <span>3. أخطاء شائعة ومفارقات</span>
+            <span>4. أخطاء شائعة ومفارقات</span>
           </button>
 
           <button
@@ -207,7 +222,7 @@ export const AnatomyTopicDetailModal: React.FC<AnatomyTopicDetailModalProps> = (
             }`}
           >
             <FileQuestion className="w-4 h-4 text-emerald-600" />
-            <span>4. أسئلة تدريبية ومراجعة</span>
+            <span>5. أسئلة تدريبية ومراجعة</span>
           </button>
 
           <button
@@ -220,7 +235,7 @@ export const AnatomyTopicDetailModal: React.FC<AnatomyTopicDetailModalProps> = (
             }`}
           >
             <GraduationCap className="w-4 h-4" />
-            <span>5. المصطلحات الطبية</span>
+            <span>6. المصطلحات الطبية</span>
           </button>
         </div>
 
@@ -517,6 +532,13 @@ export const AnatomyTopicDetailModal: React.FC<AnatomyTopicDetailModalProps> = (
                   </div>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* TAB 3: TOPIC-MATCHED MICRO-LECTURE (YOUTUBE & MEDICAL LECTURERS) */}
+          {activeTab === 'lecture' && (
+            <div className="space-y-4 animate-in fade-in duration-200">
+              <AnatomyTopicVideoSection topic={topic} />
             </div>
           )}
 

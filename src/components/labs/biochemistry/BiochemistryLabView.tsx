@@ -16,8 +16,11 @@ import {
   Layers,
   Sparkles,
   ArrowRight,
-  Flame
+  Flame,
+  Award,
+  Printer
 } from 'lucide-react';
+import { BiochemistryCertificateModal } from './BiochemistryCertificateModal';
 
 interface BiochemistryLabViewProps {
   searchQuery?: string;
@@ -30,6 +33,7 @@ export const BiochemistryLabView: React.FC<BiochemistryLabViewProps> = ({
 }) => {
   const [selectedTab, setSelectedTab] = useState<string>('all');
   const [internalQuery, setInternalQuery] = useState<string>('');
+  const [isCertificateOpen, setIsCertificateOpen] = useState<boolean>(false);
 
   const activeQuery = (searchQuery || internalQuery).trim().toLowerCase();
 
@@ -69,8 +73,17 @@ export const BiochemistryLabView: React.FC<BiochemistryLabViewProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center gap-2 text-xs text-amber-300 bg-amber-950/40 border border-amber-500/30 px-3 py-1 rounded-lg font-semibold self-start sm:self-auto">
-            <span>6 اختبارات معتمدة</span>
+          <div className="flex items-center gap-2 self-start sm:self-auto">
+            <button
+              onClick={() => setIsCertificateOpen(true)}
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 text-slate-950 font-bold text-xs shadow-md shadow-amber-500/20 hover:scale-[1.02] transition-transform"
+            >
+              <Award className="w-4 h-4" />
+              <span>شهادة إتمام المعمل (Certificate)</span>
+            </button>
+            <span className="text-xs text-amber-300 bg-amber-950/40 border border-amber-500/30 px-3 py-1.5 rounded-xl font-semibold">
+              6 اختبارات معتمدة
+            </span>
           </div>
         </div>
 
@@ -192,6 +205,13 @@ export const BiochemistryLabView: React.FC<BiochemistryLabViewProps> = ({
           ))
         )}
       </div>
+
+      {/* Biochemistry Completion Certificate Modal */}
+      <BiochemistryCertificateModal
+        isOpen={isCertificateOpen}
+        onClose={() => setIsCertificateOpen(false)}
+        scorePercentage={100}
+      />
     </div>
   );
 };
