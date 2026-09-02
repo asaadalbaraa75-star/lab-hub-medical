@@ -83,8 +83,26 @@ class StorageService {
   }
 
   // --- User Auth & Session ---
-  getCurrentUser(): User {
-    return this.get<User>(STORAGE_KEYS.CURRENT_USER, DEMO_USERS[0]);
+  getCurrentUser(): User | null {
+    try {
+      const authSessionRaw = localStorage.getItem('labhub_auth_session');
+      if (authSessionRaw) {
+        const session = JSON.parse(authSessionRaw);
+        if (session && session.user && session.expiresAt > Date.now()) {
+          return session.user;
+        }
+      }
+    } catch (e) {
+      console.error('Failed to parse auth session:', e);
+    }
+    return null;
+  }
+
+  getEffectiveUser(caller?: User): User {
+    if (caller) return caller;
+    const current = this.getCurrentUser();
+    if (current) return current;
+    return DEMO_USERS[0];
   }
 
   setCurrentUser(user: User): void {
@@ -119,7 +137,7 @@ class StorageService {
   }
 
   savePractical(practical: Practical, caller?: User): boolean {
-    const user = caller || this.getCurrentUser();
+    const user = this.getEffectiveUser(caller);
     if (!securityService.hasPermission(user.role, 'edit_questions')) {
       console.warn(`[SECURITY] Access denied: User ${user.name} (${user.role}) cannot edit practical content.`);
       return false;
@@ -215,7 +233,7 @@ class StorageService {
   }
 
   recordQuizAttempt(attempt: QuizAttempt, targetUserId?: string): StudentProgress {
-    const userId = targetUserId || this.getCurrentUser().id;
+    const userId = targetUserId || this.getCurrentUser()?.id || 'usr_guest';
     const attempts = this.get<QuizAttempt[]>(STORAGE_KEYS.QUIZ_ATTEMPTS, INITIAL_STUDENT_PROGRESS.completedQuizzes);
     attempts.unshift(attempt);
     this.set(STORAGE_KEYS.QUIZ_ATTEMPTS, attempts);
@@ -253,7 +271,7 @@ class StorageService {
   }
 
   toggleChecklistTask(scheduleId: string, taskId: string, userIdParam?: string): ScheduleItem[] {
-    const userId = userIdParam || this.getCurrentUser().id;
+    const userId = userIdParam || this.getCurrentUser()?.id || 'usr_guest';
     const schedule = this.getSchedule();
     const item = schedule.find(s => s.id === scheduleId);
     if (item) {
@@ -286,7 +304,7 @@ class StorageService {
   }
 
   createAnnouncement(announcement: Announcement, caller?: User): boolean {
-    const user = caller || this.getCurrentUser();
+    const user = this.getEffectiveUser(caller);
     if (!securityService.hasPermission(user.role, 'edit_questions')) {
       console.warn(`[SECURITY] Access denied: User ${user.name} (${user.role}) cannot post announcements.`);
       return false;
@@ -339,7 +357,7 @@ class StorageService {
   }
 
   uploadFile(file: FileAsset, caller?: User): boolean {
-    const user = caller || this.getCurrentUser();
+    const user = this.getEffectiveUser(caller);
     if (!securityService.hasPermission(user.role, 'edit_questions')) {
       console.warn(`[SECURITY] Access denied: User ${user.name} (${user.role}) cannot upload assets to curriculum repository.`);
       return false;
@@ -352,12 +370,12 @@ class StorageService {
 
   // --- Student Progress (Isolated per user with anti-tamper checksum) ---
   getProgress(): StudentProgress {
-    const currentUserId = this.getCurrentUser().id;
+    const currentUserId = this.getCurrentUser()?.id || 'usr_guest';
     return this.getStudentProgress(currentUserId);
   }
 
   getStudentProgress(userId?: string): StudentProgress {
-    const uid = userId || this.getCurrentUser().id;
+    const uid = userId || this.getCurrentUser()?.id || 'usr_guest';
     const userKey = `${STORAGE_KEYS.PROGRESS_PREFIX}${uid}`;
     const stored = this.get<StudentProgress | null>(userKey, null);
     if (stored) {
@@ -368,7 +386,7 @@ class StorageService {
   }
 
   saveProgress(progress: StudentProgress, userIdParam?: string): void {
-    const uid = userIdParam || this.getCurrentUser().id;
+    const uid = userIdParam || this.getCurrentUser()?.id || 'usr_guest';
     const userKey = `${STORAGE_KEYS.PROGRESS_PREFIX}${uid}`;
     this.set(userKey, progress);
     this.set(STORAGE_KEYS.DEFAULT_PROGRESS, progress);
@@ -376,7 +394,7 @@ class StorageService {
 
   togglePracticalCompletion(userIdOrPracticalId: string, practicalIdParam?: string): StudentProgress {
     const practicalId = practicalIdParam || userIdOrPracticalId;
-    const currentUid = this.getCurrentUser().id;
+    const currentUid = this.getCurrentUser()?.id || 'usr_guest';
     const progress = this.getStudentProgress(currentUid);
     const isCompleted = progress.completedPracticals.includes(practicalId);
     if (isCompleted) {
@@ -404,7 +422,7 @@ class StorageService {
   }
 
   saveMedicalExam(exam: MedicalExam, caller?: User): boolean {
-    const user = caller || this.getCurrentUser();
+    const user = this.getEffectiveUser(caller);
     if (!securityService.hasPermission(user.role, 'create_exams')) {
       console.warn(`[SECURITY] Access denied: User ${user.name} (${user.role}) is unauthorized to create or edit medical exams.`);
       return false;
@@ -421,7 +439,7 @@ class StorageService {
   }
 
   deleteMedicalExam(id: string, caller?: User): boolean {
-    const user = caller || this.getCurrentUser();
+    const user = this.getEffectiveUser(caller);
     if (!securityService.hasPermission(user.role, 'delete_exams')) {
       console.warn(`[SECURITY] Access denied: User ${user.name} (${user.role}) cannot delete exams.`);
       return false;
@@ -446,7 +464,7 @@ class StorageService {
   }
 
   saveExamQuestion(question: ExamQuestion, caller?: User): boolean {
-    const user = caller || this.getCurrentUser();
+    const user = this.getEffectiveUser(caller);
     if (!securityService.hasPermission(user.role, 'edit_questions')) {
       console.warn(`[SECURITY] Access denied: User ${user.name} (${user.role}) cannot modify question banks.`);
       return false;
@@ -463,7 +481,7 @@ class StorageService {
   }
 
   deleteExamQuestion(id: string, caller?: User): boolean {
-    const user = caller || this.getCurrentUser();
+    const user = this.getEffectiveUser(caller);
     if (!securityService.hasPermission(user.role, 'delete_questions')) {
       console.warn(`[SECURITY] Access denied: User ${user.name} (${user.role}) cannot delete questions.`);
       return false;

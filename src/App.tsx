@@ -54,6 +54,10 @@ import { BacteriologyConceptMap } from './components/interactive/BacteriologyCon
 import { BacteriologyOrganismDetailPage } from './components/labs/bacteriology/BacteriologyOrganismDetailPage';
 import { EducationalVideosSection } from './components/video/EducationalVideosSection';
 
+// Mandatory Account System & Administration
+import { AuthPage } from './components/auth/AuthPage';
+import { AdminDashboard } from './components/admin/AdminDashboard';
+
 // Modals & Security
 import { AiLabTutorModal } from './components/ai/AiLabTutorModal';
 import { AnnouncementsModal } from './components/announcements/AnnouncementsModal';
@@ -63,10 +67,10 @@ import { SecurityAuditModal } from './components/security/SecurityAuditModal';
 import { AuthModal } from './components/auth/AuthModal';
 
 export default function App() {
-  // Application State
-  const [currentUser, setCurrentUser] = useState<User>(() => storageService.getCurrentUser());
+  // Application State - Strictly Enforced Authentication
+  const [currentUser, setCurrentUser] = useState<User | null>(() => authService.getCurrentUser());
   const [users, setUsers] = useState<User[]>(() => storageService.getUsers());
-  const [progress, setProgress] = useState(() => storageService.getStudentProgress(currentUser.id));
+  const [progress, setProgress] = useState(() => storageService.getStudentProgress(currentUser?.id));
   const [schedule, setSchedule] = useState(() => storageService.getSchedule());
   const [practicals, setPracticals] = useState<Practical[]>(() => storageService.getPracticals());
   const [spotters, setSpotters] = useState(() => storageService.getSpotters());
@@ -105,7 +109,9 @@ export default function App() {
         'mcq_bank',
         'bacteriology_concept_map',
         'educational_videos',
-        'organism_detail'
+        'organism_detail',
+        'admin',
+        'admin_dashboard'
       ];
       if (validTabs.includes(target)) {
         return target;
@@ -205,12 +211,21 @@ export default function App() {
 
   // Sync user progress whenever currentUser changes
   useEffect(() => {
-    setProgress(storageService.getStudentProgress(currentUser.id));
-  }, [currentUser.id]);
+    if (currentUser?.id) {
+      setProgress(storageService.getStudentProgress(currentUser.id));
+    }
+  }, [currentUser?.id]);
+
+  const handleLogout = async () => {
+    await authService.logout();
+    setCurrentUser(null);
+    window.location.hash = '';
+  };
 
   const handleRoleChange = (role: 'student' | 'instructor' | 'admin') => {
     const updatedUser = storageService.setCurrentUserRole(role);
     setCurrentUser(updatedUser);
+    authService.setMockRole(role);
   };
 
   const handleUserChange = (newUser: User) => {
@@ -230,6 +245,9 @@ export default function App() {
   };
 
   const handleSelectLab = (labId: LabSubjectId) => {
+    if (currentUser) {
+      authService.trackActivity(`فتح مختبر: ${labId.toUpperCase()}`, labId);
+    }
     setSelectedLabId(labId);
     setSelectedPracticalId(null);
     setActiveQuiz(null);
@@ -239,6 +257,9 @@ export default function App() {
   };
 
   const handleOpenPractical = (labId: string, practicalId: string) => {
+    if (currentUser) {
+      authService.trackActivity(`فتح الدرس العملي: ${practicalId}`, labId);
+    }
     setSelectedLabId(labId as LabSubjectId);
     setSelectedPracticalId(practicalId);
     setActiveQuiz(null);
@@ -248,6 +269,9 @@ export default function App() {
   };
 
   const handleOpenSpotter = (labId: LabSubjectId) => {
+    if (currentUser) {
+      authService.trackActivity(`بدء فحص الشرائح (Spotters): ${labId}`, labId);
+    }
     setSelectedLabId(labId);
     setCurrentTab('spotters');
     updateTabWithHash('spotters');
@@ -255,6 +279,9 @@ export default function App() {
   };
 
   const handleOpenQuiz = (labId: LabSubjectId, practicalId?: string) => {
+    if (currentUser) {
+      authService.trackActivity(`بدء اختبار قصير: ${labId}`, labId);
+    }
     let targetQuiz: Quiz | undefined;
     if (practicalId) {
       targetQuiz = quizzes.find(q => q.practicalId === practicalId);
@@ -275,8 +302,10 @@ export default function App() {
   };
 
   const handleTogglePracticalComplete = (practicalId: string) => {
+    if (!currentUser) return;
     const updated = storageService.togglePracticalCompletion(currentUser.id, practicalId);
     setProgress(updated);
+    authService.trackActivity(`تحديث إنجاز عملي: ${practicalId}`, 'Practicals');
   };
 
   const handleTogglePreparationTask = (scheduleId: string, taskId: string) => {
@@ -287,6 +316,13 @@ export default function App() {
   const handleCompleteQuizAttempt = (attempt: QuizAttempt) => {
     const updatedProgress = storageService.saveQuizAttempt(attempt);
     setProgress(updatedProgress);
+    if (currentUser) {
+      authService.trackActivity(
+        `إكمال اختبار قصير: ${attempt.labId}`,
+        attempt.labId,
+        `النتيجة: ${attempt.percentage}%`
+      );
+    }
   };
 
   const handleUpdatePracticalStatus = (
@@ -294,6 +330,7 @@ export default function App() {
     status: ApprovalWorkflowState,
     comment?: string
   ) => {
+    if (!currentUser) return;
     const updated = storageService.updatePracticalStatus(
       practicalId,
       status,
@@ -305,6 +342,9 @@ export default function App() {
   };
 
   const handleStartMedicalExam = (exam: MedicalExam) => {
+    if (currentUser) {
+      authService.trackActivity(`بدء امتحان OSPE عملي: ${exam.title}`, 'OSPE', `Exam: ${exam.id}`);
+    }
     setActiveMedicalExam(exam);
     setCompletedExamAttempt(null);
     setCurrentTab('exam_runner');
@@ -320,7 +360,14 @@ export default function App() {
 
   const handleCompleteMedicalExam = (attempt: ExamAttempt) => {
     setCompletedExamAttempt(attempt);
-    setProgress(storageService.getStudentProgress(currentUser.id));
+    if (currentUser) {
+      setProgress(storageService.getStudentProgress(currentUser.id));
+      authService.trackActivity(
+        `تسليم امتحان OSPE: ${attempt.examTitle}`,
+        'OSPE',
+        `النتيجة: ${attempt.percentage}% (${attempt.passed ? 'ناجح' : 'راسب'})`
+      );
+    }
     setCurrentTab('exam_result');
     updateTabWithHash('exam_result');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -329,9 +376,15 @@ export default function App() {
   const handleOpenBiochemistryGuide = (testId?: string) => {
     setSelectedBiochemistryTestId(testId);
     setIsBiochemistryModalOpen(true);
+    if (currentUser) {
+      authService.trackActivity('فتح دليل الفحوصات الكيميائية', 'biochemistry');
+    }
   };
 
   const handleOpenOrganismDetail = (organismId: string) => {
+    if (currentUser) {
+      authService.trackActivity(`استكشاف الكائن الدقيق: ${organismId}`, 'bacteriology');
+    }
     setSelectedOrganismId(organismId);
     setCurrentTab('organism_detail');
     updateTabWithHash(`organism/${organismId}`);
@@ -339,6 +392,9 @@ export default function App() {
   };
 
   const handleTabSelect = (tab: string) => {
+    if (currentUser) {
+      authService.trackActivity(`تصفح قسم: ${tab}`, tab);
+    }
     if (['anatomy', 'histology', 'bacteriology', 'biochemistry'].includes(tab)) {
       handleSelectLab(tab as LabSubjectId);
       return;
@@ -648,6 +704,29 @@ export default function App() {
           </div>
         );
 
+      case 'admin':
+      case 'admin_dashboard':
+        if (currentUser.role !== 'admin') {
+          return (
+            <div className="bg-amber-50 border border-amber-200 rounded-3xl p-8 text-center space-y-4 max-w-lg mx-auto my-12">
+              <h2 className="text-xl font-bold text-amber-900">غير مصرح بالدخول</h2>
+              <p className="text-sm text-amber-700">هذا القسم مخصص لإدارة الكلية والعمادة فقط (Admin Role).</p>
+              <button
+                type="button"
+                onClick={() => handleTabSelect('dashboard')}
+                className="px-5 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors shadow-sm"
+              >
+                العودة للرئيسية
+              </button>
+            </div>
+          );
+        }
+        return (
+          <div className="animate-in fade-in duration-300">
+            <AdminDashboard currentUser={currentUser} />
+          </div>
+        );
+
       case 'dashboard':
       default:
         return (
@@ -670,6 +749,28 @@ export default function App() {
     }
   };
 
+  // MANDATORY ACCOUNT SYSTEM ENFORCEMENT:
+  // If not authenticated, visitor CANNOT access any educational content or dashboard
+  if (!currentUser || !authService.isAuthenticated()) {
+    return (
+      <AuthPage
+        onLoginSuccess={(user) => {
+          setCurrentUser(user);
+          storageService.setCurrentUser(user);
+          setProgress(storageService.getStudentProgress(user.id));
+          authService.trackActivity('تسجيل الدخول للمنصة', 'Authentication', 'تم تسجيل الدخول بنجاح');
+          if (currentTab && currentTab !== 'dashboard' && currentTab !== 'login') {
+            updateTabWithHash(currentTab);
+          } else {
+            setCurrentTab('dashboard');
+            updateTabWithHash('dashboard');
+          }
+        }}
+        initialReturnTab={currentTab}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-[#1E293B] flex flex-col selection:bg-indigo-500 selection:text-white">
       {/* Top Main Navigation */}
@@ -688,6 +789,7 @@ export default function App() {
         notifications={notifications}
         onMarkNotificationRead={handleMarkNotificationRead}
         onMarkAllNotificationsRead={handleMarkAllNotificationsRead}
+        onLogout={handleLogout}
       />
 
       {/* Main App Layout Grid */}
@@ -703,6 +805,7 @@ export default function App() {
               userRole={currentUser.role}
               onOpenAiTutor={() => setIsAiTutorOpen(true)}
               onOpenAboutModal={() => setIsAboutModalOpen(true)}
+              onLogout={handleLogout}
             />
           </div>
         </aside>

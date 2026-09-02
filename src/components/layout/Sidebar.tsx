@@ -21,7 +21,8 @@ import {
   Network,
   Video,
   HelpCircle,
-  Sparkles
+  Sparkles,
+  LogOut
 } from 'lucide-react';
 import { LabHubLogo } from '../common/LabHubLogo';
 import { User as UserType, LabSubjectId } from '../../types';
@@ -34,6 +35,7 @@ interface SidebarProps {
   userRole?: 'student' | 'instructor' | 'admin';
   onOpenAiTutor?: () => void;
   onOpenAboutModal?: () => void;
+  onLogout?: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -43,7 +45,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   currentUser,
   userRole,
   onOpenAiTutor,
-  onOpenAboutModal
+  onOpenAboutModal,
+  onLogout
 }) => {
   const safeUser = currentUser || {
     id: 'usr_sarah',
@@ -72,7 +75,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { id: 'educational_videos', label: '3-Min Micro-Lectures', icon: Video },
     { id: 'medical_exams', label: 'الامتحانات العملية (OSPE)', icon: Award },
     { id: 'biochemistry_guide', label: 'دليل الكيمياء الحيوية (9 Tests)', icon: FlaskConical },
-    { id: 'teacher_dashboard', label: 'بنك الأسئلة ولوحة الأستاذ', icon: GraduationCap },
+    ...(safeUser.role === 'admin'
+      ? [{ id: 'admin_dashboard', label: 'لوحة الإدارة وسجلات الطلاب (Admin)', icon: ShieldAlert }]
+      : []),
+    ...(safeUser.role === 'instructor' || safeUser.role === 'admin'
+      ? [{ id: 'teacher_dashboard', label: 'بنك الأسئلة ولوحة الأستاذ', icon: GraduationCap }]
+      : []),
     { id: 'practicals', label: 'Practicals & Slides', icon: BookOpen },
     { id: 'schedule', label: 'Schedule', icon: Calendar },
     { id: 'quizzes', label: 'Quizzes', icon: CheckSquare },
@@ -253,25 +261,39 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
         </div>
 
-        {/* Profile Summary Card */}
-        <div
-          onClick={() => onSelectTab('profile')}
-          className="flex items-center gap-3 p-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-[#E2E8F0] cursor-pointer transition-all group"
-        >
-          <img
-            src={safeUser.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150'}
-            alt={safeUser.name}
-            className="w-8 h-8 rounded-lg object-cover border border-[#E2E8F0]"
-          />
-          <div className="flex flex-col min-w-0 flex-1">
-            <span className="text-xs font-bold text-slate-800 truncate group-hover:text-indigo-600 transition-colors">
-              {safeUser.name}
-            </span>
-            <span className="text-[10px] text-slate-400 truncate flex items-center gap-1">
-              <GraduationCap className="w-3 h-3 text-teal-600" />
-              {safeUser.studentId}
-            </span>
+        {/* Profile Summary Card & Logout */}
+        <div className="flex items-center gap-2">
+          <div
+            onClick={() => onSelectTab('profile')}
+            className="flex items-center gap-2.5 p-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-[#E2E8F0] cursor-pointer transition-all group flex-1 min-w-0"
+          >
+            <img
+              src={safeUser.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150'}
+              alt={safeUser.name}
+              className="w-8 h-8 rounded-lg object-cover border border-[#E2E8F0] shrink-0"
+            />
+            <div className="flex flex-col min-w-0 flex-1">
+              <span className="text-xs font-bold text-slate-800 truncate group-hover:text-indigo-600 transition-colors">
+                {safeUser.name}
+              </span>
+              <span className="text-[10px] text-slate-400 truncate flex items-center gap-1">
+                <GraduationCap className="w-3 h-3 text-teal-600 shrink-0" />
+                <span className="truncate">{safeUser.studentId}</span>
+              </span>
+            </div>
           </div>
+
+          {onLogout && (
+            <button
+              type="button"
+              id="sidebar-logout-btn"
+              onClick={onLogout}
+              title="تسجيل الخروج (Sign Out)"
+              className="p-2.5 rounded-xl border border-rose-200 bg-rose-50 text-rose-600 hover:bg-rose-100 hover:text-rose-700 transition-colors shrink-0"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          )}
         </div>
       </div>
     </aside>

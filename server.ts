@@ -8,6 +8,8 @@
 
 import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
+import crypto from 'crypto';
+import fs from 'fs';
 import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI } from '@google/genai';
 import dotenv from 'dotenv';
@@ -113,6 +115,418 @@ async function startServer() {
         securityHeaders: 'PASS - CSP, X-Content-Type-Options, Referrer-Policy active'
       },
       verifiedAt: new Date().toISOString()
+    });
+  });
+
+  // --- Persistent In-Memory User & Activity Data Store ---
+  interface ServerUser {
+    id: string;
+    userId: string;
+    name: string;
+    fullName: string;
+    email: string;
+    role: 'student' | 'instructor' | 'admin';
+    passwordHash: string;
+    studentId: string;
+    department: string;
+    year?: string;
+    avatarUrl?: string;
+    enrolledLabs: string[];
+    createdAt: string;
+    lastLoginAt: string;
+    lastActivityAt: string;
+    sessionCount: number;
+  }
+
+  interface ServerActivity {
+    id: string;
+    userId: string;
+    userName: string;
+    userEmail: string;
+    activity: string;
+    section: string;
+    timestamp: string;
+    metadata?: any;
+  }
+
+  const hashPassword = (pwd: string): string => {
+    return crypto.createHash('sha256').update(`labhub_salt_2026_${pwd}`).digest('hex');
+  };
+
+  // Pre-seed default platform accounts
+  const serverUsers: ServerUser[] = [
+    {
+      id: 'usr_student_1',
+      userId: 'usr_student_1',
+      name: 'Sarah Al-Mansoor',
+      fullName: 'Sarah Al-Mansoor',
+      email: 'student@med.edu',
+      role: 'student',
+      passwordHash: hashPassword('student123'),
+      studentId: 'MED-2026-4891',
+      department: 'Faculty of Medicine — 2nd Year MBBS',
+      year: 'Year 2 (Pre-Clinical)',
+      enrolledLabs: ['anatomy', 'histology', 'bacteriology', 'biochemistry'],
+      avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+      createdAt: '2026-01-10T08:00:00.000Z',
+      lastLoginAt: new Date().toISOString(),
+      lastActivityAt: new Date().toISOString(),
+      sessionCount: 14
+    },
+    {
+      id: 'usr_admin_1',
+      userId: 'usr_admin_1',
+      name: 'Prof. Eleanor Hayes, MD, FRCPath',
+      fullName: 'Prof. Eleanor Hayes, MD, FRCPath',
+      email: 'admin@med.edu',
+      role: 'admin',
+      passwordHash: hashPassword('admin123'),
+      studentId: 'ADM-MED-001',
+      department: 'Academic Directorate & Laboratory Board',
+      year: 'Dean of Medical Laboratory Curricula',
+      enrolledLabs: ['anatomy', 'histology', 'bacteriology', 'biochemistry'],
+      avatarUrl: 'https://images.unsplash.com/photo-1594824813680-79883506ecf5?w=150&auto=format&fit=crop&q=80',
+      createdAt: '2025-09-01T08:00:00.000Z',
+      lastLoginAt: new Date().toISOString(),
+      lastActivityAt: new Date().toISOString(),
+      sessionCount: 42
+    },
+    {
+      id: 'usr_instructor_1',
+      userId: 'usr_instructor_1',
+      name: 'Dr. Tariq Vance, MD, MSc',
+      fullName: 'Dr. Tariq Vance, MD, MSc',
+      email: 'instructor@med.edu',
+      role: 'instructor',
+      passwordHash: hashPassword('faculty123'),
+      studentId: 'FAC-MED-104',
+      department: 'Department of Anatomy & Histology',
+      year: 'Senior Teaching Faculty',
+      enrolledLabs: ['anatomy', 'histology', 'bacteriology', 'biochemistry'],
+      avatarUrl: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150&auto=format&fit=crop&q=80',
+      createdAt: '2025-10-15T08:00:00.000Z',
+      lastLoginAt: new Date().toISOString(),
+      lastActivityAt: new Date().toISOString(),
+      sessionCount: 29
+    }
+  ];
+
+  const serverActivities: ServerActivity[] = [
+    {
+      id: 'act_seed_1',
+      userId: 'usr_student_1',
+      userName: 'Sarah Al-Mansoor',
+      userEmail: 'student@med.edu',
+      activity: 'Completed Gross Anatomy Quiz',
+      section: 'Anatomy',
+      timestamp: new Date(Date.now() - 3600000).toISOString()
+    },
+    {
+      id: 'act_seed_2',
+      userId: 'usr_student_1',
+      userName: 'Sarah Al-Mansoor',
+      userEmail: 'student@med.edu',
+      activity: 'Opened Virtual Histology Microscope',
+      section: 'Histology',
+      timestamp: new Date(Date.now() - 7200000).toISOString()
+    }
+  ];
+
+  // Helper to generate a session token with role verification
+  const createSessionToken = (user: ServerUser): string => {
+    const payload = `${user.id}:${user.role}:${Date.now()}`;
+    const sig = crypto.createHmac('sha256', 'labhub_session_secret_2026').update(payload).digest('hex').substring(0, 16);
+    return Buffer.from(`${payload}:${sig}`).toString('base64');
+  };
+
+  const verifySessionToken = (token: string): { userId: string; role: string } | null => {
+    try {
+      const decoded = Buffer.from(token, 'base64').toString('ascii');
+      const parts = decoded.split(':');
+      if (parts.length < 4) return null;
+      const [userId, role, timestamp, sig] = parts;
+      const expectedSig = crypto.createHmac('sha256', 'labhub_session_secret_2026')
+        .update(`${userId}:${role}:${timestamp}`).digest('hex').substring(0, 16);
+      if (sig !== expectedSig) return null;
+      return { userId, role };
+    } catch {
+      return null;
+    }
+  };
+
+  // Safe user profile view (removes passwordHash)
+  const toSafeUser = (u: ServerUser) => {
+    const { passwordHash, ...safe } = u;
+    return safe;
+  };
+
+  // --- AUTH ROUTE: REGISTER ---
+  app.post('/api/auth/register', apiRateLimiter(20, 60000), (req: Request, res: Response) => {
+    try {
+      const { fullName, email, password } = req.body;
+      if (!fullName || !email || !password) {
+        return res.status(400).json({ error: 'Full name, email, and password are required.' });
+      }
+
+      const cleanEmail = String(email).trim().toLowerCase();
+      const cleanName = String(fullName).trim();
+
+      if (!cleanEmail.includes('@') || !cleanEmail.includes('.')) {
+        return res.status(400).json({ error: 'Please provide a valid medical university email address.' });
+      }
+
+      if (password.length < 6) {
+        return res.status(400).json({ error: 'Password must be at least 6 characters in length.' });
+      }
+
+      // Check if email already registered
+      if (serverUsers.some(u => u.email === cleanEmail)) {
+        return res.status(409).json({ error: 'This email is already registered. Please sign in.' });
+      }
+
+      const now = new Date().toISOString();
+      const id = `usr_std_${Date.now()}`;
+      const studentId = `MED-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+
+      const newUser: ServerUser = {
+        id,
+        userId: id,
+        name: cleanName,
+        fullName: cleanName,
+        email: cleanEmail,
+        role: 'student', // Mandatory student role for all registrations
+        passwordHash: hashPassword(password),
+        studentId,
+        department: 'Faculty of Medicine — 1st Year Medical Sciences',
+        year: 'Year 1 (Pre-Clinical)',
+        enrolledLabs: ['anatomy', 'histology', 'bacteriology', 'biochemistry'],
+        avatarUrl: `https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150`,
+        createdAt: now,
+        lastLoginAt: now,
+        lastActivityAt: now,
+        sessionCount: 1
+      };
+
+      serverUsers.push(newUser);
+
+      // Record activity
+      serverActivities.push({
+        id: `act_${Date.now()}`,
+        userId: id,
+        userName: cleanName,
+        userEmail: cleanEmail,
+        activity: 'Account Created & Registered',
+        section: 'Account',
+        timestamp: now
+      });
+
+      const token = createSessionToken(newUser);
+      return res.status(201).json({
+        success: true,
+        user: toSafeUser(newUser),
+        token
+      });
+    } catch (err: any) {
+      return res.status(500).json({ error: 'Registration failed: ' + (err.message || 'Unknown error') });
+    }
+  });
+
+  // --- AUTH ROUTE: LOGIN ---
+  app.post('/api/auth/login', apiRateLimiter(30, 60000), (req: Request, res: Response) => {
+    try {
+      const { email, password } = req.body;
+      if (!email || !password) {
+        return res.status(400).json({ error: 'Email and password are required.' });
+      }
+
+      const cleanEmail = String(email).trim().toLowerCase();
+      const user = serverUsers.find(u => u.email === cleanEmail);
+
+      if (!user) {
+        return res.status(401).json({ error: 'Invalid email or password. Please verify your credentials.' });
+      }
+
+      const inputHash = hashPassword(password);
+      if (user.passwordHash !== inputHash) {
+        return res.status(401).json({ error: 'Invalid email or password. Please verify your credentials.' });
+      }
+
+      // Update session info
+      const now = new Date().toISOString();
+      user.lastLoginAt = now;
+      user.lastActivityAt = now;
+      user.sessionCount = (user.sessionCount || 0) + 1;
+
+      // Record login event
+      serverActivities.push({
+        id: `act_${Date.now()}`,
+        userId: user.id,
+        userName: user.name,
+        userEmail: user.email,
+        activity: `Logged in to LAB HUB (Session #${user.sessionCount})`,
+        section: 'Authentication',
+        timestamp: now
+      });
+
+      const token = createSessionToken(user);
+      return res.json({
+        success: true,
+        user: toSafeUser(user),
+        token
+      });
+    } catch (err: any) {
+      return res.status(500).json({ error: 'Login failed: ' + (err.message || 'Unknown error') });
+    }
+  });
+
+  // --- AUTH ROUTE: GET CURRENT USER (ME) ---
+  app.get('/api/auth/me', (req: Request, res: Response) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Unauthenticated' });
+    }
+    const token = authHeader.split(' ')[1];
+    const verified = verifySessionToken(token);
+    if (!verified) {
+      return res.status(401).json({ error: 'Session expired or invalid token' });
+    }
+    const user = serverUsers.find(u => u.id === verified.userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    return res.json({ user: toSafeUser(user) });
+  });
+
+  // --- AUTH ROUTE: FORGOT PASSWORD ---
+  app.post('/api/auth/forgot-password', apiRateLimiter(10, 60000), (req: Request, res: Response) => {
+    const { email, newPassword } = req.body;
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required' });
+    }
+    const cleanEmail = String(email).trim().toLowerCase();
+    const user = serverUsers.find(u => u.email === cleanEmail);
+    if (!user) {
+      // Don't leak whether email exists or not
+      return res.json({ success: true, message: 'If this email exists in our system, password reset instructions have been sent.' });
+    }
+
+    if (newPassword && newPassword.length >= 6) {
+      user.passwordHash = hashPassword(newPassword);
+      return res.json({ success: true, message: 'Password has been successfully updated.' });
+    }
+
+    return res.json({ success: true, message: 'Reset token generated. You can now set your new password.' });
+  });
+
+  // --- ACTIVITY ROUTE: LOG USER ACTIVITY ---
+  app.post('/api/user/activity', (req: Request, res: Response) => {
+    const authHeader = req.headers.authorization;
+    let userId = 'usr_guest';
+    let userName = 'Student';
+    let userEmail = '';
+
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.split(' ')[1];
+      const verified = verifySessionToken(token);
+      if (verified) {
+        const u = serverUsers.find(user => user.id === verified.userId);
+        if (u) {
+          userId = u.id;
+          userName = u.name;
+          userEmail = u.email;
+          u.lastActivityAt = new Date().toISOString();
+        }
+      }
+    }
+
+    const { activity, section, metadata } = req.body;
+    if (!activity || !section) {
+      return res.status(400).json({ error: 'Activity and section are required' });
+    }
+
+    const act: ServerActivity = {
+      id: `act_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      userId,
+      userName,
+      userEmail,
+      activity: String(activity).trim().substring(0, 200),
+      section: String(section).trim().substring(0, 100),
+      timestamp: new Date().toISOString(),
+      metadata
+    };
+
+    serverActivities.unshift(act);
+    // Keep max 1000 activities
+    if (serverActivities.length > 1000) {
+      serverActivities.pop();
+    }
+
+    return res.json({ success: true, activity: act });
+  });
+
+  // --- ADMIN ROUTE: GET ALL USERS (Strict Admin Permission) ---
+  app.get('/api/admin/users', (req: Request, res: Response) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Admin authentication required.' });
+    }
+    const token = authHeader.split(' ')[1];
+    const verified = verifySessionToken(token);
+    if (!verified || verified.role !== 'admin') {
+      return res.status(403).json({ error: 'Access Denied: Faculty Admin Privileges Required.' });
+    }
+
+    // Return list of all users
+    return res.json({
+      users: serverUsers.map(toSafeUser),
+      total: serverUsers.length
+    });
+  });
+
+  // --- ADMIN ROUTE: GET USER ACTIVITY (Strict Admin Permission) ---
+  app.get('/api/admin/users/:userId/activity', (req: Request, res: Response) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Admin authentication required.' });
+    }
+    const token = authHeader.split(' ')[1];
+    const verified = verifySessionToken(token);
+    if (!verified || verified.role !== 'admin') {
+      return res.status(403).json({ error: 'Access Denied: Faculty Admin Privileges Required.' });
+    }
+
+    const { userId } = req.params;
+    const userActivities = serverActivities.filter(a => a.userId === userId);
+    return res.json({ activities: userActivities });
+  });
+
+  // --- ADMIN ROUTE: GET ANALYTICS METRICS (Strict Admin Permission) ---
+  app.get('/api/admin/metrics', (req: Request, res: Response) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Admin authentication required.' });
+    }
+    const token = authHeader.split(' ')[1];
+    const verified = verifySessionToken(token);
+    if (!verified || verified.role !== 'admin') {
+      return res.status(403).json({ error: 'Access Denied: Faculty Admin Privileges Required.' });
+    }
+
+    const now = Date.now();
+    const oneDayAgo = now - 24 * 60 * 60 * 1000;
+    const sevenDaysAgo = now - 7 * 24 * 60 * 60 * 1000;
+
+    const totalUsers = serverUsers.length;
+    const todaysLogins = serverUsers.filter(u => new Date(u.lastLoginAt).getTime() >= oneDayAgo).length;
+    const activeRecently = serverUsers.filter(u => new Date(u.lastActivityAt).getTime() >= oneDayAgo).length;
+    const newUsersThisWeek = serverUsers.filter(u => new Date(u.createdAt).getTime() >= sevenDaysAgo).length;
+
+    return res.json({
+      totalUsers,
+      todaysLogins,
+      activeRecently,
+      newUsersThisWeek,
+      totalActivities: serverActivities.length
     });
   });
 

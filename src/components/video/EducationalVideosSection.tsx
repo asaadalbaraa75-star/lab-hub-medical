@@ -54,7 +54,7 @@ export const EducationalVideosSection: React.FC<Props> = ({ onVideoCompleted }) 
     return EDUCATIONAL_VIDEOS;
   });
 
-  const currentUser = authService.getSession().user;
+  const currentUser = authService.getCurrentUser() || { role: 'student' as const };
   const isTeacherOrAdmin = currentUser.role === 'admin' || currentUser.role === 'instructor';
 
   const [selectedVideo, setSelectedVideo] = useState<EducationalVideo>(videoList[0] || EDUCATIONAL_VIDEOS[0]);

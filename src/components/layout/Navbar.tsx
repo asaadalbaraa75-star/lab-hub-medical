@@ -31,6 +31,7 @@ interface NavbarProps {
   onRoleChange?: (role: 'student' | 'instructor' | 'admin') => void;
   unreadAnnouncementsCount?: number;
   onSelectSearchResult?: (result: { type: string; id: string; labId?: string }) => void;
+  onLogout?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -48,7 +49,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onSwitchRole,
   onRoleChange,
   unreadAnnouncementsCount,
-  onSelectSearchResult
+  onSelectSearchResult,
+  onLogout
 }) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -314,7 +316,21 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </button>
               </div>
 
-              <div className="pt-1.5">
+              <div className="pt-1.5 space-y-0.5">
+                {safeUser.role === 'admin' && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (onSelectTab) onSelectTab('admin_dashboard');
+                      setShowUserMenu(false);
+                    }}
+                    className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs font-bold text-amber-800 bg-amber-50 hover:bg-amber-100 transition-colors"
+                  >
+                    <Shield className="w-3.5 h-3.5 text-amber-600" />
+                    <span>لوحة الإدارة والحوكمة (Admin)</span>
+                  </button>
+                )}
+
                 <button
                   type="button"
                   onClick={() => {
@@ -324,19 +340,23 @@ export const Navbar: React.FC<NavbarProps> = ({
                   className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
                 >
                   <UserCheck className="w-3.5 h-3.5 text-slate-400" />
-                  <span>My Profile & Enrolled Labs</span>
+                  <span>ملفي الشخصي والمعامل المسجلة</span>
                 </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (onOpenAuthModal) onOpenAuthModal();
-                    setShowUserMenu(false);
-                  }}
-                  className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs text-rose-600 hover:bg-rose-50 transition-colors mt-0.5"
-                >
-                  <LogOut className="w-3.5 h-3.5" />
-                  <span>Switch / Sign Out</span>
-                </button>
+
+                {onLogout && (
+                  <button
+                    type="button"
+                    id="navbar-logout-btn"
+                    onClick={() => {
+                      onLogout();
+                      setShowUserMenu(false);
+                    }}
+                    className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors"
+                  >
+                    <LogOut className="w-3.5 h-3.5 text-rose-600" />
+                    <span>تسجيل الخروج (Sign Out)</span>
+                  </button>
+                )}
               </div>
             </div>
           )}

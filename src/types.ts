@@ -16,7 +16,9 @@ export type ApprovalWorkflowState = PracticalStatus;
 
 export interface User {
   id: string;
+  userId?: string; // alias for id
   name: string;
+  fullName?: string; // alias for name
   email: string;
   studentId: string;
   role: UserRole;
@@ -24,6 +26,34 @@ export interface User {
   department: string;
   year?: string;
   enrolledLabs: LabSubjectId[];
+  createdAt?: string;
+  lastLoginAt?: string;
+  lastActivityAt?: string;
+  sessionCount?: number;
+}
+
+export interface UserActivityRecord {
+  id: string;
+  userId: string;
+  userName: string;
+  userEmail: string;
+  activity: string;
+  section: string;
+  timestamp: string;
+  metadata?: Record<string, any>;
+}
+
+export interface AuthSession {
+  token: string;
+  user: User;
+  expiresAt: number;
+}
+
+export interface AdminAnalyticsMetrics {
+  totalUsers: number;
+  todaysLogins: number;
+  activeRecently: number;
+  newUsersThisWeek: number;
 }
 
 export interface LabCategory {
