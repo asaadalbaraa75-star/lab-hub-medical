@@ -482,16 +482,27 @@ async function startServer() {
       user.lastActivityAt = now;
       user.sessionCount = (user.sessionCount || 0) + 1;
 
-      // Record login event
-      serverActivities.push({
-        id: `act_${Date.now()}`,
+      // Record detailed login event (Unshift so latest is first)
+      serverActivities.unshift({
+        id: `act_login_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
         userId: user.id,
         userName: user.name,
         userEmail: user.email,
-        activity: `Logged in to LAB HUB (Session #${user.sessionCount})`,
+        activity: `تسجيل الدخول إلى المنصة (جلسة رقم ${user.sessionCount})`,
         section: 'Authentication',
-        timestamp: now
+        timestamp: now,
+        metadata: {
+          type: 'login',
+          role: user.role,
+          sessionNumber: user.sessionCount,
+          loginTime: now
+        }
       });
+
+      // Keep max 1000 activities
+      if (serverActivities.length > 1000) {
+        serverActivities.pop();
+      }
 
       saveDb();
 
@@ -528,6 +539,64 @@ async function startServer() {
       });
     } catch (err: any) {
       return res.status(500).json({ error: 'Login failed: ' + (err.message || 'Unknown error') });
+    }
+  });
+
+  // --- AUTH ROUTE: LOGOUT (Persistent Tracking) ---
+  app.post('/api/auth/logout', (req: Request, res: Response) => {
+    try {
+      const authHeader = req.headers.authorization;
+      let userName = 'User';
+      let userEmail = '';
+      let userId = 'usr_guest';
+      let role = 'student';
+      const { reason = 'Manual logout' } = req.body || {};
+
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        const token = authHeader.split(' ')[1];
+        const verified = verifySessionToken(token);
+        if (verified) {
+          userId = verified.userId;
+          role = verified.role;
+          const u = serverUsers.find(user => user.id === verified.userId);
+          if (u) {
+            userName = u.name;
+            userEmail = u.email;
+            u.lastActivityAt = new Date().toISOString();
+          }
+
+          if (role === 'admin') {
+            const sess = activeAdminSessions.find(s => s.userId === userId && !s.revoked);
+            if (sess) sess.revoked = true;
+          }
+        }
+      }
+
+      const now = new Date().toISOString();
+      serverActivities.unshift({
+        id: `act_logout_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+        userId,
+        userName,
+        userEmail,
+        activity: `تسجيل الخروج من المنصة (${reason === 'session_expired' ? 'انتهاء مهلة الجلسة' : 'تسجيل خروج يدوي'})`,
+        section: 'Authentication',
+        timestamp: now,
+        metadata: {
+          type: 'logout',
+          role,
+          reason,
+          logoutTime: now
+        }
+      });
+
+      if (serverActivities.length > 1000) {
+        serverActivities.pop();
+      }
+
+      saveDb();
+      return res.json({ success: true, message: 'Logout successfully logged to database.' });
+    } catch (err: any) {
+      return res.status(500).json({ error: 'Logout tracking failed: ' + err.message });
     }
   });
 
@@ -737,20 +806,79 @@ async function startServer() {
     }
 
     const now = Date.now();
+    const fifteenMinutesAgo = now - 15 * 60 * 1000;
     const oneDayAgo = now - 24 * 60 * 60 * 1000;
     const sevenDaysAgo = now - 7 * 24 * 60 * 60 * 1000;
 
     const totalUsers = serverUsers.length;
-    const todaysLogins = serverUsers.filter(u => new Date(u.lastLoginAt).getTime() >= oneDayAgo).length;
+    const activeNow = serverUsers.filter(u => new Date(u.lastActivityAt).getTime() >= fifteenMinutesAgo).length;
     const activeRecently = serverUsers.filter(u => new Date(u.lastActivityAt).getTime() >= oneDayAgo).length;
+    const todaysLogins = serverActivities.filter(a => {
+      const isLogin = a.metadata?.type === 'login' || (a.section === 'Authentication' && !a.activity.includes('الخروج'));
+      return isLogin && new Date(a.timestamp).getTime() >= oneDayAgo;
+    }).length || serverUsers.filter(u => new Date(u.lastLoginAt).getTime() >= oneDayAgo).length;
+
+    const todaysLogouts = serverActivities.filter(a => {
+      const isLogout = a.metadata?.type === 'logout' || a.activity.includes('الخروج');
+      return isLogout && new Date(a.timestamp).getTime() >= oneDayAgo;
+    }).length;
+
     const newUsersThisWeek = serverUsers.filter(u => new Date(u.createdAt).getTime() >= sevenDaysAgo).length;
 
     return res.json({
       totalUsers,
-      todaysLogins,
-      activeRecently,
+      activeNow: Math.max(activeNow, 1),
+      todaysLogins: Math.max(todaysLogins, 1),
+      todaysLogouts,
+      activeRecently: Math.max(activeRecently, 1),
       newUsersThisWeek,
       totalActivities: serverActivities.length
+    });
+  });
+
+  // --- ADMIN ROUTE: GET CURRENTLY ACTIVE USERS (Strict Admin Permission) ---
+  app.get('/api/admin/active-users', (req: Request, res: Response) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Admin authentication required.' });
+    }
+    const token = authHeader.split(' ')[1];
+    const verified = verifySessionToken(token);
+    if (!verified || verified.role !== 'admin') {
+      return res.status(403).json({ error: 'Access Denied: Faculty Admin Privileges Required.' });
+    }
+
+    const now = Date.now();
+    const fifteenMinutesAgo = now - 15 * 60 * 1000;
+    const oneDayAgo = now - 24 * 60 * 60 * 1000;
+
+    const activeList = serverUsers.map(user => {
+      const lastActTime = user.lastActivityAt ? new Date(user.lastActivityAt).getTime() : 0;
+      const isActiveNow = now - lastActTime <= 15 * 60 * 1000;
+      const isActiveToday = now - lastActTime <= 24 * 60 * 60 * 1000;
+
+      // Find last recorded activity
+      const lastAct = serverActivities.find(a => a.userId === user.id);
+
+      return {
+        ...toSafeUser(user),
+        isActiveNow,
+        isActiveToday,
+        statusArabic: isActiveNow ? 'نشط الآن' : isActiveToday ? 'نشط اليوم' : 'غير نشط',
+        lastAction: lastAct ? lastAct.activity : 'تسجيل الدخول إلى المنصة',
+        lastActionSection: lastAct ? lastAct.section : 'المنصة العامة',
+        lastActionTimestamp: lastAct ? lastAct.timestamp : user.lastActivityAt
+      };
+    }).sort((a, b) => {
+      if (a.isActiveNow && !b.isActiveNow) return -1;
+      if (!a.isActiveNow && b.isActiveNow) return 1;
+      return new Date(b.lastActivityAt || 0).getTime() - new Date(a.lastActivityAt || 0).getTime();
+    });
+
+    return res.json({
+      activeUsers: activeList,
+      totalActiveNow: activeList.filter(u => u.isActiveNow).length,
+      totalActiveToday: activeList.filter(u => u.isActiveToday).length
     });
   });
 

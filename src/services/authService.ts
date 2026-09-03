@@ -471,12 +471,26 @@ export class AuthService {
   }
 
   /**
-   * Logout user and revoke access
+   * Logout user and revoke access (Persistent server and local tracking)
    */
-  public logout(): void {
+  public logout(reason: string = 'تسجيل خروج يدوي'): void {
+    const session = this.getSession();
+    const token = session?.token;
     try {
-      this.trackActivity('تسجيل الخروج من المنصة (Logged Out)', 'Authentication');
-      fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
+      this.trackActivity(`تسجيل الخروج من المنصة (${reason})`, 'Authentication', {
+        type: 'logout',
+        reason,
+        logoutTime: new Date().toISOString()
+      });
+
+      fetch('/api/auth/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify({ reason })
+      }).catch(() => {});
     } catch {}
     localStorage.removeItem(AUTH_STORAGE_KEY);
   }
@@ -652,6 +666,55 @@ export class AuthService {
     } catch {}
 
     return [];
+  }
+
+  /**
+   * Admin-Only: Fetch currently active users and online status
+   */
+  public async getActiveUsers(caller: User): Promise<{
+    activeUsers: (User & { isActiveNow: boolean; isActiveToday: boolean; statusArabic: string; lastAction: string; lastActionSection: string; lastActionTimestamp: string })[];
+    totalActiveNow: number;
+    totalActiveToday: number;
+  }> {
+    if (caller.role !== 'admin') {
+      return { activeUsers: [], totalActiveNow: 0, totalActiveToday: 0 };
+    }
+
+    const session = this.getSession();
+    if (session && session.token) {
+      try {
+        const res = await fetch('/api/admin/active-users', {
+          headers: { 'Authorization': `Bearer ${session.token}` }
+        });
+        if (res.ok) {
+          return await res.json();
+        }
+      } catch {}
+    }
+
+    // Fallback based on users and activities
+    const users = await this.getAllUsers(caller);
+    const now = Date.now();
+    const activeList = users.map(u => {
+      const lastAct = u.lastActivityAt ? new Date(u.lastActivityAt).getTime() : 0;
+      const isActiveNow = now - lastAct <= 15 * 60 * 1000;
+      const isActiveToday = now - lastAct <= 24 * 60 * 60 * 1000;
+      return {
+        ...u,
+        isActiveNow,
+        isActiveToday,
+        statusArabic: isActiveNow ? 'نشط الآن' : isActiveToday ? 'نشط اليوم' : 'غير نشط',
+        lastAction: 'نشاط دراسي في المنصة',
+        lastActionSection: 'المعامل',
+        lastActionTimestamp: u.lastActivityAt || new Date().toISOString()
+      };
+    });
+
+    return {
+      activeUsers: activeList,
+      totalActiveNow: activeList.filter(u => u.isActiveNow).length,
+      totalActiveToday: activeList.filter(u => u.isActiveToday).length
+    };
   }
 
   /**

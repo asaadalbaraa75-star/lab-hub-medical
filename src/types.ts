@@ -52,6 +52,7 @@ export interface AuthSession {
 export type AdminSubPage = 
   | 'overview' 
   | 'users' 
+  | 'active_users'
   | 'activity' 
   | 'analytics' 
   | 'content' 
@@ -60,7 +61,9 @@ export type AdminSubPage =
 
 export interface AdminAnalyticsMetrics {
   totalUsers: number;
+  activeNow?: number;
   todaysLogins: number;
+  todaysLogouts?: number;
   activeRecently: number;
   newUsersThisWeek: number;
   totalActivities?: number;

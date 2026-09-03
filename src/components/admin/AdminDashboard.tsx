@@ -34,11 +34,13 @@ import {
 import { authService } from '../../services/authService';
 import { AdminOverviewTab } from './tabs/AdminOverviewTab';
 import { AdminUsersTab } from './tabs/AdminUsersTab';
+import { AdminActiveUsersTab } from './tabs/AdminActiveUsersTab';
 import { AdminActivityTab } from './tabs/AdminActivityTab';
 import { AdminAnalyticsTab } from './tabs/AdminAnalyticsTab';
 import { AdminContentTab } from './tabs/AdminContentTab';
 import { AdminVideosTab } from './tabs/AdminVideosTab';
 import { AdminSecurityTab } from './tabs/AdminSecurityTab';
+import { Radio } from 'lucide-react';
 
 interface AdminDashboardProps {
   currentUser: User;
@@ -80,6 +82,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     const parseHash = () => {
       const hash = window.location.hash.toLowerCase();
       if (hash.includes('admin/users')) setActiveSubPage('users');
+      else if (hash.includes('admin/active_users') || hash.includes('admin/active-users')) setActiveSubPage('active_users');
       else if (hash.includes('admin/activity')) setActiveSubPage('activity');
       else if (hash.includes('admin/analytics')) setActiveSubPage('analytics');
       else if (hash.includes('admin/content')) setActiveSubPage('content');
@@ -185,15 +188,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     );
   }
 
-  // Navigation Tabs Configuration
+  // Navigation Tabs Configuration (Fully in Professional Administrative Arabic)
   const navTabs: { id: AdminSubPage; label: string; icon: React.ReactNode; badge?: number }[] = [
-    { id: 'overview', label: 'الرئيسية (Overview)', icon: <Home className="w-4 h-4" /> },
-    { id: 'users', label: 'المستخدمون (Users)', icon: <Users className="w-4 h-4" />, badge: users.length },
-    { id: 'activity', label: 'سجل الأنشطة (Activity)', icon: <Activity className="w-4 h-4" />, badge: activities.length },
-    { id: 'analytics', label: 'التحليلات (Analytics)', icon: <TrendingUp className="w-4 h-4" /> },
-    { id: 'content', label: 'إدارة المحتوى (Content)', icon: <BookOpen className="w-4 h-4" /> },
-    { id: 'videos', label: 'إدارة الفيديوهات (Videos)', icon: <Video className="w-4 h-4" /> },
-    { id: 'security', label: 'الأمان والصلاحيات (Security)', icon: <Lock className="w-4 h-4" /> }
+    { id: 'overview', label: 'الرئيسية والإحصائيات', icon: <Home className="w-4 h-4" /> },
+    { id: 'users', label: 'إدارة الطلاب والمستخدمين', icon: <Users className="w-4 h-4" />, badge: users.length },
+    { id: 'active_users', label: 'النشطون حالياً', icon: <Radio className="w-4 h-4 text-emerald-500" /> },
+    { id: 'activity', label: 'سجل الدخول والأنشطة', icon: <Activity className="w-4 h-4" />, badge: activities.length },
+    { id: 'analytics', label: 'التحليلات المتقدمة', icon: <TrendingUp className="w-4 h-4" /> },
+    { id: 'content', label: 'إدارة المحتوى المعملي', icon: <BookOpen className="w-4 h-4" /> },
+    { id: 'videos', label: 'إدارة الفيديوهات', icon: <Video className="w-4 h-4" /> },
+    { id: 'security', label: 'الأمان والامتيازات', icon: <Lock className="w-4 h-4" /> }
   ];
 
   return (
@@ -288,6 +292,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             currentUser={currentUser}
             onSelectUserForLogs={handleSelectUserForLogs}
             onUpdateRole={handleUpdateRole}
+          />
+        )}
+
+        {activeSubPage === 'active_users' && (
+          <AdminActiveUsersTab
+            currentUser={currentUser}
+            onSelectUserForLogs={handleSelectUserForLogs}
           />
         )}
 

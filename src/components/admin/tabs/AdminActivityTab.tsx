@@ -166,17 +166,25 @@ export const AdminActivityTab: React.FC<Props> = ({
             </p>
           </div>
 
-          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-xs font-bold">
-            {['all', 'Anatomy', 'Histology', 'Bacteriology', 'Biochemistry', 'OSPE', 'Video'].map(sec => (
+          <div className="flex flex-wrap items-center gap-1 bg-slate-100 p-1 rounded-xl text-xs font-bold">
+            {[
+              { id: 'all', label: 'الكل' },
+              { id: 'Authentication', label: 'دخول وخروج' },
+              { id: 'Anatomy', label: 'التشريح' },
+              { id: 'Histology', label: 'الأنسجة' },
+              { id: 'Bacteriology', label: 'البكتيريا' },
+              { id: 'Biochemistry', label: 'الكيمياء' },
+              { id: 'OSPE', label: 'الاختبارات' }
+            ].map(sec => (
               <button
-                key={sec}
+                key={sec.id}
                 type="button"
-                onClick={() => setSectionFilter(sec)}
+                onClick={() => setSectionFilter(sec.id)}
                 className={`px-2.5 py-1 rounded-lg transition-colors ${
-                  sectionFilter === sec ? 'bg-white text-indigo-600 shadow-2xs' : 'text-slate-500 hover:text-slate-800'
+                  sectionFilter === sec.id ? 'bg-white text-indigo-600 shadow-2xs' : 'text-slate-500 hover:text-slate-800'
                 }`}
               >
-                {sec === 'all' ? 'الكل' : sec}
+                {sec.label}
               </button>
             ))}
           </div>
@@ -186,30 +194,49 @@ export const AdminActivityTab: React.FC<Props> = ({
           {filteredActivities.length === 0 ? (
             <p className="text-xs text-slate-400 text-center py-6">لا توجد أنشطة مسجلة في هذا القسم حالياً.</p>
           ) : (
-            filteredActivities.slice(0, 20).map(act => (
-              <div
-                key={act.id}
-                className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50/70 hover:bg-slate-100 border border-slate-100 transition-colors text-xs"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-2.5 h-2.5 rounded-full bg-indigo-600 shrink-0" />
-                  <div>
-                    <span className="font-bold text-slate-900">{act.userName}</span>
-                    <span className="text-slate-400 mx-2 font-mono">({act.userEmail})</span>
-                    <span className="text-slate-700 font-medium">{act.activity}</span>
+            filteredActivities.slice(0, 30).map(act => {
+              const isLogin = act.metadata?.type === 'login' || (act.section === 'Authentication' && !act.activity.includes('الخروج'));
+              const isLogout = act.metadata?.type === 'logout' || act.activity.includes('الخروج');
+
+              return (
+                <div
+                  key={act.id}
+                  className={`flex items-center justify-between p-3.5 rounded-xl border transition-colors text-xs ${
+                    isLogin
+                      ? 'bg-emerald-50/40 border-emerald-100 hover:bg-emerald-50/70'
+                      : isLogout
+                      ? 'bg-rose-50/40 border-rose-100 hover:bg-rose-50/70'
+                      : 'bg-slate-50/70 border-slate-100 hover:bg-slate-100'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`w-2.5 h-2.5 rounded-full shrink-0 ${
+                      isLogin ? 'bg-emerald-500 animate-pulse' : isLogout ? 'bg-rose-500' : 'bg-indigo-600'
+                    }`} />
+                    <div>
+                      <span className="font-bold text-slate-900">{act.userName}</span>
+                      <span className="text-slate-400 mx-2 font-mono">({act.userEmail})</span>
+                      <span className="text-slate-700 font-medium">{act.activity}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2.5 text-[11px] shrink-0">
+                    <span className={`px-2 py-0.5 rounded-md font-bold border ${
+                      isLogin
+                        ? 'bg-emerald-100 text-emerald-800 border-emerald-200'
+                        : isLogout
+                        ? 'bg-rose-100 text-rose-800 border-rose-200'
+                        : 'bg-indigo-50 text-indigo-700 border border-indigo-200'
+                    }`}>
+                      {isLogin ? '🟢 تسجيل دخول' : isLogout ? '🔴 تسجيل خروج' : act.section}
+                    </span>
+                    <span className="text-slate-400 font-mono">
+                      {new Date(act.timestamp).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                    </span>
                   </div>
                 </div>
-
-                <div className="flex items-center gap-2.5 text-[11px] shrink-0">
-                  <span className="px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 font-bold border border-indigo-200">
-                    {act.section}
-                  </span>
-                  <span className="text-slate-400">
-                    {new Date(act.timestamp).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })}
-                  </span>
-                </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
       </div>

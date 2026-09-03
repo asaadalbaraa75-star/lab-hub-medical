@@ -11,7 +11,10 @@ import {
   CheckCircle2,
   BookOpen,
   Video,
-  ChevronRight
+  ChevronRight,
+  LogOut,
+  Radio,
+  BarChart3
 } from 'lucide-react';
 import { User, UserActivityRecord, AdminAnalyticsMetrics, AdminSubPage } from '../../../types';
 
@@ -38,145 +41,203 @@ export const AdminOverviewTab: React.FC<Props> = ({
 
   return (
     <div className="space-y-8 animate-in fade-in duration-300">
-      {/* 4 Primary Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* 6 Primary Summary Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3.5">
         {/* Total Users */}
         <div 
           onClick={() => onSelectSubPage('users')}
-          className="bg-white p-5 rounded-2xl border border-[#E2E8F0] shadow-sm hover:shadow-md hover:border-indigo-300 transition-all cursor-pointer group"
+          className="bg-white p-4 rounded-2xl border border-[#E2E8F0] shadow-sm hover:shadow-md hover:border-indigo-300 transition-all cursor-pointer group"
         >
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">إجمالي المستخدمين</span>
-            <div className="p-2.5 rounded-xl bg-indigo-50 text-indigo-600 group-hover:scale-110 transition-transform">
-              <Users className="w-5 h-5" />
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-bold text-slate-500">إجمالي الطلاب</span>
+            <div className="p-2 rounded-xl bg-indigo-50 text-indigo-600 group-hover:scale-110 transition-transform">
+              <Users className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-3xl font-black text-slate-900">{metrics.totalUsers}</div>
-          <div className="mt-2 flex items-center justify-between text-xs text-slate-500">
-            <span>{studentCount} طالب | {adminCount} إدارة</span>
-            <span className="text-indigo-600 font-semibold flex items-center gap-0.5">
-              عرض <ArrowUpRight className="w-3.5 h-3.5" />
-            </span>
+          <div className="text-2xl font-black text-slate-900">{studentCount}</div>
+          <div className="mt-2 flex items-center justify-between text-[11px] text-slate-500">
+            <span>من أصل {metrics.totalUsers} حساب</span>
+            <ArrowUpRight className="w-3.5 h-3.5 text-indigo-600" />
           </div>
         </div>
 
-        {/* Active Users */}
+        {/* Active Users Now */}
         <div 
-          onClick={() => onSelectSubPage('activity')}
-          className="bg-white p-5 rounded-2xl border border-[#E2E8F0] shadow-sm hover:shadow-md hover:border-emerald-300 transition-all cursor-pointer group"
+          onClick={() => onSelectSubPage('active_users')}
+          className="bg-white p-4 rounded-2xl border border-[#E2E8F0] shadow-sm hover:shadow-md hover:border-emerald-300 transition-all cursor-pointer group"
         >
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">النشطون حالياً</span>
-            <div className="p-2.5 rounded-xl bg-emerald-50 text-emerald-600 group-hover:scale-110 transition-transform">
-              <Activity className="w-5 h-5" />
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-bold text-slate-500">النشطون الآن</span>
+            <div className="p-2 rounded-xl bg-emerald-50 text-emerald-600 group-hover:scale-110 transition-transform">
+              <Radio className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-3xl font-black text-slate-900">{metrics.activeRecently}</div>
-          <div className="mt-2 flex items-center justify-between text-xs text-emerald-600">
-            <span className="flex items-center gap-1 font-semibold">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              تفاعل خلال 24 ساعة
-            </span>
+          <div className="text-2xl font-black text-emerald-700 flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+            {metrics.activeNow || 1}
+          </div>
+          <div className="mt-2 flex items-center justify-between text-[11px] text-emerald-600">
+            <span>متصلون بالمنصة</span>
             <ArrowUpRight className="w-3.5 h-3.5" />
           </div>
         </div>
 
         {/* Today's Logins */}
         <div 
-          onClick={() => onSelectSubPage('analytics')}
-          className="bg-white p-5 rounded-2xl border border-[#E2E8F0] shadow-sm hover:shadow-md hover:border-amber-300 transition-all cursor-pointer group"
+          onClick={() => onSelectSubPage('activity')}
+          className="bg-white p-4 rounded-2xl border border-[#E2E8F0] shadow-sm hover:shadow-md hover:border-amber-300 transition-all cursor-pointer group"
         >
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">تسجيلات الدخول اليوم</span>
-            <div className="p-2.5 rounded-xl bg-amber-50 text-amber-600 group-hover:scale-110 transition-transform">
-              <Clock className="w-5 h-5" />
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-bold text-slate-500">دخول اليوم</span>
+            <div className="p-2 rounded-xl bg-amber-50 text-amber-600 group-hover:scale-110 transition-transform">
+              <Clock className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-3xl font-black text-slate-900">{metrics.todaysLogins}</div>
-          <div className="mt-2 flex items-center justify-between text-xs text-amber-700">
-            <span>جلسات اليوم</span>
-            <span className="font-semibold flex items-center gap-0.5">
-              تحليل <ArrowUpRight className="w-3.5 h-3.5" />
-            </span>
+          <div className="text-2xl font-black text-slate-900">{metrics.todaysLogins}</div>
+          <div className="mt-2 flex items-center justify-between text-[11px] text-amber-700">
+            <span>جلسات الدخول</span>
+            <ArrowUpRight className="w-3.5 h-3.5" />
+          </div>
+        </div>
+
+        {/* Today's Logouts */}
+        <div 
+          onClick={() => onSelectSubPage('activity')}
+          className="bg-white p-4 rounded-2xl border border-[#E2E8F0] shadow-sm hover:shadow-md hover:border-rose-300 transition-all cursor-pointer group"
+        >
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-bold text-slate-500">خروج اليوم</span>
+            <div className="p-2 rounded-xl bg-rose-50 text-rose-600 group-hover:scale-110 transition-transform">
+              <LogOut className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="text-2xl font-black text-slate-900">{metrics.todaysLogouts || 0}</div>
+          <div className="mt-2 flex items-center justify-between text-[11px] text-rose-700">
+            <span>جلسات منتهية</span>
+            <ArrowUpRight className="w-3.5 h-3.5" />
           </div>
         </div>
 
         {/* New Users This Week */}
         <div 
           onClick={() => onSelectSubPage('users')}
-          className="bg-white p-5 rounded-2xl border border-[#E2E8F0] shadow-sm hover:shadow-md hover:border-purple-300 transition-all cursor-pointer group"
+          className="bg-white p-4 rounded-2xl border border-[#E2E8F0] shadow-sm hover:shadow-md hover:border-purple-300 transition-all cursor-pointer group"
         >
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">مستخدمون جدد هذا الأسبوع</span>
-            <div className="p-2.5 rounded-xl bg-purple-50 text-purple-600 group-hover:scale-110 transition-transform">
-              <Calendar className="w-5 h-5" />
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-bold text-slate-500">جدد هذا الأسبوع</span>
+            <div className="p-2 rounded-xl bg-purple-50 text-purple-600 group-hover:scale-110 transition-transform">
+              <Calendar className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-3xl font-black text-slate-900">{metrics.newUsersThisWeek}</div>
-          <div className="mt-2 flex items-center justify-between text-xs text-purple-700">
-            <span>تسجيلات الأسبوع الحالي</span>
-            <span className="font-semibold flex items-center gap-0.5">
-              إدارة <ArrowUpRight className="w-3.5 h-3.5" />
-            </span>
+          <div className="text-2xl font-black text-slate-900">{metrics.newUsersThisWeek}</div>
+          <div className="mt-2 flex items-center justify-between text-[11px] text-purple-700">
+            <span>تسجيلات حديثة</span>
+            <ArrowUpRight className="w-3.5 h-3.5" />
+          </div>
+        </div>
+
+        {/* Total Activities */}
+        <div 
+          onClick={() => onSelectSubPage('activity')}
+          className="bg-white p-4 rounded-2xl border border-[#E2E8F0] shadow-sm hover:shadow-md hover:border-teal-300 transition-all cursor-pointer group"
+        >
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-bold text-slate-500">إجمالي الأنشطة</span>
+            <div className="p-2 rounded-xl bg-teal-50 text-teal-600 group-hover:scale-110 transition-transform">
+              <Activity className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="text-2xl font-black text-slate-900">{metrics.totalActivities || activities.length}</div>
+          <div className="mt-2 flex items-center justify-between text-[11px] text-teal-700">
+            <span>سجلات موثقة</span>
+            <ArrowUpRight className="w-3.5 h-3.5" />
           </div>
         </div>
       </div>
 
       {/* Quick Action Navigation Strip */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         <button
           type="button"
           onClick={() => onSelectSubPage('users')}
-          className="p-3.5 bg-white border border-[#E2E8F0] hover:border-indigo-500 rounded-xl flex items-center gap-3 transition-all text-right shadow-2xs group"
+          className="p-3 bg-white border border-[#E2E8F0] hover:border-indigo-500 rounded-xl flex items-center gap-2.5 transition-all text-right shadow-2xs group"
         >
           <div className="p-2 rounded-lg bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
             <Users className="w-4 h-4" />
           </div>
           <div className="min-w-0 flex-1">
             <div className="text-xs font-bold text-slate-800">إدارة المستخدمين</div>
-            <div className="text-[10px] text-slate-500 truncate">تعديل الأدوار والحسابات</div>
+            <div className="text-[10px] text-slate-500 truncate">تعديل الأدوار</div>
+          </div>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => onSelectSubPage('active_users')}
+          className="p-3 bg-white border border-[#E2E8F0] hover:border-emerald-500 rounded-xl flex items-center gap-2.5 transition-all text-right shadow-2xs group"
+        >
+          <div className="p-2 rounded-lg bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+            <Radio className="w-4 h-4" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="text-xs font-bold text-slate-800">النشطون حالياً</div>
+            <div className="text-[10px] text-slate-500 truncate">تتبع فوري مباشر</div>
           </div>
         </button>
 
         <button
           type="button"
           onClick={() => onSelectSubPage('activity')}
-          className="p-3.5 bg-white border border-[#E2E8F0] hover:border-teal-500 rounded-xl flex items-center gap-3 transition-all text-right shadow-2xs group"
+          className="p-3 bg-white border border-[#E2E8F0] hover:border-teal-500 rounded-xl flex items-center gap-2.5 transition-all text-right shadow-2xs group"
         >
           <div className="p-2 rounded-lg bg-teal-50 text-teal-600 group-hover:bg-teal-600 group-hover:text-white transition-colors">
             <Activity className="w-4 h-4" />
           </div>
           <div className="min-w-0 flex-1">
             <div className="text-xs font-bold text-slate-800">سجل الأنشطة</div>
-            <div className="text-[10px] text-slate-500 truncate">تتبع نشاط الطلاب العملي</div>
+            <div className="text-[10px] text-slate-500 truncate">سجل الدخول والخروج</div>
+          </div>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => onSelectSubPage('analytics')}
+          className="p-3 bg-white border border-[#E2E8F0] hover:border-blue-500 rounded-xl flex items-center gap-2.5 transition-all text-right shadow-2xs group"
+        >
+          <div className="p-2 rounded-lg bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+            <BarChart3 className="w-4 h-4" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="text-xs font-bold text-slate-800">التحليلات</div>
+            <div className="text-[10px] text-slate-500 truncate">تقارير التفاعل</div>
           </div>
         </button>
 
         <button
           type="button"
           onClick={() => onSelectSubPage('content')}
-          className="p-3.5 bg-white border border-[#E2E8F0] hover:border-amber-500 rounded-xl flex items-center gap-3 transition-all text-right shadow-2xs group"
+          className="p-3 bg-white border border-[#E2E8F0] hover:border-amber-500 rounded-xl flex items-center gap-2.5 transition-all text-right shadow-2xs group"
         >
           <div className="p-2 rounded-lg bg-amber-50 text-amber-600 group-hover:bg-amber-600 group-hover:text-white transition-colors">
             <BookOpen className="w-4 h-4" />
           </div>
           <div className="min-w-0 flex-1">
             <div className="text-xs font-bold text-slate-800">إدارة المحتوى</div>
-            <div className="text-[10px] text-slate-500 truncate">المعامل والمواد الأربعة</div>
+            <div className="text-[10px] text-slate-500 truncate">المعامل الأربعة</div>
           </div>
         </button>
 
         <button
           type="button"
           onClick={() => onSelectSubPage('videos')}
-          className="p-3.5 bg-white border border-[#E2E8F0] hover:border-rose-500 rounded-xl flex items-center gap-3 transition-all text-right shadow-2xs group"
+          className="p-3 bg-white border border-[#E2E8F0] hover:border-rose-500 rounded-xl flex items-center gap-2.5 transition-all text-right shadow-2xs group"
         >
           <div className="p-2 rounded-lg bg-rose-50 text-rose-600 group-hover:bg-rose-600 group-hover:text-white transition-colors">
             <Video className="w-4 h-4" />
           </div>
           <div className="min-w-0 flex-1">
-            <div className="text-xs font-bold text-slate-800">إدارة الفيديوهات</div>
-            <div className="text-[10px] text-slate-500 truncate">المحاضرات الطبية المركزة</div>
+            <div className="text-xs font-bold text-slate-800">فيديوهات المعامل</div>
+            <div className="text-[10px] text-slate-500 truncate">الشروحات المرئية</div>
           </div>
         </button>
       </div>
