@@ -260,22 +260,9 @@ export const Navbar: React.FC<NavbarProps> = ({
               </div>
 
               <div className="pt-1.5 space-y-0.5">
-                {safeUser.role === 'admin' && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (onSelectTab) onSelectTab('admin_dashboard');
-                      setShowUserMenu(false);
-                    }}
-                    className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs font-bold text-amber-800 bg-amber-50 hover:bg-amber-100 transition-colors"
-                  >
-                    <Shield className="w-3.5 h-3.5 text-amber-600" />
-                    <span>لوحة الإدارة والحوكمة (Admin)</span>
-                  </button>
-                )}
-
                 <button
                   type="button"
+                  id="navbar-profile-menu-item"
                   onClick={() => {
                     if (onSelectTab) onSelectTab('profile');
                     setShowUserMenu(false);
@@ -285,6 +272,23 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <UserCheck className="w-3.5 h-3.5 text-slate-400" />
                   <span>ملفي الشخصي والمعامل المسجلة</span>
                 </button>
+
+                {safeUser.role === 'admin' && (
+                  <button
+                    type="button"
+                    id="navbar-admin-dashboard-btn"
+                    onClick={() => {
+                      window.history.pushState(null, '', '/admin');
+                      window.location.hash = '#admin';
+                      if (onSelectTab) onSelectTab('admin');
+                      setShowUserMenu(false);
+                    }}
+                    className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs font-bold text-amber-800 bg-amber-50 hover:bg-amber-100 transition-colors"
+                  >
+                    <span className="text-sm">🛡️</span>
+                    <span>Admin Dashboard</span>
+                  </button>
+                )}
 
                 {onLogout && (
                   <button

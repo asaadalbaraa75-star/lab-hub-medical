@@ -37,6 +37,7 @@ import { SpotterView } from './components/spotter/SpotterView';
 import { QuizzesOverviewPage } from './components/quiz/QuizzesOverviewPage';
 import { QuizRunner } from './components/quiz/QuizRunner';
 import { ProgressPage } from './components/progress/ProgressPage';
+import { StudentProfilePage } from './components/profile/StudentProfilePage';
 import { SchedulePage } from './components/schedule/SchedulePage';
 import { AcademicApprovalHub } from './components/academic/AcademicApprovalHub';
 
@@ -108,6 +109,7 @@ export default function App() {
         'quizzes',
         'schedule',
         'progress',
+        'profile',
         'academic_approval',
         'histology_microscope',
         'mcq_bank',
@@ -658,6 +660,16 @@ export default function App() {
             progress={progress}
             currentUser={currentUser}
             onOpenPractical={handleOpenPractical}
+          />
+        );
+
+      case 'profile':
+        return (
+          <StudentProfilePage
+            currentUser={currentUser}
+            progress={progress}
+            onSelectLab={handleSelectLab}
+            onSelectTab={handleTabSelect}
           />
         );
 

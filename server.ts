@@ -322,23 +322,56 @@ async function startServer() {
     }
   };
 
+  // Interface for tracking active administrator sessions
+  interface AdminSessionRecord {
+    id: string;
+    tokenTimestamp: number;
+    userId: string;
+    ip: string;
+    userAgent: string;
+    createdAt: string;
+    lastActivityAt: string;
+    revoked: boolean;
+  }
+
+  // Security Update Epoch: invalidates all Admin tokens generated prior to this update
+  const SECURITY_UPDATE_TIMESTAMP = Date.now();
+  let minAdminTokenTimestamp = SECURITY_UPDATE_TIMESTAMP;
+  const activeAdminSessions: AdminSessionRecord[] = [];
+
   // Helper to generate a session token with role verification
   const createSessionToken = (user: ServerUser): string => {
-    const payload = `${user.id}:${user.role}:${Date.now()}`;
+    const timestamp = Date.now();
+    const payload = `${user.id}:${user.role}:${timestamp}`;
     const sig = crypto.createHmac('sha256', 'labhub_session_secret_2026').update(payload).digest('hex').substring(0, 16);
     return Buffer.from(`${payload}:${sig}`).toString('base64');
   };
 
-  const verifySessionToken = (token: string): { userId: string; role: string } | null => {
+  const verifySessionToken = (token: string): { userId: string; role: string; timestamp: number } | null => {
     try {
       const decoded = Buffer.from(token, 'base64').toString('ascii');
       const parts = decoded.split(':');
       if (parts.length < 4) return null;
-      const [userId, role, timestamp, sig] = parts;
+      const [userId, role, timestampStr, sig] = parts;
       const expectedSig = crypto.createHmac('sha256', 'labhub_session_secret_2026')
-        .update(`${userId}:${role}:${timestamp}`).digest('hex').substring(0, 16);
+        .update(`${userId}:${role}:${timestampStr}`).digest('hex').substring(0, 16);
       if (sig !== expectedSig) return null;
-      return { userId, role };
+
+      const tokenTime = Number(timestampStr);
+      // For Admin accounts: verify against the security update epoch and explicit revocation list
+      if (role === 'admin') {
+        if (isNaN(tokenTime) || tokenTime < minAdminTokenTimestamp) {
+          console.warn(`[SECURITY] Rejected expired or revoked Admin token (Token Timestamp: ${tokenTime}, Minimum Valid: ${minAdminTokenTimestamp})`);
+          return null;
+        }
+        const sessionRecord = activeAdminSessions.find(s => s.tokenTimestamp === tokenTime);
+        if (sessionRecord && sessionRecord.revoked) {
+          console.warn(`[SECURITY] Rejected explicitly revoked Admin session`);
+          return null;
+        }
+      }
+
+      return { userId, role, timestamp: tokenTime };
     } catch {
       return null;
     }
@@ -463,6 +496,31 @@ async function startServer() {
       saveDb();
 
       const token = createSessionToken(user);
+
+      if (user.role === 'admin') {
+        const decoded = Buffer.from(token, 'base64').toString('ascii');
+        const parts = decoded.split(':');
+        const tokenTimestamp = Number(parts[2]) || Date.now();
+        const clientIp = (req.headers['x-forwarded-for'] as string) || req.socket.remoteAddress || '127.0.0.1';
+        const userAgent = (req.headers['user-agent'] as string) || 'Modern Web Terminal';
+
+        activeAdminSessions.unshift({
+          id: `sess_adm_${Date.now()}`,
+          tokenTimestamp,
+          userId: user.id,
+          ip: clientIp.split(',')[0].trim(),
+          userAgent: userAgent.slice(0, 100),
+          createdAt: now,
+          lastActivityAt: now,
+          revoked: false
+        });
+
+        // Cap stored sessions
+        if (activeAdminSessions.length > 25) {
+          activeAdminSessions.pop();
+        }
+      }
+
       return res.json({
         success: true,
         user: toSafeUser(user),
@@ -804,6 +862,109 @@ async function startServer() {
       lessonActivity,
       quizActivity: { totalAttempts: 84, passed: 72, failed: 12 },
       videoActivity: { totalViews: 119, completedCount: 88 }
+    });
+  });
+
+  // --- ADMIN ROUTE: GET SECURITY STATUS (Strict Admin Permission) ---
+  app.get('/api/admin/security/status', (req: Request, res: Response) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Admin authentication required.' });
+    }
+    const token = authHeader.split(' ')[1];
+    const verified = verifySessionToken(token);
+    if (!verified || verified.role !== 'admin') {
+      return res.status(403).json({ error: 'Access Denied: Faculty Admin Privileges Required.' });
+    }
+
+    const adminUser = serverUsers.find(u => u.role === 'admin') || serverUsers[1];
+
+    // Build session snapshot
+    const currentSession = activeAdminSessions.find(s => s.tokenTimestamp === verified.timestamp) || {
+      id: `sess_adm_active_${verified.timestamp}`,
+      tokenTimestamp: verified.timestamp,
+      userId: verified.userId,
+      ip: (req.headers['x-forwarded-for'] as string)?.split(',')[0].trim() || req.socket.remoteAddress || '127.0.0.1',
+      userAgent: (req.headers['user-agent'] as string) || 'Authorized Admin Workstation',
+      createdAt: new Date(verified.timestamp).toISOString(),
+      lastActivityAt: new Date().toISOString(),
+      revoked: false
+    };
+
+    const securityEvents = serverActivities.filter(a =>
+      (a.section || '').toLowerCase().includes('sec') ||
+      (a.section || '').toLowerCase().includes('auth') ||
+      (a.activity || '').toLowerCase().includes('admin') ||
+      (a.activity || '').toLowerCase().includes('role') ||
+      (a.activity || '').toLowerCase().includes('session')
+    ).slice(0, 25);
+
+    return res.json({
+      adminAccount: {
+        name: adminUser.name,
+        email: adminUser.email,
+        studentId: adminUser.studentId,
+        role: adminUser.role,
+        department: adminUser.department,
+        accountStatus: 'Active & Verified (Role = admin)',
+        lastLoginAt: adminUser.lastLoginAt,
+        sessionCount: adminUser.sessionCount,
+        securityUpdateVersion: '2026.09.03_SEC_FINAL'
+      },
+      currentSession: {
+        ...currentSession,
+        isCurrent: true,
+        status: 'Active (Current Device)'
+      },
+      sessions: activeAdminSessions.map(s => ({
+        ...s,
+        isCurrent: s.tokenTimestamp === verified.timestamp
+      })),
+      minAdminTokenTimestamp,
+      securityEvents
+    });
+  });
+
+  // --- ADMIN ROUTE: REVOKE ALL OTHER ADMIN SESSIONS (Strict Admin Permission) ---
+  app.post('/api/admin/security/revoke-other-sessions', (req: Request, res: Response) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Admin authentication required.' });
+    }
+    const token = authHeader.split(' ')[1];
+    const verified = verifySessionToken(token);
+    if (!verified || verified.role !== 'admin') {
+      return res.status(403).json({ error: 'Access Denied: Faculty Admin Privileges Required.' });
+    }
+
+    // Keep current admin token valid, mark all others as revoked
+    minAdminTokenTimestamp = verified.timestamp;
+    let revokedCount = 0;
+    activeAdminSessions.forEach(s => {
+      if (s.tokenTimestamp !== verified.timestamp) {
+        s.revoked = true;
+        revokedCount++;
+      }
+    });
+
+    const now = new Date().toISOString();
+    serverActivities.unshift({
+      id: `act_sec_revoke_${Date.now()}`,
+      userId: verified.userId,
+      userName: 'Prof. Eleanor Hayes, MD, FRCPath',
+      userEmail: 'admin@med.edu',
+      activity: `Revoked all other Admin sessions (${revokedCount} session(s) invalidated). Current session maintained.`,
+      section: 'Security',
+      timestamp: now
+    });
+
+    saveDb();
+
+    return res.json({
+      success: true,
+      message: `Successfully revoked ${revokedCount} other Admin session(s). Your current authorized session remains active.`,
+      revokedCount,
+      activeSessionTimestamp: verified.timestamp
     });
   });
 

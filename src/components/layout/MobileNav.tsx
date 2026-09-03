@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, FlaskConical, Calendar, Bot, Award } from 'lucide-react';
+import { LayoutDashboard, FlaskConical, Award, BarChart3, User, Bot } from 'lucide-react';
 
 interface MobileNavProps {
   activeTab: string;
@@ -13,53 +13,80 @@ export const MobileNav: React.FC<MobileNavProps> = ({
   onSelectTab,
   onOpenAiTutor,
 }) => {
+  const isSubjectsActive = [
+    'laboratories',
+    'anatomy',
+    'histology',
+    'bacteriology',
+    'biochemistry',
+    'practical_detail',
+    'organism_detail',
+    'practicals',
+    'spotters',
+    'histology_microscope',
+    'bacteriology_concept_map',
+    'educational_videos'
+  ].includes(activeTab);
+
+  const isExamsActive = [
+    'medical_exams',
+    'exam_runner',
+    'exam_result',
+    'quizzes',
+    'quiz_runner',
+    'mcq_bank'
+  ].includes(activeTab);
+
   const navItems = [
-    { id: 'dashboard', label: 'الرئيسية', icon: LayoutDashboard },
-    { id: 'laboratories', label: 'المعامل', icon: FlaskConical },
-    { id: 'medical_exams', label: 'الامتحانات', icon: Award },
-    { id: 'ai_tutor', label: 'AI Tutor', icon: Bot, isTutor: true },
-    { id: 'progress', label: 'التقدم', icon: Calendar }
+    { id: 'dashboard', label: 'Home', icon: LayoutDashboard, isActive: activeTab === 'dashboard' },
+    { id: 'laboratories', label: 'Subjects', icon: FlaskConical, isActive: isSubjectsActive },
+    { id: 'medical_exams', label: 'Exams', icon: Award, isActive: isExamsActive },
+    { id: 'progress', label: 'Progress', icon: BarChart3, isActive: activeTab === 'progress' },
+    { id: 'profile', label: 'Profile', icon: User, isActive: activeTab === 'profile' },
   ];
 
   return (
-    <div
+    <nav
       id="mobile-bottom-nav"
-      className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-lg border-t border-[#E2E8F0] px-2 py-2 flex items-center justify-around shadow-lg"
+      aria-label="Mobile Navigation"
+      className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-900/95 backdrop-blur-xl border-t border-slate-800 px-3 py-2 flex items-center justify-around shadow-2xl safe-area-bottom"
     >
       {navItems.map(item => {
         const Icon = item.icon;
-        const isActive = activeTab === item.id || (item.id === 'laboratories' && ['anatomy', 'histology', 'bacteriology', 'biochemistry'].includes(activeTab));
-
-        if (item.isTutor) {
-          return (
-            <button
-              key={item.id}
-              type="button"
-              onClick={onOpenAiTutor}
-              className="flex flex-col items-center gap-1 p-2 text-indigo-600 hover:text-indigo-700 transition-colors"
-            >
-              <div className="p-1 rounded-lg bg-indigo-50 border border-indigo-200 shadow-2xs">
-                <Icon className="w-4 h-4 text-indigo-600" />
-              </div>
-              <span className="text-[10px] font-bold text-indigo-600">{item.label}</span>
-            </button>
-          );
-        }
+        const active = item.isActive;
 
         return (
           <button
             key={item.id}
             type="button"
+            id={`mobile-nav-${item.id}`}
             onClick={() => onSelectTab(item.id)}
-            className={`flex flex-col items-center gap-1 p-2 transition-colors ${
-              isActive ? 'text-indigo-600 font-bold' : 'text-slate-500 hover:text-slate-900'
+            className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] py-1 px-2 rounded-xl transition-all ${
+              active
+                ? 'text-cyan-400 font-semibold bg-cyan-950/40 border border-cyan-500/30 shadow-xs'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
             }`}
           >
-            <Icon className="w-5 h-5" />
-            <span className="text-[10px]">{item.label}</span>
+            <Icon className={`w-5 h-5 ${active ? 'text-cyan-400 scale-110' : 'text-slate-400'} transition-transform`} />
+            <span className="text-[11px] mt-1 tracking-tight">{item.label}</span>
           </button>
         );
       })}
-    </div>
+
+      {onOpenAiTutor && (
+        <button
+          type="button"
+          onClick={onOpenAiTutor}
+          aria-label="Open AI Tutor"
+          className="flex flex-col items-center justify-center min-w-[52px] min-h-[44px] py-1 px-2 rounded-xl text-indigo-400 hover:text-indigo-300 transition-all hover:bg-indigo-950/40"
+        >
+          <div className="p-1 rounded-lg bg-indigo-500/20 border border-indigo-500/30">
+            <Bot className="w-4 h-4 text-indigo-400" />
+          </div>
+          <span className="text-[10px] mt-1 font-medium text-indigo-300">AI Tutor</span>
+        </button>
+      )}
+    </nav>
   );
 };
+

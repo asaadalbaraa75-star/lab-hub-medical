@@ -81,6 +81,37 @@ export interface AdminAnalyticsBreakdown {
   videoActivity: { totalViews: number; completedCount: number };
 }
 
+export interface AdminSecuritySession {
+  id: string;
+  tokenTimestamp: number;
+  userId: string;
+  ip: string;
+  userAgent: string;
+  createdAt: string;
+  lastActivityAt: string;
+  revoked: boolean;
+  isCurrent?: boolean;
+  status?: string;
+}
+
+export interface AdminSecurityStatus {
+  adminAccount: {
+    name: string;
+    email: string;
+    studentId: string;
+    role: string;
+    department?: string;
+    accountStatus: string;
+    lastLoginAt?: string;
+    sessionCount?: number;
+    securityUpdateVersion?: string;
+  };
+  currentSession: AdminSecuritySession;
+  sessions: AdminSecuritySession[];
+  minAdminTokenTimestamp: number;
+  securityEvents: UserActivityRecord[];
+}
+
 export interface LabCategory {
   id: string;
   labId: LabSubjectId;
