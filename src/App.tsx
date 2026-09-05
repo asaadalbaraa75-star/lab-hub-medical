@@ -56,6 +56,7 @@ import { EducationalVideosSection } from './components/video/EducationalVideosSe
 import { AnatomicalPlanesInteractiveView } from './components/labs/anatomy/AnatomicalPlanesInteractiveView';
 import { AnatomyInteractive3DViewer } from './components/labs/anatomy/AnatomyInteractive3DViewer';
 import { AnatomyMovementsAndJointsViewer } from './components/labs/anatomy/AnatomyMovementsAndJointsViewer';
+import { RealisticHuman3DViewer } from './components/labs/anatomy/3d/RealisticHuman3DViewer';
 import { BiochemistryPathwaysViewer } from './components/labs/biochemistry/BiochemistryPathwaysViewer';
 
 // Mandatory Account System & Administration
@@ -114,6 +115,7 @@ export default function App() {
         'educational_videos',
         'interactive_planes',
         'interactive_3d_muscles',
+        'realistic_3d_human',
         'anatomy_movements',
         'biochemistry_pathways',
         'admin',
@@ -619,6 +621,13 @@ export default function App() {
         return (
           <div className="animate-in fade-in duration-300">
             <AnatomyInteractive3DViewer onBack={() => handleTabSelect('dashboard')} />
+          </div>
+        );
+
+      case 'realistic_3d_human':
+        return (
+          <div className="animate-in fade-in duration-300">
+            <RealisticHuman3DViewer onBack={() => handleTabSelect('dashboard')} />
           </div>
         );
 

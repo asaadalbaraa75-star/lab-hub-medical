@@ -13,6 +13,7 @@ import { AnatomyPracticalExamModal } from './AnatomyPracticalExamModal';
 import { AnatomicalPlanesInteractiveView } from './AnatomicalPlanesInteractiveView';
 import { AnatomyInteractive3DViewer } from './AnatomyInteractive3DViewer';
 import { AnatomyMovementsAndJointsViewer } from './AnatomyMovementsAndJointsViewer';
+import { RealisticHuman3DViewer } from './3d/RealisticHuman3DViewer';
 import { MEDICAL_ASSETS } from '../../../assets/medicalImages';
 import { anatomyProgressService, AnatomyStudentProgress } from './AnatomyStudentProgressService';
 import {
@@ -68,7 +69,7 @@ export const AnatomyLabView: React.FC<AnatomyLabViewProps> = ({
   onOpenQuiz
 }) => {
   const [internalSearch, setInternalSearch] = useState<string>(searchQuery);
-  const [activeViewMode, setActiveViewMode] = useState<'dashboard' | 'organ_systems' | 'exams' | 'all_topics' | 'interactive_planes' | 'interactive_3d_muscles' | 'interactive_movements'>('dashboard');
+  const [activeViewMode, setActiveViewMode] = useState<'dashboard' | 'realistic_3d_human' | 'organ_systems' | 'exams' | 'all_topics' | 'interactive_planes' | 'interactive_3d_muscles' | 'interactive_movements'>('dashboard');
   const [selectedOrganSystem, setSelectedOrganSystem] = useState<string>('all');
   const [selectedTopic, setSelectedTopic] = useState<AnatomyTopic | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
@@ -333,6 +334,16 @@ export const AnatomyLabView: React.FC<AnatomyLabViewProps> = ({
     { label: 'Flexion & Extension', query: 'Flexion' }
   ];
 
+  // If realistic 3D human body viewer is requested
+  if (activeViewMode === 'realistic_3d_human') {
+    return (
+      <RealisticHuman3DViewer
+        onBack={() => setActiveViewMode('dashboard')}
+        onOpenQuiz={() => handleOpenQuickQuiz('topic_muscular')}
+      />
+    );
+  }
+
   // If interactive 3D planes view is requested or topic is planes
   if (activeViewMode === 'interactive_planes' || selectedTopic?.id === 'topic_anatomical_planes') {
     return (
@@ -456,6 +467,23 @@ export const AnatomyLabView: React.FC<AnatomyLabViewProps> = ({
           >
             <Layers className="w-3.5 h-3.5" />
             <span>لوحة الأقسام الرئيسية (7 Categories)</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setActiveViewMode('realistic_3d_human');
+              setInternalSearch('');
+            }}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-2 cursor-pointer ${
+              (activeViewMode as string) === 'realistic_3d_human'
+                ? 'bg-gradient-to-r from-cyan-500 via-purple-600 to-rose-600 text-white shadow-lg shadow-purple-600/40 animate-pulse'
+                : 'bg-gradient-to-r from-cyan-950/90 to-purple-950/90 text-cyan-300 hover:text-white border border-cyan-400/50 hover:border-cyan-400'
+            }`}
+          >
+            <Move3d className="w-3.5 h-3.5 text-cyan-400 animate-spin" style={{ animationDuration: '6s' }} />
+            <span>المجسم البشري 3D الواقعي (WebGL Real-Time)</span>
+            <span className="px-1.5 py-0.5 rounded bg-cyan-400 text-slate-950 font-black text-[9px]">جديد</span>
           </button>
 
           <button

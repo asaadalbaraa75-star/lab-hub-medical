@@ -13,6 +13,7 @@ import {
   ArrowUpRight,
   ChevronDown,
   Sparkles,
+  Move3d,
   Compass,
   Activity,
   Microscope,
@@ -81,7 +82,7 @@ export const CinematicMedicalDashboard: React.FC<CinematicMedicalDashboardProps>
   // Selected central laboratory in the 3D card carousel (default: anatomy)
   const [activeLabId, setActiveLabId] = useState<LabSubjectId>('anatomy');
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [selectedCurvedModule, setSelectedCurvedModule] = useState<'planes' | 'movements' | 'microscope' | 'pathways'>('planes');
+  const [selectedCurvedModule, setSelectedCurvedModule] = useState<'3d_human' | 'planes' | 'movements' | 'microscope' | 'pathways'>('3d_human');
 
   const LABS_CONFIG: LabCardConfig[] = [
     {
@@ -97,11 +98,11 @@ export const CinematicMedicalDashboard: React.FC<CinematicMedicalDashboardProps>
       descriptionAr: 'التشريح العياني، الميكانيكا الحيوية العضلية الهيكلية، مستويات الجسم ثلاثية الأبعاد والعلاقات الجراحية.',
       highYieldStats: [
         { label: 'الأجهزة الحيوية', value: '7 الأنظمة' },
-        { label: 'النماذج ثلاثية الأبعاد', value: '3D Atlas' },
+        { label: 'النماذج ثلاثية الأبعاد', value: '3D WebGL' },
         { label: 'محطات Spotter', value: '18 محطة' }
       ],
-      interactiveModeTab: 'interactive_planes',
-      interactiveModeLabel: 'مستويات الجسم التفاعلية (3D Planes)'
+      interactiveModeTab: 'realistic_3d_human',
+      interactiveModeLabel: 'المجسم البشري 3D الواقعي (WebGL Real-Time)'
     },
     {
       id: 'histology',
@@ -549,6 +550,19 @@ export const CinematicMedicalDashboard: React.FC<CinematicMedicalDashboardProps>
             <div className="flex flex-wrap items-center gap-2 p-1.5 rounded-2xl bg-white/5 border border-white/10 self-start sm:self-auto">
               <button
                 type="button"
+                onClick={() => setSelectedCurvedModule('3d_human')}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  selectedCurvedModule === '3d_human'
+                    ? 'bg-gradient-to-r from-cyan-500 to-purple-600 text-white shadow-lg shadow-purple-600/40 animate-pulse'
+                    : 'text-cyan-400 hover:text-white'
+                }`}
+              >
+                <Move3d className="w-3.5 h-3.5" />
+                <span>المجسم البشري 3D</span>
+              </button>
+
+              <button
+                type="button"
                 onClick={() => setSelectedCurvedModule('planes')}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                   selectedCurvedModule === 'planes'
@@ -610,7 +624,8 @@ export const CinematicMedicalDashboard: React.FC<CinematicMedicalDashboardProps>
                 <button
                   type="button"
                   onClick={() => {
-                    if (selectedCurvedModule === 'planes') onSelectTab('interactive_planes');
+                    if (selectedCurvedModule === '3d_human') onSelectTab('realistic_3d_human');
+                    else if (selectedCurvedModule === 'planes') onSelectTab('interactive_planes');
                     else if (selectedCurvedModule === 'movements') onSelectTab('anatomy_movements');
                     else if (selectedCurvedModule === 'microscope') onSelectTab('histology_microscope');
                     else onSelectTab('biochemistry_pathways');
@@ -625,7 +640,9 @@ export const CinematicMedicalDashboard: React.FC<CinematicMedicalDashboardProps>
               <div className="h-60 sm:h-72 w-full overflow-hidden relative">
                 <img
                   src={
-                    selectedCurvedModule === 'planes'
+                    selectedCurvedModule === '3d_human'
+                      ? MEDICAL_ASSETS.heroAnatomicalTorso
+                      : selectedCurvedModule === 'planes'
                       ? MEDICAL_ASSETS.heroAnatomicalTorso
                       : selectedCurvedModule === 'movements'
                       ? MEDICAL_ASSETS.bicepsBrachiiMuscle
@@ -644,12 +661,14 @@ export const CinematicMedicalDashboard: React.FC<CinematicMedicalDashboardProps>
               <div className="p-6 text-right space-y-3" dir="rtl">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-mono text-cyan-400 font-bold">
+                    {selectedCurvedModule === '3d_human' && "WebGL 3D Engine • 360° Dissection • Layers"}
                     {selectedCurvedModule === 'planes' && "Sagittal • Coronal • Transverse"}
                     {selectedCurvedModule === 'movements' && "Kinesiology & Joint Degrees"}
                     {selectedCurvedModule === 'microscope' && "4x • 10x • 40x • 100x Oil"}
                     {selectedCurvedModule === 'pathways' && "Substrate → Enzyme → Product"}
                   </span>
                   <h3 className="text-lg sm:text-xl font-black text-white">
+                    {selectedCurvedModule === '3d_human' && "المجسم البشري ثلاثي الأبعاد الواقعي (3D Human Body)"}
                     {selectedCurvedModule === 'planes' && "مستويات الجسم التشريحية (3D Planes)"}
                     {selectedCurvedModule === 'movements' && "الحركات والمفاصل الحيوية (Movements & Joints)"}
                     {selectedCurvedModule === 'microscope' && "المجهر الافتراضي عالي الدقة (Virtual Microscope)"}
@@ -658,6 +677,7 @@ export const CinematicMedicalDashboard: React.FC<CinematicMedicalDashboardProps>
                 </div>
 
                 <p className="text-xs text-slate-300 leading-relaxed">
+                  {selectedCurvedModule === '3d_human' && "محاكاة تشريحية واقعية WebGL ثلاثية الأبعاد تدعم الدوران 360°، التحكم في طبقات العضلات والأعضاء والعظام والشرايين، مع حركة نبض القلب والتنفس الحي وبنك أسئلة OSPE."}
                   {selectedCurvedModule === 'planes' && "استكشف المستويات السهمية والإكليلية والمستعرضة مع محاذاة الأشعة المقطعية وأسئلة OSPE السريعة."}
                   {selectedCurvedModule === 'movements' && "محاكاة بصرية لحركات الثني، البسط، التبعيد، الكب والاستلقاء مع العضلات المحركة والأهمية السريرية."}
                   {selectedCurvedModule === 'microscope' && "تصفح الشرائح النسيجية بدقة الميكروسكوب الضوئي الحقيقي مع مغير العدسات ودبابيس تحديد الخلايا."}
@@ -668,14 +688,15 @@ export const CinematicMedicalDashboard: React.FC<CinematicMedicalDashboardProps>
                   <button
                     type="button"
                     onClick={() => {
-                      if (selectedCurvedModule === 'planes') onSelectTab('interactive_planes');
+                      if (selectedCurvedModule === '3d_human') onSelectTab('realistic_3d_human');
+                      else if (selectedCurvedModule === 'planes') onSelectTab('interactive_planes');
                       else if (selectedCurvedModule === 'movements') onSelectTab('anatomy_movements');
                       else if (selectedCurvedModule === 'microscope') onSelectTab('histology_microscope');
                       else onSelectTab('biochemistry_pathways');
                     }}
-                    className="w-full py-3 rounded-full text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 shadow-lg shadow-purple-900/40 transition-all cursor-pointer flex items-center justify-center gap-2"
+                    className="w-full py-3 rounded-full text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-cyan-500 via-purple-600 to-rose-600 hover:from-cyan-400 hover:to-rose-500 shadow-lg shadow-purple-900/40 transition-all cursor-pointer flex items-center justify-center gap-2 font-bold"
                   >
-                    <span>فتح الأداة التفاعلية الآن</span>
+                    <span>دخول مجسم التشريح 3D الواقعي الآن</span>
                     <ChevronRight className="w-4 h-4" />
                   </button>
                 </div>
