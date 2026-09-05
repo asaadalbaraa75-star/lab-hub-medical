@@ -53,10 +53,10 @@ export const AcademicApprovalHub: React.FC<AcademicApprovalHubProps> = ({
       practicalsCount: safePracticals.filter(p => p.courseId === 'histology').length
     },
     {
-      dept: 'Department of Medical Microbiology',
-      head: 'Dr. Alistair Chen, PhD, D(ABMM)',
+      dept: 'Department of Clinical Biochemistry',
+      head: 'Dr. Tariq Vance, MD, MSc',
       status: 'Active Reviewer',
-      practicalsCount: safePracticals.filter(p => p.courseId === 'bacteriology').length
+      practicalsCount: safePracticals.filter(p => p.courseId === 'biochemistry').length
     }
   ];
 

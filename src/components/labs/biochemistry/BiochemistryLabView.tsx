@@ -21,6 +21,7 @@ import {
   Printer
 } from 'lucide-react';
 import { BiochemistryCertificateModal } from './BiochemistryCertificateModal';
+import { BiochemistryPathwaysViewer } from './BiochemistryPathwaysViewer';
 
 interface BiochemistryLabViewProps {
   searchQuery?: string;
@@ -34,6 +35,15 @@ export const BiochemistryLabView: React.FC<BiochemistryLabViewProps> = ({
   const [selectedTab, setSelectedTab] = useState<string>('all');
   const [internalQuery, setInternalQuery] = useState<string>('');
   const [isCertificateOpen, setIsCertificateOpen] = useState<boolean>(false);
+  const [showPathways, setShowPathways] = useState<boolean>(false);
+
+  if (showPathways) {
+    return (
+      <BiochemistryPathwaysViewer
+        onBack={() => setShowPathways(false)}
+      />
+    );
+  }
 
   const activeQuery = (searchQuery || internalQuery).trim().toLowerCase();
 
@@ -73,10 +83,18 @@ export const BiochemistryLabView: React.FC<BiochemistryLabViewProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center gap-2 self-start sm:self-auto">
+          <div className="flex items-center gap-2 self-start sm:self-auto flex-wrap">
+            <button
+              onClick={() => setShowPathways(true)}
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold text-xs shadow-md shadow-purple-500/20 hover:scale-[1.02] transition-transform cursor-pointer"
+            >
+              <Sparkles className="w-4 h-4 text-purple-300" />
+              <span>مسارات الأيض والتحاليل (Pathways & Assays)</span>
+            </button>
+
             <button
               onClick={() => setIsCertificateOpen(true)}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 text-slate-950 font-bold text-xs shadow-md shadow-amber-500/20 hover:scale-[1.02] transition-transform"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 text-slate-950 font-bold text-xs shadow-md shadow-amber-500/20 hover:scale-[1.02] transition-transform cursor-pointer"
             >
               <Award className="w-4 h-4" />
               <span>شهادة إتمام المعمل (Certificate)</span>

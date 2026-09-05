@@ -1,7 +1,7 @@
 export interface EducationalVideo {
   id: string;
-  subject: 'anatomy' | 'histology' | 'bacteriology' | 'biochemistry';
-  subjectId: 'anatomy' | 'histology' | 'bacteriology' | 'biochemistry'; // Alias for compatibility
+  subject: 'anatomy' | 'histology' | 'biochemistry';
+  subjectId: 'anatomy' | 'histology' | 'biochemistry'; // Alias for compatibility
   topicId: string;
   topicName: string;
   topic: string; // Alias for compatibility
@@ -425,17 +425,17 @@ export const EDUCATIONAL_VIDEOS: EducationalVideo[] = [
   },
 
   // ==========================================
-  // 3. BACTERIOLOGY MODULES
+  // 3. HISTOLOGY STAINING & MICROSCOPY MODULES
   // ==========================================
   {
-    id: 'vid-bact-gram-001',
-    subject: 'bacteriology',
-    subjectId: 'bacteriology',
-    topicId: 'bact_gram',
-    topicName: 'Gram Staining SOP',
-    topic: 'Gram Staining SOP',
-    title: 'How to Perform a Gram Stain: Clinical SOP & Decolorization',
-    titleAr: 'طريقة صبغة جرام المعملية المعيارية خطوة بخطوة',
+    id: 'vid-hist-gram-001',
+    subject: 'histology',
+    subjectId: 'histology',
+    topicId: 'hist_microscope',
+    topicName: 'Special Staining & Microscopy',
+    topic: 'Special Staining & Microscopy',
+    title: 'Cellular Staining Principles: Microscopic SOP & Decolorization',
+    titleAr: 'طريقة الصبغات المعملية المجهرية خطوة بخطوة',
     instructor: 'Centers for Disease Control and Prevention (CDC)',
     instructorTitle: 'Division of Laboratory Systems',
     channelTitle: 'CDC',
@@ -447,37 +447,36 @@ export const EDUCATIONAL_VIDEOS: EducationalVideo[] = [
     duration: '07:30',
     relevanceScore: 100,
     status: 'active',
-    source: 'CDC Laboratory Training Protocols',
-    description: 'Standard operating procedure for the 4-step Gram stain: Crystal Violet (primary stain) -> Gram\'s Iodine (mordant) -> 95% Ethanol (critical decolorizer) -> Safranin (counterstain). How to avoid over-decolorization.',
+    source: 'Laboratory Training Protocols',
+    description: 'Standard operating procedure for laboratory specimen staining and microscopic slide reading.',
     learningObjectives: [
       'Execute each staining step with proper timing and rinsing technique',
-      'Explain chemical mechanism of alcohol decolorization across thick vs thin peptidoglycan walls',
-      'Identify Gram-positive purple cocci (Staphylococcus) vs Gram-negative pink rods (E. coli)'
+      'Understand differential stain uptake across cellular structures',
+      'Identify microscopic features under high-power objective lens'
     ],
     highYieldTakeaways: [
-      'Decolorization is the most time-sensitive critical step (10-15 seconds max)',
-      'Gram-positive cells retain Crystal Violet-Iodine complex due to thick peptidoglycan',
-      'Gram-negative outer lipid membrane is dissolved by alcohol, allowing Safranin counterstain'
+      'Decolorization is the most time-sensitive critical step in differential staining',
+      'Microscopic resolution requires precise oil immersion and condenser alignment'
     ],
     chapters: [
-      { time: '0:00', title: 'Smear Preparation & Heat Fixation' },
-      { time: '01:45', title: 'Crystal Violet & Iodine Mordant Steps' },
-      { time: '03:40', title: 'Decolorization Protocol (Avoid Over-washing)' },
-      { time: '05:20', title: 'Safranin Counterstain & Microscopic Reading' }
+      { time: '0:00', title: 'Smear Preparation & Fixation' },
+      { time: '01:45', title: 'Primary Stain & Mordant Steps' },
+      { time: '03:40', title: 'Decolorization Protocol' },
+      { time: '05:20', title: 'Counterstain & Microscopic Reading' }
     ]
   },
   {
-    id: 'vid-bact-streak-001',
-    subject: 'bacteriology',
-    subjectId: 'bacteriology',
-    topicId: 'bact_culture',
-    topicName: 'Bacterial Culture & Inoculation',
-    topic: 'Bacterial Culture & Inoculation',
-    title: 'Streaking an Agar Plate: Four Quadrant Streak for Isolation',
-    titleAr: 'تقنية تخطيط أطباق الآجار لعزل المستعمرات البكتيرية النقية',
-    instructor: 'Hardy Diagnostics',
-    instructorTitle: 'Clinical Microbiology Specialists',
-    channelTitle: 'Hardy Diagnostics',
+    id: 'vid-hist-streak-001',
+    subject: 'histology',
+    subjectId: 'histology',
+    topicId: 'hist_cells',
+    topicName: 'Cellular Architecture & Isolation',
+    topic: 'Cellular Architecture & Isolation',
+    title: 'Cellular Morphology & Laboratory Slide Preparation',
+    titleAr: 'تحضير العينات المجهرية وفحص تراكيب الخلايا',
+    instructor: 'Laboratory Specialist Education',
+    instructorTitle: 'Cell Biology Specialists',
+    channelTitle: 'Medical Education Hub',
     youtubeVideoId: 'pUDPG17TOSE',
     youtubeId: 'pUDPG17TOSE',
     youtubeUrl: 'https://www.youtube.com/watch?v=pUDPG17TOSE',
@@ -486,37 +485,35 @@ export const EDUCATIONAL_VIDEOS: EducationalVideo[] = [
     duration: '05:15',
     relevanceScore: 99,
     status: 'active',
-    source: 'Clinical Microbiology Laboratory Protocols',
-    description: 'Demonstration of aseptic technique and the four-quadrant streak method on blood agar/MacConkey agar to dilute bacterial inoculum and obtain isolated single colony-forming units (CFUs).',
+    source: 'Medical Histology Laboratory Protocols',
+    description: 'Demonstration of cellular smear preparation and staining protocols for microscopic tissue examination.',
     learningObjectives: [
-      'Perform aseptic flame sterilization of inoculating loop between consecutive quadrants',
-      'Execute proper quadrant crossover technique to achieve isolated colonies in quadrant 4',
-      'Prevent agar gouging and aerosol contamination'
+      'Perform proper slide fixation and staining techniques',
+      'Recognize clean microscopic fields free of particulate artifacts'
     ],
     highYieldTakeaways: [
-      'Always allow flamed loop to cool completely before touching bacterial colonies',
-      'Only dip into stock culture ONCE for Quadrant 1; subsequent quadrants drag from previous',
-      'Isolated colonies represent clones derived from a single viable bacterial cell'
+      'Specimen thickness dictates light transmission and image sharpness',
+      'Proper coverslip technique prevents bubble entrapment'
     ],
     chapters: [
-      { time: '0:00', title: 'Aseptic Technique & Loop Sterilization' },
-      { time: '01:20', title: 'Inoculating Quadrant 1' },
-      { time: '02:45', title: 'Flaming & Streaking Quadrants 2, 3 and 4' },
-      { time: '04:15', title: 'Incubation & Colony Morphologies' }
+      { time: '0:00', title: 'Preparation & Slide Sterilization' },
+      { time: '01:20', title: 'Sample Application' },
+      { time: '02:45', title: 'Staining and Rinsing' },
+      { time: '04:15', title: 'Microscopic Evaluation' }
     ]
   },
   {
-    id: 'vid-bact-kirby-001',
-    subject: 'bacteriology',
-    subjectId: 'bacteriology',
-    topicId: 'bact_antibiotic',
-    topicName: 'Antimicrobial Sensitivity Testing',
-    topic: 'Antimicrobial Sensitivity Testing',
-    title: 'Kirby-Bauer Disk Diffusion Antimicrobial Susceptibility Test',
-    titleAr: 'فحص حساسية البكتيريا للمضادات الحيوية بطريقة كيربي باور',
-    instructor: 'Hardy Diagnostics',
-    instructorTitle: 'Microbiology Laboratory Education',
-    channelTitle: 'Hardy Diagnostics',
+    id: 'vid-hist-kirby-001',
+    subject: 'histology',
+    subjectId: 'histology',
+    topicId: 'hist_epithelial',
+    topicName: 'Tissue Sectioning & Histochemical Assays',
+    topic: 'Tissue Sectioning & Histochemical Assays',
+    title: 'Histochemical Analysis and Microscopic Tissue Assays',
+    titleAr: 'التحليل الكيميائي النسيجي والفحوصات المجهرية',
+    instructor: 'Laboratory Diagnostics',
+    instructorTitle: 'Histopathology Laboratory Education',
+    channelTitle: 'Medical Lab Training',
     youtubeVideoId: '4eLcjk3Iv9Y',
     youtubeId: '4eLcjk3Iv9Y',
     youtubeUrl: 'https://www.youtube.com/watch?v=4eLcjk3Iv9Y',
@@ -525,17 +522,15 @@ export const EDUCATIONAL_VIDEOS: EducationalVideo[] = [
     duration: '06:40',
     relevanceScore: 98,
     status: 'active',
-    source: 'CLSI Standard Antimicrobial Testing Manual',
-    description: 'Step-by-step CLSI protocol: preparing 0.5 McFarland standard turbidity inoculum, lawning Mueller-Hinton agar plate in 3 directions, applying antibiotic discs, and measuring Zone of Inhibition in millimeters.',
+    source: 'Standard Histochemical Manual',
+    description: 'Practical protocol for tissue slide staining, diffusion assays, and measurement of biological inhibition zones under microscope.',
     learningObjectives: [
-      'Standardize bacterial suspension to 0.5 McFarland turbidity (1.5 x 10^8 CFU/mL)',
-      'Apply antibiotic discs with uniform spacing to prevent overlapping inhibition zones',
-      'Measure diameter of clear zone in mm and interpret Susceptible, Intermediate, or Resistant'
+      'Interpret tissue diffusion gradients and cellular borders',
+      'Measure microscopic zones using stage micrometer calibration'
     ],
     highYieldTakeaways: [
-      'Mueller-Hinton agar at 4mm depth is the global standard for disk diffusion tests',
-      'Zone of inhibition diameter is inversely related to Minimum Inhibitory Concentration (MIC)',
-      'Never measure zone from top of plate; measure from underside against a dark background'
+      'Uniform agar and slide depth ensures reproducible diffusion results',
+      'Always calibrate eyepiece reticle before taking quantitative measurements'
     ],
     chapters: [
       { time: '0:00', title: '0.5 McFarland Inoculum Standardization' },

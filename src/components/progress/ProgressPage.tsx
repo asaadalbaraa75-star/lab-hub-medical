@@ -8,7 +8,7 @@ import {
   Clock,
   Bone,
   Microscope,
-  Bug,
+  FlaskConical,
   Sparkles,
   ShieldCheck,
   Calendar
@@ -25,8 +25,9 @@ export const ProgressPage: React.FC<ProgressPageProps> = ({
   currentUser,
   onOpenPractical
 }) => {
+  const bioPercent = progress.biochemistryPercent ?? 70;
   const overallAvg = Math.round(
-    (progress.anatomyPercent + progress.histologyPercent + progress.bacteriologyPercent) / 3
+    (progress.anatomyPercent + progress.histologyPercent + bioPercent) / 3
   );
 
   const subjectCards = [
@@ -51,14 +52,14 @@ export const ProgressPage: React.FC<ProgressPageProps> = ({
       total: 12
     },
     {
-      id: 'bacteriology' as LabSubjectId,
-      name: 'Bacteriology Lab',
-      code: 'BACT-203',
-      percent: progress.bacteriologyPercent,
-      color: '#059669',
-      icon: Bug,
-      completed: 9,
-      total: 10
+      id: 'biochemistry' as LabSubjectId,
+      name: 'Biochemistry Lab',
+      code: 'BIO-204',
+      percent: bioPercent,
+      color: '#D97706',
+      icon: FlaskConical,
+      completed: 4,
+      total: 6
     }
   ];
 
@@ -78,11 +79,11 @@ export const ProgressPage: React.FC<ProgressPageProps> = ({
       color: 'text-indigo-700 bg-indigo-50 border-indigo-200'
     },
     {
-      title: 'Gram-Stain Diagnostic Pro',
-      desc: '100% score on bacterial differential staining timing',
-      icon: Bug,
-      earned: progress.bacteriologyPercent >= 80,
-      color: 'text-emerald-700 bg-emerald-50 border-emerald-200'
+      title: 'Carbohydrate Profiler',
+      desc: '100% score on qualitative carbohydrate reactions and Benedict test',
+      icon: FlaskConical,
+      earned: bioPercent >= 75,
+      color: 'text-amber-700 bg-amber-50 border-amber-200'
     },
     {
       title: 'Honor Practical Scholar',
@@ -156,7 +157,7 @@ export const ProgressPage: React.FC<ProgressPageProps> = ({
         </div>
       </div>
 
-      {/* Progress Bars by Laboratory (Anatomy, Histology, Bacteriology) */}
+      {/* Progress Bars by Laboratory (Anatomy, Histology, Biochemistry) */}
       <div className="bg-white border border-[#E2E8F0] rounded-xl p-6 sm:p-7 shadow-sm space-y-5">
         <h2 className="text-lg font-bold text-slate-900">Laboratory Subject Mastery</h2>
 

@@ -34,7 +34,7 @@ export const AdminVideosTab: React.FC<Props> = ({ currentUser }) => {
   const [previewVideo, setPreviewVideo] = useState<EducationalVideo | null>(null);
 
   // Form fields
-  const [formSubject, setFormSubject] = useState<'anatomy' | 'histology' | 'bacteriology' | 'biochemistry'>('anatomy');
+  const [formSubject, setFormSubject] = useState<'anatomy' | 'histology' | 'biochemistry'>('anatomy');
   const [formTopic, setFormTopic] = useState('');
   const [formTitle, setFormTitle] = useState('');
   const [formTitleAr, setFormTitleAr] = useState('');
@@ -117,7 +117,7 @@ export const AdminVideosTab: React.FC<Props> = ({ currentUser }) => {
 
   const handleOpenEdit = (vid: EducationalVideo) => {
     setEditingVideo(vid);
-    setFormSubject(vid.subject);
+    setFormSubject((vid.subject as any) || 'anatomy');
     setFormTopic(vid.topic || vid.topicName || '');
     setFormTitle(vid.title);
     setFormTitleAr(vid.titleAr || '');
@@ -237,7 +237,6 @@ export const AdminVideosTab: React.FC<Props> = ({ currentUser }) => {
           { id: 'all', label: 'جميع المحاضرات' },
           { id: 'anatomy', label: '🫀 التشريح (Anatomy)' },
           { id: 'histology', label: '🔬 الأنسجة (Histology)' },
-          { id: 'bacteriology', label: '🧫 البكتيريا (Bacteriology)' },
           { id: 'biochemistry', label: '🧪 الكيمياء الحيوية (Biochemistry)' },
         ].map(tab => (
           <button
@@ -329,7 +328,6 @@ export const AdminVideosTab: React.FC<Props> = ({ currentUser }) => {
                         <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                           vid.subject === 'anatomy' ? 'bg-indigo-50 text-indigo-700' :
                           vid.subject === 'histology' ? 'bg-emerald-50 text-emerald-700' :
-                          vid.subject === 'bacteriology' ? 'bg-amber-50 text-amber-700' :
                           'bg-cyan-50 text-cyan-700'
                         }`}>
                           {vid.subject.toUpperCase()}
@@ -437,7 +435,6 @@ export const AdminVideosTab: React.FC<Props> = ({ currentUser }) => {
                   >
                     <option value="anatomy">Anatomy (التشريح)</option>
                     <option value="histology">Histology (الأنسجة)</option>
-                    <option value="bacteriology">Bacteriology (البكتيريا)</option>
                     <option value="biochemistry">Biochemistry (الكيمياء الحيوية)</option>
                   </select>
                 </div>

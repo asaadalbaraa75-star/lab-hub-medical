@@ -72,7 +72,6 @@ export const PracticalDetailPage: React.FC<PracticalDetailPageProps> = ({
   const courseNames: Record<string, string> = {
     anatomy: 'Anatomy Lab',
     histology: 'Histology Lab',
-    bacteriology: 'Bacteriology Lab',
     biochemistry: 'Biochemistry Lab'
   };
 

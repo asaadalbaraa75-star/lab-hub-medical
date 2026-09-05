@@ -18,7 +18,7 @@ export const QuickAccessCards: React.FC<QuickAccessCardsProps> = ({
   onSelectTab
 }) => {
   const overallAvg = Math.round(
-    (progress.anatomyPercent + progress.histologyPercent + progress.bacteriologyPercent) / 3
+    (progress.anatomyPercent + progress.histologyPercent + progress.biochemistryPercent) / 3
   );
 
   const cards = [

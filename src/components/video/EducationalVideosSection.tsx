@@ -58,7 +58,7 @@ export const EducationalVideosSection: React.FC<Props> = ({ onVideoCompleted }) 
   const isTeacherOrAdmin = currentUser.role === 'admin' || currentUser.role === 'instructor';
 
   const [selectedVideo, setSelectedVideo] = useState<EducationalVideo>(videoList[0] || EDUCATIONAL_VIDEOS[0]);
-  const [selectedSubject, setSelectedSubject] = useState<'all' | 'anatomy' | 'histology' | 'bacteriology' | 'biochemistry'>('all');
+  const [selectedSubject, setSelectedSubject] = useState<'all' | 'anatomy' | 'histology' | 'biochemistry'>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [showUnavailable, setShowUnavailable] = useState<boolean>(false);
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
@@ -69,7 +69,7 @@ export const EducationalVideosSection: React.FC<Props> = ({ onVideoCompleted }) 
   const [editingVideoId, setEditingVideoId] = useState<string | null>(null);
 
   // Form fields
-  const [formSubject, setFormSubject] = useState<'anatomy' | 'histology' | 'bacteriology' | 'biochemistry'>('anatomy');
+  const [formSubject, setFormSubject] = useState<'anatomy' | 'histology' | 'biochemistry'>('anatomy');
   const [formTopic, setFormTopic] = useState<string>('');
   const [formTitle, setFormTitle] = useState<string>('');
   const [formTitleAr, setFormTitleAr] = useState<string>('');
@@ -224,7 +224,7 @@ export const EducationalVideosSection: React.FC<Props> = ({ onVideoCompleted }) 
   const handleOpenEditModal = (vid: EducationalVideo) => {
     setModalMode('edit');
     setEditingVideoId(vid.id);
-    setFormSubject(vid.subject || vid.subjectId || 'anatomy');
+    setFormSubject(((vid.subject || vid.subjectId) as any) || 'anatomy');
     setFormTopic(vid.topicName || vid.topic || '');
     setFormTitle(vid.title);
     setFormTitleAr(vid.titleAr || '');
@@ -446,7 +446,6 @@ export const EducationalVideosSection: React.FC<Props> = ({ onVideoCompleted }) 
             { id: 'all', label: 'All Subjects' },
             { id: 'anatomy', label: 'Anatomy' },
             { id: 'histology', label: 'Histology' },
-            { id: 'bacteriology', label: 'Bacteriology' },
             { id: 'biochemistry', label: 'Biochemistry' }
           ].map(tab => (
             <button
@@ -851,7 +850,6 @@ export const EducationalVideosSection: React.FC<Props> = ({ onVideoCompleted }) 
                   >
                     <option value="anatomy">Anatomy</option>
                     <option value="histology">Histology</option>
-                    <option value="bacteriology">Bacteriology</option>
                     <option value="biochemistry">Biochemistry</option>
                   </select>
                 </div>

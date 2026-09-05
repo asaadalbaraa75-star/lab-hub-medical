@@ -31,6 +31,7 @@ import { PlatformFooter } from './components/common/PlatformFooter';
 // View Components
 import { DashboardView } from './components/dashboard/DashboardView';
 import { LabSubjectPage } from './components/labs/LabSubjectPage';
+import { LaboratoriesHubPage } from './components/labs/LaboratoriesHubPage';
 import { PracticalDetailPage } from './components/practicals/PracticalDetailPage';
 import { PracticalsListPage } from './components/practicals/PracticalsListPage';
 import { SpotterView } from './components/spotter/SpotterView';
@@ -51,9 +52,11 @@ import { BiochemistryDetailsModal } from './components/labs/biochemistry/Biochem
 // Interactive Modules
 import { VirtualHistologyViewer } from './components/interactive/VirtualHistologyViewer';
 import { McqQuestionBank } from './components/quiz/McqQuestionBank';
-import { BacteriologyConceptMap } from './components/interactive/BacteriologyConceptMap';
-import { BacteriologyOrganismDetailPage } from './components/labs/bacteriology/BacteriologyOrganismDetailPage';
 import { EducationalVideosSection } from './components/video/EducationalVideosSection';
+import { AnatomicalPlanesInteractiveView } from './components/labs/anatomy/AnatomicalPlanesInteractiveView';
+import { AnatomyInteractive3DViewer } from './components/labs/anatomy/AnatomyInteractive3DViewer';
+import { AnatomyMovementsAndJointsViewer } from './components/labs/anatomy/AnatomyMovementsAndJointsViewer';
+import { BiochemistryPathwaysViewer } from './components/labs/biochemistry/BiochemistryPathwaysViewer';
 
 // Mandatory Account System & Administration
 import { AuthPage } from './components/auth/AuthPage';
@@ -86,10 +89,6 @@ export default function App() {
       const path = window.location.pathname.replace('/', '').trim().toLowerCase();
       const target = hash || path;
 
-      if (target.startsWith('organism/') || target.startsWith('bacteriology/')) {
-        return 'organism_detail';
-      }
-
       if (target.startsWith('admin/') || target === 'admin' || target === 'admin_dashboard') {
         return 'admin';
       }
@@ -99,7 +98,6 @@ export default function App() {
         'laboratories',
         'anatomy',
         'histology',
-        'bacteriology',
         'biochemistry',
         'medical_exams',
         'teacher_dashboard',
@@ -113,9 +111,11 @@ export default function App() {
         'academic_approval',
         'histology_microscope',
         'mcq_bank',
-        'bacteriology_concept_map',
         'educational_videos',
-        'organism_detail',
+        'interactive_planes',
+        'interactive_3d_muscles',
+        'anatomy_movements',
+        'biochemistry_pathways',
         'admin',
         'admin_dashboard'
       ];
@@ -128,28 +128,11 @@ export default function App() {
     return 'dashboard';
   };
 
-  // Parse initial organism ID if any
-  const getInitialOrganismId = () => {
-    try {
-      const hash = window.location.hash.replace('#', '').trim().toLowerCase();
-      if (hash.startsWith('organism/')) {
-        return hash.split('/')[1] || 'staph-aureus';
-      }
-      if (hash.startsWith('bacteriology/')) {
-        return hash.split('/')[1] || 'staph-aureus';
-      }
-    } catch {
-      // Fallback
-    }
-    return 'staph-aureus';
-  };
-
   // Navigation State
   const [currentTab, setCurrentTab] = useState<string>(getInitialTabState);
-  const [selectedOrganismId, setSelectedOrganismId] = useState<string>(getInitialOrganismId);
   const [selectedLabId, setSelectedLabId] = useState<LabSubjectId | null>(() => {
     const initial = getInitialTabState();
-    if (['anatomy', 'histology', 'bacteriology', 'biochemistry'].includes(initial)) {
+    if (['anatomy', 'histology', 'biochemistry'].includes(initial)) {
       return initial as LabSubjectId;
     }
     return null;
@@ -177,18 +160,8 @@ export default function App() {
   // Handle browser back/forward and hash changes
   useEffect(() => {
     const handleHashChange = () => {
-      const hash = window.location.hash.replace('#', '').trim().toLowerCase();
-      if (hash.startsWith('organism/') || hash.startsWith('bacteriology/')) {
-        const orgId = hash.split('/')[1] || 'staph-aureus';
-        setSelectedOrganismId(orgId);
-        setCurrentTab('organism_detail');
-        setSelectedPracticalId(null);
-        setActiveQuiz(null);
-        return;
-      }
-
       const target = getInitialTabState();
-      if (['anatomy', 'histology', 'bacteriology', 'biochemistry'].includes(target)) {
+      if (['anatomy', 'histology', 'biochemistry'].includes(target)) {
         setSelectedLabId(target as LabSubjectId);
       }
       setSelectedPracticalId(null);
@@ -381,21 +354,11 @@ export default function App() {
     }
   };
 
-  const handleOpenOrganismDetail = (organismId: string) => {
-    if (currentUser) {
-      authService.trackActivity(`استكشاف الكائن الدقيق: ${organismId}`, 'bacteriology');
-    }
-    setSelectedOrganismId(organismId);
-    setCurrentTab('organism_detail');
-    updateTabWithHash(`organism/${organismId}`);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
   const handleTabSelect = (tab: string) => {
     if (currentUser) {
       authService.trackActivity(`تصفح قسم: ${tab}`, tab);
     }
-    if (['anatomy', 'histology', 'bacteriology', 'biochemistry'].includes(tab)) {
+    if (['anatomy', 'histology', 'biochemistry'].includes(tab)) {
       handleSelectLab(tab as LabSubjectId);
       return;
     }
@@ -434,7 +397,7 @@ export default function App() {
   // View routing
   const renderCurrentView = () => {
     // 1. Specific Lab Subjects
-    if (['anatomy', 'histology', 'bacteriology', 'biochemistry'].includes(currentTab)) {
+    if (['anatomy', 'histology', 'biochemistry'].includes(currentTab)) {
       const labInfo = LAB_SUBJECTS.find(l => l.id === currentTab) || LAB_SUBJECTS[0];
       const labPracticals = practicals.filter(p => p.courseId === currentTab);
 
@@ -446,31 +409,6 @@ export default function App() {
           onOpenSpotter={handleOpenSpotter}
           onOpenQuiz={handleOpenQuiz}
           onBackToDashboard={() => handleTabSelect('dashboard')}
-          onOpenOrganism={handleOpenOrganismDetail}
-          onOpenConceptMap={() => {
-            setCurrentTab('bacteriology_concept_map');
-            updateTabWithHash('bacteriology_concept_map');
-          }}
-        />
-      );
-    }
-
-    // 2. Organism Detail View (Bacteriology Pathogens)
-    if (currentTab === 'organism_detail' && selectedOrganismId) {
-      return (
-        <BacteriologyOrganismDetailPage
-          organismId={selectedOrganismId}
-          onBack={() => {
-            if (selectedLabId === 'bacteriology') {
-              handleSelectLab('bacteriology');
-            } else {
-              setCurrentTab('bacteriology_concept_map');
-              updateTabWithHash('bacteriology_concept_map');
-            }
-          }}
-          onSelectOrganism={handleOpenOrganismDetail}
-          onOpenQuiz={() => handleOpenQuiz('bacteriology')}
-          onOpenSpotter={() => handleOpenSpotter('bacteriology')}
         />
       );
     }
@@ -575,45 +513,11 @@ export default function App() {
 
       case 'laboratories':
         return (
-          <div className="space-y-6 animate-in fade-in duration-300">
-            <div className="space-y-1">
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-[#1E293B]">
-                MEDICAL LABORATORIES
-              </h1>
-              <p className="text-sm text-[#64748B]">
-                Select a discipline to access slides, models, cultures, and practical protocols.
-              </p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {LAB_SUBJECTS.map(lab => (
-                <div
-                  key={lab.id}
-                  onClick={() => handleSelectLab(lab.id)}
-                  className="bg-white hover:bg-slate-50 border border-[#E2E8F0] hover:border-indigo-500/60 rounded-3xl overflow-hidden cursor-pointer transition-all shadow-md group"
-                >
-                  <div className="h-44 bg-slate-900 relative">
-                    <img
-                      src={lab.cardImage}
-                      alt={lab.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-75"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent" />
-                    <span className="absolute bottom-3 left-4 text-lg font-bold text-white">
-                      {lab.name}
-                    </span>
-                  </div>
-                  <div className="p-5 space-y-3">
-                    <p className="text-xs text-[#64748B] leading-relaxed line-clamp-3">
-                      {lab.description}
-                    </p>
-                    <div className="text-xs text-indigo-600 font-bold">
-                      Explore {lab.name} →
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <LaboratoriesHubPage
+            onSelectLab={handleSelectLab}
+            practicals={practicals}
+            progress={progress}
+          />
         );
 
       case 'practicals':
@@ -697,20 +601,38 @@ export default function App() {
           </div>
         );
 
-      case 'bacteriology_concept_map':
-        return (
-          <div className="animate-in fade-in duration-300">
-            <BacteriologyConceptMap
-              onOpenOrganism={handleOpenOrganismDetail}
-              initialOrganismId={selectedOrganismId || undefined}
-            />
-          </div>
-        );
-
       case 'educational_videos':
         return (
           <div className="animate-in fade-in duration-300">
             <EducationalVideosSection />
+          </div>
+        );
+
+      case 'interactive_planes':
+        return (
+          <div className="animate-in fade-in duration-300">
+            <AnatomicalPlanesInteractiveView onBack={() => handleTabSelect('dashboard')} />
+          </div>
+        );
+
+      case 'interactive_3d_muscles':
+        return (
+          <div className="animate-in fade-in duration-300">
+            <AnatomyInteractive3DViewer onBack={() => handleTabSelect('dashboard')} />
+          </div>
+        );
+
+      case 'anatomy_movements':
+        return (
+          <div className="animate-in fade-in duration-300">
+            <AnatomyMovementsAndJointsViewer onBack={() => handleTabSelect('dashboard')} />
+          </div>
+        );
+
+      case 'biochemistry_pathways':
+        return (
+          <div className="animate-in fade-in duration-300">
+            <BiochemistryPathwaysViewer onBack={() => handleTabSelect('dashboard')} />
           </div>
         );
 
@@ -787,41 +709,54 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-[#1E293B] flex flex-col selection:bg-indigo-500 selection:text-white">
+    <div className="min-h-screen bg-[#070B14] text-slate-100 flex flex-col selection:bg-purple-600 selection:text-white relative overflow-x-hidden medical-grid-bg">
+      {/* Ambient Futuristic Medical Aurora Glow */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden z-0" aria-hidden="true">
+        <div className="absolute -top-40 -left-40 w-[450px] h-[450px] rounded-full bg-purple-600/15 blur-[120px]" />
+        <div className="absolute top-1/4 -right-40 w-[550px] h-[550px] rounded-full bg-indigo-600/12 blur-[140px]" />
+        <div className="absolute bottom-10 left-1/3 w-[600px] h-[600px] rounded-full bg-violet-800/10 blur-[160px]" />
+        <div className="absolute top-2/3 right-1/4 w-80 h-80 rounded-full bg-cyan-600/10 blur-[130px]" />
+      </div>
+
       {/* Top Main Navigation */}
-      <Navbar
-        currentUser={currentUser}
-        onOpenAiTutor={() => setIsAiTutorOpen(true)}
-        onOpenAskAI={() => setIsAiTutorOpen(true)}
-        onOpenAnnouncements={() => setIsAnnouncementsOpen(true)}
-        onOpenShareModal={() => setIsShareModalOpen(true)}
-        onOpenAuthModal={() => setIsAuthModalOpen(true)}
-        unreadAnnouncementsCount={announcements.length}
-        onSelectSearchResult={handleSearchSelect}
-        onSelectTab={handleTabSelect}
-        notifications={notifications}
-        onMarkNotificationRead={handleMarkNotificationRead}
-        onMarkAllNotificationsRead={handleMarkAllNotificationsRead}
-        onLogout={handleLogout}
-      />
+      <div className="relative z-30">
+        <Navbar
+          currentUser={currentUser}
+          activeTab={currentTab}
+          onOpenAiTutor={() => setIsAiTutorOpen(true)}
+          onOpenAskAI={() => setIsAiTutorOpen(true)}
+          onOpenAnnouncements={() => setIsAnnouncementsOpen(true)}
+          onOpenShareModal={() => setIsShareModalOpen(true)}
+          onOpenAuthModal={() => setIsAuthModalOpen(true)}
+          unreadAnnouncementsCount={announcements.length}
+          onSelectSearchResult={handleSearchSelect}
+          onSelectTab={handleTabSelect}
+          notifications={notifications}
+          onMarkNotificationRead={handleMarkNotificationRead}
+          onMarkAllNotificationsRead={handleMarkAllNotificationsRead}
+          onLogout={handleLogout}
+        />
+      </div>
 
       {/* Main App Layout Grid */}
-      <div className="flex-1 flex max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-6 gap-8">
-        {/* Left Desktop Sidebar */}
-        <aside className="hidden lg:block w-64 shrink-0">
-          <div className="sticky top-24">
-            <Sidebar
-              activeTab={currentTab}
-              activeLabId={selectedLabId || undefined}
-              onSelectTab={handleTabSelect}
-              currentUser={currentUser}
-              userRole={currentUser.role}
-              onOpenAiTutor={() => setIsAiTutorOpen(true)}
-              onOpenAboutModal={() => setIsAboutModalOpen(true)}
-              onLogout={handleLogout}
-            />
-          </div>
-        </aside>
+      <div className="relative z-10 flex-1 flex max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-6 gap-8">
+        {/* Left Desktop Sidebar: Available for tabular and administrative pages */}
+        {!['dashboard', 'laboratories', 'interactive_planes', 'interactive_3d_muscles', 'anatomy_movements', 'biochemistry_pathways'].includes(currentTab) && (
+          <aside className="hidden lg:block w-64 shrink-0">
+            <div className="sticky top-24">
+              <Sidebar
+                activeTab={currentTab}
+                activeLabId={selectedLabId || undefined}
+                onSelectTab={handleTabSelect}
+                currentUser={currentUser}
+                userRole={currentUser.role}
+                onOpenAiTutor={() => setIsAiTutorOpen(true)}
+                onOpenAboutModal={() => setIsAboutModalOpen(true)}
+                onLogout={handleLogout}
+              />
+            </div>
+          </aside>
+        )}
 
         {/* Center Main Stage Content */}
         <main className="flex-1 min-w-0 pb-20 lg:pb-10">

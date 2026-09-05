@@ -44,8 +44,6 @@ export const StudentProfilePage: React.FC<StudentProfilePageProps> = ({
         return <Activity className="w-5 h-5 text-indigo-600" />;
       case 'histology':
         return <Microscope className="w-5 h-5 text-emerald-600" />;
-      case 'bacteriology':
-        return <FlaskConical className="w-5 h-5 text-amber-600" />;
       case 'biochemistry':
         return <Dna className="w-5 h-5 text-cyan-600" />;
       default:

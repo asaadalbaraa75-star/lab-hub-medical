@@ -164,22 +164,12 @@ export const AboutPlatformModal: React.FC<AboutPlatformModalProps> = ({
               </div>
 
               <div className="p-3.5 rounded-xl bg-slate-50 border border-[#E2E8F0] space-y-1.5">
-                <div className="flex items-center justify-end gap-1.5 text-emerald-700 font-bold">
-                  <span>معمل البكتيريا (Bacteriology)</span>
-                  <Bug className="w-4 h-4" />
-                </div>
-                <p className="text-slate-600 leading-relaxed">
-                  أطباق المزارع البكتيرية، صبغة جرام، الاختبارات الكيميائية الحيوية، واختبارات الحساسية.
-                </p>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-slate-50 border border-[#E2E8F0] space-y-1.5">
                 <div className="flex items-center justify-end gap-1.5 text-amber-700 font-bold">
-                  <span>معمل الكيمياء الحيوية</span>
+                  <span>معمل الكيمياء الحيوية (Biochemistry)</span>
                   <FlaskConical className="w-4 h-4" />
                 </div>
                 <p className="text-slate-600 leading-relaxed">
-                  9 اختبارات نوعية للكربوهيدرات مع التدرج اللوني، التفاعلات الكيميائية، ودليل الكواشف.
+                  فحوصات السكريات، الكواشف الكيميائية، معادلات التفاعل، وتفسير النتائج السريرية مع دليل الـ 6 اختبارات.
                 </p>
               </div>
             </div>

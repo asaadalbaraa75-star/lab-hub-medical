@@ -24,7 +24,7 @@ export async function askLabHubTutor(
   } catch (err: any) {
     console.warn('API error falling back to local curriculum response:', err);
     return {
-      answer: `### Academic Note\n\nFor **"${question}"**, please review the approved practical modules under Anatomy, Histology, or Bacteriology. All high-yield pointers, microscope slides, and clinical correlations are accessible in the Practical sessions.\n\n*Reference: University Medical Laboratory Curriculum.*`,
+      answer: `### Academic Note\n\nFor **"${question}"**, please review the approved practical modules under Anatomy, Histology, or Biochemistry. All high-yield pointers, microscope slides, and clinical correlations are accessible in the Practical sessions.\n\n*Reference: University Medical Laboratory Curriculum.*`,
       source: 'offline-curriculum'
     };
   }

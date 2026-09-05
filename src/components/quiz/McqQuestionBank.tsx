@@ -29,7 +29,7 @@ interface Props {
 
 export const McqQuestionBank: React.FC<Props> = ({ onBackToHub }) => {
   // Filter state
-  const [selectedSubject, setSelectedSubject] = useState<'all' | 'anatomy' | 'histology' | 'bacteriology' | 'biochemistry'>('all');
+  const [selectedSubject, setSelectedSubject] = useState<'all' | 'anatomy' | 'histology' | 'biochemistry'>('all');
   const [selectedDifficulty, setSelectedDifficulty] = useState<'all' | 'basic' | 'intermediate' | 'advanced'>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [onlyShowBookmarked, setOnlyShowBookmarked] = useState<boolean>(false);
@@ -142,7 +142,7 @@ export const McqQuestionBank: React.FC<Props> = ({ onBackToHub }) => {
               Medical MCQ & OSPE Question Bank
             </h1>
             <p className="text-slate-400 text-sm mt-1 max-w-2xl">
-              Comprehensive exam-prep questions covering Anatomy, Histology, Bacteriology, and Biochemistry with instant rationales and high-yield pearls.
+              Comprehensive exam-prep questions covering Anatomy, Histology, and Biochemistry with instant rationales and high-yield pearls.
             </p>
           </div>
 
@@ -173,8 +173,7 @@ export const McqQuestionBank: React.FC<Props> = ({ onBackToHub }) => {
             { id: 'all', label: 'All Subjects', count: ALL_MCQ_BANK.length },
             { id: 'anatomy', label: 'Anatomy (100)', count: 100 },
             { id: 'histology', label: 'Histology (100)', count: 100 },
-            { id: 'bacteriology', label: 'Bacteriology', count: 5 },
-            { id: 'biochemistry', label: 'Biochemistry', count: 5 }
+            { id: 'biochemistry', label: 'Biochemistry', count: 10 }
           ].map(tab => (
             <button
               key={tab.id}

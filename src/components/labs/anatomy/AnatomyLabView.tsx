@@ -10,6 +10,10 @@ import { AnatomyTopicVisual } from './AnatomyTopicVisuals';
 import { AnatomyTopicDetailModal } from './AnatomyTopicDetailModal';
 import { AnatomyInteractiveQuizModal } from './AnatomyInteractiveQuizModal';
 import { AnatomyPracticalExamModal } from './AnatomyPracticalExamModal';
+import { AnatomicalPlanesInteractiveView } from './AnatomicalPlanesInteractiveView';
+import { AnatomyInteractive3DViewer } from './AnatomyInteractive3DViewer';
+import { AnatomyMovementsAndJointsViewer } from './AnatomyMovementsAndJointsViewer';
+import { MEDICAL_ASSETS } from '../../../assets/medicalImages';
 import { anatomyProgressService, AnatomyStudentProgress } from './AnatomyStudentProgressService';
 import {
   Compass,
@@ -64,7 +68,7 @@ export const AnatomyLabView: React.FC<AnatomyLabViewProps> = ({
   onOpenQuiz
 }) => {
   const [internalSearch, setInternalSearch] = useState<string>(searchQuery);
-  const [activeViewMode, setActiveViewMode] = useState<'dashboard' | 'organ_systems' | 'exams' | 'all_topics'>('dashboard');
+  const [activeViewMode, setActiveViewMode] = useState<'dashboard' | 'organ_systems' | 'exams' | 'all_topics' | 'interactive_planes' | 'interactive_3d_muscles' | 'interactive_movements'>('dashboard');
   const [selectedOrganSystem, setSelectedOrganSystem] = useState<string>('all');
   const [selectedTopic, setSelectedTopic] = useState<AnatomyTopic | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
@@ -329,6 +333,38 @@ export const AnatomyLabView: React.FC<AnatomyLabViewProps> = ({
     { label: 'Flexion & Extension', query: 'Flexion' }
   ];
 
+  // If interactive 3D planes view is requested or topic is planes
+  if (activeViewMode === 'interactive_planes' || selectedTopic?.id === 'topic_anatomical_planes') {
+    return (
+      <AnatomicalPlanesInteractiveView
+        onBack={() => {
+          setSelectedTopic(null);
+          setActiveViewMode('dashboard');
+        }}
+        onOpenQuiz={() => handleOpenQuickQuiz('topic_anatomical_planes')}
+      />
+    );
+  }
+
+  // If interactive 3D muscles viewer is requested
+  if (activeViewMode === 'interactive_3d_muscles') {
+    return (
+      <AnatomyInteractive3DViewer
+        onBack={() => setActiveViewMode('dashboard')}
+        onOpenQuiz={() => handleOpenQuickQuiz('topic_muscular')}
+      />
+    );
+  }
+
+  // If interactive body movements & joints viewer is requested
+  if (activeViewMode === 'interactive_movements') {
+    return (
+      <AnatomyMovementsAndJointsViewer
+        onBack={() => setActiveViewMode('dashboard')}
+      />
+    );
+  }
+
   // If a topic is selected, render the dedicated full-page lesson experience
   if (selectedTopic) {
     return (
@@ -420,6 +456,54 @@ export const AnatomyLabView: React.FC<AnatomyLabViewProps> = ({
           >
             <Layers className="w-3.5 h-3.5" />
             <span>لوحة الأقسام الرئيسية (7 Categories)</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setActiveViewMode('interactive_planes');
+              setInternalSearch('');
+            }}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-2 cursor-pointer ${
+              (activeViewMode as string) === 'interactive_planes'
+                ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md'
+                : 'bg-slate-950/80 text-purple-400 hover:text-white border border-purple-500/30'
+            }`}
+          >
+            <Compass className="w-3.5 h-3.5 text-purple-400" />
+            <span>مستويات الجسم التفاعلية (3D Planes)</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setActiveViewMode('interactive_3d_muscles');
+              setInternalSearch('');
+            }}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-2 cursor-pointer ${
+              (activeViewMode as string) === 'interactive_3d_muscles'
+                ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-md'
+                : 'bg-slate-950/80 text-cyan-400 hover:text-white border border-cyan-500/30'
+            }`}
+          >
+            <Move3d className="w-3.5 h-3.5 text-cyan-400" />
+            <span>أطلس العضلات 3D (Biceps & Limbs)</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setActiveViewMode('interactive_movements');
+              setInternalSearch('');
+            }}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-2 cursor-pointer ${
+              (activeViewMode as string) === 'interactive_movements'
+                ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md'
+                : 'bg-slate-950/80 text-emerald-400 hover:text-white border border-emerald-500/30'
+            }`}
+          >
+            <Activity className="w-3.5 h-3.5 text-emerald-400" />
+            <span>حركات الجسم والمفاصل (Kinesiology & Joints)</span>
           </button>
 
           <button
@@ -688,7 +772,112 @@ export const AnatomyLabView: React.FC<AnatomyLabViewProps> = ({
         </div>
       )}
 
-      {/* 5. MAIN ANATOMY CATEGORIES (7 Primary Category Cards) */}
+      {/* 5. INTERACTIVE 3D CLINICAL LABS (Featured from Reference Design) */}
+      {activeViewMode === 'dashboard' && !query && (
+        <div className="space-y-3" id="featured-interactive-labs">
+          <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-purple-400 animate-pulse" />
+              <h3 className="text-sm sm:text-base font-bold text-white">
+                المعامل التفاعلية ثلاثية الأبعاد (Featured 3D Interactive Labs)
+              </h3>
+            </div>
+            <span className="text-[11px] font-mono text-purple-400 bg-purple-950/60 px-2.5 py-0.5 rounded-full border border-purple-500/30">
+              Interactive 3D Engine
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Card 1: 3D Anatomical Planes */}
+            <div
+              onClick={() => setActiveViewMode('interactive_planes')}
+              className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0B1124] via-[#070B16] to-[#120B24] border border-purple-500/30 hover:border-purple-500/80 p-5 cursor-pointer group transition-all duration-300 shadow-xl hover:shadow-purple-500/10 flex flex-col justify-between"
+            >
+              <div className="absolute top-0 left-0 w-64 h-64 bg-purple-600/10 rounded-full blur-3xl pointer-events-none" />
+              <div className="space-y-3 relative z-10">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-purple-300 bg-purple-900/60 px-2.5 py-1 rounded-lg border border-purple-500/40">
+                    Gray's Anatomy • Chapter 1
+                  </span>
+                  <div className="w-2.5 h-2.5 rounded-full bg-purple-400 shadow-[0_0_8px_#a855f7] animate-ping" />
+                </div>
+
+                <div>
+                  <h4 className="text-base sm:text-lg font-black text-white group-hover:text-purple-300 transition-colors">
+                    مستويات ومحاور الجسم ثلاثية الأبعاد
+                  </h4>
+                  <p className="text-xs font-mono text-slate-400">3D Anatomical Planes of the Human Body</p>
+                </div>
+
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  تحكم تفاعلي مباشر في المستويات السهمية والإكليلية والمستعرضة (Sagittal, Coronal, Transverse) مع تدوير 3D ومطابقة الأشعة المقطعية السريرية CT Scan.
+                </p>
+
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {['Sagittal (سهمي)', 'Coronal (إكليلي)', 'Transverse (مستعرض)', 'CT Correlation'].map(tag => (
+                    <span key={tag} className="text-[10px] px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-slate-300 font-medium">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="pt-4 mt-4 border-t border-white/10 flex items-center justify-between relative z-10">
+                <span className="text-xs font-bold text-purple-400 group-hover:text-purple-300 flex items-center gap-1.5">
+                  افتح النموذج التفاعلي (Launch 3D Planes)
+                  <ArrowRight className="w-3.5 h-3.5 rotate-180 group-hover:-translate-x-1 transition-transform" />
+                </span>
+                <span className="text-[10px] text-slate-500 font-mono">10 MCQs + Spotter</span>
+              </div>
+            </div>
+
+            {/* Card 2: 3D Muscle Biomechanics */}
+            <div
+              onClick={() => setActiveViewMode('interactive_3d_muscles')}
+              className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#071322] via-[#050C17] to-[#0A1A2F] border border-cyan-500/30 hover:border-cyan-500/80 p-5 cursor-pointer group transition-all duration-300 shadow-xl hover:shadow-cyan-500/10 flex flex-col justify-between"
+            >
+              <div className="absolute top-0 left-0 w-64 h-64 bg-cyan-600/10 rounded-full blur-3xl pointer-events-none" />
+              <div className="space-y-3 relative z-10">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-cyan-300 bg-cyan-900/60 px-2.5 py-1 rounded-lg border border-cyan-500/40">
+                    Locomotor System • Upper & Lower Limbs
+                  </span>
+                  <div className="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#22d3ee] animate-ping" />
+                </div>
+
+                <div>
+                  <h4 className="text-base sm:text-lg font-black text-white group-hover:text-cyan-300 transition-colors">
+                    أطلس العضلات والميكانيكا الحيوية 3D
+                  </h4>
+                  <p className="text-xs font-mono text-slate-400">Interactive 3D Muscle Architecture & Biomechanics</p>
+                </div>
+
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  استكشاف عضلة Biceps Brachii وعضلات الكتف والفخذ مع إبراز الأصل (Origin)، الارتكاز (Insertion)، التعصيب الحركي، وعلامات Popeye السريرية.
+                </p>
+
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {['Biceps Brachii', 'Coracoid Origin', 'Radial Tuberosity', 'C5-C6 Reflex'].map(tag => (
+                    <span key={tag} className="text-[10px] px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-slate-300 font-medium">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="pt-4 mt-4 border-t border-white/10 flex items-center justify-between relative z-10">
+                <span className="text-xs font-bold text-cyan-400 group-hover:text-cyan-300 flex items-center gap-1.5">
+                  استكشف العضلات ثلاثية الأبعاد (Explore 3D Muscle)
+                  <ArrowRight className="w-3.5 h-3.5 rotate-180 group-hover:-translate-x-1 transition-transform" />
+                </span>
+                <span className="text-[10px] text-slate-500 font-mono">Interactive Pins + Rotator</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 6. MAIN ANATOMY CATEGORIES (7 Primary Category Cards) */}
       {activeViewMode === 'dashboard' && !query && (
         <div className="space-y-4" id="main-anatomy-categories-section">
           <div className="flex items-center justify-between border-b border-slate-800 pb-3">

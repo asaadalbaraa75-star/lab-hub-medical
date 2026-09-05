@@ -22,7 +22,7 @@ export const DEMO_USERS: User[] = [
     avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
     department: 'Faculty of Medicine — 2nd Year MBBS',
     year: 'Year 2 (Pre-Clinical)',
-    enrolledLabs: ['anatomy', 'histology', 'bacteriology', 'biochemistry']
+    enrolledLabs: ['anatomy', 'histology', 'biochemistry']
   },
   {
     id: 'usr_instructor_1',
@@ -33,7 +33,7 @@ export const DEMO_USERS: User[] = [
     avatarUrl: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150&auto=format&fit=crop&q=80',
     department: 'Department of Anatomy & Histology',
     year: 'Senior Teaching Faculty',
-    enrolledLabs: ['anatomy', 'histology', 'bacteriology', 'biochemistry']
+    enrolledLabs: ['anatomy', 'histology', 'biochemistry']
   },
   {
     id: 'usr_admin_1',
@@ -44,7 +44,7 @@ export const DEMO_USERS: User[] = [
     avatarUrl: 'https://images.unsplash.com/photo-1594824813680-79883506ecf5?w=150&auto=format&fit=crop&q=80',
     department: 'Academic Directorate & Laboratory Board',
     year: 'Dean of Medical Laboratory Curricula',
-    enrolledLabs: ['anatomy', 'histology', 'bacteriology', 'biochemistry']
+    enrolledLabs: ['anatomy', 'histology', 'biochemistry']
   }
 ];
 
@@ -274,120 +274,6 @@ export const LAB_SUBJECTS: LabSubjectInfo[] = [
         practicalCount: 0,
         spotterCount: 0,
         quizCount: 8
-      }
-    ]
-  },
-  {
-    id: 'bacteriology',
-    name: 'Bacteriology Lab',
-    code: 'BACT-203',
-    tagline: 'Medical Microbiology, Cultures & Diagnostic Staining',
-    description: 'Explore bacteria, samples, culture media, laboratory tests and observations.',
-    heroImage: 'https://images.unsplash.com/photo-1583912267670-6575ad4736f6?w=1200&auto=format&fit=crop&q=80',
-    cardImage: 'https://images.unsplash.com/photo-1583912267670-6575ad4736f6?w=800&auto=format&fit=crop&q=80',
-    icon: 'Bug',
-    colorAccent: '#6FAF8F',
-    totalPracticals: 10,
-    completedPracticals: 9,
-    categories: [
-      {
-        id: 'bact_bacteria',
-        labId: 'bacteriology',
-        title: 'BACTERIA',
-        shortDesc: 'Explore pathogenic Gram-positive and Gram-negative species.',
-        iconName: 'Bug',
-        imageUrl: 'https://images.unsplash.com/photo-1583912267670-6575ad4736f6?w=600&auto=format&fit=crop&q=80',
-        practicalCount: 3,
-        spotterCount: 25,
-        quizCount: 4
-      },
-      {
-        id: 'bact_samples',
-        labId: 'bacteriology',
-        title: 'SAMPLES',
-        shortDesc: 'Explore specimen collection, transport and safety protocols.',
-        iconName: 'TestTube',
-        imageUrl: 'https://images.unsplash.com/photo-1579154204601-01588f351e67?w=600&auto=format&fit=crop&q=80',
-        practicalCount: 2,
-        spotterCount: 12,
-        quizCount: 2
-      },
-      {
-        id: 'bact_media',
-        labId: 'bacteriology',
-        title: 'CULTURE MEDIA',
-        shortDesc: 'Explore selective, differential and enriched agar plates.',
-        iconName: 'Disc',
-        imageUrl: 'https://images.unsplash.com/photo-1530026405186-ed1f139313f8?w=600&auto=format&fit=crop&q=80',
-        practicalCount: 2,
-        spotterCount: 16,
-        quizCount: 3
-      },
-      {
-        id: 'bact_tests',
-        labId: 'bacteriology',
-        title: 'TESTS',
-        shortDesc: 'Explore Catalase, Coagulase, Oxidase and biochemical assays.',
-        iconName: 'FlaskConical',
-        imageUrl: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=600&auto=format&fit=crop&q=80',
-        practicalCount: 2,
-        spotterCount: 18,
-        quizCount: 3
-      },
-      {
-        id: 'bact_observations',
-        labId: 'bacteriology',
-        title: 'OBSERVATIONS',
-        shortDesc: 'Explore colony morphology, hemolysis patterns and pigments.',
-        iconName: 'Eye',
-        imageUrl: 'https://images.unsplash.com/photo-1576086213369-97a306d36557?w=600&auto=format&fit=crop&q=80',
-        practicalCount: 2,
-        spotterCount: 15,
-        quizCount: 2
-      },
-      {
-        id: 'bact_practicals',
-        labId: 'bacteriology',
-        title: 'PRACTICALS',
-        shortDesc: 'View all diagnostic Bacteriology curriculum practicals.',
-        iconName: 'BookOpen',
-        imageUrl: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=600&auto=format&fit=crop&q=80',
-        practicalCount: 10,
-        spotterCount: 40,
-        quizCount: 6
-      },
-      {
-        id: 'bact_images',
-        labId: 'bacteriology',
-        title: 'IMAGES',
-        shortDesc: 'Review microscopic stains, oil immersion fields and colonies.',
-        iconName: 'Image',
-        imageUrl: 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=600&auto=format&fit=crop&q=80',
-        practicalCount: 4,
-        spotterCount: 26,
-        quizCount: 3
-      },
-      {
-        id: 'bact_spotter',
-        labId: 'bacteriology',
-        title: 'SPOTTER',
-        shortDesc: 'Practice rapid diagnostic microbiology spotter stations.',
-        iconName: 'Target',
-        imageUrl: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=600&auto=format&fit=crop&q=80',
-        practicalCount: 0,
-        spotterCount: 30,
-        quizCount: 4
-      },
-      {
-        id: 'bact_quiz',
-        labId: 'bacteriology',
-        title: 'QUIZ',
-        shortDesc: 'Test antimicrobial sensitivity and bacterial taxonomy.',
-        iconName: 'CheckSquare',
-        imageUrl: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600&auto=format&fit=crop&q=80',
-        practicalCount: 0,
-        spotterCount: 0,
-        quizCount: 7
       }
     ]
   },
@@ -973,208 +859,211 @@ export const INITIAL_PRACTICALS: Practical[] = [
     spotterIds: ['spot_anat_1', 'spot_anat_2']
   },
   {
-    id: 'prac_bact_03',
-    courseId: 'bacteriology',
-    categoryId: 'bact_tests',
-    practicalNumber: 3,
-    title: 'Gram Staining & Bacterial Morphology',
-    subTitle: 'Differential Staining Protocol for Peptidoglycan Cell Wall Differentiation',
-    estimatedTime: '40 mins',
-    version: '3.0',
-    lastUpdated: 'Aug 22, 2026',
+    id: 'prac_bio_01',
+    courseId: 'biochemistry',
+    categoryId: 'bio_carbohydrates',
+    practicalNumber: 1,
+    title: 'Qualitative Identification of Carbohydrates',
+    subTitle: 'Systematic Chemical Reactions for Monosaccharides, Disaccharides & Polysaccharides',
+    estimatedTime: '45 mins',
+    version: '3.1',
+    lastUpdated: 'Aug 26, 2026',
     status: 'published',
-    authorName: 'Dr. Tariq Vance, MD',
-    authorRole: 'Senior Microbiology Faculty',
+    authorName: 'Dr. Tariq Vance, MD, MSc',
+    authorRole: 'Clinical Biochemistry Faculty',
     approvedBy: 'Prof. Eleanor Hayes, MD',
-    approvalDate: 'Aug 23, 2026',
+    approvalDate: 'Aug 27, 2026',
     learningObjectives: [
-      'Master the 4-step Gram Staining differential protocol (Crystal Violet, Iodine, 95% Ethyl Alcohol Decolorizer, Safranin Counterstain).',
-      'Explain the biochemical mechanism of differential staining based on peptidoglycan thickness and outer membrane lipopolysaccharides.',
-      'Differentiate Gram-Positive Cocci in clusters (Staphylococci) vs chains (Streptococci) vs Gram-Negative Bacilli (Enterobacteriaceae).',
-      'Operate the 100x oil-immersion objective with proper focal plane navigation and immersion oil application.',
-      'Troubleshoot common staining artifacts: Over-decolorization, thick smear precipitation, and old culture Gram-variable false results.'
+      'Master the principle and reaction mechanism of the Molisch General Carbohydrate Test (alpha-naphthol dehydration violet ring).',
+      'Differentiate reducing from non-reducing sugars using alkaline copper reduction tests (Benedict & Fehling tests).',
+      'Distinguish reducing monosaccharides from reducing disaccharides using Barfoed’s acid copper acetate test.',
+      'Differentiate ketohexoses (fructose) from aldohexoses (glucose) using Seliwanoff’s resorcinol-HCl rapid colorimetric test.',
+      'Identify starch and glycogen polysaccharides using Iodine-potassium iodide helical inclusion complex formation.'
     ],
     beforeTheLab: {
       previousKnowledge: [
-        'Bacterial cell envelope ultrastructure (Gram-positive thick peptidoglycan + teichoic acid vs Gram-negative thin peptidoglycan + LPS lipid bilayer).',
-        'Aseptic technique, Bunsen burner safety, and inoculation loop heat sterilization.'
+        'Fundamental chemistry of carbohydrates: aldoses vs. ketoses, hemiacetal ring structures, and glycosidic bond formation.',
+        'Principles of oxidation-reduction reactions involving cupric (Cu²⁺) and cuprous (Cu⁺) ions.',
+        'Laboratory safety handling strong mineral acids (concentrated H₂SO₄ and concentrated HCl).'
       ],
       recommendedReading: [
-        "Murray's Medical Microbiology (9th Ed.), Chapter 3: Bacterial Cell Wall Architecture, pp. 12-25.",
-        'Jawetz, Melnick & Adelberg’s Medical Microbiology (28th Ed.), Chapter 2: Cell Structure, pp. 10-38.'
+        "Harper's Illustrated Biochemistry (32nd Ed.), Chapter 14: Carbohydrates of Physiological Significance, pp. 132-148.",
+        'Lehninger Principles of Biochemistry (8th Ed.), Chapter 7: Carbohydrates and Glycobiology, pp. 245-280.'
       ],
       preparationChecklist: [
-        { id: 'chk_b3_1', text: 'Memorize the exact timing for each of the 4 Gram stain reagents' },
-        { id: 'chk_b3_2', text: 'Review Bunsen burner cone zones for proper loop heat fixing' },
-        { id: 'chk_b3_3', text: 'Understand the mechanism of acetone-alcohol lipid dissolution' }
+        { id: 'chk_b1_1', text: 'Review difference between reducing sugars (free anomeric carbon) and non-reducing sugars (sucrose)' },
+        { id: 'chk_b1_2', text: 'Review acid pipetting precautions when layering concentrated H2SO4 down the tube wall' },
+        { id: 'chk_b1_3', text: 'Understand the reaction time cutoffs for Barfoed (2-3 min) and Seliwanoff (<1 min)' }
       ],
-      preLabSummary: 'Gram staining divides the entire bacterial kingdom into two diagnostic classes. Crystal violet stains all cells purple; Iodine acts as a mordant forming CV-I complexes; 95% Ethanol dissolves lipid-rich Gram-negative outer membranes allowing dye wash out; Safranin counterstains Gram-negative cells pink/red.'
+      preLabSummary: 'Carbohydrate identification follows a hierarchical algorithm: Molisch test screens for carbohydrate presence; Iodine distinguishes polysaccharides; Benedict identifies reducing capability; Barfoed differentiates monosaccharides from disaccharides; Seliwanoff identifies rapid ketose condensation.'
     },
     equipment: [
       {
-        id: 'eq_bact_1',
-        name: 'Gram Stain Reagent Kit',
-        image: 'https://images.unsplash.com/photo-1583912267670-6575ad4736f6?w=300&auto=format&fit=crop&q=80',
-        description: 'Kit bottles: Crystal Violet (1 min), Gram’s Iodine (1 min), 95% Ethyl Alcohol / Acetone Decolorizer (10-15 sec), Safranin (1 min), Wash bottle with distilled H2O.',
-        safetyNotes: 'Crystal violet and safranin cause persistent skin and clothing stains; wear nitrile gloves.'
+        id: 'eq_bio_1',
+        name: 'Biochemistry Chemical Reagent Rack',
+        image: 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=300&auto=format&fit=crop&q=80',
+        description: 'Reagent bottles: Molisch reagent (5% alpha-naphthol in ethanol), Concentrated H2SO4, Benedict reagent (CuSO4, Na2CO3, sodium citrate), Barfoed reagent, Seliwanoff reagent, Iodine solution.',
+        safetyNotes: 'Wear chemical safety goggles and nitrile gloves when handling concentrated sulfuric acid; acid causes severe chemical burns.'
       },
       {
-        id: 'eq_bact_2',
-        name: 'Bunsen Burner & Nichrome Inoculating Loop',
+        id: 'eq_bio_2',
+        name: 'Thermostatic Boiling Water Bath & Tube Racks',
         image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=300&auto=format&fit=crop&q=80',
-        description: 'Gas burner with roaring blue flame for sterilizing wire loops and heat-fixing bacterial smears onto glass slides.',
-        safetyNotes: 'Never leave open flames unattended; tie back long hair; check gas hose connections.'
+        description: 'Water bath maintained at 100°C for timed boiling of Benedict, Barfoed, and Seliwanoff reaction tubes.',
+        safetyNotes: 'Use wooden test tube holders; never lean face over boiling water bath.'
       },
       {
-        id: 'eq_bact_3',
-        name: 'Compound Light Microscope with 100x Oil Objective',
-        image: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=300&auto=format&fit=crop&q=80',
-        description: 'Equipped with 100x oil-immersion spring-loaded objective (N.A. 1.25) and Abbe condenser with iris diaphragm.',
-        safetyNotes: 'Always wipe oil off objective lens with optical paper immediately after observation.'
+        id: 'eq_bio_3',
+        name: 'Borosilicate Glass Test Tubes & Pipettes',
+        image: 'https://images.unsplash.com/photo-1579154204601-01588f351e67?w=300&auto=format&fit=crop&q=80',
+        description: 'Heat-resistant borosilicate tubes with calibration marks, graduated pipettes, and safety pipette bulbs.',
+        safetyNotes: 'Check glass rims for chips or micro-cracks before heating.'
       }
     ],
     procedure: [
       {
         stepNumber: 1,
-        title: 'Smear Preparation & Heat Fixing',
-        description: 'Place a small loopful of sterile saline on a clean glass slide. Aseptically touch a single bacterial colony, emulsify to form a faint milky turbidity. Allow to air-dry completely. Pass slide through the blue flame 3 times to heat-fix bacteria to the glass.',
-        cautionNote: 'Do not overheat: excess heat distorts bacterial cell morphology and lyses cell walls.'
+        title: 'Molisch General Test for Carbohydrates',
+        description: 'Add 2 mL of unknown test solution into a clean test tube. Add 2 drops of Molisch reagent (alpha-naphthol) and mix gently. Carefully incline the test tube and slowly pour 2 mL of concentrated H2SO4 down the inside wall of the tube without shaking, so it forms a dense layer beneath the aqueous solution.',
+        cautionNote: 'Do not shake! A purple/violet ring forms at the liquid junction if carbohydrate is present.'
       },
       {
         stepNumber: 2,
-        title: 'Primary Stain — Crystal Violet (60 Seconds)',
-        description: 'Cover the smear with Crystal Violet solution for 60 seconds. Gently rinse with a steady stream of distilled water from the wash bottle.',
-        cautionNote: 'Rinse gently at the edge of the slide, not directly onto the fragile smear.'
+        title: 'Iodine Test for Polysaccharides',
+        description: 'Add 1 mL of test solution to a porcelain spot plate or tube. Add 1–2 drops of Lugol’s iodine solution. Observe immediate color changes: Deep blue-black indicates amylose/starch; reddish-brown indicates glycogen or erythrodextrin; yellow/brown indicates monosaccharide/disaccharide.',
+        cautionNote: 'Do not boil before reading; iodine-starch complexes dissociate on heating.'
       },
       {
         stepNumber: 3,
-        title: 'Mordant Application — Gram Iodine (60 Seconds)',
-        description: 'Flood with Gram’s Iodine solution for 60 seconds. Iodine penetrates and forms large insoluble Crystal Violet-Iodine (CV-I) complexes within the cell wall. Rinse with distilled water.',
-        cautionNote: 'Mordant is essential; skipping causes all cells to decolorize.'
+        title: 'Benedict Qualitative Test for Reducing Sugars',
+        description: 'Combine 5 mL of Benedict reagent with 8 drops (approx. 0.5 mL) of carbohydrate solution in a tube. Mix thoroughly and place into a vigorously boiling water bath for exactly 3 to 5 minutes. Remove and observe precipitate color: Green (0.5%), Yellow (1%), Orange (1.5%), Brick-Red (>2% reducing sugar).',
+        cautionNote: 'Always use test tube holder. Sucrose is negative (remains blue).'
       },
       {
         stepNumber: 4,
-        title: 'Critical Decolorization — 95% Ethanol (10–15 Seconds)',
-        description: 'Hold slide at a 45-degree angle. Add 95% ethanol dropwise until runoff is almost clear (strictly 10–15 seconds). Immediately rinse thoroughly with water to halt decolorization.',
-        cautionNote: 'CRITICAL STEP: Over-decolorization turns Gram-positive pink; under-decolorization leaves Gram-negative purple.'
+        title: 'Barfoed Test — Monosaccharide vs Disaccharide Distinction',
+        description: 'Add 2 mL of Barfoed reagent (cupric acetate in dilute acetic acid) to 2 mL of test solution. Place in boiling water bath and record time with stopwatch. Monosaccharides form a red cuprous oxide precipitate along the bottom and sides within 2 to 3 minutes. Reducing disaccharides require >10 minutes.',
+        cautionNote: 'Strictly monitor time: prolonged boiling beyond 3 minutes will hydrolyze disaccharides yielding false positives.'
       },
       {
         stepNumber: 5,
-        title: 'Counterstain — Safranin (60 Seconds) & Oil Immersion',
-        description: 'Flood smear with Safranin counterstain for 60 seconds. Rinse, blot dry with bibulous paper (do not rub). Add 1 drop of immersion oil onto smear and examine under 100x oil-immersion objective.',
-        cautionNote: 'Never drag 40x dry objective through immersion oil.'
+        title: 'Seliwanoff Test for Rapid Ketose Differentiation',
+        description: 'Add 3 mL of Seliwanoff reagent (resorcinol in dilute HCl) to 1 mL of carbohydrate solution. Place in boiling water bath. Rapid cherry-red coloration within 30 to 60 seconds indicates a ketohexose (fructose). Aldohexoses (glucose) remain colorless or pale pink after several minutes.',
+        cautionNote: 'Do not boil beyond 1 minute; excessive boiling hydrolyzes aldoses producing false cherry-red.'
       }
     ],
     images: [
       {
-        url: 'https://images.unsplash.com/photo-1583912267670-6575ad4736f6?w=800&auto=format&fit=crop&q=80',
-        caption: 'Gram-Positive Staphylococci (purple clusters) vs Gram-Negative E. coli (pink bacilli) under 1000x oil immersion.',
-        magnification: '1000x Oil Immersion',
-        stainOrView: 'Gram Staining Protocol'
+        url: 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=800&auto=format&fit=crop&q=80',
+        caption: 'Benedict test series showing color gradient: Blue (negative/sucrose) to Green, Orange, and Brick-Red (Cuprous oxide Cu2O precipitate).',
+        magnification: 'Macroscopic Colorimetric Reaction',
+        stainOrView: 'Benedict Reagent Reduction'
       },
       {
-        url: 'https://images.unsplash.com/photo-1530026405186-ed1f139313f8?w=800&auto=format&fit=crop&q=80',
-        caption: 'Streptococcus pneumoniae Gram-positive lancet-shaped diplococci surrounded by clear capsule halos.',
-        magnification: '1000x',
-        stainOrView: 'Gram Stain'
+        url: 'https://images.unsplash.com/photo-1579154204601-01588f351e67?w=800&auto=format&fit=crop&q=80',
+        caption: 'Molisch test positive purple/violet ring formed at the liquid junction of concentrated H2SO4 and carbohydrate solution.',
+        magnification: 'Macroscopic Ring Junction',
+        stainOrView: 'Molisch Alpha-Naphthol Reaction'
       }
     ],
     interactiveImages: [
       {
-        id: 'inter_bact_1',
-        title: 'Interactive Gram-Stained Mixed Smear (1000x Oil Immersion)',
-        baseImage: 'https://images.unsplash.com/photo-1583912267670-6575ad4736f6?w=1000&auto=format&fit=crop&q=80',
-        magnification: '1000x Oil Immersion',
-        stainOrView: 'Gram Differential Stain',
-        description: 'Click the pins to explore Gram-positive vs Gram-negative differential characteristics and clinical pathogens.',
+        id: 'inter_bio_1',
+        title: 'Interactive Carbohydrate Diagnostic Algorithm & Test Tubes',
+        baseImage: 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=1000&auto=format&fit=crop&q=80',
+        magnification: 'Laboratory Analytical Panel',
+        stainOrView: 'Qualitative Chemical Reactions',
+        description: 'Click the pins to explore each chemical reaction test tube, molecular mechanism, and diagnostic value.',
         pins: [
           {
-            id: 'pin_b1',
-            x: 30,
-            y: 40,
+            id: 'pin_bio1',
+            x: 25,
+            y: 50,
             label: '1',
-            structureName: 'Gram-Positive Cocci in Clusters (Staphylococcus aureus)',
-            histologicalFeatures: 'Deep violet/purple spherical cells (0.5–1.0 µm) arranged in irregular grape-like clusters. Thick multilayered peptidoglycan wall (20–80 nm) traps CV-I complex during alcohol wash.',
-            clinicalSignificance: 'Common cause of skin abscesses, toxic shock syndrome, endocarditis, and hospital-acquired MRSA pneumonia.',
-            stain: 'Crystal Violet Positive (Purple)'
+            structureName: 'Benedict Positive Reaction (Brick-Red Cu2O)',
+            histologicalFeatures: 'Reducing sugars possess free anomeric aldehyde or ketone groups capable of reducing Cu2+ (cupric) to Cu+ (cuprous) oxide in hot alkaline carbonate buffer.',
+            clinicalSignificance: 'Classic qualitative test for glucosuria in uncontrolled diabetes mellitus and inborn errors of carbohydrate metabolism.',
+            stain: 'Brick-Red Cuprous Oxide Precipitate'
           },
           {
-            id: 'pin_b2',
-            x: 65,
-            y: 55,
+            id: 'pin_bio2',
+            x: 55,
+            y: 45,
             label: '2',
-            structureName: 'Gram-Negative Bacilli (Escherichia coli / Klebsiella)',
-            histologicalFeatures: 'Pink/red rod-shaped bacteria (1–3 µm). Thin peptidoglycan layer (2–7 nm) surrounded by outer membrane with LPS. Alcohol dissolves lipids, allowing CV-I to escape; counterstained by safranin.',
-            clinicalSignificance: 'Leading cause of urinary tract infections (UTIs), gram-negative sepsis, and intra-abdominal peritonitis.',
-            stain: 'Safranin Positive (Pink/Red)'
+            structureName: 'Seliwanoff Cherry-Red Ketose Complex',
+            histologicalFeatures: 'Ketohexoses (Fructose) undergo rapid acid dehydration forming 5-hydroxymethylfurfural, condensing with resorcinol into a vibrant cherry-red pigment in under 60 seconds.',
+            clinicalSignificance: 'Used to diagnose hereditary fructose intolerance and essential fructosuria.',
+            stain: 'Resorcinol Cherry-Red Chromogen'
           },
           {
-            id: 'pin_b3',
-            x: 48,
-            y: 25,
+            id: 'pin_bio3',
+            x: 75,
+            y: 55,
             label: '3',
-            structureName: 'Gram-Positive Cocci in Pairs & Chains (Streptococcus)',
-            histologicalFeatures: 'Spherical or ovoid purple cells in linear chains. Catalase-negative (distinguishing from Staphylococci).',
-            clinicalSignificance: 'Streptococcus pyogenes (Group A Strep) causes pharyngitis, rheumatic fever, and necrotizing fasciitis.',
-            stain: 'Purple / Crystal Violet'
+            structureName: 'Barfoed Acid Copper Acetate Reduction',
+            histologicalFeatures: 'The slightly acidic medium (pH 4.6) retards reduction by disaccharides. Monosaccharides are strong enough reducing agents to precipitate red Cu2O in 2–3 minutes.',
+            clinicalSignificance: 'Differentiates monosaccharides (glucose, fructose) from reducing disaccharides (lactose, maltose).',
+            stain: 'Acidic Cuprous Oxide Precipitate'
           }
         ]
       }
     ],
     identificationPoints: [
-      'GRAM-POSITIVE: Retains primary Crystal Violet, appears DEEP PURPLE/VIOLET. Thick peptidoglycan wall.',
-      'GRAM-NEGATIVE: Decolorized by alcohol, counterstained by Safranin, appears PINK/RED. Thin peptidoglycan + LPS outer membrane.',
-      'MORPHOLOGY: Cocci (spherical: clusters, chains, pairs) vs Bacilli (rods: straight, curved, branching).'
+      'MOLISCH TEST: Purple ring at interface = POSITIVE for all carbohydrates.',
+      'IODINE TEST: Deep blue = Starch/Amylose; Red-brown = Glycogen; Yellow/clear = Mono/Disaccharides.',
+      'BENEDICT TEST: Brick-red precipitate = Reducing sugar (Glucose, Fructose, Lactose, Maltose). Negative blue = Sucrose, Starch.',
+      'BARFOED TEST: Red precipitate within 2–3 mins = Monosaccharide. No precipitate at 3 mins = Disaccharide.',
+      'SELIWANOFF TEST: Cherry-red within 60 secs = Ketohexose (Fructose). Negative/slow = Aldohexose (Glucose).'
     ],
     commonMistakes: [
       {
-        mistake: 'Over-decolorizing with alcohol (>20 seconds).',
-        correction: 'Alcohol must only be applied dropwise for strictly 10 to 15 seconds. Immediately quench with water.',
-        whyItMatters: 'Over-decolorization washes CV-I out of Gram-positive cells, creating dangerous false Gram-negative interpretations.'
+        mistake: 'Shaking the test tube during Molisch acid layering.',
+        correction: 'Incline tube at 45 degrees and pipette conc. H2SO4 slowly down the glass wall. Do not mix.',
+        whyItMatters: 'Shaking generates sudden heat, charring the carbohydrates and masking the interface ring.'
       },
       {
-        mistake: 'Using old (>24–48 hr) bacterial cultures.',
-        correction: 'Always use fresh 18-24 hour exponential growth cultures. Aging bacteria suffer peptidoglycan wall autolysis.',
-        whyItMatters: 'Old Gram-positive cultures stain Gram-variable with patchy pink and purple cells.'
+        mistake: 'Boiling Barfoed test beyond 3 minutes.',
+        correction: 'Strictly remove the tube from boiling water bath when 3 minutes elapse.',
+        whyItMatters: 'Boiling acid hydrolyzes disaccharides into monosaccharides, producing false positives.'
       }
     ],
     clinicalCorrelation: {
-      condition: 'Empiric Antibiotic Selection Guided by Rapid Gram Stain in Sepsis & Meningitis',
-      pathophysiology: 'Bacterial cell wall composition dictates antibiotic susceptibility: Gram-positive thick peptidoglycan is highly sensitive to beta-lactams and Vancomycin; Gram-negative outer membrane acts as a permeability barrier and requires Cephalosporins (e.g. Ceftriaxone), Carbapenems, or Aminoglycosides.',
-      clinicalPresentation: 'Fever, neck stiffness, and altered mental status in acute bacterial meningitis. CSF Gram stain showing Gram-negative diplococci (Neisseria meningitidis) triggers immediate isolation and high-dose Ceftriaxone.',
-      diagnosticPearls: 'A 10-minute STAT Gram stain in the ICU saves lives by guiding targeted antimicrobial therapy hours before final culture results.'
+      condition: 'Glucosuria & Inborn Errors of Carbohydrate Metabolism',
+      pathophysiology: 'When blood glucose exceeds renal threshold (~180 mg/dL), proximal tubule SGLT2 transporters saturate and glucose spills into urine. In hereditary galactosaemia and fructosuria, abnormal reducing sugars are excreted.',
+      clinicalPresentation: 'Polyuria, polydipsia, and weight loss in diabetic ketoacidosis. Rapid Benedict screening detects reducing substances in pediatric urine.',
+      diagnosticPearls: 'Glucose oxidase test strips (Clinistix) are specific for glucose; Benedict test detects all reducing sugars including galactose, fructose, and lactose.'
     },
     safety: {
-      biosafetyLevel: 'BSL-2 (Potentially Pathogenic Clinical Isolates)',
+      biosafetyLevel: 'BSL-1 (Chemical Safety Level 2)',
       hazards: [
-        'Aerosol generation during vortexing or loop flaming',
-        'Open Bunsen burner fire hazard',
-        'Infectious pathogen contact with mucous membranes or cut skin'
+        'Concentrated sulfuric acid and hydrochloric acid caustic burns',
+        'Boiling water bath splashing and steam burns',
+        'Hot glassware shatter hazard'
       ],
       ppeRequired: [
-        'Buttoned laboratory coat',
-        'Nitrile gloves at all times',
-        'Safety goggles',
-        'Work within Class II Biosafety Cabinet for unknown specimen smears'
+        'Chemical-resistant laboratory coat',
+        'Nitrile safety gloves',
+        'Certified chemical splash goggles',
+        'Closed-toe chemical-resistant footwear'
       ],
-      emergencyProtocol: 'In case of bacterial culture spill, cover with paper towels, saturate with 10% household bleach (0.5% sodium hypochlorite) or 70% ethanol, let stand for 20 minutes, then wipe clean and dispose in biohazard autoclave bag. Report to laboratory supervisor.'
+      emergencyProtocol: 'In case of acid contact on skin, immediately flood the area with copious flowing water from the safety eyewash/shower for at least 15 minutes. Notify the laboratory instructor immediately.'
     },
     references: [
       {
-        title: "Murray's Medical Microbiology",
-        authors: 'Patrick R. Murray, Ken S. Rosenthal, Michael A. Pfaller',
-        editionOrYear: '9th Edition (2020)',
-        pages: 'pp. 12–35'
+        title: "Harper's Illustrated Biochemistry",
+        authors: 'Victor W. Rodwell, David Bender, Kathleen M. Botham, Peter J. Kennelly, P. Anthony Weil',
+        editionOrYear: '32nd Edition (2023)',
+        pages: 'pp. 132–156'
       },
       {
-        title: 'Bailey & Scott’s Diagnostic Microbiology',
-        authors: 'Patricia M. Tille',
-        editionOrYear: '15th Edition (2022)',
-        pages: 'pp. 88–104'
+        title: 'Practical Clinical Biochemistry: Methods and Interpretations',
+        authors: 'Ranjan Chawla',
+        editionOrYear: '5th Edition (2021)',
+        pages: 'pp. 45–68'
       }
     ],
-    quizId: 'quiz_bact_03',
-    spotterIds: ['spot_bact_1', 'spot_bact_2']
+    quizId: 'quiz_bio_01',
+    spotterIds: ['spot_bio_1']
   }
 ];
 
@@ -1255,27 +1144,27 @@ export const SPOTTER_ITEMS: SpotterItem[] = [
     difficulty: 'basic'
   },
   {
-    id: 'spot_bact_1',
-    labId: 'bacteriology',
-    categoryId: 'bact_tests',
-    practicalId: 'prac_bact_03',
-    title: 'Spotter 04: Gram Staining Morphology',
-    image: 'https://images.unsplash.com/photo-1583912267670-6575ad4736f6?w=800&auto=format&fit=crop&q=80',
-    question: 'Identify the bacterial Gram reaction and morphological grouping seen in the violet field:',
-    pointerX: 35,
-    pointerY: 42,
+    id: 'spot_bio_1',
+    labId: 'biochemistry',
+    categoryId: 'bio_carbohydrates',
+    practicalId: 'prac_bio_01',
+    title: 'Spotter 04: Benedict Test Reaction Tube',
+    image: 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=800&auto=format&fit=crop&q=80',
+    question: 'Identify the biochemical reaction result and interpretation shown in this test tube with brick-red precipitate after boiling:',
+    pointerX: 45,
+    pointerY: 55,
     options: [
-      'Gram-Positive Cocci in Grape-like Clusters (Staphylococcus morphology)',
-      'Gram-Negative Diplococci in Intracellular Pairs (Neisseria morphology)',
-      'Gram-Positive Bacilli with Subterminal Spores (Bacillus morphology)',
-      'Gram-Negative Enteric Bacilli (E. coli morphology)'
+      'Positive Benedict Test indicating high concentration of reducing sugar (Cuprous oxide Cu₂O precipitate)',
+      'Negative Molisch Test indicating absent carbohydrates',
+      'Positive Iodine Test for amylose helix',
+      'Negative Barfoed Test for non-reducing disaccharides'
     ],
     correctIndex: 0,
-    explanation: 'Correct! The deep violet/purple spheres arranged in irregular clusters represent Gram-Positive Cocci typical of Staphylococcus aureus. The thick peptidoglycan retains the Crystal Violet-Iodine complex.',
+    explanation: 'Correct! Reducing sugars (e.g., glucose, fructose, maltose) reduce alkaline cupric ions (Cu²⁺) in Benedict reagent to insoluble brick-red cuprous oxide (Cu₂O) precipitate upon boiling.',
     identificationKeyPoints: [
-      '1. Deep purple color indicates Gram-positive cell wall structure.',
-      '2. Spherical cocci arranged in characteristic grape-like clusters.',
-      '3. Catalase-positive differentiation from Streptococci.'
+      '1. Brick-red / orange precipitate confirms reduction of Cu²⁺ to Cu⁺.',
+      '2. Characteristic of free aldose or ketose reducing carbonyl groups.',
+      '3. Qualitative/semi-quantitative indicator of reducing sugar concentration.'
     ],
     difficulty: 'basic'
   }
@@ -1386,47 +1275,47 @@ export const INITIAL_QUIZZES: Quiz[] = [
     ]
   },
   {
-    id: 'quiz_bact_03',
-    labId: 'bacteriology',
-    practicalId: 'prac_bact_03',
-    title: 'Bacteriology Quiz: Gram Staining & Cell Wall',
-    description: 'Test your understanding of Gram staining steps, reagents, timings, and diagnostic troubleshooting.',
+    id: 'quiz_bio_01',
+    labId: 'biochemistry',
+    practicalId: 'prac_bio_01',
+    title: 'Biochemistry Quiz: Qualitative Carbohydrate Identification',
+    description: 'Test your mastery of carbohydrate identification tests: Molisch, Iodine, Barfoed, Seliwanoff, Benedict, and Fehling reactions.',
     timeLimitMinutes: 10,
     passingScorePercent: 75,
     questions: [
       {
-        id: 'q_b3_1',
-        question: 'What is the role of Gram’s Iodine in the Gram stain protocol?',
+        id: 'q_bio_1',
+        question: 'Which reagent is used in Seliwanoff’s test to rapidly differentiate ketohexoses (fructose) from aldohexoses (glucose)?',
         type: 'mcq',
         options: [
-          'It serves as a mordant that forms large insoluble complexes with Crystal Violet',
-          'It decolorizes Gram-negative outer membranes',
-          'It acts as the red counterstain for acid-fast bacteria',
-          'It heat-fixes the bacterial smear to the glass slide'
+          'Resorcinol in dilute HCl (forms cherry-red complex)',
+          'Alpha-naphthol in concentrated H₂SO₄',
+          'Copper acetate in acetic acid',
+          'Iodine solution in potassium iodide'
         ],
         correctIndex: 0,
-        explanation: 'Gram’s Iodine is a mordant. It forms a chemical CV-I complex inside the cell that is too large to easily wash out through the dehydrated thick peptidoglycan of Gram-positive cells.'
+        explanation: 'Seliwanoff’s test uses resorcinol in dilute HCl. Ketoses dehydrate rapidly to 5-hydroxymethylfurfural which condenses with resorcinol to give a cherry-red color within 1–2 minutes.'
       },
       {
-        id: 'q_b3_2',
-        question: 'If a student accidentally leaves the 95% alcohol decolorizer on the slide for 2 minutes, what will happen to Gram-positive Staphylococcus aureus?',
+        id: 'q_bio_2',
+        question: 'What is the key difference in reaction time between monosaccharides and disaccharides in Barfoed’s test?',
         type: 'mcq',
         options: [
-          'It will be over-decolorized and appear false pink/red after safranin counterstain',
-          'It will remain dark purple because Gram-positive bacteria are immune to alcohol',
-          'It will dissolve completely and vanish from the glass slide',
-          'It will turn bright fluorescent green'
+          'Monosaccharides reduce cupric ions rapidly within 2–3 minutes in an acidic medium, while reducing disaccharides react much more slowly or not at all',
+          'Disaccharides react immediately while monosaccharides require prolonged boiling',
+          'Barfoed test only detects polysaccharides like glycogen',
+          'Both react with identical speed'
         ],
         correctIndex: 0,
-        explanation: 'Prolonged alcohol exposure over-decolorizes even thick Gram-positive cell walls, causing the CV-I complex to leach out and resulting in a false-negative pink result.'
+        explanation: 'Barfoed’s reagent consists of cupric acetate in dilute acetic acid (acidic medium). Monosaccharides, being stronger reducing agents, produce a red precipitate (Cu₂O) within 2–3 minutes, whereas disaccharides require prolonged boiling (>10 minutes).'
       },
       {
-        id: 'q_b3_3',
-        question: 'True or False: Gram-negative bacteria appear pink/red because their thin peptidoglycan layer allows the CV-I complex to escape during alcohol decolorization.',
+        id: 'q_bio_3',
+        question: 'True or False: The Molisch test is a general screening test positive for all carbohydrates due to acid dehydration forming furfural derivatives.',
         type: 'true_false',
         options: ['True', 'False'],
         correctIndex: 0,
-        explanation: 'True. The thin peptidoglycan layer (2–7 nm) and high lipid outer membrane dissolve in alcohol, releasing the purple dye so cells take up the pink safranin counterstain.'
+        explanation: 'True. Concentrated sulfuric acid dehydrates all carbohydrates to furfural (from pentoses) or hydroxymethylfurfural (from hexoses), which condenses with alpha-naphthol to form a characteristic violet or purple ring at the interface.'
       }
     ]
   }
@@ -1480,18 +1369,18 @@ export const INITIAL_SCHEDULE: ScheduleItem[] = [
     date: '2026-09-02',
     day: 'Wednesday',
     time: '01:00 PM – 03:00 PM',
-    courseId: 'bacteriology',
-    courseName: 'Bacteriology Lab',
-    practicalNumber: 3,
-    practicalId: 'prac_bact_03',
-    practicalTitle: 'Practical 03 — Gram Staining & Bacterial Morphology',
+    courseId: 'biochemistry',
+    courseName: 'Biochemistry Lab',
+    practicalNumber: 1,
+    practicalId: 'prac_bio_01',
+    practicalTitle: 'Practical 01 — Qualitative Identification of Carbohydrates',
     instructorName: 'Prof. Eleanor Hayes, MD',
-    room: 'Microbiology Lab 3',
+    room: 'Biochemistry Lab 2',
     isToday: false,
     isTomorrow: false,
     preparationTasks: [
-      { id: 'prep_9', label: 'Read Gram staining protocol reagents and timings', completed: false },
-      { id: 'prep_10', label: 'Review BSL-2 biosafety regulations', completed: false }
+      { id: 'prep_9', label: 'Review Molisch & Benedict reaction mechanisms', completed: false },
+      { id: 'prep_10', label: 'Review Barfoed and Seliwanoff timing precautions', completed: false }
     ]
   }
 ];
@@ -1509,10 +1398,10 @@ export const INITIAL_ANNOUNCEMENTS: Announcement[] = [
   },
   {
     id: 'ann_2',
-    title: 'Bacteriology Lab Session Relocated to Room 3',
-    content: 'Please note that upcoming Bacteriology diagnostic sessions (Practical 03: Gram Staining) will take place in Microbiology Lab Room 3 due to biosafety ventilation upgrades in Room 1.',
+    title: 'Biochemistry Practical 01: Carbohydrates Protocol Live',
+    content: 'The laboratory manual and interactive testing algorithms for Practical 01 (Carbohydrate Qualitative Tests) are now live. Students must review Molisch, Benedict, and Barfoed procedures before entering Lab 2.',
     date: 'Aug 27, 2026',
-    labId: 'bacteriology',
+    labId: 'biochemistry',
     author: 'Prof. Eleanor Hayes, Dean',
     authorRole: 'Academic Directorate',
     priority: 'urgent'
@@ -1550,8 +1439,8 @@ export const INITIAL_NOTIFICATIONS: NotificationItem[] = [
   },
   {
     id: 'notif_3',
-    title: 'Bacteriology Lab moved to Room 3',
-    message: 'Practical 03 relocated to Microbiology Lab 3.',
+    title: 'Biochemistry Practical 01 Published',
+    message: 'Carbohydrate Qualitative Identification protocol is ready in Lab 2.',
     time: 'Yesterday',
     type: 'announcement',
     linkTarget: { tab: 'announcements' },
@@ -1588,14 +1477,14 @@ export const INITIAL_FILES: FileAsset[] = [
   },
   {
     id: 'file_3',
-    fileName: 'Microbiology_Gram_Staining_Safety_SOP.pdf',
+    fileName: 'Biochemistry_Carbohydrate_Qualitative_Tests_Manual.pdf',
     fileType: 'pdf',
-    fileSize: '1.9 MB',
+    fileSize: '2.3 MB',
     uploadDate: 'Aug 23, 2026',
     uploadedBy: 'Prof. Eleanor Hayes',
-    courseId: 'bacteriology',
-    practicalId: 'prac_bact_03',
-    version: '3.0',
+    courseId: 'biochemistry',
+    practicalId: 'prac_bio_01',
+    version: '3.1',
     approvalStatus: 'published',
     downloadUrl: '#'
   }
@@ -1603,11 +1492,10 @@ export const INITIAL_FILES: FileAsset[] = [
 
 export const INITIAL_STUDENT_PROGRESS: StudentProgress = {
   userId: 'usr_student_1',
-  anatomyPercent: 80,
-  histologyPercent: 70,
-  bacteriologyPercent: 90,
-  biochemistryPercent: 0,
-  completedPracticals: ['prac_anat_02', 'prac_bact_03'],
+  anatomyPercent: 82,
+  histologyPercent: 74,
+  biochemistryPercent: 70,
+  completedPracticals: ['prac_anat_01', 'prac_anat_02', 'prac_hist_01'],
   completedQuizzes: [
     {
       id: 'att_1',
@@ -1627,7 +1515,7 @@ export const INITIAL_STUDENT_PROGRESS: StudentProgress = {
       completedAt: 'Aug 26, 2026'
     }
   ],
-  completedSpotters: ['spot_anat_1', 'spot_bact_1'],
+  completedSpotters: ['spot_anat_1', 'spot_hist_1'],
   averageScore: 92,
   studyTimeMinutes: 340,
   completedChecklistTasks: ['prep_1', 'prep_2', 'prep_5']

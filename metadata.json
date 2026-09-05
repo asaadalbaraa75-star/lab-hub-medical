@@ -1,6 +1,6 @@
 {
   "name": "LAB HUB",
-  "description": "A centralized digital medical laboratory learning platform for medical students covering Anatomy, Histology, Bacteriology, and Biochemistry carbohydrate identification tests with practicals, spotters, interactive microscope viewers, quizzes, schedules, progress tracking, and academic workflows.",
+  "description": "A centralized digital medical laboratory learning platform for medical students covering Anatomy, Histology, and Biochemistry with interactive practicals, high-yield spotters, digital microscope viewer, quizzes, schedule, and AI tutor.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

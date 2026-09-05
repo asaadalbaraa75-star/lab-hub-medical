@@ -1,3 +1,5 @@
+import { MEDICAL_ASSETS } from '../assets/medicalImages';
+
 export interface HistologyPin {
   id: string;
   pinNumber: number;
@@ -32,6 +34,81 @@ export interface HistologySlide {
 }
 
 export const HISTOLOGY_SLIDES_CATALOG: HistologySlide[] = [
+  // 0. SIMPLE CUBOIDAL EPITHELIUM (Primary Reference Slide)
+  {
+    id: 'slide-simple-cuboidal',
+    title: 'Simple Cuboidal Epithelium',
+    titleAr: 'الظهارة المكعبة البسيطة (النبيبات الكلوية)',
+    category: 'epithelia',
+    tissueType: 'Simple Cuboidal Epithelium',
+    stain: 'Hematoxylin & Eosin (H&E)',
+    organSource: 'Kidney Tubules / Renal Cortex',
+    description: 'Single layer of cube-like epithelial cells whose height approximately equals their width. The round, darkly stained nuclei are centrally located in each cell. Forms the lining of renal collecting ducts and convoluted tubules, adapted for selective secretion and reabsorption.',
+    magnifications: {
+      '4x': MEDICAL_ASSETS.histologyKidneyTubules,
+      '10x': MEDICAL_ASSETS.histologyKidneyTubules,
+      '40x': MEDICAL_ASSETS.histologyKidneyTubules,
+      '100x': MEDICAL_ASSETS.histologyKidneyTubules
+    },
+    baseImage: MEDICAL_ASSETS.histologyKidneyTubules,
+    pins: [
+      {
+        id: 'pin-sc-1',
+        pinNumber: 1,
+        x: 48,
+        y: 42,
+        structureName: 'Spherical Central Nucleus',
+        structureNameAr: 'نواة مركزية كروية داكنة',
+        histologicalFeatures: 'Prominent, perfectly spherical nucleus positioned exactly in the geometric center of each cuboidal cell.',
+        stainingNotes: 'Deep basophilic blue/purple hematoxylin staining due to dense chromatin and RNA.',
+        clinicalSignificance: 'Nuclear pleomorphism and loss of polarity in renal tubular epithelium are signs of acute tubular necrosis (ATN) or renal cell carcinoma.'
+      },
+      {
+        id: 'pin-sc-2',
+        pinNumber: 2,
+        x: 38,
+        y: 52,
+        structureName: 'Cuboidal Epithelial Cell Body',
+        structureNameAr: 'خلية ظهارية مكعبة',
+        histologicalFeatures: 'Single cell layer where cell height equals width, with eosinophilic cytoplasm rich in mitochondria for active ion transport.',
+        stainingNotes: 'Moderate pink/eosinophilic staining of cytoplasm.',
+        clinicalSignificance: 'Proximal convoluted tubule cells possess extensive apical brush borders (microvilli) to maximize glucose, amino acid, and sodium reabsorption.'
+      },
+      {
+        id: 'pin-sc-3',
+        pinNumber: 3,
+        x: 52,
+        y: 62,
+        structureName: 'Tubular Lumen',
+        structureNameAr: 'لمعة النبيب الكلوي',
+        histologicalFeatures: 'Central clear luminal cavity through which glomerular filtrate flows and undergoes tubular modification.',
+        stainingNotes: 'Empty lumen (unstained or containing pink proteinaceous casts in pathology).',
+        clinicalSignificance: 'Obstruction of the lumen by cellular debris (casts) occurs in myoglobinuria and acute renal injury.'
+      },
+      {
+        id: 'pin-sc-4',
+        pinNumber: 4,
+        x: 30,
+        y: 68,
+        structureName: 'Basement Membrane (Basal Lamina)',
+        structureNameAr: 'الغشاء القاعدي',
+        histologicalFeatures: 'Thin extracellular matrix layer supporting the basal aspect of the cuboidal cells.',
+        stainingNotes: 'Lightly eosinophilic on H&E; intensely stained magenta by Periodic Acid-Schiff (PAS).',
+        clinicalSignificance: 'Thickening of the tubular basement membrane is observed in diabetic nephropathy.'
+      }
+    ],
+    highYieldPearls: [
+      'Single layer of cells with height equal to width',
+      'Nuclei are strictly round and centrally located (unlike flat nuclei of squamous or basal nuclei of columnar)',
+      'Classic locations: Kidney collecting tubules, thyroid follicles, surface of ovary'
+    ],
+    diagnosticChecklist: [
+      'Confirm single cell layer on basement membrane',
+      'Inspect nuclear shape: must be spherical, not oval or flattened',
+      'Look for annular arrangement enclosing a circular tubular lumen'
+    ]
+  },
+
   // 1. SKELETAL MUSCLE
   {
     id: 'slide-skeletal-muscle',

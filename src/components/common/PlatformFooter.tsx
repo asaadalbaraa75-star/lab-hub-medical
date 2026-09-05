@@ -95,16 +95,6 @@ export const PlatformFooter: React.FC<PlatformFooterProps> = ({
               <li>
                 <button
                   type="button"
-                  onClick={() => onSelectTab && onSelectTab('bacteriology')}
-                  className="hover:text-emerald-600 transition-colors flex items-center gap-1.5"
-                >
-                  <Bug className="w-3.5 h-3.5 text-emerald-500" />
-                  <span>معمل البكتيريا (Bacteriology Lab)</span>
-                </button>
-              </li>
-              <li>
-                <button
-                  type="button"
                   onClick={() => onSelectTab && onSelectTab('biochemistry')}
                   className="hover:text-amber-600 transition-colors flex items-center gap-1.5"
                 >

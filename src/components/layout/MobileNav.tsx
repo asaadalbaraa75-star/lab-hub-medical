@@ -17,14 +17,11 @@ export const MobileNav: React.FC<MobileNavProps> = ({
     'laboratories',
     'anatomy',
     'histology',
-    'bacteriology',
     'biochemistry',
     'practical_detail',
-    'organism_detail',
     'practicals',
     'spotters',
     'histology_microscope',
-    'bacteriology_concept_map',
     'educational_videos'
   ].includes(activeTab);
 

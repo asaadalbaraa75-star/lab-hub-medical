@@ -47,7 +47,7 @@ export const StudentPortalModal: React.FC<StudentPortalModalProps> = ({
 
   const handleTelegramShare = () => {
     const text = encodeURIComponent(
-      `منصة المعامل الطبية الذكية (Anatomy, Histology, Bacteriology, Biochemistry) — تطوير: سكينة أسعد:\n${portalUrl}`
+      `منصة المعامل الطبية الذكية (Anatomy, Histology, Biochemistry) — تطوير: سكينة أسعد:\n${portalUrl}`
     );
     window.open(`https://t.me/share/url?url=${encodeURIComponent(portalUrl)}&text=${text}`, '_blank');
   };
@@ -55,7 +55,7 @@ export const StudentPortalModal: React.FC<StudentPortalModalProps> = ({
   const handleEmailShare = () => {
     const subject = encodeURIComponent('LAB HUB Medical Platform Access Link | رابط منصة المعامل الطبية — تطوير: سكينة أسعد');
     const body = encodeURIComponent(
-      `Dear Medical Student,\n\nHere is the access link to our Medical Laboratory Learning Platform covering Anatomy, Histology, Bacteriology, and Biochemistry (Created by Sukaina Asaad):\n\n${portalUrl}\n\nGood luck with your practicals!`
+      `Dear Medical Student,\n\nHere is the access link to our Medical Laboratory Learning Platform covering Anatomy, Histology, and Biochemistry (Created by Sukaina Asaad):\n\n${portalUrl}\n\nGood luck with your practicals!`
     );
     window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
   };
@@ -323,7 +323,7 @@ export const StudentPortalModal: React.FC<StudentPortalModalProps> = ({
                     <strong className="text-slate-800">الدخول المباشر:</strong> افتح الرابط في أي متصفح ويب على هاتفك أو حاسوبك المحمول.
                   </li>
                   <li>
-                    <strong className="text-slate-800">اختيار المعمل:</strong> تصفح أقسام (Anatomy, Histology, Bacteriology) للاطلاع على الدروس والشرائح.
+                    <strong className="text-slate-800">اختيار المعمل:</strong> تصفح أقسام (Anatomy, Histology, Biochemistry) للاطلاع على الدروس والشرائح.
                   </li>
                   <li>
                     <strong className="text-slate-800">المجهر التفاعلي والـ Spotters:</strong> افتح الشرائح المكبرة واختبر مهارات التعرف السريع على العينات.

@@ -265,8 +265,8 @@ class StorageService {
       progress.histologyPercent = Math.min(100, progress.histologyPercent + 8);
     } else if (attempt.labId === 'anatomy' && progress.anatomyPercent < 95) {
       progress.anatomyPercent = Math.min(100, progress.anatomyPercent + 8);
-    } else if (attempt.labId === 'bacteriology' && progress.bacteriologyPercent < 95) {
-      progress.bacteriologyPercent = Math.min(100, progress.bacteriologyPercent + 8);
+    } else if (attempt.labId === 'biochemistry' && (progress.biochemistryPercent || 0) < 95) {
+      progress.biochemistryPercent = Math.min(100, (progress.biochemistryPercent || 0) + 8);
     }
 
     this.saveProgress(progress, userId);

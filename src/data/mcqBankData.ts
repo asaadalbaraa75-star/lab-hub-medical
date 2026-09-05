@@ -1,6 +1,6 @@
 export interface BankMcqQuestion {
   id: string;
-  subjectId: 'anatomy' | 'histology' | 'bacteriology' | 'biochemistry';
+  subjectId: 'anatomy' | 'histology' | 'biochemistry';
   topic: string;
   difficulty: 'basic' | 'intermediate' | 'advanced';
   question: string;
@@ -1187,70 +1187,7 @@ export const HISTOLOGY_MCQ_BANK: BankMcqQuestion[] = [
   }
 ];
 
-// BACTERIOLOGY & BIOCHEMISTRY QUESTIONS
-export const BACTERIOLOGY_MCQ_BANK: BankMcqQuestion[] = [
-  {
-    id: 'bact-001',
-    subjectId: 'bacteriology',
-    topic: 'Gram Staining',
-    difficulty: 'basic',
-    question: 'In the Gram staining protocol, the primary stain that imparts a purple color to all bacterial cells is:',
-    options: ['Crystal violet', 'Gram\'s iodine', '95% Ethanol / Acetone', 'Safranin'],
-    correctIndex: 0,
-    explanation: 'Crystal violet is the primary basic dye that penetrates and stains all bacterial cell walls violet/purple.',
-    keyPoints: ['1. Crystal violet (Primary stain)', '2. Iodine (Mordant)', '3. Alcohol (Decolorizer)', '4. Safranin (Counterstain)']
-  },
-  {
-    id: 'bact-002',
-    subjectId: 'bacteriology',
-    topic: 'Gram Staining',
-    difficulty: 'basic',
-    question: 'Gram-positive bacteria retain the crystal violet-iodine complex because their cell wall possesses:',
-    options: [
-      'A thick peptidoglycan layer with teichoic acid',
-      'An outer membrane with lipopolysaccharide (LPS)',
-      'A thin peptidoglycan layer and periplasmic space',
-      'Mycolic acid lipid barrier'
-    ],
-    correctIndex: 0,
-    explanation: 'Gram-positive bacteria have a thick (20-80 nm) multilayered peptidoglycan meshwork that dehydrates during alcohol treatment, trapping the large CV-I crystal complex.',
-    keyPoints: ['Gram+ = Thick peptidoglycan + Teichoic acids + Purple', 'Gram- = Thin peptidoglycan + Outer membrane (LPS) + Pink']
-  },
-  {
-    id: 'bact-003',
-    subjectId: 'bacteriology',
-    topic: 'Cocci Identification',
-    difficulty: 'intermediate',
-    question: 'Which test rapidly differentiates Staphylococcus (catalase-positive) from Streptococcus (catalase-negative)?',
-    options: ['Catalase test with 3% H2O2', 'Coagulase test', 'Oxidase test', 'Indole test'],
-    correctIndex: 0,
-    explanation: 'The catalase test uses 3% hydrogen peroxide (H2O2). Staphylococcus produces the catalase enzyme breaking H2O2 into water and oxygen bubbles (positive), whereas Streptococcus is negative.',
-    keyPoints: ['Catalase + (bubbles) = Staphylococcus', 'Catalase - (no bubbles) = Streptococcus']
-  },
-  {
-    id: 'bact-004',
-    subjectId: 'bacteriology',
-    topic: 'Cocci Identification',
-    difficulty: 'intermediate',
-    question: 'The definitive test that distinguishes Staphylococcus aureus (pathogenic) from coagulase-negative staphylococci (e.g. S. epidermidis) is the:',
-    options: ['Coagulase test', 'Oxidase test', 'Gram stain', 'Urease test'],
-    correctIndex: 0,
-    explanation: 'Staphylococcus aureus produces coagulase enzyme (free and bound), which converts fibrinogen to fibrin, forming a plasma clot (coagulase-positive).',
-    keyPoints: ['S. aureus = Coagulase POSITIVE (clot formation) + Golden colonies', 'S. epidermidis / S. saprophyticus = Coagulase NEGATIVE']
-  },
-  {
-    id: 'bact-005',
-    subjectId: 'bacteriology',
-    topic: 'Culture Media',
-    difficulty: 'intermediate',
-    question: 'MacConkey agar is both selective and differential. It differentiates Gram-negative bacilli based on the fermentation of:',
-    options: ['Lactose', 'Glucose', 'Sucrose', 'Mannitol'],
-    correctIndex: 0,
-    explanation: 'MacConkey agar contains bile salts/crystal violet (inhibits Gram-positives) and lactose + neutral red pH indicator. Lactose fermenters (e.g. E. coli) produce pink colonies; non-fermenters (e.g. Pseudomonas) produce colorless/pale colonies.',
-    keyPoints: ['MacConkey selective for Gram-negative rods', 'Lactose fermenters = Pink colonies (E. coli, Klebsiella)', 'Non-lactose fermenters = Pale/colorless (Pseudomonas, Salmonella, Shigella)']
-  }
-];
-
+// BIOCHEMISTRY QUESTIONS
 export const BIOCHEMISTRY_MCQ_BANK: BankMcqQuestion[] = [
   {
     id: 'bioc-001',
@@ -1312,6 +1249,5 @@ export const BIOCHEMISTRY_MCQ_BANK: BankMcqQuestion[] = [
 export const ALL_MCQ_BANK: BankMcqQuestion[] = [
   ...ANATOMY_MCQ_BANK,
   ...HISTOLOGY_MCQ_BANK,
-  ...BACTERIOLOGY_MCQ_BANK,
   ...BIOCHEMISTRY_MCQ_BANK
 ];

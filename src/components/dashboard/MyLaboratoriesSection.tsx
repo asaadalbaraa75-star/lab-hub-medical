@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bone, Microscope, Bug, FlaskConical, ArrowRight, BookOpen, Target, CheckSquare } from 'lucide-react';
+import { Bone, Microscope, FlaskConical, ArrowRight, BookOpen, Target, CheckSquare } from 'lucide-react';
 import { LAB_SUBJECTS } from '../../data/mockData';
 import { LabSubjectId, StudentProgress } from '../../types';
 
@@ -17,14 +17,12 @@ export const MyLaboratoriesSection: React.FC<MyLaboratoriesSectionProps> = ({
   const iconMap: Record<string, any> = {
     anatomy: Bone,
     histology: Microscope,
-    bacteriology: Bug,
     biochemistry: FlaskConical
   };
 
   const progressMap: Record<string, number> = {
     anatomy: progress.anatomyPercent || 0,
     histology: progress.histologyPercent || 0,
-    bacteriology: progress.bacteriologyPercent || 0,
     biochemistry: progress.biochemistryPercent || 0
   };
 
@@ -45,12 +43,12 @@ export const MyLaboratoriesSection: React.FC<MyLaboratoriesSectionProps> = ({
           </p>
         </div>
         <span className="text-xs text-indigo-700 bg-indigo-50 border border-indigo-200 px-2.5 py-1 rounded-lg font-semibold self-start sm:self-auto">
-          4 معامل طبية معتمدة
+          3 معامل طبية معتمدة
         </span>
       </div>
 
-      {/* 4 Large Professional Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      {/* 3 Large Professional Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {LAB_SUBJECTS.map(lab => {
           const Icon = iconMap[lab.id] || FlaskConical;
           const labProgress = progressMap[lab.id] || 0;

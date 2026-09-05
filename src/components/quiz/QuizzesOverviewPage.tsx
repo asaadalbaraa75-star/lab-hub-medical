@@ -39,7 +39,7 @@ export const QuizzesOverviewPage: React.FC<QuizzesOverviewPageProps> = ({
 
         {/* Filter Tabs */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1">
-          {['all', 'anatomy', 'histology', 'bacteriology'].map(labId => (
+          {['all', 'anatomy', 'histology', 'biochemistry'].map(labId => (
             <button
               key={labId}
               type="button"

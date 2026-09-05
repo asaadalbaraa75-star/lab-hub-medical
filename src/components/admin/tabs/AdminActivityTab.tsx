@@ -172,8 +172,7 @@ export const AdminActivityTab: React.FC<Props> = ({
               { id: 'Authentication', label: 'دخول وخروج' },
               { id: 'Anatomy', label: 'التشريح' },
               { id: 'Histology', label: 'الأنسجة' },
-              { id: 'Bacteriology', label: 'البكتيريا' },
-              { id: 'Biochemistry', label: 'الكيمياء' },
+              { id: 'Biochemistry', label: 'الكيمياء الحيوية' },
               { id: 'OSPE', label: 'الاختبارات' }
             ].map(sec => (
               <button

@@ -22,7 +22,8 @@ import {
   Microscope,
   Info,
   ChevronRight,
-  Filter
+  Filter,
+  Tag
 } from 'lucide-react';
 
 interface Props {
@@ -417,33 +418,112 @@ export const VirtualHistologyViewer: React.FC<Props> = ({ onSlideSelected, initi
             )}
           </div>
 
-          {/* Bottom Floating Canvas Controls */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center bg-slate-900/85 backdrop-blur-md border border-slate-800 rounded-full px-3 py-1.5 shadow-2xl space-x-2">
+          {/* Floating Action Tools on the Right (Matching Reference Screenshot: Labels, Zoom, Identify, Info) */}
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-2">
             <button
-              onClick={() => setScale(s => Math.max(s - 0.25, 0.5))}
-              className="p-1.5 rounded-full hover:bg-slate-800 text-slate-300 hover:text-white transition"
-              title="Zoom Out"
+              onClick={() => setShowPins(!showPins)}
+              className={`flex flex-col items-center justify-center w-10 h-10 rounded-2xl border transition-all shadow-xl backdrop-blur-md ${
+                showPins
+                  ? 'bg-purple-950/80 border-purple-500 text-purple-300 shadow-[0_0_15px_rgba(168,85,247,0.3)]'
+                  : 'bg-[#090D1A]/90 border-white/10 text-slate-400 hover:text-white'
+              }`}
+              title="Toggle Slide Structure Pins"
             >
-              <ZoomOut className="w-4 h-4" />
+              <Tag className="w-3.5 h-3.5" />
+              <span className="text-[8px] font-bold mt-0.5">Labels</span>
             </button>
-            <span className="text-xs font-mono text-slate-300 w-12 text-center">
-              {(scale * 100).toFixed(0)}%
-            </span>
+
             <button
-              onClick={() => setScale(s => Math.min(s + 0.25, 4.0))}
-              className="p-1.5 rounded-full hover:bg-slate-800 text-slate-300 hover:text-white transition"
+              onClick={() => setScale(s => Math.min(s + 0.3, 4.0))}
+              className="flex flex-col items-center justify-center w-10 h-10 rounded-2xl bg-[#090D1A]/90 hover:bg-sky-950/80 border border-white/10 hover:border-sky-500/50 text-slate-300 hover:text-white transition-all shadow-xl backdrop-blur-md"
               title="Zoom In"
             >
-              <ZoomIn className="w-4 h-4" />
+              <ZoomIn className="w-3.5 h-3.5 text-sky-400" />
+              <span className="text-[8px] font-bold mt-0.5">Zoom</span>
             </button>
-            <div className="w-px h-4 bg-slate-700" />
+
             <button
-              onClick={handleResetViewport}
-              className="p-1.5 rounded-full hover:bg-slate-800 text-slate-300 hover:text-white transition"
-              title="Center & Reset View"
+              onClick={() => {
+                setIsQuizMode(!isQuizMode);
+                setSelectedPin(null);
+              }}
+              className={`flex flex-col items-center justify-center w-10 h-10 rounded-2xl border transition-all shadow-xl backdrop-blur-md ${
+                isQuizMode
+                  ? 'bg-amber-950/80 border-amber-500 text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.3)]'
+                  : 'bg-[#090D1A]/90 border-white/10 text-slate-400 hover:text-amber-300'
+              }`}
+              title="Identify Mode (OSPE Spotter)"
             >
-              <RotateCcw className="w-4 h-4" />
+              <HelpCircle className="w-3.5 h-3.5 text-amber-400" />
+              <span className="text-[8px] font-bold mt-0.5">Identify</span>
             </button>
+
+            <button
+              onClick={() => {
+                if (selectedSlide.pins.length > 0) setSelectedPin(selectedSlide.pins[0]);
+              }}
+              className="flex flex-col items-center justify-center w-10 h-10 rounded-2xl bg-[#090D1A]/90 hover:bg-teal-950/80 border border-white/10 hover:border-teal-500/50 text-slate-300 hover:text-white transition-all shadow-xl backdrop-blur-md"
+              title="Slide Info"
+            >
+              <Info className="w-3.5 h-3.5 text-teal-400" />
+              <span className="text-[8px] font-bold mt-0.5">Info</span>
+            </button>
+          </div>
+
+          {/* Bottom Floating Canvas Controls with Magnification Switcher (4x | 10x | 40x | 100x) */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center bg-[#070B16]/90 backdrop-blur-md border border-white/15 rounded-full px-4 py-1.5 shadow-2xl space-x-3">
+            {/* Objective Selector [ 4x | 10x | 40x | 100x ] */}
+            <div className="flex items-center space-x-1">
+              {(['4x', '10x', '40x', '100x'] as const).map(obj => {
+                const isCurrent = activeObjective === obj;
+                return (
+                  <button
+                    key={obj}
+                    onClick={() => {
+                      setActiveObjective(obj);
+                      setFineFocus(0);
+                    }}
+                    className={`px-2.5 py-0.5 rounded-full text-xs font-bold transition-all ${
+                      isCurrent
+                        ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-[0_0_10px_rgba(168,85,247,0.4)]'
+                        : 'text-slate-400 hover:text-white hover:bg-white/5'
+                    }`}
+                  >
+                    {obj}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="w-px h-4 bg-white/20" />
+
+            {/* Canvas Zoom Tools */}
+            <div className="flex items-center space-x-1">
+              <button
+                onClick={() => setScale(s => Math.max(s - 0.25, 0.5))}
+                className="p-1 rounded-full hover:bg-white/10 text-slate-300 hover:text-white transition"
+                title="Zoom Out"
+              >
+                <ZoomOut className="w-3.5 h-3.5" />
+              </button>
+              <span className="text-[11px] font-mono text-slate-300 w-10 text-center">
+                {(scale * 100).toFixed(0)}%
+              </span>
+              <button
+                onClick={() => setScale(s => Math.min(s + 0.25, 4.0))}
+                className="p-1 rounded-full hover:bg-white/10 text-slate-300 hover:text-white transition"
+                title="Zoom In"
+              >
+                <ZoomIn className="w-3.5 h-3.5" />
+              </button>
+              <button
+                onClick={handleResetViewport}
+                className="p-1 rounded-full hover:bg-white/10 text-slate-400 hover:text-white transition"
+                title="Center & Reset View"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
         </div>
 

@@ -53,7 +53,7 @@ export class AuthService {
             studentId: 'MED-2026-4891',
             department: 'Faculty of Medicine — 2nd Year MBBS',
             year: 'Year 2 (Pre-Clinical)',
-            enrolledLabs: ['anatomy', 'histology', 'bacteriology', 'biochemistry'],
+            enrolledLabs: ['anatomy', 'histology', 'biochemistry'],
             avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
             createdAt: '2026-01-10T08:00:00.000Z',
             lastLoginAt: new Date().toISOString(),
@@ -71,7 +71,7 @@ export class AuthService {
             studentId: 'ADM-MED-001',
             department: 'Academic Directorate & Laboratory Board',
             year: 'Dean of Medical Laboratory Curricula',
-            enrolledLabs: ['anatomy', 'histology', 'bacteriology', 'biochemistry'],
+            enrolledLabs: ['anatomy', 'histology', 'biochemistry'],
             avatarUrl: 'https://images.unsplash.com/photo-1594824813680-79883506ecf5?w=150&auto=format&fit=crop&q=80',
             createdAt: '2025-09-01T08:00:00.000Z',
             lastLoginAt: new Date().toISOString(),
@@ -89,7 +89,7 @@ export class AuthService {
             studentId: 'FAC-MED-104',
             department: 'Department of Anatomy & Histology',
             year: 'Senior Teaching Faculty',
-            enrolledLabs: ['anatomy', 'histology', 'bacteriology', 'biochemistry'],
+            enrolledLabs: ['anatomy', 'histology', 'biochemistry'],
             avatarUrl: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150&auto=format&fit=crop&q=80',
             createdAt: '2025-10-15T08:00:00.000Z',
             lastLoginAt: new Date().toISOString(),
@@ -398,7 +398,7 @@ export class AuthService {
       studentId,
       department: 'Faculty of Medicine — 1st Year Medical Sciences',
       year: 'Year 1 (Pre-Clinical)',
-      enrolledLabs: ['anatomy', 'histology', 'bacteriology', 'biochemistry'],
+      enrolledLabs: ['anatomy', 'histology', 'biochemistry'],
       avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
       createdAt: now,
       lastLoginAt: now,
@@ -794,16 +794,14 @@ export class AuthService {
       subjectVisits: [
         { subject: 'Anatomy', count: 28, color: 'bg-indigo-500' },
         { subject: 'Histology', count: 22, color: 'bg-emerald-500' },
-        { subject: 'Bacteriology', count: 31, color: 'bg-amber-500' },
-        { subject: 'Biochemistry', count: 19, color: 'bg-cyan-500' },
+        { subject: 'Biochemistry', count: 26, color: 'bg-amber-500' },
         { subject: 'OSPE Exams', count: 24, color: 'bg-purple-500' },
         { subject: 'Videos', count: 35, color: 'bg-rose-500' }
       ],
       lessonActivity: [
         { title: 'Gross Anatomy: Cranial Nerves Dissection', subject: 'Anatomy', opens: 38 },
         { title: 'Virtual Histology: Epithelial & Cartilage', subject: 'Histology', opens: 34 },
-        { title: 'Gram-Positive Pathogens & Catalase Protocol', subject: 'Bacteriology', opens: 47 },
-        { title: 'Benedict & Qualitative Carbohydrate Testing', subject: 'Biochemistry', opens: 29 }
+        { title: 'Benedict & Qualitative Carbohydrate Testing', subject: 'Biochemistry', opens: 47 }
       ],
       quizActivity: { totalAttempts: 84, passed: 72, failed: 12 },
       videoActivity: { totalViews: 119, completedCount: 88 }

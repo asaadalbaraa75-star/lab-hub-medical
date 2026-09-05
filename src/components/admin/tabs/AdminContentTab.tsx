@@ -223,7 +223,6 @@ export const AdminContentTab: React.FC<Props> = ({
           { id: 'all', label: 'جميع المعامل' },
           { id: 'anatomy', label: '🫀 التشريح (Anatomy)' },
           { id: 'histology', label: '🔬 الأنسجة (Histology)' },
-          { id: 'bacteriology', label: '🧫 البكتيريا (Bacteriology)' },
           { id: 'biochemistry', label: '🧪 الكيمياء الحيوية (Biochemistry)' },
         ].map(tab => (
           <button
@@ -297,7 +296,6 @@ export const AdminContentTab: React.FC<Props> = ({
                         <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold ${
                           p.courseId === 'anatomy' ? 'bg-indigo-50 text-indigo-700' :
                           p.courseId === 'histology' ? 'bg-emerald-50 text-emerald-700' :
-                          p.courseId === 'bacteriology' ? 'bg-amber-50 text-amber-700' :
                           'bg-cyan-50 text-cyan-700'
                         }`}>
                           {p.courseId.toUpperCase()}
@@ -404,7 +402,6 @@ export const AdminContentTab: React.FC<Props> = ({
                   >
                     <option value="anatomy">Anatomy (التشريح)</option>
                     <option value="histology">Histology (الأنسجة)</option>
-                    <option value="bacteriology">Bacteriology (البكتيريا)</option>
                     <option value="biochemistry">Biochemistry (الكيمياء الحيوية)</option>
                   </select>
                 </div>

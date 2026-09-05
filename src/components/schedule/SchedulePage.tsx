@@ -82,14 +82,14 @@ export const SchedulePage: React.FC<SchedulePageProps> = ({
           </button>
           <button
             type="button"
-            onClick={() => setFilterCourse('bacteriology')}
+            onClick={() => setFilterCourse('biochemistry')}
             className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors shadow-xs ${
-              filterCourse === 'bacteriology'
-                ? 'bg-emerald-600 text-white'
+              filterCourse === 'biochemistry'
+                ? 'bg-amber-600 text-white'
                 : 'bg-white text-slate-600 hover:bg-slate-50 border border-[#E2E8F0]'
             }`}
           >
-            Bacteriology
+            Biochemistry
           </button>
         </div>
       </div>

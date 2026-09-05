@@ -1,6 +1,6 @@
 export type UserRole = 'student' | 'instructor' | 'admin';
 
-export type LabSubjectId = 'anatomy' | 'histology' | 'bacteriology' | 'biochemistry';
+export type LabSubjectId = 'anatomy' | 'histology' | 'biochemistry';
 
 export type PracticalStatus = 
   | 'draft' 
@@ -373,8 +373,7 @@ export interface StudentProgress {
   userId: string;
   anatomyPercent: number;
   histologyPercent: number;
-  bacteriologyPercent: number;
-  biochemistryPercent?: number;
+  biochemistryPercent: number;
   completedPracticals: string[]; // practical IDs
   completedQuizzes: QuizAttempt[];
   completedSpotters: string[]; // spotter IDs

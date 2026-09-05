@@ -55,18 +55,16 @@ export const AdminAnalyticsTab: React.FC<Props> = ({ metrics, breakdown }) => {
       { week: 'Week 4', count: 130 }
     ],
     subjectVisits: [
-      { subject: 'Anatomy', count: 38, color: 'bg-indigo-500' },
-      { subject: 'Histology', count: 28, color: 'bg-emerald-500' },
-      { subject: 'Bacteriology', count: 42, color: 'bg-amber-500' },
-      { subject: 'Biochemistry', count: 24, color: 'bg-cyan-500' },
+      { subject: 'Anatomy', count: 48, color: 'bg-indigo-500' },
+      { subject: 'Histology', count: 38, color: 'bg-emerald-500' },
+      { subject: 'Biochemistry', count: 44, color: 'bg-cyan-500' },
       { subject: 'OSPE Exams', count: 31, color: 'bg-purple-500' },
       { subject: 'Videos', count: 49, color: 'bg-rose-500' }
     ],
     lessonActivity: [
       { title: 'Gross Anatomy: Cranial Nerves Dissection', subject: 'Anatomy', opens: 38 },
       { title: 'Virtual Histology: Epithelial & Cartilage', subject: 'Histology', opens: 34 },
-      { title: 'Gram-Positive Pathogens & Catalase Protocol', subject: 'Bacteriology', opens: 47 },
-      { title: 'Benedict & Qualitative Carbohydrate Testing', subject: 'Biochemistry', opens: 29 }
+      { title: 'Benedict & Qualitative Carbohydrate Testing', subject: 'Biochemistry', opens: 47 }
     ],
     quizActivity: { totalAttempts: 84, passed: 72, failed: 12 },
     videoActivity: { totalViews: 119, completedCount: 88 }

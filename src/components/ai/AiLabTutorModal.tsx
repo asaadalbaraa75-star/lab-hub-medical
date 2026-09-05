@@ -120,7 +120,7 @@ export const AiLabTutorModal: React.FC<AiLabTutorModalProps> = ({
                 </span>
               </div>
               <p className="text-[11px] text-slate-500 font-medium">
-                Instant curriculum assistance for Anatomy, Histology & Bacteriology
+                Instant curriculum assistance for Anatomy, Histology & Biochemistry
               </p>
             </div>
           </div>

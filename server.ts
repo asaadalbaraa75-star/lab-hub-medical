@@ -166,7 +166,7 @@ async function startServer() {
       studentId: 'MED-2026-4891',
       department: 'Faculty of Medicine — 2nd Year MBBS',
       year: 'Year 2 (Pre-Clinical)',
-      enrolledLabs: ['anatomy', 'histology', 'bacteriology', 'biochemistry'],
+      enrolledLabs: ['anatomy', 'histology', 'biochemistry'],
       avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
       createdAt: '2026-01-10T08:00:00.000Z',
       lastLoginAt: new Date().toISOString(),
@@ -184,7 +184,7 @@ async function startServer() {
       studentId: 'ADM-MED-001',
       department: 'Academic Directorate & Laboratory Board',
       year: 'Dean of Medical Laboratory Curricula',
-      enrolledLabs: ['anatomy', 'histology', 'bacteriology', 'biochemistry'],
+      enrolledLabs: ['anatomy', 'histology', 'biochemistry'],
       avatarUrl: 'https://images.unsplash.com/photo-1594824813680-79883506ecf5?w=150&auto=format&fit=crop&q=80',
       createdAt: '2025-09-01T08:00:00.000Z',
       lastLoginAt: new Date().toISOString(),
@@ -202,7 +202,7 @@ async function startServer() {
       studentId: 'FAC-MED-104',
       department: 'Department of Anatomy & Histology',
       year: 'Senior Teaching Faculty',
-      enrolledLabs: ['anatomy', 'histology', 'bacteriology', 'biochemistry'],
+      enrolledLabs: ['anatomy', 'histology', 'biochemistry'],
       avatarUrl: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150&auto=format&fit=crop&q=80',
       createdAt: '2025-10-15T08:00:00.000Z',
       lastLoginAt: new Date().toISOString(),
@@ -220,7 +220,7 @@ async function startServer() {
       studentId: 'MED-2026-5120',
       department: 'Faculty of Medicine — 1st Year MBBS',
       year: 'Year 1 (Pre-Clinical)',
-      enrolledLabs: ['anatomy', 'histology', 'bacteriology', 'biochemistry'],
+      enrolledLabs: ['anatomy', 'histology', 'biochemistry'],
       avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
       createdAt: '2026-02-01T09:30:00.000Z',
       lastLoginAt: new Date(Date.now() - 3600000 * 5).toISOString(),
@@ -253,8 +253,8 @@ async function startServer() {
       userId: 'usr_student_1',
       userName: 'Sarah Al-Mansoor',
       userEmail: 'student@med.edu',
-      activity: 'Explored Pathogen Profile: Staphylococcus aureus',
-      section: 'Bacteriology',
+      activity: 'Explored Qualitative Carbohydrate Reactions: Molisch & Benedict',
+      section: 'Biochemistry',
       timestamp: new Date(Date.now() - 3600000 * 12).toISOString()
     },
     {
@@ -280,8 +280,8 @@ async function startServer() {
       userId: 'usr_student_2',
       userName: 'Omar Farooq',
       userEmail: 'omar@med.edu',
-      activity: 'Started Quiz: Gram-Positive Cocci Identification',
-      section: 'Bacteriology',
+      activity: 'Started Quiz: Carbohydrate Identification Reactions',
+      section: 'Biochemistry',
       timestamp: new Date(Date.now() - 3600000 * 24).toISOString()
     }
   ];
@@ -422,7 +422,7 @@ async function startServer() {
         studentId,
         department: 'Faculty of Medicine — 1st Year Medical Sciences',
         year: 'Year 1 (Pre-Clinical)',
-        enrolledLabs: ['anatomy', 'histology', 'bacteriology', 'biochemistry'],
+        enrolledLabs: ['anatomy', 'histology', 'biochemistry'],
         avatarUrl: `https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150`,
         createdAt: now,
         lastLoginAt: now,
@@ -929,8 +929,7 @@ async function startServer() {
     const subjectsMap: Record<string, { count: number; color: string }> = {
       'Anatomy': { count: 0, color: 'bg-indigo-500' },
       'Histology': { count: 0, color: 'bg-emerald-500' },
-      'Bacteriology': { count: 0, color: 'bg-amber-500' },
-      'Biochemistry': { count: 0, color: 'bg-cyan-500' },
+      'Biochemistry': { count: 0, color: 'bg-amber-500' },
       'OSPE Exams': { count: 0, color: 'bg-purple-500' },
       'Videos': { count: 0, color: 'bg-rose-500' }
     };
@@ -940,7 +939,6 @@ async function startServer() {
       const act = (a.activity || '').toLowerCase();
       if (sec.includes('anat') || act.includes('anat')) subjectsMap['Anatomy'].count++;
       else if (sec.includes('histo') || act.includes('histo')) subjectsMap['Histology'].count++;
-      else if (sec.includes('bact') || act.includes('bact') || act.includes('pathogen')) subjectsMap['Bacteriology'].count++;
       else if (sec.includes('bioch') || act.includes('bioch')) subjectsMap['Biochemistry'].count++;
       else if (sec.includes('ospe') || act.includes('exam')) subjectsMap['OSPE Exams'].count++;
       else if (sec.includes('video') || act.includes('video')) subjectsMap['Videos'].count++;
@@ -949,8 +947,7 @@ async function startServer() {
     // Ensure realistic baseline counts for visual display if activities are low
     if (subjectsMap['Anatomy'].count === 0) subjectsMap['Anatomy'].count = 18;
     if (subjectsMap['Histology'].count === 0) subjectsMap['Histology'].count = 14;
-    if (subjectsMap['Bacteriology'].count === 0) subjectsMap['Bacteriology'].count = 22;
-    if (subjectsMap['Biochemistry'].count === 0) subjectsMap['Biochemistry'].count = 11;
+    if (subjectsMap['Biochemistry'].count === 0) subjectsMap['Biochemistry'].count = 24;
     if (subjectsMap['OSPE Exams'].count === 0) subjectsMap['OSPE Exams'].count = 16;
     if (subjectsMap['Videos'].count === 0) subjectsMap['Videos'].count = 25;
 
@@ -972,8 +969,7 @@ async function startServer() {
     const lessonActivity = [
       { title: 'Gross Anatomy: Cranial Nerves Dissection', subject: 'Anatomy', opens: 38 },
       { title: 'Virtual Histology: Epithelial & Cartilage', subject: 'Histology', opens: 34 },
-      { title: 'Gram-Positive Pathogens & Catalase Protocol', subject: 'Bacteriology', opens: 47 },
-      { title: 'Benedict & Qualitative Carbohydrate Testing', subject: 'Biochemistry', opens: 29 },
+      { title: 'Benedict & Qualitative Carbohydrate Testing', subject: 'Biochemistry', opens: 47 },
       { title: 'OSPE Station: Skull Foramina & Nerve Exit', subject: 'Anatomy', opens: 41 }
     ];
 
@@ -1144,8 +1140,7 @@ async function startServer() {
 Your specialty encompasses:
 1. Gross Anatomy & Osteology (bone landmarks, muscle origins/insertions, neurovascular relations, clinical fractures)
 2. Histology (microscopic cellular morphology, stains e.g. H&E, tissue differentiation, intercalated discs, striations)
-3. Bacteriology & Microbiology (Gram staining mechanisms, bacterial morphology, culture media, biosafety protocols, antibiotic correlations)
-4. Biochemistry (Carbohydrate identification tests e.g. Benedict, Barfoed, Seliwanoff, Bial, Molisch, Iodine, Osazone, Fehling)
+3. Biochemistry (Carbohydrate identification tests e.g. Benedict, Barfoed, Seliwanoff, Bial, Molisch, Iodine, Osazone, Fehling)
 
 Guidelines:
 - Provide structured, high-yield answers tailored to pre-clinical and clinical medical students.
@@ -1153,7 +1148,7 @@ Guidelines:
   1. Direct High-Yield Summary (2-3 sentences)
   2. Key Identification Features / Distinctive Hallmarks
   3. Clinical & Practical Correlation (e.g., nerve injury, pathology, reagent reaction)
-  4. Standard Medical Text Reference (e.g. Junqueira's Basic Histology, Moore's Clinically Oriented Anatomy, Murray's Medical Microbiology, Harper's Illustrated Biochemistry).
+  4. Standard Medical Text Reference (e.g. Junqueira's Basic Histology, Moore's Clinically Oriented Anatomy, Harper's Illustrated Biochemistry).
 - Focus specifically on the requested laboratory subject: ${labContext || 'General Medical Laboratory'}.
 - Keep the response clear, academically rigorous, and encouraging.`;
 
