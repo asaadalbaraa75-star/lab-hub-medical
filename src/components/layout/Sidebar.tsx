@@ -10,6 +10,7 @@ import {
   GraduationCap,
   Award,
   Sparkles,
+  Compass,
   LogOut
 } from 'lucide-react';
 import { User as UserType, LabSubjectId } from '../../types';
@@ -118,6 +119,26 @@ export const Sidebar: React.FC<SidebarProps> = ({
           >
             <LayoutDashboard className={`w-4 h-4 ${activeTab === 'dashboard' ? 'text-purple-400' : 'text-slate-400'}`} />
             <span>الرئيسية • Home</span>
+          </button>
+
+          {/* 1.5. Visual Map (Atlas) */}
+          <button
+            type="button"
+            id="sidebar-link-visual-map"
+            onClick={() => onSelectTab('visual_map')}
+            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium transition-all ${
+              activeTab === 'visual_map'
+                ? 'bg-gradient-to-r from-sky-950/80 to-indigo-950/60 text-sky-300 font-semibold border border-sky-500/40 shadow-[0_0_15px_rgba(14,165,233,0.2)]'
+                : 'text-slate-300 hover:bg-white/5 hover:text-white'
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <Compass className={`w-4 h-4 ${activeTab === 'visual_map' ? 'text-sky-400' : 'text-slate-400'}`} />
+              <span>الخريطة البصرية • Visual Map</span>
+            </div>
+            <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-300 border border-sky-500/30">
+              ATLAS
+            </span>
           </button>
 
           {/* 2. Subjects */}

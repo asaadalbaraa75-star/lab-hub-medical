@@ -612,6 +612,15 @@ export const CinematicMedicalDashboard: React.FC<CinematicMedicalDashboardProps>
                 <FlaskConical className="w-3.5 h-3.5" />
                 <span>المسارات (Pathways)</span>
               </button>
+
+              <button
+                type="button"
+                onClick={() => onSelectTab('visual_map')}
+                className="px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white shadow-lg shadow-sky-600/30 hover:scale-105"
+              >
+                <Compass className="w-3.5 h-3.5" />
+                <span>الخريطة البصرية الشاملة (Visual Map)</span>
+              </button>
             </div>
           </div>
 

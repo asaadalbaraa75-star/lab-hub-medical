@@ -35,6 +35,7 @@ import { LabSubjectInfo, LabCategory, Practical, LabSubjectId } from '../../type
 import { BIOCHEMISTRY_CARBOHYDRATE_TESTS } from '../../data/mockData';
 import { BiochemistryLabView } from './biochemistry/BiochemistryLabView';
 import { AnatomyLabView } from './anatomy/AnatomyLabView';
+import { HistologyLabView } from './histology/HistologyLabView';
 
 interface LabSubjectPageProps {
   labInfo: LabSubjectInfo;
@@ -84,6 +85,7 @@ export const LabSubjectPage: React.FC<LabSubjectPageProps> = ({
 
   const isBiochemistry = labInfo?.id === 'biochemistry';
   const isAnatomy = labInfo?.id === 'anatomy';
+  const isHistology = labInfo?.id === 'histology';
 
   const filteredBiochemTests = BIOCHEMISTRY_CARBOHYDRATE_TESTS.filter(test => {
     if (!searchQuery.trim()) return true;
@@ -261,8 +263,19 @@ export const LabSubjectPage: React.FC<LabSubjectPageProps> = ({
         </div>
       )}
 
-      {/* HISTOLOGY LAB: Visual Category Cards */}
-      {!isBiochemistry && !isAnatomy && activeFilter !== 'practicals' && (
+      {/* HISTOLOGY LAB: Verified Sana'a University Curriculum 10-Lesson Suite & Practical Mode */}
+      {isHistology && (
+        <div id="histology-suite-section">
+          <HistologyLabView
+            searchQuery={searchQuery}
+            onOpenExam={() => onOpenQuiz(labInfo.id)}
+            onOpenSpotter={() => onOpenSpotter(labInfo.id)}
+          />
+        </div>
+      )}
+
+      {/* FALLBACK CATEGORY CARDS (Non-specialized subjects) */}
+      {!isBiochemistry && !isAnatomy && !isHistology && activeFilter !== 'practicals' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-slate-900 tracking-tight">

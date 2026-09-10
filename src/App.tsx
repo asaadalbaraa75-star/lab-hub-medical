@@ -58,6 +58,7 @@ import { AnatomyInteractive3DViewer } from './components/labs/anatomy/AnatomyInt
 import { AnatomyMovementsAndJointsViewer } from './components/labs/anatomy/AnatomyMovementsAndJointsViewer';
 import { RealisticHuman3DViewer } from './components/labs/anatomy/3d/RealisticHuman3DViewer';
 import { BiochemistryPathwaysViewer } from './components/labs/biochemistry/BiochemistryPathwaysViewer';
+import { FirstYearMedicalVisualMap } from './components/visualMap/FirstYearMedicalVisualMap';
 
 // Mandatory Account System & Administration
 import { AuthPage } from './components/auth/AuthPage';
@@ -118,6 +119,9 @@ export default function App() {
         'realistic_3d_human',
         'anatomy_movements',
         'biochemistry_pathways',
+        'visual_map',
+        'anatomy_histology_map',
+        'visual_atlas',
         'admin',
         'admin_dashboard'
       ];
@@ -642,6 +646,15 @@ export default function App() {
         return (
           <div className="animate-in fade-in duration-300">
             <BiochemistryPathwaysViewer onBack={() => handleTabSelect('dashboard')} />
+          </div>
+        );
+
+      case 'visual_map':
+      case 'anatomy_histology_map':
+      case 'visual_atlas':
+        return (
+          <div className="animate-in fade-in duration-300">
+            <FirstYearMedicalVisualMap onBack={() => handleTabSelect('dashboard')} />
           </div>
         );
 

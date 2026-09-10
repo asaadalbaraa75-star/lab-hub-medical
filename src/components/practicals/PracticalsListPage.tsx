@@ -69,7 +69,7 @@ export const PracticalsListPage: React.FC<PracticalsListPageProps> = ({
           type="text"
           value={search}
           onChange={e => setSearch(e.target.value)}
-          placeholder="Search by practical title, tissue type, bacterial stain, or anatomical structure..."
+          placeholder="Search by practical title, tissue type, histology stain, or anatomical structure..."
           className="w-full bg-[#1E293B] border border-[#334155] focus:border-[#5B9BD5] rounded-2xl pl-11 pr-4 py-3 text-xs sm:text-sm text-[#E5E7EB] placeholder-[#94A3B8] focus:outline-none"
         />
       </div>

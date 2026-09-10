@@ -27,7 +27,7 @@ export const AiLabTutorModal: React.FC<AiLabTutorModalProps> = ({
     {
       id: 'welcome',
       sender: 'tutor',
-      text: `Hello! I am your **LAB HUB AI Medical Laboratory Tutor**. 🔬\n\nI can assist you with:\n- **Histological slide identification** (stains, cell layers, artifacts)\n- **Bacterial morphology & differential tests** (Gram stain, catalase, culture media)\n- **Anatomical landmarks & relations** (bones, muscles, nerves, blood supply)\n- **OSPE spotter exam preparation**\n\nHow can I help you master your laboratory practical today?`,
+      text: `Hello! I am your **LAB HUB AI Medical Laboratory Tutor**. 🔬\n\nI can assist you with:\n- **Histological slide identification** (stains, cell layers, artifacts)\n- **Biochemistry practical tests** (Carbohydrate qualitative tests, Biuret test, Casein precipitation)\n- **Anatomical landmarks & relations** (bones, muscles, nerves, blood supply)\n- **OSPE spotter exam preparation**\n\nHow can I help you master your laboratory practical today?`,
       timestamp: 'Just now'
     }
   ]);
@@ -38,9 +38,9 @@ export const AiLabTutorModal: React.FC<AiLabTutorModalProps> = ({
 
   const quickPrompts = [
     'How do I distinguish skeletal vs cardiac muscle under light microscopy?',
-    'Explain the Gram-staining reaction mechanism step-by-step.',
+    'Explain the chemical principle of the Biuret test for proteins.',
     'What are the key bony landmarks on the scapula for OSPE spotters?',
-    'What is the difference between alpha, beta, and gamma hemolysis on Blood Agar?'
+    'What is the mechanism of isoelectric precipitation of casein at pH 4.6?'
   ];
 
   useEffect(() => {
@@ -232,7 +232,7 @@ export const AiLabTutorModal: React.FC<AiLabTutorModalProps> = ({
             onKeyDown={e => {
               if (e.key === 'Enter') handleSend();
             }}
-            placeholder="Ask about stains, slide morphology, bacteria, anatomy landmarks..."
+            placeholder="Ask about histology stains, slide morphology, biochemical tests, anatomy landmarks..."
             className="flex-1 bg-slate-50 border border-[#E2E8F0] focus:border-indigo-500 focus:bg-white rounded-lg px-4 py-2.5 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none transition-colors"
           />
           <button

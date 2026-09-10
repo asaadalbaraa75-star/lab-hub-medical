@@ -8,6 +8,7 @@ import {
 import { AnatomyTopicVisual } from './AnatomyTopicVisuals';
 import { AnatomyTopicVideoSection } from './AnatomyTopicVideoSection';
 import { anatomyProgressService } from './AnatomyStudentProgressService';
+import { UnifiedMedicalImageViewer } from '../common/UnifiedMedicalImageViewer';
 import {
   ArrowLeft,
   BookOpen,
@@ -578,285 +579,114 @@ export const AnatomyTopicLessonPage: React.FC<AnatomyTopicLessonPageProps> = ({
 
         {/* SECTION 2: CENTRAL INTERACTIVE ANATOMICAL IMAGE & SPOTTER */}
         <section ref={interactiveRef} className="space-y-4" id="section-interactive-anatomy">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-2">
-            <div className="flex items-center gap-2">
-              <Target className="w-5 h-5 text-indigo-400" />
-              <div>
-                <h2 className="text-lg font-bold text-white tracking-tight">
-                  Interactive Anatomical Diagram
-                </h2>
-                <p className="text-xs text-slate-400">
-                  {isInteractiveModeActive
-                    ? 'Active Recall Mode: Identify the requested structure on the diagram'
-                    : 'Tap any pinpoint marker to inspect location, function, and high-yield notes'}
-                </p>
-              </div>
-            </div>
+          <UnifiedMedicalImageViewer
+            subject="anatomy"
+            topicOrLessonId={topic.id}
+            topicTitle={topic.titleEn}
+            topicTitleAr={topic.titleAr}
+          />
 
-            {/* Mode Switcher Buttons */}
-            <div className="flex items-center gap-1.5 bg-slate-900 p-1 rounded-xl border border-slate-800 shrink-0">
-              <button
-                type="button"
-                onClick={() => {
-                  setIsInteractiveModeActive(false);
-                  setInteractiveFeedback('idle');
-                }}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                  !isInteractiveModeActive
-                    ? 'bg-indigo-600 text-white shadow-xs'
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                <Eye className="w-3.5 h-3.5" />
-                <span>Explore Mode</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={handleRestartInteractiveMode}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                  isInteractiveModeActive
-                    ? 'bg-amber-500 text-slate-950 font-black shadow-xs'
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                <Target className="w-3.5 h-3.5" />
-                <span>Active Recall Challenge</span>
-              </button>
-            </div>
-          </div>
-
-          {/* ACTIVE RECALL CHALLENGE BANNER (When interactive mode is active) */}
-          {isInteractiveModeActive && (
-            <div className="bg-gradient-to-r from-amber-500/20 via-slate-900 to-slate-900 border border-amber-500/40 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md animate-in fade-in">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 rounded-md bg-amber-500 text-slate-950 text-[11px] font-black font-mono">
-                    STEP {interactiveStep + 1} / {spotters.length}
-                  </span>
-                  <span className="text-xs text-slate-400 font-mono">
-                    Score: {interactiveScore} / {spotters.length}
-                  </span>
+          {/* Kinesiology & Body Movements Interactive Deep-Dive Guide (For Movement Topic) */}
+          {topic.id === 'anat_movements' && (
+            <div className="bg-slate-900/90 rounded-2xl border border-teal-500/30 p-5 shadow-xl space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-teal-500/20 text-teal-400 flex items-center justify-center font-bold">
+                    <Activity className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-white">
+                      دليل حركات الجسم والمفاصل التوضيحي (Kinesiology & Movements Guide)
+                    </h3>
+                    <p className="text-xs text-slate-400">
+                      كل حركة مرتبطة بالمستوى التشريحي والمفصل والعضلات الرئيسية المسؤولة عنها
+                    </p>
+                  </div>
                 </div>
-                <h3 className="text-base font-bold text-white">
-                  Identify the <span className="text-amber-400 underline">{currentTargetPin.structureNameEn}</span>
-                </h3>
-                <p className="text-xs text-slate-300 font-arabic" dir="rtl">
-                  المطلوب: انقر على الدبوس الصحيح الذي يمثل ({currentTargetPin.structureNameAr})
-                </p>
+                <span className="px-3 py-1 rounded-full bg-teal-500/20 text-teal-300 text-xs font-mono font-bold">
+                  High-Yield OSPE
+                </span>
               </div>
 
-              {/* Feedback & Next Button */}
-              <div className="flex items-center gap-2 shrink-0">
-                {interactiveFeedback === 'correct' && (
-                  <div className="flex items-center gap-2">
-                    <span className="px-3 py-1 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 text-xs font-bold flex items-center gap-1">
-                      <Check className="w-4 h-4" /> Correct!
-                    </span>
-                    <button
-                      type="button"
-                      onClick={handleNextInteractiveStep}
-                      className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-all cursor-pointer"
-                    >
-                      {interactiveStep < spotters.length - 1 ? 'Next Structure →' : 'Finish Challenge'}
-                    </button>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {[
+                  {
+                    nameEn: 'Flexion vs. Extension',
+                    nameAr: 'الانثناء والانبساط',
+                    plane: 'Sagittal Plane',
+                    axis: 'Coronal (Transverse) Axis',
+                    definition: 'Flexion decreases the joint angle; Extension increases the joint angle (straightening).',
+                    example: 'Elbow, Knee, Shoulder, Hip joints',
+                    pearl: 'Anterior displacement at shoulder/elbow is flexion; knee flexion is posterior displacement.'
+                  },
+                  {
+                    nameEn: 'Abduction vs. Adduction',
+                    nameAr: 'التباعد والتقارب',
+                    plane: 'Frontal (Coronal) Plane',
+                    axis: 'Anteroposterior (AP) Axis',
+                    definition: 'Abduction moves limb AWAY from midline; Adduction moves limb TOWARD midline.',
+                    example: 'Shoulder (Deltoid), Hip (Gluteus medius), Fingers (DAB / PAD)',
+                    pearl: 'Midline for hand is 3rd finger (middle); midline for foot is 2nd toe.'
+                  },
+                  {
+                    nameEn: 'Medial vs. Lateral Rotation',
+                    nameAr: 'الدوران الإنسي والوحشي',
+                    plane: 'Transverse (Horizontal) Plane',
+                    axis: 'Vertical (Longitudinal) Axis',
+                    definition: 'Medial (Internal) turns anterior surface inward; Lateral (External) turns it outward.',
+                    example: 'Shoulder (Rotator cuff), Hip joint (Piriformis vs. Subscapularis)',
+                    pearl: 'Essential for rotational agility and joint stabilization.'
+                  },
+                  {
+                    nameEn: 'Pronation vs. Supination',
+                    nameAr: 'الكب والتبطيح (الساعد)',
+                    plane: 'Transverse Plane (Forearm)',
+                    axis: 'Radio-ulnar Axis',
+                    definition: 'Supination turns palm anteriorly (holding soup); Pronation turns palm posteriorly.',
+                    example: 'Superior & Inferior Radioulnar Joints (Biceps brachii & Pronator teres)',
+                    pearl: 'Biceps brachii is the most powerful supinator of the flexed forearm.'
+                  },
+                  {
+                    nameEn: 'Inversion vs. Eversion',
+                    nameAr: 'الانقلاب الداخلي والخارجي (القدم)',
+                    plane: 'Frontal Plane (Foot sole)',
+                    axis: 'Subtalar & Transverse Tarsal Joints',
+                    definition: 'Inversion turns sole inward toward midline; Eversion turns sole outward laterally.',
+                    example: 'Subtalar Joint (Tibialis anterior/posterior vs. Fibularis longus)',
+                    pearl: 'Ankle sprains most frequently occur during hyper-inversion injuring the anterior talofibular ligament (ATFL).'
+                  },
+                  {
+                    nameEn: 'Circumduction',
+                    nameAr: 'الحركة الدائرية المركبة',
+                    plane: 'Multi-planar (Cone of movement)',
+                    axis: 'Polyaxial (Ball & Socket Joints)',
+                    definition: 'Sequential combination of Flexion → Abduction → Extension → Adduction in a circle.',
+                    example: 'Glenohumeral (Shoulder) & Acetabulofemoral (Hip) Joints',
+                    pearl: 'Does NOT involve pure rotation; it is a consecutive composite of angular movements.'
+                  }
+                ].map((mov, i) => (
+                  <div key={i} className="bg-slate-950/80 rounded-xl p-3.5 border border-slate-800 hover:border-teal-500/50 transition-all space-y-2">
+                    <div className="flex items-start justify-between gap-1 border-b border-slate-800/80 pb-2">
+                      <div>
+                        <h4 className="text-xs font-bold text-white">{mov.nameEn}</h4>
+                        <p className="text-[11px] text-teal-300 font-arabic" dir="rtl">{mov.nameAr}</p>
+                      </div>
+                      <span className="px-2 py-0.5 rounded bg-slate-900 text-[10px] font-mono text-slate-300 shrink-0">
+                        {mov.plane}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-300 leading-relaxed">
+                      {mov.definition}
+                    </p>
+                    <div className="text-[10px] text-slate-400 space-y-1 pt-1">
+                      <p><strong className="text-slate-300">Joints:</strong> {mov.example}</p>
+                      <p className="text-amber-300/90 font-arabic" dir="rtl">💡 {mov.pearl}</p>
+                    </div>
                   </div>
-                )}
-
-                {interactiveFeedback === 'wrong' && (
-                  <div className="flex items-center gap-2">
-                    <span className="px-3 py-1 rounded-xl bg-rose-500/20 border border-rose-500/40 text-rose-400 text-xs font-bold flex items-center gap-1">
-                      <XCircle className="w-4 h-4" /> Try Again
-                    </span>
-                  </div>
-                )}
-
-                {interactiveFinished && (
-                  <div className="flex items-center gap-2">
-                    <span className="px-3 py-1 rounded-xl bg-indigo-500/20 text-indigo-300 text-xs font-bold">
-                      Completed: {interactiveScore}/{spotters.length}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={handleRestartInteractiveMode}
-                      className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold"
-                    >
-                      Restart
-                    </button>
-                  </div>
-                )}
+                ))}
               </div>
             </div>
           )}
-
-          {/* MAIN INTERACTIVE DISPLAY GRID */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-            
-            {/* LEFT / CENTER: Large Anatomical Visual with Hotspot Pins */}
-            <div className="lg:col-span-7 bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 shadow-xl relative group">
-              <div className="relative aspect-4/3 sm:aspect-16/11 w-full bg-slate-950 flex items-center justify-center">
-                <AnatomyTopicVisual
-                  topicId={topic.id}
-                  selectedPinNumber={selectedPin?.pinNumber}
-                  activePinNumber={isInteractiveModeActive ? currentTargetPin?.pinNumber : undefined}
-                  onPinClick={handlePinClickInInteractive}
-                  spotters={spotters}
-                  interactive={true}
-                  variant="full"
-                  className="w-full h-full"
-                />
-                
-                {/* Subtle vignette for contrast */}
-                <div className="absolute inset-0 bg-radial from-transparent via-transparent to-slate-950/40 pointer-events-none" />
-
-                {/* Hotspot Pins Overlay */}
-                {spotters.map(pin => {
-                  const isSelected = selectedPin?.pinNumber === pin.pinNumber;
-                  const isTargetInChallenge = currentTargetPin.pinNumber === pin.pinNumber;
-                  const isAttempted = selectedPinAttempt === pin.pinNumber;
-
-                  let pinStyle = 'bg-indigo-600 text-white border-white hover:scale-110';
-
-                  if (!isInteractiveModeActive) {
-                    if (isSelected) {
-                      pinStyle = 'bg-amber-500 text-slate-950 border-white scale-125 shadow-lg shadow-amber-500/50 ring-4 ring-amber-400/30';
-                    }
-                  } else {
-                    // In Interactive Active Recall Mode
-                    if (isAttempted) {
-                      if (interactiveFeedback === 'correct') {
-                        pinStyle = 'bg-emerald-500 text-white border-white scale-125 ring-4 ring-emerald-400/30';
-                      } else {
-                        pinStyle = 'bg-rose-500 text-white border-white scale-110 animate-shake';
-                      }
-                    } else if (interactiveFeedback === 'correct' && isTargetInChallenge) {
-                      pinStyle = 'bg-emerald-500 text-white border-white scale-125 ring-4 ring-emerald-400/30';
-                    }
-                  }
-
-                  return (
-                    <button
-                      key={pin.pinNumber}
-                      type="button"
-                      onClick={() => handlePinClickInInteractive(pin)}
-                      style={{ left: `${pin.positionX}%`, top: `${pin.positionY}%` }}
-                      className={`absolute -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full border-2 font-mono font-bold text-xs flex items-center justify-center transition-all duration-200 cursor-pointer z-20 ${pinStyle}`}
-                    >
-                      {pin.pinNumber}
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Bottom bar of image */}
-              <div className="p-3 bg-slate-950 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
-                <span className="font-mono">
-                  {spotters.length} Interactive Markers Identified
-                </span>
-                <span className="text-indigo-400">
-                  Tap marker numbers to view details
-                </span>
-              </div>
-            </div>
-
-            {/* RIGHT: Structure Information Panel (Concise, Clean & Readable) */}
-            <div className="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl space-y-4">
-              {selectedPin ? (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                    <div className="flex items-center gap-2">
-                      <span className="w-7 h-7 rounded-lg bg-amber-500 text-slate-950 font-black font-mono text-xs flex items-center justify-center">
-                        #{selectedPin.pinNumber}
-                      </span>
-                      <div>
-                        <h3 className="text-base font-bold text-white">
-                          {selectedPin.structureNameEn}
-                        </h3>
-                        <p className="text-xs text-indigo-300 font-arabic" dir="rtl">
-                          {selectedPin.structureNameAr}
-                        </p>
-                      </div>
-                    </div>
-
-                    <span className="px-2 py-0.5 rounded-full bg-slate-800 text-[10px] font-mono text-slate-300 font-bold">
-                      {selectedPin.level || 'CORE'}
-                    </span>
-                  </div>
-
-                  {/* Concise Structure Fields */}
-                  <div className="space-y-3 text-xs">
-                    
-                    {/* Location */}
-                    <div className="bg-slate-950 p-3 rounded-xl border border-slate-800/80 space-y-1">
-                      <span className="text-slate-400 font-bold uppercase tracking-wider text-[10px] block">
-                        📍 Anatomical Location
-                      </span>
-                      <p className="text-slate-200 leading-relaxed">
-                        {selectedPin.whereIsIt}
-                      </p>
-                    </div>
-
-                    {/* Function / Action */}
-                    <div className="bg-slate-950 p-3 rounded-xl border border-slate-800/80 space-y-1">
-                      <span className="text-slate-400 font-bold uppercase tracking-wider text-[10px] block">
-                        ⚙️ Function & Motion
-                      </span>
-                      <p className="text-slate-200 leading-relaxed">
-                        {selectedPin.functionDesc}
-                      </p>
-                    </div>
-
-                    {/* High-Yield Key Point */}
-                    <div className="bg-indigo-950/40 p-3 rounded-xl border border-indigo-800/40 space-y-1">
-                      <span className="text-indigo-400 font-bold uppercase tracking-wider text-[10px] flex items-center gap-1">
-                        <Sparkles className="w-3 h-3" /> Key High-Yield Point
-                      </span>
-                      <p className="text-indigo-200 leading-relaxed">
-                        {selectedPin.highYieldNote}
-                      </p>
-                    </div>
-
-                    {/* Clinical Note (if present) */}
-                    {selectedPin.clinicalNote && (
-                      <div className="bg-rose-950/30 p-3 rounded-xl border border-rose-900/40 space-y-1">
-                        <span className="text-rose-400 font-bold uppercase tracking-wider text-[10px] flex items-center gap-1">
-                          <Stethoscope className="w-3 h-3" /> Clinical Relevance
-                        </span>
-                        <p className="text-rose-200 leading-relaxed">
-                          {selectedPin.clinicalNote}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Marker Quick Switcher Pill Strip */}
-                  <div className="pt-2 border-t border-slate-800/80 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-                    <span className="text-[11px] text-slate-400 font-bold shrink-0 mr-1">
-                      Pins:
-                    </span>
-                    {spotters.map(pin => (
-                      <button
-                        key={pin.pinNumber}
-                        type="button"
-                        onClick={() => setSelectedPin(pin)}
-                        className={`w-7 h-7 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer shrink-0 ${
-                          selectedPin.pinNumber === pin.pinNumber
-                            ? 'bg-amber-500 text-slate-950 font-black shadow-xs'
-                            : 'bg-slate-950 text-slate-400 hover:text-white border border-slate-800'
-                        }`}
-                      >
-                        {pin.pinNumber}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <div className="py-12 text-center text-slate-400 text-xs">
-                  Tap any numbered pin on the diagram to inspect structure details.
-                </div>
-              )}
-            </div>
-          </div>
         </section>
 
         {/* SECTION 3: TOPIC-MATCHED MICRO-LECTURE & CLINICAL DEMONSTRATION */}

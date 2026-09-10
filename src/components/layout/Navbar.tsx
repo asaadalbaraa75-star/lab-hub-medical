@@ -174,6 +174,19 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             <button
               type="button"
+              onClick={() => handleNavClick('visual_map')}
+              className={`px-3 py-1.5 rounded-full transition-all cursor-pointer flex items-center gap-1.5 ${
+                activeTab === 'visual_map'
+                  ? 'bg-sky-600 text-white shadow-inner font-bold'
+                  : 'text-sky-400 hover:text-white hover:bg-sky-500/20'
+              }`}
+            >
+              <span>الخريطة البصرية</span>
+              <span className="text-[9px] font-mono px-1 rounded bg-sky-500/20 text-sky-300">ATLAS</span>
+            </button>
+
+            <button
+              type="button"
               onClick={() => handleNavClick('mcq_bank')}
               className={`px-3 py-1.5 rounded-full transition-all cursor-pointer ${
                 activeTab === 'mcq_bank'
