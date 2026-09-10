@@ -314,55 +314,55 @@ export const PROTEIN_PRACTICAL_EXPERIMENTS: ProteinPracticalExperiment[] = [
   },
   {
     id: 'casein',
-    titleEn: 'Detection of Casein — Isoelectric Precipitation',
-    titleAr: 'ب) الكشف عن الكازين — الترسيب عند نقطة التعادل الكهربائي (Isoelectric Point pH 4.6)',
+    titleEn: 'Isoelectric Point (pI) Test — Casein',
+    titleAr: 'اختبار نقطة التعادل الكهربائي (pI) — بروتين الكازين',
     experimentSubSection: 'B',
-    aim: 'To isolate and detect Casein (the major milk phosphoprotein) by precipitation at its specific Isoelectric Point (pI = 4.6).',
-    principle: 'Casein is a phosphoprotein soluble in milk at neutral pH (pH ≈ 6.6) due to its net negative charge and hydration shell. At its Isoelectric Point (pH 4.6), the net electrical charge on the casein molecule becomes exactly ZERO (Zwitterion state). Repulsive electrostatic charges vanish, molecular solubility reaches its absolute minimum, and casein aggregates and precipitates out as a dense curdy white precipitate.',
+    aim: 'To determine and observe the precipitation of Casein near its isoelectric point (pI 4.6–4.9) using Bromocresol Green (BCG) indicator and acetic acid.',
+    principle: 'Acetic acid lowers the pH of the protein solution. As the pH approaches the protein’s isoelectric point (pI), the protein has very little net electrical charge and its solubility decreases, resulting in precipitation. For casein, the approximate pI is 4.6–4.9.',
     materialsAndReagents: [
-      'Fresh whole milk or skimmed milk',
-      '10% Acetic acid (CH₃COOH) or 1M Acetic acid solution',
-      'Distilled water',
-      'Test tubes, 1 mL pipette, pH indicator paper / pH meter'
+      'Protein sample (Casein)',
+      'Bromocresol Green (BCG) indicator',
+      'Acetic acid',
+      'Test tubes and 1 mL pipettes'
     ],
     procedureSteps: [
       {
         stepNumber: 1,
-        action: 'Add 5.0 mL of milk into a clean 50 mL beaker or large test tube, and dilute with 5.0 mL of distilled water.',
-        note: 'Diluting reduces viscosity and improves precipitant yield.'
+        action: 'Add 1 mL of the protein sample.'
       },
       {
         stepNumber: 2,
-        action: 'Add 10% Acetic Acid drop-by-drop with continuous gentle swirling.',
-        note: 'Count drops carefully; monitor pH down to approximately 4.6.'
+        action: 'Add 1 drop of Bromocresol Green (BCG).'
       },
       {
         stepNumber: 3,
-        action: 'Observe the formation of a flocculent, curdy white precipitate as pH reaches 4.6.',
-        note: 'Notice the liquid clears (whey supernatant) as casein flocculates.'
+        action: 'Mix well.'
       },
       {
         stepNumber: 4,
-        action: 'Test effect of excess acid: add 2 mL of concentrated acid and observe resolution of precipitate.',
-        note: 'Casein acquires positive charge in strong acid and re-dissolves!'
+        action: 'Add 1 mL of acetic acid.'
+      },
+      {
+        stepNumber: 5,
+        action: 'Observe the bottom of the test tube for a green precipitate.'
       }
     ],
     observation: {
-      visualAppearance: 'Formation of a dense, curdy, flocculent White Precipitate of Casein with a clear supernatant whey.',
-      colorHex: '#F8FAFC',
-      positiveResult: 'Dense curdy white precipitate forming specifically at pH 4.6',
-      negativeResult: 'Uniform milky white suspension with no clump formation'
+      visualAppearance: 'Green precipitate clearly accumulated at the bottom of the test tube.',
+      colorHex: '#10B981',
+      positiveResult: 'Green precipitate at the bottom of the test tube.',
+      negativeResult: 'No visible green precipitate.'
     },
-    interpretation: 'Casein precipitates selectively at pH 4.6 because its net charge is zero. When excess acid is added (pH < 3.0), casein molecules gain positive charges (—NH₃⁺), repulsive forces return, and the precipitate re-dissolves. Likewise, adding alkali (NaOH) re-dissolves casein by conferring negative charges.',
+    interpretation: 'Positive result: A green precipitate at the bottom indicates that casein has precipitated near its isoelectric point. Negative result: No visible green precipitate means the expected precipitation was not observed.',
     precautions: [
-      'ADD ACETIC ACID DROP-BY-DROP: Adding excess acid too quickly will overshoot the isoelectric point (pH 4.6), re-protonating the protein and re-dissolving it into solution!',
-      'Swirl continuously between drops to distribute the acid evenly.',
-      'Perform at room temperature or gentle warmth (40°C increases flocculation speed).'
+      'Add reagents in the exact stated sequence (sample → BCG → mix → acetic acid).',
+      'Ensure gentle and thorough mixing after adding the Bromocresol Green indicator.',
+      'Allow the test tube to stand undisturbed to observe the green precipitate settling at the bottom.'
     ],
     practicalExamQuestion: {
-      question: 'What happens to the precipitated casein when excess hydrochloric acid is added to reduce the pH below 3.0, and why?',
-      correctAnswer: 'The curdy white precipitate re-dissolves completely because casein molecules gain positive charges at low pH, restoring electrostatic repulsion',
-      explanation: 'At pH below its isoelectric point (pI 4.6), carboxylate groups are protonated to uncharged —COOH while amino groups remain —NH₃⁺, giving casein a net positive charge and restoring solubility.'
+      question: 'What does the formation of a green precipitate at the bottom of the test tube indicate in the Casein pI test?',
+      correctAnswer: 'It indicates that casein has reached its isoelectric point (pI 4.6–4.9) where its net charge is zero, causing it to precipitate with the Bromocresol Green indicator',
+      explanation: 'At its isoelectric point, casein loses repulsive electrostatic charges, reaching minimum solubility and precipitating out as an insoluble green sediment with BCG.'
     }
   }
 ];
