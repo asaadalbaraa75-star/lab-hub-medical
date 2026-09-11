@@ -1,339 +1,235 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import {
-  BookOpen,
   Microscope,
-  Search,
-  ArrowRight,
   Layers,
-  Award,
   Sparkles,
-  CheckCircle2,
-  Clock,
+  Circle,
+  Activity,
+  RotateCcw,
+  BookmarkCheck,
+  ArrowRight,
+  ArrowLeft,
   Target,
-  FileText,
-  BookmarkCheck
+  BookOpen,
+  Award,
+  GraduationCap
 } from 'lucide-react';
-import { HISTOLOGY_LESSONS, HistologyLesson } from './HistologyLessonsData';
+import { HISTOLOGY_SECTIONS, HistologySection, HistologyLessonItem } from './HistologyCurriculumData';
 
 interface HistologyHomeViewProps {
   onSelectLesson: (lessonId: string) => void;
-  onOpenExam?: () => void;
-  onOpenSpotter?: () => void;
-  externalSearch?: string;
+  onOpenExam: () => void;
 }
 
 export const HistologyHomeView: React.FC<HistologyHomeViewProps> = ({
   onSelectLesson,
-  onOpenExam,
-  onOpenSpotter,
-  externalSearch = ''
+  onOpenExam
 }) => {
-  const [searchQuery, setSearchQuery] = useState(externalSearch);
-  const [selectedFilter, setSelectedFilter] = useState<'all' | 'foundation' | 'techniques' | 'cells' | 'tissues' | 'exam'>('all');
+  const [selectedSectionId, setSelectedSectionId] = useState<string | null>(null);
 
-  // Filter lessons based on search query and category
-  const filteredLessons = useMemo(() => {
-    return HISTOLOGY_LESSONS.filter(lesson => {
-      const matchesSearch =
-        lesson.titleEn.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        lesson.titleAr.includes(searchQuery) ||
-        lesson.numberString.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        lesson.keyConcepts.some(k => k.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        lesson.summaryEn.toLowerCase().includes(searchQuery.toLowerCase());
+  const activeSection: HistologySection | undefined = HISTOLOGY_SECTIONS.find(
+    s => s.id === selectedSectionId
+  );
 
-      if (!matchesSearch) return false;
+  const getSectionIcon = (iconName: string) => {
+    switch (iconName) {
+      case 'Microscope': return <Microscope className="w-6 h-6 text-teal-400" />;
+      case 'Layers': return <Layers className="w-6 h-6 text-cyan-400" />;
+      case 'Sparkles': return <Sparkles className="w-6 h-6 text-amber-400" />;
+      case 'Circle': return <Circle className="w-6 h-6 text-rose-400" />;
+      case 'Activity': return <Activity className="w-6 h-6 text-emerald-400" />;
+      case 'RotateCcw': return <RotateCcw className="w-6 h-6 text-indigo-400" />;
+      case 'BookmarkCheck': return <BookmarkCheck className="w-6 h-6 text-teal-400" />;
+      default: return <BookOpen className="w-6 h-6 text-teal-400" />;
+    }
+  };
 
-      if (selectedFilter === 'foundation') {
-        return lesson.lessonNumber === 1 || lesson.lessonNumber === 2;
-      }
-      if (selectedFilter === 'techniques') {
-        return lesson.lessonNumber === 3 || lesson.lessonNumber === 4 || lesson.lessonNumber === 5;
-      }
-      if (selectedFilter === 'cells') {
-        return lesson.lessonNumber === 6 || lesson.lessonNumber === 7;
-      }
-      if (selectedFilter === 'tissues') {
-        return lesson.lessonNumber === 8 || lesson.lessonNumber === 9;
-      }
-      if (selectedFilter === 'exam') {
-        return lesson.lessonNumber === 10;
-      }
-      return true;
-    });
-  }, [searchQuery, selectedFilter]);
+  const handleCardClick = (section: HistologySection) => {
+    if (section.lessons.length === 1) {
+      onSelectLesson(section.lessons[0].id);
+    } else {
+      setSelectedSectionId(section.id);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
-  return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 p-4 sm:p-6 lg:p-8 space-y-8">
-      {/* 1. HERO HEADER */}
-      <div className="relative overflow-hidden rounded-2xl border border-teal-500/20 bg-gradient-to-br from-slate-900 via-slate-900/90 to-teal-950/40 p-6 sm:p-8 shadow-2xl">
-        <div className="absolute top-0 right-0 -mt-8 -mr-8 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="relative z-10 max-w-4xl space-y-4">
-          <div className="flex flex-wrap items-center gap-3">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-teal-500/10 text-teal-400 border border-teal-500/30">
-              <GraduationCapIcon className="w-3.5 h-3.5" />
-              1st Year Practical Curriculum
+  // -------------------------------------------------------------
+  // VIEW B: DEDICATED SECTION LESSON LIST (When a section is selected)
+  // -------------------------------------------------------------
+  if (selectedSectionId && activeSection) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-slate-100 p-4 sm:p-6 lg:p-8 space-y-6 max-w-5xl mx-auto">
+        {/* Breadcrumb & Section Header */}
+        <div className="flex items-center gap-3 pb-4 border-b border-slate-800">
+          <button
+            onClick={() => setSelectedSectionId(null)}
+            className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-850 text-slate-300 hover:text-white border border-slate-700/80 text-xs font-semibold flex items-center gap-2 transition-colors shadow-sm"
+          >
+            <ArrowLeft className="w-4 h-4 text-teal-400" />
+            <span>Back to All Sections</span>
+          </button>
+
+          <div className="space-y-0.5">
+            <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-teal-500/10 text-teal-400 border border-teal-500/30">
+              SECTION {activeSection.number}
             </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700">
-              Faculty of Medicine • Sana'a University
-            </span>
-            <span className="inline-flex items-center gap-1 text-xs text-slate-400">
-              <BookmarkCheck className="w-3.5 h-3.5 text-teal-400" />
-              Verified Faculty Handout: Dr. Ruqia Y. Sharaf Addin
-            </span>
+            <h1 className="text-xl sm:text-2xl font-bold text-white">
+              {activeSection.titleEn}
+            </h1>
+            <p className="text-xs text-slate-400">{activeSection.titleAr}</p>
+          </div>
+        </div>
+
+        {/* Section Lessons Grid */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between text-xs text-slate-400">
+            <span>Select a lesson to begin study:</span>
+            <span>{activeSection.lessons.length} Lessons Available</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white">
-            Histology Laboratory
-            <span className="block text-xl sm:text-2xl font-normal text-teal-400/90 mt-1">
-              المختبر العملي للأنسجة والبيولوجيا الخلوية
-            </span>
-          </h1>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            {activeSection.lessons.map((lesson) => (
+              <button
+                key={lesson.id}
+                onClick={() => onSelectLesson(lesson.id)}
+                className="group text-left p-5 rounded-2xl bg-slate-900/90 hover:bg-slate-900 border border-slate-800 hover:border-teal-500/40 transition-all flex flex-col justify-between space-y-3 shadow-md hover:shadow-teal-950/30"
+              >
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-800 text-teal-300 border border-slate-700">
+                      {lesson.numberString}
+                    </span>
+                    {lesson.badge && (
+                      <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500 group-hover:text-teal-400 transition-colors">
+                        {lesson.badge}
+                      </span>
+                    )}
+                  </div>
 
-          <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-3xl">
-            A practical, slide-by-slide medical training environment. Every lesson contains high-definition real microscopic slides, concise diagnostic clues, practical identification self-tests, and high-yield OSPE exam tables.
-          </p>
+                  <h3 className="text-sm sm:text-base font-bold text-white group-hover:text-teal-300 transition-colors">
+                    {lesson.titleEn}
+                  </h3>
 
-          {/* Quick Metrics Bar */}
-          <div className="pt-2 flex flex-wrap items-center gap-6 text-xs sm:text-sm text-slate-300">
-            <div className="flex items-center gap-2">
-              <BookOpen className="w-4 h-4 text-teal-400" />
-              <span className="font-semibold text-white">10</span> Dedicated Lessons
-            </div>
-            <div className="flex items-center gap-2">
-              <Microscope className="w-4 h-4 text-teal-400" />
-              <span className="font-semibold text-white">50+</span> Real Histological Micrographs
-            </div>
-            <div className="flex items-center gap-2">
-              <Target className="w-4 h-4 text-teal-400" />
-              <span className="font-semibold text-white">OSPE</span> Spotter Identification
-            </div>
-            <div className="flex items-center gap-2">
-              <Award className="w-4 h-4 text-amber-400" />
-              <span className="font-semibold text-white">100%</span> Exam-Focused
-            </div>
+                  {lesson.titleAr && (
+                    <p className="text-xs text-slate-400 font-normal">
+                      {lesson.titleAr}
+                    </p>
+                  )}
+
+                  <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed pt-1">
+                    {lesson.quickExplanation}
+                  </p>
+                </div>
+
+                <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400 group-hover:text-teal-400 transition-colors">
+                  <span>Open Lesson</span>
+                  <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform" />
+                </div>
+              </button>
+            ))}
           </div>
         </div>
       </div>
+    );
+  }
 
-      {/* 2. SEARCH & FILTER CONTROLS */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-        {/* Search Bar */}
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-          <input
-            type="text"
-            placeholder="Search lessons (e.g. Golgi, Mitochondria, Epithelium, Mitosis)..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-slate-900/90 border border-slate-700/80 rounded-xl text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500 transition-colors"
-          />
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-white"
-            >
-              Clear
-            </button>
-          )}
+  // -------------------------------------------------------------
+  // VIEW A: MAIN HISTOLOGY LAB DASHBOARD
+  // Title: 🔬 HISTOLOGY LAB
+  // Subtitle: "Learn it. See it. Identify it."
+  // 8 Main Learning Sections as separate large clickable cards
+  // -------------------------------------------------------------
+  return (
+    <div className="min-h-screen bg-slate-950 text-slate-100 p-4 sm:p-6 lg:p-8 space-y-8 max-w-5xl mx-auto">
+      {/* 1. HERO HEADER */}
+      <div className="relative overflow-hidden rounded-2xl border border-teal-500/20 bg-gradient-to-br from-slate-900 via-slate-900 to-teal-950/40 p-6 sm:p-8 shadow-2xl text-center sm:text-left">
+        <div className="max-w-3xl space-y-3">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-teal-500/10 text-teal-400 border border-teal-500/30">
+            <GraduationCap className="w-3.5 h-3.5" />
+            <span>1st-Year Medical Practical Curriculum</span>
+          </div>
+
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white">
+            🔬 HISTOLOGY LAB
+          </h1>
+
+          <p className="text-base sm:text-lg text-teal-300/90 font-medium">
+            "Learn it. See it. Identify it."
+          </p>
+
+          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-2xl">
+            Strictly adhering to the verified practical handout by Dr. Ruqia Y. Sharaf Addin. Study the original microscopic slides, master cellular features, and test your recognition.
+          </p>
         </div>
 
-        {/* Category Filter Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none text-xs">
-          {[
-            { id: 'all', label: 'All 10 Lessons' },
-            { id: 'foundation', label: 'Foundations' },
-            { id: 'techniques', label: 'Microscopes & Stains' },
-            { id: 'cells', label: 'Cell & Mitosis' },
-            { id: 'tissues', label: 'Epithelial & Connective' },
-            { id: 'exam', label: 'OSPE Simulator' }
-          ].map(tab => (
+        {/* Quick Jump to Practical Exam Mode */}
+        <div className="mt-6 pt-4 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-3">
+          <span className="text-xs text-slate-400">
+            Test your visual recognition on random slides:
+          </span>
+          <button
+            onClick={onOpenExam}
+            className="px-4 py-2 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 text-xs font-bold flex items-center gap-2 transition-all shadow-lg hover:shadow-teal-500/20"
+          >
+            <Target className="w-4 h-4" />
+            <span>🔬 IDENTIFY THE SLIDE (Exam Mode)</span>
+          </button>
+        </div>
+      </div>
+
+      {/* 2. THE 8 MAIN LEARNING SECTIONS AS LARGE CLICKABLE CARDS */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm sm:text-base font-bold uppercase tracking-wider text-slate-300 font-mono">
+            Curriculum Sections (الأقسام التعليمية الثمانية)
+          </h2>
+          <span className="text-xs text-slate-400">8 Core Sections</span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {HISTOLOGY_SECTIONS.map((section) => (
             <button
-              key={tab.id}
-              onClick={() => setSelectedFilter(tab.id as any)}
-              className={`px-3.5 py-2 rounded-lg font-medium whitespace-nowrap transition-all ${
-                selectedFilter === tab.id
-                  ? 'bg-teal-500 text-slate-950 font-semibold shadow-md shadow-teal-500/20'
-                  : 'bg-slate-900/70 text-slate-300 hover:bg-slate-800 border border-slate-800'
-              }`}
+              key={section.id}
+              onClick={() => handleCardClick(section)}
+              className="group text-left p-6 rounded-2xl bg-slate-900/90 hover:bg-slate-900 border border-slate-800 hover:border-teal-500/40 transition-all flex flex-col justify-between space-y-4 shadow-lg hover:shadow-teal-950/30"
             >
-              {tab.label}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="p-2.5 rounded-xl bg-slate-800/90 border border-slate-700/80 group-hover:border-teal-500/40 transition-colors">
+                    {getSectionIcon(section.iconName)}
+                  </div>
+                  <span className="px-2.5 py-0.5 rounded-md text-[10px] font-mono font-bold bg-teal-500/10 text-teal-400 border border-teal-500/20">
+                    SECTION 0{section.number}
+                  </span>
+                </div>
+
+                <div className="space-y-1">
+                  <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-teal-300 transition-colors">
+                    {section.titleEn}
+                  </h3>
+                  <p className="text-xs text-slate-400 font-normal">
+                    {section.titleAr}
+                  </p>
+                </div>
+
+                <p className="text-xs text-slate-300 leading-relaxed line-clamp-2">
+                  {section.descriptionEn}
+                </p>
+              </div>
+
+              <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-xs font-semibold text-slate-400 group-hover:text-teal-400 transition-colors">
+                <span>
+                  {section.lessons.length === 1 ? '1 Dedicated Lesson' : `${section.lessons.length} Individual Lessons`}
+                </span>
+                <div className="flex items-center gap-1">
+                  <span>Open</span>
+                  <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
             </button>
           ))}
         </div>
       </div>
-
-      {/* 3. LESSON CARDS GRID */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-            <Layers className="w-4 h-4 text-teal-400" />
-            Independent Practical Lessons ({filteredLessons.length} Modules)
-          </h2>
-          <span className="text-xs text-slate-500">
-            Click any lesson card to launch its dedicated slide deck
-          </span>
-        </div>
-
-        {filteredLessons.length === 0 ? (
-          <div className="text-center py-16 bg-slate-900/40 border border-dashed border-slate-800 rounded-2xl p-6">
-            <Microscope className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-            <p className="text-slate-300 font-medium">No lessons matching "{searchQuery}"</p>
-            <p className="text-slate-500 text-xs mt-1">Try searching for "Golgi", "Stains", "Mitosis", or "Tendon"</p>
-            <button
-              onClick={() => { setSearchQuery(''); setSelectedFilter('all'); }}
-              className="mt-4 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-xs rounded-lg text-teal-400 transition"
-            >
-              Reset Filters
-            </button>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredLessons.map((lesson) => (
-              <LessonCard
-                key={lesson.id}
-                lesson={lesson}
-                onOpen={() => onSelectLesson(lesson.id)}
-              />
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* 4. PRACTICAL OSPE BANNER CALLOUT */}
-      <div className="rounded-2xl border border-teal-500/30 bg-gradient-to-r from-teal-950/40 via-slate-900 to-slate-900 p-6 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 text-teal-400 text-xs font-bold uppercase tracking-wider">
-            <Target className="w-4 h-4" />
-            Practical Exam Preparation
-          </div>
-          <h3 className="text-xl font-bold text-white">
-            Ready to test your slide recognition under exam conditions?
-          </h3>
-          <p className="text-slate-300 text-xs sm:text-sm max-w-2xl">
-            Launch Station 10 to practice timed virtual microscopy spotter stations with real histological images, clinical questions, and instant diagnostic pearls.
-          </p>
-        </div>
-
-        <button
-          onClick={() => onSelectLesson('lesson_10')}
-          className="px-5 py-3 bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-slate-950 font-bold text-sm rounded-xl shadow-lg shadow-teal-500/20 flex items-center gap-2 whitespace-nowrap transition-all transform hover:-translate-y-0.5"
-        >
-          <Target className="w-4 h-4" />
-          Launch OSPE Exam Simulator
-          <ArrowRight className="w-4 h-4 ml-1" />
-        </button>
-      </div>
     </div>
   );
 };
-
-/* Individual Lesson Card Component */
-interface LessonCardProps {
-  lesson: HistologyLesson;
-  onOpen: () => void;
-}
-
-const LessonCard: React.FC<LessonCardProps> = ({ lesson, onOpen }) => {
-  return (
-    <div
-      onClick={onOpen}
-      className="group relative flex flex-col justify-between bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-teal-500/50 rounded-2xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:shadow-teal-500/10 cursor-pointer transform hover:-translate-y-1"
-    >
-      {/* Top Image Preview */}
-      <div className="relative h-48 w-full overflow-hidden bg-slate-950">
-        <img
-          src={lesson.coverImage}
-          alt={lesson.titleEn}
-          referrerPolicy="no-referrer"
-          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 opacity-80 group-hover:opacity-100"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent" />
-
-        {/* Top Badges */}
-        <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
-          <span className="px-2.5 py-1 rounded-md text-xs font-black tracking-wider uppercase bg-slate-950/80 backdrop-blur-md text-teal-400 border border-teal-500/30">
-            {lesson.numberString}
-          </span>
-          <span className="px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-900/80 backdrop-blur-md text-slate-300 border border-slate-700/60">
-            {lesson.badge}
-          </span>
-        </div>
-
-        {/* Bottom Image Overlay: Slides count and Duration */}
-        <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs text-slate-300">
-          <span className="flex items-center gap-1.5 bg-slate-950/70 backdrop-blur-sm px-2.5 py-1 rounded-md">
-            <FileText className="w-3.5 h-3.5 text-teal-400" />
-            {lesson.slides.length} Practical Slides
-          </span>
-          <span className="flex items-center gap-1.5 bg-slate-950/70 backdrop-blur-sm px-2.5 py-1 rounded-md">
-            <Clock className="w-3.5 h-3.5 text-slate-400" />
-            ~{lesson.durationMinutes} min
-          </span>
-        </div>
-      </div>
-
-      {/* Content Section */}
-      <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-        <div className="space-y-1.5">
-          <h3 className="text-lg font-bold text-white group-hover:text-teal-400 transition-colors">
-            {lesson.titleEn}
-          </h3>
-          <p className="text-xs font-medium text-slate-400">
-            {lesson.titleAr}
-          </p>
-          <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed pt-1">
-            {lesson.summaryEn}
-          </p>
-        </div>
-
-        {/* Key Concepts Chips */}
-        <div className="space-y-2 pt-2 border-t border-slate-800/80">
-          <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-            Key Practical Focus:
-          </div>
-          <div className="flex flex-wrap gap-1.5">
-            {lesson.keyConcepts.slice(0, 3).map((concept, idx) => (
-              <span
-                key={idx}
-                className="px-2 py-0.5 rounded text-[11px] bg-slate-800 text-slate-300 border border-slate-700/60"
-              >
-                {concept}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        {/* Action Button */}
-        <div className="pt-3">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onOpen();
-            }}
-            className="w-full py-2.5 px-4 bg-teal-500/10 hover:bg-teal-500 text-teal-400 hover:text-slate-950 text-xs font-bold rounded-xl border border-teal-500/30 hover:border-teal-500 transition-all flex items-center justify-center gap-2 group-hover:bg-teal-500 group-hover:text-slate-950"
-          >
-            <span>Open Lesson</span>
-            <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-function GraduationCapIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-      <path d="M6 12v5c3 3 9 3 12 0v-5" />
-    </svg>
-  );
-}

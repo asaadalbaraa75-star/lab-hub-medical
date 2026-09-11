@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { HISTOLOGY_LESSONS, HistologyLesson } from './HistologyLessonsData';
+import { ALL_HISTOLOGY_LESSONS, HistologyLessonItem } from './HistologyCurriculumData';
 import { HistologyHomeView } from './HistologyHomeView';
-import { HistologyLessonContainer } from './HistologyLessonContainer';
+import { HistologyLessonView } from './HistologyLessonView';
+import { HistologyPracticalExamView } from './HistologyPracticalExamView';
 
 interface Props {
   searchQuery?: string;
@@ -15,40 +16,74 @@ export const HistologyLabView: React.FC<Props> = ({
   onOpenSpotter
 }) => {
   const [selectedLessonId, setSelectedLessonId] = useState<string | null>(null);
+  const [isExamMode, setIsExamMode] = useState<boolean>(false);
 
   // Find currently active lesson if one is selected
-  const activeLesson: HistologyLesson | undefined = HISTOLOGY_LESSONS.find(
+  const activeLessonIndex = ALL_HISTOLOGY_LESSONS.findIndex(
     (l) => l.id === selectedLessonId
   );
+  const activeLesson: HistologyLessonItem | undefined =
+    activeLessonIndex >= 0 ? ALL_HISTOLOGY_LESSONS[activeLessonIndex] : undefined;
 
   const handleSelectLesson = (lessonId: string) => {
+    setIsExamMode(false);
     setSelectedLessonId(lessonId);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleBackToHome = () => {
     setSelectedLessonId(null);
+    setIsExamMode(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // If a lesson is selected, render the dedicated lesson container
-  if (selectedLessonId && activeLesson) {
+  const handleNextLesson = () => {
+    if (activeLessonIndex >= 0 && activeLessonIndex < ALL_HISTOLOGY_LESSONS.length - 1) {
+      handleSelectLesson(ALL_HISTOLOGY_LESSONS[activeLessonIndex + 1].id);
+    }
+  };
+
+  const handlePrevLesson = () => {
+    if (activeLessonIndex > 0) {
+      handleSelectLesson(ALL_HISTOLOGY_LESSONS[activeLessonIndex - 1].id);
+    }
+  };
+
+  // If Practical Exam Mode is active
+  if (isExamMode) {
     return (
-      <HistologyLessonContainer
-        lesson={activeLesson}
+      <HistologyPracticalExamView
         onBackToHome={handleBackToHome}
-        onSelectLesson={handleSelectLesson}
       />
     );
   }
 
-  // Otherwise, render the clean Histology Laboratory Home Page with 10 large clickable lesson cards
+  // If a lesson is selected, render the dedicated 3-tab lesson view
+  if (selectedLessonId && activeLesson) {
+    return (
+      <HistologyLessonView
+        lesson={activeLesson}
+        onBackToSection={handleBackToHome}
+        onNextLesson={
+          activeLessonIndex < ALL_HISTOLOGY_LESSONS.length - 1
+            ? handleNextLesson
+            : undefined
+        }
+        onPrevLesson={
+          activeLessonIndex > 0
+            ? handlePrevLesson
+            : undefined
+        }
+      />
+    );
+  }
+
+  // Otherwise, render the clean 8-section dashboard
   return (
     <HistologyHomeView
       onSelectLesson={handleSelectLesson}
-      onOpenExam={onOpenExam}
-      onOpenSpotter={onOpenSpotter || (() => handleSelectLesson('lesson_10'))}
-      externalSearch={searchQuery}
+      onOpenExam={() => setIsExamMode(true)}
     />
   );
 };
+

@@ -1,16 +1,15 @@
 # LAB HUB — Medical Practical Laboratory Platform (منصة المختبرات الطبية التعليمية)
 
-A comprehensive, production-ready digital medical laboratory learning & examination platform for medical students and faculty, featuring **Anatomy (تشريح)**, **Histology (علم الأنسجة)**, **Bacteriology (علم البكتيريا)**, and **Biochemistry (الكيمياء الحيوية)**.
+A comprehensive, production-ready digital medical laboratory learning & examination platform for medical students and faculty, featuring **Anatomy (تشريح)**, **Histology (علم الأنسجة)**, and **Biochemistry (الكيمياء الحيوية)**.
 
 ---
 
 ## 🔬 Key Features
 
-- **4 Core Medical Laboratories**:
+- **3 Core Medical Laboratories**:
   - **Anatomy**: High-yield 3D/dissection stations, labeled spotters, bone and muscle identification.
-  - **Histology**: Interactive tissue microscope slide viewer, staining identification (H&E, PAS, Silver stain), cellular landmarks.
-  - **Bacteriology**: Gram staining, colony morphology, biochemical identification tests, antibiotic sensitivity.
-  - **Biochemistry**: Complete reference and procedural guides for the 9 qualitative tests (Benedict's, Molisch, Barfoed's, Seliwanoff's, Bial's, Iodine, Biuret, Ninhydrin, Sudan IV).
+  - **Histology**: Microscopic tissue slide viewer, staining identification (H&E, Special stains), cellular and tissue landmarks based on the official faculty curriculum.
+  - **Biochemistry**: Complete procedural and diagnostic guides with doctor explanation videos and practical OSPE stations.
 - **Interactive OSPE Practical Examination System**:
   - Timed stations with medical specimens and high-resolution slides.
   - Identification multiple-choice questions with flags, instant scoring, and review cards.

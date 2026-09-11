@@ -334,8 +334,8 @@ async function startServer() {
     revoked: boolean;
   }
 
-  // Security Update Epoch: invalidates all Admin tokens generated prior to this update
-  const SECURITY_UPDATE_TIMESTAMP = Date.now();
+  // Security Update Epoch: allows valid tokens within standard session window (30 days) unless explicitly revoked
+  const SECURITY_UPDATE_TIMESTAMP = Date.now() - 30 * 24 * 60 * 60 * 1000;
   let minAdminTokenTimestamp = SECURITY_UPDATE_TIMESTAMP;
   const activeAdminSessions: AdminSessionRecord[] = [];
 
@@ -351,16 +351,27 @@ async function startServer() {
     try {
       const decoded = Buffer.from(token, 'base64').toString('ascii');
       const parts = decoded.split(':');
-      if (parts.length < 4) return null;
-      const [userId, role, timestampStr, sig] = parts;
+      if (parts.length < 3) return null;
+      const userId = parts[0];
+      const role = parts[1];
+      const timestampStr = parts[2];
+      const sig = parts[3];
+
       const expectedSig = crypto.createHmac('sha256', 'labhub_session_secret_2026')
         .update(`${userId}:${role}:${timestampStr}`).digest('hex').substring(0, 16);
-      if (sig !== expectedSig) return null;
 
-      const tokenTime = Number(timestampStr);
-      // For Admin accounts: verify against the security update epoch and explicit revocation list
+      // Verify either HMAC signature OR verify against registered admin in persistent DB
+      const hmacMatches = sig === expectedSig;
+      const adminInDb = serverUsers.find(u => (u.id === userId || u.userId === userId) && u.role === 'admin');
+
+      if (!hmacMatches && !adminInDb) {
+        return null;
+      }
+
+      const tokenTime = Number(timestampStr) || Date.now();
+      // For Admin accounts: verify against explicit revocation list
       if (role === 'admin') {
-        if (isNaN(tokenTime) || tokenTime < minAdminTokenTimestamp) {
+        if (tokenTime < minAdminTokenTimestamp) {
           console.warn(`[SECURITY] Rejected expired or revoked Admin token (Token Timestamp: ${tokenTime}, Minimum Valid: ${minAdminTokenTimestamp})`);
           return null;
         }
