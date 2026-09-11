@@ -1,6 +1,6 @@
 {
   "name": "LAB HUB",
-  "description": "A centralized digital medical laboratory learning platform for medical students covering Anatomy, Histology, and Biochemistry with interactive practicals, high-yield spotters, digital microscope viewer, quizzes, schedule, and AI tutor.",
+  "description": "LAB HUB — Medical Laboratory Practical Examination Platform. Developed by Sakina Asaad. A centralized digital learning platform for medical students covering Anatomy, Histology, and Biochemistry.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

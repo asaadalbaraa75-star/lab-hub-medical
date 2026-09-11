@@ -15,6 +15,7 @@ import {
   GraduationCap
 } from 'lucide-react';
 import { HISTOLOGY_SECTIONS, HistologySection, HistologyLessonItem } from './HistologyCurriculumData';
+import { OwnershipWatermark } from '../../common/OwnershipWatermark';
 
 interface HistologyHomeViewProps {
   onSelectLesson: (lessonId: string) => void;
@@ -144,9 +145,12 @@ export const HistologyHomeView: React.FC<HistologyHomeViewProps> = ({
       {/* 1. HERO HEADER */}
       <div className="relative overflow-hidden rounded-2xl border border-teal-500/20 bg-gradient-to-br from-slate-900 via-slate-900 to-teal-950/40 p-6 sm:p-8 shadow-2xl text-center sm:text-left">
         <div className="max-w-3xl space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-teal-500/10 text-teal-400 border border-teal-500/30">
-            <GraduationCap className="w-3.5 h-3.5" />
-            <span>1st-Year Medical Practical Curriculum</span>
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-teal-500/10 text-teal-400 border border-teal-500/30">
+              <GraduationCap className="w-3.5 h-3.5" />
+              <span>1st-Year Medical Practical Curriculum</span>
+            </div>
+            <OwnershipWatermark variant="badge" />
           </div>
 
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white">
@@ -229,6 +233,11 @@ export const HistologyHomeView: React.FC<HistologyHomeViewProps> = ({
             </button>
           ))}
         </div>
+      </div>
+
+      {/* Bottom Platform Attribution */}
+      <div className="pt-4 flex justify-center">
+        <OwnershipWatermark variant="minimal" />
       </div>
     </div>
   );

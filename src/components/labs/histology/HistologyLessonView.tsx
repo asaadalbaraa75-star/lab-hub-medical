@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { HistologyLessonItem, HistologyLabel } from './HistologyCurriculumData';
 import { HistologySlideViewer } from './HistologySlideViewer';
+import { OwnershipWatermark } from '../../common/OwnershipWatermark';
 
 interface HistologyLessonViewProps {
   lesson: HistologyLessonItem;
@@ -84,13 +85,14 @@ export const HistologyLessonView: React.FC<HistologyLessonViewProps> = ({
           </button>
 
           <div className="space-y-0.5">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-teal-500/10 text-teal-400 border border-teal-500/30">
                 {lesson.numberString}
               </span>
               <h1 className="text-base sm:text-lg font-bold text-white">
                 {lesson.titleEn}
               </h1>
+              <OwnershipWatermark variant="badge" className="text-[10px]" />
             </div>
             {lesson.titleAr && (
               <p className="text-xs text-slate-400">
@@ -552,6 +554,11 @@ export const HistologyLessonView: React.FC<HistologyLessonViewProps> = ({
             <span>Back to Sections</span>
           </button>
         )}
+      </div>
+
+      {/* Platform Ownership Notice */}
+      <div className="pt-2 flex justify-center">
+        <OwnershipWatermark variant="minimal" />
       </div>
     </div>
   );

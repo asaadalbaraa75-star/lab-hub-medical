@@ -25,6 +25,7 @@ import {
   Filter,
   Tag
 } from 'lucide-react';
+import { OwnershipWatermark } from '../common/OwnershipWatermark';
 
 interface Props {
   onSlideSelected?: (slideId: string) => void;
@@ -173,11 +174,12 @@ export const VirtualHistologyViewer: React.FC<Props> = ({ onSlideSelected, initi
             <Microscope className="w-5 h-5" />
           </div>
           <div>
-            <div className="flex items-center space-x-2 rtl:space-x-reverse">
+            <div className="flex items-center space-x-2 rtl:space-x-reverse flex-wrap">
               <h2 className="font-semibold text-slate-100 text-base">{selectedSlide.title}</h2>
               <span className="text-xs px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-sky-400 font-medium">
                 {selectedSlide.stain}
               </span>
+              <OwnershipWatermark variant="badge" className="text-[9px]" />
             </div>
             <p className="text-xs text-slate-400">
               Source: <span className="text-slate-300 font-medium">{selectedSlide.organSource}</span> &bull; {selectedSlide.tissueType}

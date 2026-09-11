@@ -4,6 +4,7 @@ import {
   EducationalVideo 
 } from '../../data/educationalVideosData';
 import { authService } from '../../services/authService';
+import { OwnershipWatermark } from '../common/OwnershipWatermark';
 import { 
   Play, 
   RotateCcw, 
@@ -409,6 +410,7 @@ export const EducationalVideosSection: React.FC<Props> = ({ onVideoCompleted }) 
                 <ShieldCheck className="w-3.5 h-3.5" />
                 <span>100% Verified Working YouTube Lectures</span>
               </span>
+              <OwnershipWatermark variant="badge" className="text-[10px]" />
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
               Medical Laboratory & Clinical Video Masterclasses
@@ -1035,6 +1037,10 @@ export const EducationalVideosSection: React.FC<Props> = ({ onVideoCompleted }) 
         </div>
       )}
 
+      {/* Platform Ownership Notice */}
+      <div className="pt-4 flex justify-center">
+        <OwnershipWatermark variant="minimal" />
+      </div>
     </div>
   );
 };

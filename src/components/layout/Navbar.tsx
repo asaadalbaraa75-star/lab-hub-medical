@@ -116,8 +116,8 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span className="text-sm font-black tracking-tight text-white block leading-none">
                 LAB HUB
               </span>
-              <span className="text-[9px] font-mono text-purple-300 block tracking-wider">
-                منصة التعلم الطبي
+              <span className="text-[9px] font-medium text-purple-300 block tracking-normal">
+                تطوير: سكينة أسعد
               </span>
             </div>
           </div>
@@ -483,8 +483,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </button>
               )}
 
-              <p className="text-[10px] text-center text-slate-500 font-mono">
-                LAB HUB v3.0 • MBBS Medical Edition
+              <p className="text-[10px] text-center text-slate-400 font-mono" dir="ltr">
+                © LAB HUB • Developed by Sakina Asaad
+              </p>
+              <p className="text-[10px] text-center text-purple-300/80" dir="rtl">
+                منصة المعامل الطبية والامتحانات العملية • تطوير: سكينة أسعد
               </p>
             </div>
           </div>

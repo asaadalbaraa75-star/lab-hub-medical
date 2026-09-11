@@ -31,6 +31,8 @@ import {
   Bookmark,
   ExternalLink
 } from 'lucide-react';
+import { OwnershipWatermark } from '../common/OwnershipWatermark';
+import { EmbeddedCompanionCard } from '../companion/EmbeddedCompanionCard';
 
 interface CinematicMedicalDashboardProps {
   currentUser: User;
@@ -173,12 +175,15 @@ export const CinematicMedicalDashboard: React.FC<CinematicMedicalDashboardProps>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           {/* Left Column: Hero Typography & Actions (7 cols) */}
           <div className="lg:col-span-7 space-y-6 text-right" dir="rtl">
-            {/* Top pill badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md shadow-lg shadow-purple-950/40">
-              <span className="w-2 h-2 rounded-full bg-[#FF007A] animate-ping" />
-              <span className="text-[11px] font-mono font-bold tracking-wider text-purple-300 uppercase">
-                First-Year MBBS Medical Core Platform
-              </span>
+            {/* Top pill badge and ownership watermark */}
+            <div className="flex flex-wrap items-center justify-start gap-2">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md shadow-lg shadow-purple-950/40">
+                <span className="w-2 h-2 rounded-full bg-[#FF007A] animate-ping" />
+                <span className="text-[11px] font-mono font-bold tracking-wider text-purple-300 uppercase">
+                  First-Year MBBS Medical Core Platform
+                </span>
+              </div>
+              <OwnershipWatermark variant="badge" className="text-[11px]" />
             </div>
 
             {/* Giant Hero Title - reproducing exact reference hierarchy */}
@@ -284,6 +289,18 @@ export const CinematicMedicalDashboard: React.FC<CinematicMedicalDashboardProps>
           </div>
         </div>
       </section>
+
+      {/* Motivational Companion Banner with Labeeb */}
+      <div className="max-w-4xl mx-auto w-full">
+        <EmbeddedCompanionCard
+          expression="welcome"
+          badge="لبيب • رفيقك الدراسي في LAB HUB"
+          message="أهلًا بكِ في LAB HUB! 🌟 جاهزة لنتفوق سويًا في المعامل الطبية اليوم؟"
+          subMessage="معامل التشريح (Anatomy)، الأنسجة (Histology)، والكيمياء الحيوية (Biochemistry) متوفرة بنماذج تفاعلية وبنك أسئلة واختبارات عملية لمساعدتكِ خطوة بخطوة."
+          actionText="استكشف المعامل الثلاثة"
+          onAction={() => onSelectTab('laboratories')}
+        />
+      </div>
 
       {/* =========================================================================
           SECTION 2: CENTRAL 3D CARD SHOWCASE (reproducing reference middle stage)

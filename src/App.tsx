@@ -72,6 +72,10 @@ import { AboutPlatformModal } from './components/about/AboutPlatformModal';
 import { SecurityAuditModal } from './components/security/SecurityAuditModal';
 import { AuthModal } from './components/auth/AuthModal';
 
+// Interactive Study Companion ("لبيب" / Labeeb)
+import { LabHubCompanion } from './components/companion/LabHubCompanion';
+import { companionService } from './components/companion/companionStore';
+
 export default function App() {
   // Application State - Strictly Enforced Authentication
   const [currentUser, setCurrentUser] = useState<User | null>(() => authService.getCurrentUser());
@@ -239,6 +243,7 @@ export default function App() {
     if (currentUser) {
       authService.trackActivity(`فتح الدرس العملي: ${practicalId}`, labId);
     }
+    companionService.enterLesson();
     setSelectedLabId(labId as LabSubjectId);
     setSelectedPracticalId(practicalId);
     setActiveQuiz(null);
@@ -251,6 +256,7 @@ export default function App() {
     if (currentUser) {
       authService.trackActivity(`بدء فحص الشرائح (Spotters): ${labId}`, labId);
     }
+    companionService.say('ركزي في تفاصيل الشريحة... أنتِ قادرة!', 'thinking', 5000);
     setSelectedLabId(labId);
     setCurrentTab('spotters');
     updateTabWithHash('spotters');
@@ -261,6 +267,7 @@ export default function App() {
     if (currentUser) {
       authService.trackActivity(`بدء اختبار قصير: ${labId}`, labId);
     }
+    companionService.startExam();
     let targetQuiz: Quiz | undefined;
     if (practicalId) {
       targetQuiz = quizzes.find(q => q.practicalId === practicalId);
@@ -282,8 +289,12 @@ export default function App() {
 
   const handleTogglePracticalComplete = (practicalId: string) => {
     if (!currentUser) return;
+    const isNowCompleted = !progress.completedPracticals.includes(practicalId);
     const updated = storageService.togglePracticalCompletion(currentUser.id, practicalId);
     setProgress(updated);
+    if (isNowCompleted) {
+      companionService.completeLesson();
+    }
     authService.trackActivity(`تحديث إنجاز عملي: ${practicalId}`, 'Practicals');
   };
 
@@ -295,6 +306,11 @@ export default function App() {
   const handleCompleteQuizAttempt = (attempt: QuizAttempt) => {
     const updatedProgress = storageService.saveQuizAttempt(attempt);
     setProgress(updatedProgress);
+    if (attempt.percentage >= 70) {
+      companionService.completeExam(attempt.percentage);
+    } else {
+      companionService.incorrectAnswer();
+    }
     if (currentUser) {
       authService.trackActivity(
         `إكمال اختبار قصير: ${attempt.labId}`,
@@ -792,6 +808,9 @@ export default function App() {
         onOpenSecurityAudit={() => setIsSecurityAuditOpen(true)}
         onSelectTab={handleTabSelect}
       />
+
+      {/* Original Interactive Cartoon Study Companion ("لبيب" / Labeeb) */}
+      <LabHubCompanion />
 
       {/* Mobile Bottom Navigation Bar */}
       <MobileNav

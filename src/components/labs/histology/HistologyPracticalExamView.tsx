@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { HistologySlideViewer } from './HistologySlideViewer';
 import { ALL_HISTOLOGY_LESSONS, HistologyLessonItem } from './HistologyCurriculumData';
+import { OwnershipWatermark } from '../../common/OwnershipWatermark';
 
 interface ExamQuestionItem {
   id: string;
@@ -117,9 +118,12 @@ export const HistologyPracticalExamView: React.FC<HistologyPracticalExamViewProp
 
       {/* 2. TITLE BADGE */}
       <div className="text-center space-y-1">
-        <h1 className="text-xl sm:text-2xl font-extrabold text-white flex items-center justify-center gap-2">
-          <span>🔬 IDENTIFY THE SLIDE</span>
-        </h1>
+        <div className="flex items-center justify-center gap-2">
+          <h1 className="text-xl sm:text-2xl font-extrabold text-white flex items-center justify-center gap-2">
+            <span>🔬 IDENTIFY THE SLIDE</span>
+          </h1>
+          <OwnershipWatermark variant="badge" className="text-[10px]" />
+        </div>
         <p className="text-xs sm:text-sm text-slate-400">
           First-Year Medical Practical Examination — Faculty Handout
         </p>
@@ -238,6 +242,11 @@ export const HistologyPracticalExamView: React.FC<HistologyPracticalExamViewProp
             </p>
           </div>
         )}
+      </div>
+
+      {/* Platform Ownership Notice */}
+      <div className="pt-2 flex justify-center">
+        <OwnershipWatermark variant="minimal" />
       </div>
     </div>
   );

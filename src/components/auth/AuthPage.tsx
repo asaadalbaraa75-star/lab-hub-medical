@@ -179,8 +179,8 @@ export const AuthPage: React.FC<AuthPageProps> = ({
             <p className="text-xs sm:text-sm text-indigo-200/80 max-w-sm mx-auto font-medium leading-relaxed">
               Medical Laboratory & First-Year Medical Education Platform
             </p>
-            <p className="text-[11px] text-slate-400">
-              إشراف وتطوير: <span className="text-indigo-300 font-semibold">سكينة أسعد</span>
+            <p className="text-xs text-purple-300 font-medium">
+              Developed by Sakina Asaad • تطوير: <span className="text-white font-bold">سكينة أسعد</span>
             </p>
           </div>
 
@@ -556,8 +556,15 @@ export const AuthPage: React.FC<AuthPageProps> = ({
       )}
 
       {/* Bottom Footer Notice */}
-      <div className="py-4 text-center text-xs text-slate-400 border-t border-white/10 backdrop-blur-md">
-        <span>© 2026 LAB HUB. جميع الحقوق محفوظة — منصة تعليمية طبية متكاملة للطلاب والأطباء</span>
+      <div className="py-4 text-center text-xs text-slate-400 border-t border-white/10 backdrop-blur-md space-y-1">
+        <div dir="ltr">
+          <span className="font-bold text-slate-200">© LAB HUB</span>
+          <span className="mx-1.5 text-slate-600">•</span>
+          <span>Developed by Sakina Asaad</span>
+        </div>
+        <div className="text-[11px] text-purple-300" dir="rtl">
+          منصة المعامل الطبية والامتحانات العملية • تطوير: سكينة أسعد
+        </div>
       </div>
     </div>
   );

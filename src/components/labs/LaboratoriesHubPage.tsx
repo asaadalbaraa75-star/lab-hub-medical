@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { LabSubjectId, Practical, StudentProgress } from '../../types';
 import { MEDICAL_ASSETS } from '../../assets/medicalImages';
+import { OwnershipWatermark } from '../common/OwnershipWatermark';
 
 interface LaboratoriesHubPageProps {
   onSelectLab: (labId: LabSubjectId) => void;
@@ -274,13 +275,16 @@ export const LaboratoriesHubPage: React.FC<LaboratoriesHubPageProps> = ({
           TOP HEADER SECTION: LAB HUB • المعامل الطبية
       ============================================================ */}
       <div className="space-y-4 text-center max-w-3xl mx-auto pt-2">
-        {/* Academic Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-950/70 border border-purple-500/30 shadow-[0_0_20px_rgba(168,85,247,0.2)]">
-          <Sparkles className="w-4 h-4 text-purple-400 animate-pulse" />
-          <span className="text-xs font-extrabold uppercase tracking-widest text-purple-300">
-            LAB HUB • 2026 ACADEMIC YEAR
-          </span>
-          <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
+        {/* Academic Badge & Ownership */}
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-950/70 border border-purple-500/30 shadow-[0_0_20px_rgba(168,85,247,0.2)]">
+            <Sparkles className="w-4 h-4 text-purple-400 animate-pulse" />
+            <span className="text-xs font-extrabold uppercase tracking-widest text-purple-300">
+              LAB HUB • 2026 ACADEMIC YEAR
+            </span>
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
+          </div>
+          <OwnershipWatermark variant="badge" />
         </div>
 
         {/* Main Title: Arabic Header + English Subhead */}

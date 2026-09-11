@@ -41,6 +41,7 @@ import { AdminContentTab } from './tabs/AdminContentTab';
 import { AdminVideosTab } from './tabs/AdminVideosTab';
 import { AdminSecurityTab } from './tabs/AdminSecurityTab';
 import { Radio } from 'lucide-react';
+import { OwnershipWatermark } from '../common/OwnershipWatermark';
 
 interface AdminDashboardProps {
   currentUser: User;
@@ -205,7 +206,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {/* Top Header Banner */}
       <div className="bg-white rounded-3xl border border-[#E2E8F0] shadow-xs p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-1 text-right">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <span className="px-2.5 py-0.5 rounded-md bg-purple-50 text-purple-700 border border-purple-200 text-[11px] font-black uppercase tracking-wider">
               Faculty Administration Workspace
             </span>
@@ -213,6 +214,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
               Live Server Sync
             </span>
+            <OwnershipWatermark variant="badge" className="text-[10px]" />
           </div>
 
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
@@ -339,6 +341,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             currentUser={currentUser}
           />
         )}
+      </div>
+
+      {/* Platform Ownership Notice */}
+      <div className="pt-4 flex justify-center">
+        <OwnershipWatermark variant="minimal" />
       </div>
     </div>
   );

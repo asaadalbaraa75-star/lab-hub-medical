@@ -14,6 +14,7 @@ import {
   LogOut
 } from 'lucide-react';
 import { User as UserType, LabSubjectId } from '../../types';
+import { OwnershipWatermark } from '../common/OwnershipWatermark';
 
 interface SidebarProps {
   activeTab: string;
@@ -363,6 +364,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <LogOut className="w-3.5 h-3.5" />
             </button>
           )}
+        </div>
+
+        {/* Permanent Software Ownership Attribution */}
+        <div className="pt-2 border-t border-white/5 flex flex-col items-center justify-center text-center">
+          <OwnershipWatermark variant="minimal" showIcon={false} className="text-[10px] text-slate-400" />
         </div>
       </div>
     </aside>

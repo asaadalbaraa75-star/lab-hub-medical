@@ -131,3 +131,88 @@
   animation: reverse-spin-slow 36s linear infinite;
 }
 
+/* ==========================================================================
+   LAB HUB Original Cartoon Companion Animations ("لبيب" / Labeeb)
+   ========================================================================== */
+@keyframes companion-float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-companion-float {
+  animation: companion-float 4s ease-in-out infinite;
+}
+
+@keyframes companion-blink {
+  0%, 94%, 98%, 100% {
+    transform: scaleY(1);
+    transform-origin: center;
+  }
+  96% {
+    transform: scaleY(0.08);
+    transform-origin: center;
+  }
+}
+
+.animate-companion-blink {
+  animation: companion-blink 4.2s infinite;
+}
+
+@keyframes companion-wave {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(-14deg);
+  }
+  40% {
+    transform: rotate(10deg);
+  }
+  60% {
+    transform: rotate(-10deg);
+  }
+  80% {
+    transform: rotate(6deg);
+  }
+}
+
+.animate-companion-wave {
+  animation: companion-wave 2s ease-in-out infinite;
+  transform-origin: 95px 95px;
+}
+
+@keyframes companion-bounce {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  40% {
+    transform: translateY(-8px) scale(1.03);
+  }
+  60% {
+    transform: translateY(-4px) scale(1.01);
+  }
+}
+
+.animate-companion-bounce {
+  animation: companion-bounce 1.6s ease-in-out infinite;
+}
+
+@keyframes companion-sparkle {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(0.8) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2) rotate(45deg);
+  }
+}
+
+.animate-companion-sparkle {
+  animation: companion-sparkle 2s ease-in-out infinite;
+}
+

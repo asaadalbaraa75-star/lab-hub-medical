@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Quiz, QuizAttempt, LabSubjectId } from '../../types';
+import { OwnershipWatermark } from '../common/OwnershipWatermark';
 import {
   CheckCircle2,
   XCircle,
@@ -289,10 +290,13 @@ export const QuizRunner: React.FC<QuizRunnerProps> = ({
             <span>Exit Quiz</span>
           </button>
 
-          {/* Countdown Clock */}
-          <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-50 border border-amber-200 text-xs font-mono font-bold text-amber-800">
-            <Clock className="w-3.5 h-3.5" />
-            <span>Time Left: {formatTime(timeLeft)}</span>
+          <div className="flex items-center gap-2">
+            <OwnershipWatermark variant="badge" className="text-[10px]" />
+            {/* Countdown Clock */}
+            <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-50 border border-amber-200 text-xs font-mono font-bold text-amber-800">
+              <Clock className="w-3.5 h-3.5" />
+              <span>Time Left: {formatTime(timeLeft)}</span>
+            </div>
           </div>
         </div>
 
@@ -401,6 +405,11 @@ export const QuizRunner: React.FC<QuizRunnerProps> = ({
             )}
           </div>
         </div>
+      </div>
+
+      {/* Platform Ownership Notice */}
+      <div className="pt-2 flex justify-center">
+        <OwnershipWatermark variant="minimal" />
       </div>
     </div>
   );

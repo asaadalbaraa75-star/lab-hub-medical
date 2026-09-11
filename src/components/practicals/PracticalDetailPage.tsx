@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
-import {
-  Practical,
-  LabSubjectId,
-  StudentProgress
-} from '../../types';
+import { Practical, LabSubjectId, StudentProgress } from '../../types';
 import { InteractiveSlideViewer } from '../interactive/InteractiveSlideViewer';
+import { OwnershipWatermark } from '../common/OwnershipWatermark';
 import {
   CheckCircle2,
   Circle,
@@ -224,7 +221,8 @@ export const PracticalDetailPage: React.FC<PracticalDetailPageProps> = ({
             </span>
           </div>
 
-          <div className="flex items-center gap-2 text-[11px] text-slate-400">
+          <div className="flex items-center gap-2 text-[11px] text-slate-400 flex-wrap">
+            <OwnershipWatermark variant="badge" className="text-[10px]" />
             <span className="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 border border-slate-700 font-mono">
               v{practical.version}
             </span>
@@ -849,6 +847,11 @@ export const PracticalDetailPage: React.FC<PracticalDetailPageProps> = ({
           </div>
         </section>
       )}
+
+      {/* Platform Ownership Notice */}
+      <div className="pt-2 flex justify-center">
+        <OwnershipWatermark variant="minimal" />
+      </div>
     </div>
   );
 };
