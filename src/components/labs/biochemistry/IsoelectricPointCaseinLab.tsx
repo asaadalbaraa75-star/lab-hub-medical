@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { DoctorVideoSection } from './DoctorVideoSection';
 import {
   FlaskConical,
   CheckCircle2,
@@ -509,6 +510,36 @@ export const IsoelectricPointCaseinLab: React.FC = () => {
             </p>
           </div>
         </div>
+      </div>
+
+      {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+          DOCTOR EXPLANATION SECTION (شرح الطبيب المعتمد)
+      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+      <div className="pt-2 border-t border-slate-700/80 space-y-4" id="casein-doctor-explanation">
+        <div className="flex items-center gap-2 text-xs font-bold text-emerald-400 uppercase tracking-wider">
+          <Sparkles className="w-4 h-4" />
+          <span>🎥 Doctor Explanation & Practical Chemistry Review (شرح الطبيب المعتمد)</span>
+        </div>
+
+        <DoctorVideoSection
+          title="Isoelectric Point (pI) Test — Casein Precipitation & BCG Color Transition"
+          titleAr="تجربة نقطة التعادل الكهربائي (pI) للكازيين وترسيبه بكاشف بروموكريسول الأخضر"
+          doctorName="Faculty of Medical Biochemistry"
+          doctorTitle="Department of Medical Biochemistry & Clinical Pathology"
+          channelTitle="Practical Medical Biochemistry"
+          duration="06:30"
+          objectives={[
+            "فهم آلية تعادل الشحنة الكهربائية الكلية لجزيئات بروتين الكازيين عند pI ≈ 4.6–4.9",
+            "ملاحظة دور حمض الخليك المخفف في خفض درجة الحموضة pH للوصول إلى نقطة التعادل",
+            "مراقبة ترسب الكازيين الحبيبي الأخضر في قاع الأنبوبة بوجود كاشف BCG"
+          ]}
+          highYieldPoints={[
+            "عند نقطة التعادل الكهربائي (pI) تنعدم قوى التنافر الكهروستاتيكي بين الجزيئات فتترسب البروتينات",
+            "كاشف بروموكريسول الأخضر (BCG) يتلون بالأخضر عند pH ~ 4.6–4.9 ليتوافق مع ترسب الكازيين",
+            "إضافة حمض زائد تعيد ذوبان البروتين بسبب اكتساب شحنات موجبة (+)"
+          ]}
+          status="coming_soon"
+        />
       </div>
     </div>
   );

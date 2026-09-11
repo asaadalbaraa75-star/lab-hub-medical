@@ -4,6 +4,7 @@ import {
   ProteinPracticalExperiment
 } from './ProteinsData';
 import { IsoelectricPointCaseinLab } from './IsoelectricPointCaseinLab';
+import { DoctorVideoSection } from './DoctorVideoSection';
 import {
   FlaskConical,
   TestTube,
@@ -204,6 +205,31 @@ export const ProteinPracticalLab: React.FC = () => {
                   </li>
                 ))}
               </ul>
+            </div>
+
+            {/* Dedicated Doctor Explanation Section for Biuret */}
+            <div className="pt-2">
+              <DoctorVideoSection
+                videoId="bkubseVmas8"
+                youtubeUrl="https://www.youtube.com/watch?v=bkubseVmas8"
+                title="Biuret Test for Proteins — Practical Lab Demonstration & Principle"
+                titleAr="اختبار بيوريت للكشف عن الروابط الببتيدية والبروتينات — الشرح المخبري المعتمد"
+                doctorName="Dr. Amit (Biochemistry Basics)"
+                doctorTitle="Associate Professor of Medical Biochemistry"
+                channelTitle="Biochemistry Basics by Dr Amit"
+                duration="05:12"
+                objectives={[
+                  "ملاحظة تشكل المعقد البنفسجي القرنفلي في الوسط القلوي",
+                  "فهم اشتراط وجود رابطتين ببتيديتين على الأقل لإعطاء تفاعل إيجابي",
+                  "التمييز بين البروتينات والأحماض الأمينية الفردية مثل الجلايسين"
+                ]}
+                highYieldPoints={[
+                  "أيونات النحاس الثنائية تتناسق مع 4 ذرات نيتروجين ببتيدية",
+                  "تدرج اللون يعتمد طردياً على عدد الروابط الببتيدية",
+                  "الأحماض الأمينية الحرة تعطي تفاعلاً سلبياً تماماً مع البيوريت"
+                ]}
+                status="active"
+              />
             </div>
           </div>
 

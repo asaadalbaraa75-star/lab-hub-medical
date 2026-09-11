@@ -544,6 +544,162 @@ export const EDUCATIONAL_VIDEOS: EducationalVideo[] = [
   // 4. BIOCHEMISTRY MODULES
   // ==========================================
   {
+    id: 'vid-bioc-benedict-001',
+    subject: 'biochemistry',
+    subjectId: 'biochemistry',
+    topicId: 'benedict',
+    topicName: "Benedict's Test (Reducing Sugars)",
+    topic: "Benedict's Test",
+    title: "Benedict's Test — Practical Demonstration & Chemical Principle",
+    titleAr: "اختبار بندكت للكشف عن السكريات المختزلة — العرض المخبري والمبدأ الكيميائي",
+    instructor: 'Faculty of Medical Biochemistry',
+    instructorTitle: 'Department of Medical Biochemistry & Chemical Pathology',
+    channelTitle: 'Practical Biochemistry Education',
+    youtubeVideoId: 'nlPHeqHOYpU',
+    youtubeId: 'nlPHeqHOYpU',
+    youtubeUrl: 'https://youtu.be/nlPHeqHOYpU?si=Kw5FCw5YCKA-UlB4',
+    embedUrl: 'https://www.youtube.com/embed/nlPHeqHOYpU',
+    thumbnailUrl: 'https://img.youtube.com/vi/nlPHeqHOYpU/hqdefault.jpg',
+    duration: '06:15',
+    relevanceScore: 100,
+    status: 'active',
+    source: 'Official Faculty Demonstration',
+    description: "Official medical laboratory demonstration of Benedict's Test: detecting reducing sugars, heating in a boiling water bath, observing precipitation of cuprous oxide (Cu2O), and reading the semi-quantitative color scale (blue → green → yellow → orange → brick-red).",
+    learningObjectives: [
+      "Understand the composition of Benedict's reagent: CuSO4 (source of Cu2+), Na2CO3 (alkaline medium), and sodium citrate (chelating agent)",
+      "Perform the boiling water bath heating step (3–5 min) and observe precipitate formation",
+      "Correlate precipitate color with reducing sugar concentration: Green (0.5%), Yellow (1%), Orange (1.5%), Brick-red (>=2%)"
+    ],
+    highYieldTakeaways: [
+      "Benedict's test detects free aldehyde (aldose) or free alpha-hydroxy ketone (ketose) carbonyl reducing groups",
+      "Sodium citrate chelates Cu2+ preventing precipitation of insoluble Cu(OH)2 before reaction with sugar",
+      "Sucrose and starch give negative results (blue) because their anomeric carbons are engaged in glycosidic bonds"
+    ],
+    chapters: [
+      { time: '0:00', title: 'Introduction & What is Benedict\'s Test?' },
+      { time: '01:15', title: 'Reagent Composition & Chemical Principle' },
+      { time: '02:30', title: 'Adding Sample & Boiling Water Bath Heating' },
+      { time: '04:10', title: 'Observing Cuprous Oxide (Cu2O) Precipitate' },
+      { time: '05:25', title: 'Semi-Quantitative Color Scale & Exam Points' }
+    ]
+  },
+  {
+    id: 'vid-bioc-molisch-001',
+    subject: 'biochemistry',
+    subjectId: 'biochemistry',
+    topicId: 'molisch',
+    topicName: "Molisch's Test (General Carbohydrate Screening)",
+    topic: "Molisch's Test",
+    title: "Molisch Test For Carbohydrates — Demonstration & Principle",
+    titleAr: "اختبار موليش العام للكربوهيدرات — العرض العملي والمبدأ",
+    instructor: 'Dr. Amit (Biochemistry Basics)',
+    instructorTitle: 'Associate Professor of Medical Biochemistry',
+    channelTitle: 'Biochemistry Basics by Dr Amit',
+    youtubeVideoId: 'RaxvcJgQJ_A',
+    youtubeId: 'RaxvcJgQJ_A',
+    youtubeUrl: 'https://www.youtube.com/watch?v=RaxvcJgQJ_A',
+    embedUrl: 'https://www.youtube.com/embed/RaxvcJgQJ_A',
+    thumbnailUrl: 'https://img.youtube.com/vi/RaxvcJgQJ_A/hqdefault.jpg',
+    duration: '04:30',
+    relevanceScore: 99,
+    status: 'active',
+    source: 'Medical Biochemistry Bench Practical Series',
+    description: 'Dehydration of carbohydrates with concentrated H2SO4 to form furfural derivatives which condense with alpha-naphthol to produce a distinct purple/violet ring at the junction of the two liquids.',
+    learningObjectives: [
+      'Learn the safe technique of pouring concentrated sulfuric acid along the side of an inclined test tube',
+      'Understand the dehydration reaction of pentoses and hexoses into furfural and hydroxymethylfurfural',
+      'Recognize that Molisch test is a general positive screening test for ALL carbohydrates'
+    ],
+    highYieldTakeaways: [
+      'A violet ring at the interface confirms the presence of carbohydrate',
+      'Do not shake the tube after adding acid to preserve the delicate interface ring',
+      'Non-carbohydrate organic compounds (e.g. pure proteins) yield a negative test'
+    ],
+    chapters: [
+      { time: '0:00', title: 'Principle & Reagents' },
+      { time: '01:20', title: 'Adding Alpha-Naphthol' },
+      { time: '02:40', title: 'Inclining Tube & Adding Conc. H2SO4' },
+      { time: '03:50', title: 'Observing Violet Interface Ring' }
+    ]
+  },
+  {
+    id: 'vid-bioc-barfoed-001',
+    subject: 'biochemistry',
+    subjectId: 'biochemistry',
+    topicId: 'barfoed',
+    topicName: "Barfoed's Test (Mono vs Disaccharides)",
+    topic: "Barfoed's Test",
+    title: "Barfoed's Test With Demonstration — Differentiating Monosaccharides",
+    titleAr: "اختبار بارفود للتمييز السريع بين السكريات الأحادية والثنائية",
+    instructor: 'Dr. Amit (Biochemistry Basics)',
+    instructorTitle: 'Associate Professor of Medical Biochemistry',
+    channelTitle: 'Biochemistry Basics by Dr Amit',
+    youtubeVideoId: 'vJWg9eXjYQc',
+    youtubeId: 'vJWg9eXjYQc',
+    youtubeUrl: 'https://www.youtube.com/watch?v=vJWg9eXjYQc',
+    embedUrl: 'https://www.youtube.com/embed/vJWg9eXjYQc',
+    thumbnailUrl: 'https://img.youtube.com/vi/vJWg9eXjYQc/hqdefault.jpg',
+    duration: '04:15',
+    relevanceScore: 99,
+    status: 'active',
+    source: 'Medical Biochemistry Bench Practical Series',
+    description: 'Demonstration of Barfoed\'s test in mildly acidic copper acetate medium: monosaccharides rapidly reduce cupric ions within 2-3 minutes, differentiating them from disaccharides which react much slower.',
+    learningObjectives: [
+      'Explain the effect of acidic medium on the reducing power of sugars',
+      'Observe rapid cuprous oxide precipitate formation with glucose within 2-3 minutes',
+      'Differentiate monosaccharides (glucose, fructose) from reducing disaccharides (maltose, lactose)'
+    ],
+    highYieldTakeaways: [
+      'Barfoed reagent is copper acetate in dilute acetic acid (acidic medium)',
+      'Monosaccharides reduce Cu2+ within 2–3 minutes; disaccharides require prolonged heating (>10 min)',
+      'Red precipitate appears characteristically at the bottom of the tube'
+    ],
+    chapters: [
+      { time: '0:00', title: 'Principle of Barfoed Test' },
+      { time: '01:10', title: 'Reagent Preparation & Sample Addition' },
+      { time: '02:20', title: 'Timing the Boiling Water Bath (2–3 min)' },
+      { time: '03:40', title: 'Red Precipitate Confirmation' }
+    ]
+  },
+  {
+    id: 'vid-bioc-iodine-001',
+    subject: 'biochemistry',
+    subjectId: 'biochemistry',
+    topicId: 'iodine',
+    topicName: "Iodine Test for Starch (Polysaccharides)",
+    topic: "Iodine Test",
+    title: "Carbohydrates Tests: Benedict's & Iodine Test Demonstration",
+    titleAr: "اختبار اليود للكشف النوعي عن النشاء والمعقدات السكرية",
+    instructor: 'Launchpad Learning',
+    instructorTitle: 'Medical Biology & Biochemistry Educator',
+    channelTitle: 'Launchpad Learning',
+    youtubeVideoId: 'd6tHWPW5WLM',
+    youtubeId: 'd6tHWPW5WLM',
+    youtubeUrl: 'https://www.youtube.com/watch?v=d6tHWPW5WLM',
+    embedUrl: 'https://www.youtube.com/embed/d6tHWPW5WLM',
+    thumbnailUrl: 'https://img.youtube.com/vi/d6tHWPW5WLM/hqdefault.jpg',
+    duration: '06:40',
+    relevanceScore: 98,
+    status: 'active',
+    source: 'Laboratory Science Series',
+    description: 'Interaction between triiodide ions (I3-) and the helical amylose core of starch to form an intense blue-black charge transfer complex, reversible with temperature.',
+    learningObjectives: [
+      'Demonstrate adding Lugol\'s iodine (I2/KI) to starch versus monosaccharide controls',
+      'Observe immediate blue-black color formation without requiring heating',
+      'Understand thermoreversibility: color disappears upon heating and returns on cooling'
+    ],
+    highYieldTakeaways: [
+      'Amylose forms an intense blue-black complex with iodine',
+      'Glycogen produces a reddish-brown color',
+      'Heating unwinds the starch helix causing the blue color to disappear'
+    ],
+    chapters: [
+      { time: '0:00', title: 'Introduction & Test Setup' },
+      { time: '02:00', title: 'Iodine Addition to Starch' },
+      { time: '04:10', title: 'Temperature Effect (Heat vs Cool)' }
+    ]
+  },
+  {
     id: 'vid-bioc-carbs-001',
     subject: 'biochemistry',
     subjectId: 'biochemistry',

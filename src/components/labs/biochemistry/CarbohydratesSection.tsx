@@ -4,6 +4,7 @@ import {
   BiochemistryTestCard,
   VisualBioTest
 } from './BiochemistryTestCard';
+import { BenedictDedicatedLesson } from './BenedictDedicatedLesson';
 import {
   FlaskConical,
   Layers,
@@ -12,12 +13,14 @@ import {
   AlertTriangle,
   Info,
   Beaker,
-  Search
+  Search,
+  Video,
+  BookOpen
 } from 'lucide-react';
 
 export const CarbohydratesSection: React.FC<{ searchQuery?: string }> = ({ searchQuery = '' }) => {
-  const [activeSubTab, setActiveSubTab] = useState<'tests' | 'classification'>('tests');
-  const [selectedTestId, setSelectedTestId] = useState<string>('molisch');
+  const [activeSubTab, setActiveSubTab] = useState<'tests' | 'classification' | 'benedict_dedicated'>('tests');
+  const [selectedTestId, setSelectedTestId] = useState<string>('benedict');
 
   const carbClassifications = [
     {
@@ -79,7 +82,20 @@ export const CarbohydratesSection: React.FC<{ searchQuery?: string }> = ({ searc
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            type="button"
+            onClick={() => setActiveSubTab('benedict_dedicated')}
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+              activeSubTab === 'benedict_dedicated'
+                ? 'bg-amber-400 text-slate-950 font-black shadow-md shadow-amber-400/30 ring-2 ring-amber-300/60'
+                : 'bg-[#0F172A] text-amber-300 border border-amber-500/40 hover:border-amber-400'
+            }`}
+          >
+            <BookOpen className="w-3.5 h-3.5 text-amber-400" />
+            <span>🎥 درس بندكت المعتمد (Benedict's Dedicated)</span>
+          </button>
+
           <button
             type="button"
             onClick={() => setActiveSubTab('tests')}
@@ -106,6 +122,26 @@ export const CarbohydratesSection: React.FC<{ searchQuery?: string }> = ({ searc
         </div>
       </div>
 
+      {/* SUB-VIEW: BENEDICT DEDICATED LESSON */}
+      {activeSubTab === 'benedict_dedicated' && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between bg-[#1E293B] border border-amber-500/40 px-4 py-2.5 rounded-xl">
+            <span className="text-xs text-amber-300 font-bold flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-amber-400" />
+              <span>الدرس العملي النموذجي الكامل — اختبار بندكت مع فيديو شرح الطبيب المعتمد</span>
+            </span>
+            <button
+              type="button"
+              onClick={() => setActiveSubTab('tests')}
+              className="text-xs text-slate-400 hover:text-white underline cursor-pointer"
+            >
+              العودة إلى باقي الاختبارات الـ 6
+            </button>
+          </div>
+          <BenedictDedicatedLesson />
+        </div>
+      )}
+
       {/* SUB-VIEW 1: THE 6 QUALITATIVE IDENTIFICATION TESTS */}
       {activeSubTab === 'tests' && (
         <div className="space-y-4">
@@ -125,6 +161,7 @@ export const CarbohydratesSection: React.FC<{ searchQuery?: string }> = ({ searc
                 test={test}
                 isActive={selectedTestId === test.id}
                 onSelect={() => setSelectedTestId(test.id)}
+                onOpenDedicatedLesson={() => setActiveSubTab('benedict_dedicated')}
               />
             ))}
           </div>

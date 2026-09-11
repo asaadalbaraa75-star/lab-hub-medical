@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BiochemistryTestTube, TestTubeType } from './BiochemistryTestTube';
 import { BenedictColorScale } from './BenedictColorScale';
+import { DoctorVideoSection } from './DoctorVideoSection';
 import {
   FlaskConical,
   Beaker,
@@ -11,7 +12,11 @@ import {
   Flame,
   ArrowRight,
   HelpCircle,
-  Sparkles
+  Sparkles,
+  Video,
+  ChevronDown,
+  ChevronUp,
+  BookOpen
 } from 'lucide-react';
 
 export interface VisualBioTest {
@@ -176,17 +181,148 @@ export const BIOCHEMISTRY_VISUAL_TESTS: VisualBioTest[] = [
   }
 ];
 
+export const TEST_DOCTOR_VIDEOS: Record<string, {
+  videoId?: string;
+  youtubeUrl?: string;
+  title: string;
+  titleAr: string;
+  doctorName: string;
+  doctorTitle: string;
+  channelTitle?: string;
+  duration: string;
+  objectives: string[];
+  highYieldPoints: string[];
+  status: 'active' | 'coming_soon';
+}> = {
+  benedict: {
+    videoId: 'nlPHeqHOYpU',
+    youtubeUrl: 'https://youtu.be/nlPHeqHOYpU?si=Kw5FCw5YCKA-UlB4',
+    title: "Benedict's Test — Practical Demonstration & Chemical Principle",
+    titleAr: "اختبار بندكت للكشف عن السكريات المختزلة — العرض المخبري",
+    doctorName: "Faculty of Medical Biochemistry",
+    doctorTitle: "Department of Medical Biochemistry & Clinical Pathology",
+    channelTitle: "Practical Biochemistry Education",
+    duration: "06:15",
+    objectives: [
+      "فهم دور مكونات الكاشف: كبريتات النحاس، كربونات الصوديوم، وسترات الصوديوم",
+      "ملاحظة التسخين في الحمام المائي لمدة 3–5 دقائق وتشكل راسب أكسيد النحاسوز",
+      "قراءة التدرج اللوني شبه الكمي من الأزرق إلى الأحمر القرميدي"
+    ],
+    highYieldPoints: [
+      "يكشف عن مجموعات الكربونيل المختزلة الحرة (الألدهيدات والكيتونات)",
+      "سترات الصوديوم تمنع ترسب هيدروكسيد النحاس الثنائي كمركب مخلبي",
+      "السكروز سلبي لأن ذرتا الكربون الأنوميرية مشتركتان في الرابطة الجليكوسيدية"
+    ],
+    status: 'active'
+  },
+  molisch: {
+    videoId: 'RaxvcJgQJ_A',
+    youtubeUrl: 'https://www.youtube.com/watch?v=RaxvcJgQJ_A',
+    title: "Molisch Test For Carbohydrates — Demonstration & Principle",
+    titleAr: "اختبار موليش العام للكربوهيدرات — العرض العملي والمبدأ",
+    doctorName: "Dr. Amit (Biochemistry Basics)",
+    doctorTitle: "Associate Professor of Medical Biochemistry",
+    channelTitle: "Biochemistry Basics by Dr Amit",
+    duration: "04:30",
+    objectives: [
+      "التقنية الآمنة لإضافة حمض الكبريتيك المركز على جدار الأنبوبة المائلة",
+      "نزع الماء من السكريات الخماسية والسداسية لتشكيل مشتقات الفورفورال",
+      "تشكل الحلقة البنفسجية المميزة عند السطح الفاصل"
+    ],
+    highYieldPoints: [
+      "اختبار مسح نوعي إيجابي لجميع الكربوهيدرات دون استثناء",
+      "عدم رج الأنبوبة بعد إضافة الحمض للحفاظ على الحلقة الفاصلة"
+    ],
+    status: 'active'
+  },
+  barfoed: {
+    videoId: 'vJWg9eXjYQc',
+    youtubeUrl: 'https://www.youtube.com/watch?v=vJWg9eXjYQc',
+    title: "Barfoed's Test With Demonstration — Differentiating Monosaccharides",
+    titleAr: "اختبار بارفود للتمييز السريع بين السكريات الأحادية والثنائية",
+    doctorName: "Dr. Amit (Biochemistry Basics)",
+    doctorTitle: "Associate Professor of Medical Biochemistry",
+    channelTitle: "Biochemistry Basics by Dr Amit",
+    duration: "04:15",
+    objectives: [
+      "تفسير تأثير الوسط الحمضي الضعيف على سرعة اختزال السكريات",
+      "التمييز بين السكريات الأحادية (2-3 دقائق) والسكريات الثنائية"
+    ],
+    highYieldPoints: [
+      "كاشف بارفود يتكون من خلات النحاس في حمض الخليك المخفف",
+      "السكريات الأحادية ترسب أكسيد النحاسوز الأحمر سريعاً في قاع الأنبوبة"
+    ],
+    status: 'active'
+  },
+  iodine: {
+    videoId: 'd6tHWPW5WLM',
+    youtubeUrl: 'https://www.youtube.com/watch?v=d6tHWPW5WLM',
+    title: "Carbohydrates Tests: Benedict's & Iodine Test Demonstration",
+    titleAr: "اختبار اليود للكشف النوعي عن النشاء والمعقدات السكرية",
+    doctorName: "Launchpad Learning",
+    doctorTitle: "Medical Biology & Biochemistry Educator",
+    channelTitle: "Launchpad Learning",
+    duration: "06:40",
+    objectives: [
+      "تفاعل أيونات اليود الثلاثية مع اللولب الحلزوني للأميلوز",
+      "ملاحظة اختفاء اللون الأزرق بالتسخين وعودته بالتبريد"
+    ],
+    highYieldPoints: [
+      "النشاء يعطي لوناً أزرق داكناً بينما الجليكوجين يعطي لوناً أحمر بنياً",
+      "التسخين يفكك اللولب الحلزوني ويحرر جزيئات اليود"
+    ],
+    status: 'active'
+  },
+  seliwanoff: {
+    title: "Seliwanoff's Test (Resorcinol / Cherry-Red Ketose Test)",
+    titleAr: "اختبار سيليفانوف للكشف عن الكيتوزات (الفركتوز)",
+    doctorName: "Faculty of Medical Biochemistry",
+    doctorTitle: "Faculty Review: Academic Peer Verification",
+    duration: "05:00",
+    objectives: [
+      "نزع الماء السريع من الكيتوزات بحمض الهيدروكلوريك المخفف لتشكيل الفورفورال",
+      "التكثيف مع الريزورسينول لإنتاج لون أحمر كرزي ساطع خلال دقيقة لدقيقتين"
+    ],
+    highYieldPoints: [
+      "الفركتوز يعطي لوناً أحمر كرزياً سريعاً جداً",
+      "الألدوزات تتفاعل ببطء شديد وتعطي لوناً وردياً باهتاً فقط عند الغلي المطول"
+    ],
+    status: 'coming_soon'
+  },
+  fehling: {
+    title: "Fehling's Qualitative Test for Reducing Sugars",
+    titleAr: "اختبار فيهلنغ للسكريات المختزلة",
+    doctorName: "Faculty of Medical Biochemistry",
+    doctorTitle: "Faculty Review: Academic Peer Verification",
+    duration: "05:00",
+    objectives: [
+      "مزج محلول فيهلنغ A مع B قبل الاستخدام مباشرة",
+      "اختزال معقد ترترات النحاس إلى راسب أكسيد النحاسوز الأحمر"
+    ],
+    highYieldPoints: [
+      "ترترات الصوديوم والبوتاسيوم (ملح روشيل) يعمل كمركب مخلبي لمنع ترسب هيدروكسيد النحاس",
+      "كاشف بندكت مفضل سريرياً لاستقراره الطويل في زجاجة واحدة"
+    ],
+    status: 'coming_soon'
+  }
+};
+
 interface BiochemistryTestCardProps {
   test: VisualBioTest;
   isActive?: boolean;
   onSelect?: () => void;
+  onOpenDedicatedLesson?: (testId: string) => void;
 }
 
 export const BiochemistryTestCard: React.FC<BiochemistryTestCardProps> = ({
   test,
   isActive = false,
-  onSelect
+  onSelect,
+  onOpenDedicatedLesson
 }) => {
+  const [showDoctorVideo, setShowDoctorVideo] = useState<boolean>(test.id === 'benedict');
+  const videoInfo = TEST_DOCTOR_VIDEOS[test.id];
+
   return (
     <div
       id={`biochem-card-${test.id}`}
@@ -212,9 +348,22 @@ export const BiochemistryTestCard: React.FC<BiochemistryTestCardProps> = ({
           </p>
         </div>
 
-        {/* Lab Icon */}
-        <div className="w-12 h-12 rounded-xl bg-slate-900/80 border border-[#334155] flex items-center justify-center text-amber-400 shrink-0 shadow-inner">
-          <FlaskConical className="w-6 h-6" />
+        {/* Action Buttons & Lab Icon */}
+        <div className="flex items-center gap-2">
+          {test.id === 'benedict' && onOpenDedicatedLesson && (
+            <button
+              type="button"
+              onClick={() => onOpenDedicatedLesson(test.id)}
+              className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 text-xs font-black shadow-md flex items-center gap-1.5 transition-all cursor-pointer"
+            >
+              <BookOpen className="w-4 h-4" />
+              <span>الدرس الكامل المعتمد (Full Lesson)</span>
+            </button>
+          )}
+
+          <div className="w-12 h-12 rounded-xl bg-slate-900/80 border border-[#334155] flex items-center justify-center text-amber-400 shrink-0 shadow-inner">
+            <FlaskConical className="w-6 h-6" />
+          </div>
         </div>
       </div>
 
@@ -365,6 +514,54 @@ export const BiochemistryTestCard: React.FC<BiochemistryTestCardProps> = ({
         <p className="text-[11px] text-[#94A3B8] font-mono leading-relaxed">
           {test.observationEn}
         </p>
+      </div>
+
+      {/* 5. Dedicated Doctor Explanation Section */}
+      <div className="pt-2 border-t border-[#334155] space-y-3" id={`doctor-explanation-${test.id}`}>
+        <div className="flex items-center justify-between">
+          <button
+            type="button"
+            onClick={() => setShowDoctorVideo(!showDoctorVideo)}
+            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#0F172A] hover:bg-slate-900 border border-amber-500/40 text-amber-300 text-xs font-bold transition-all cursor-pointer shadow-sm"
+          >
+            <Video className="w-4 h-4 text-amber-400" />
+            <span>🎥 Doctor Explanation (شرح الطبيب المعتمد)</span>
+            {showDoctorVideo ? (
+              <ChevronUp className="w-3.5 h-3.5 text-slate-400" />
+            ) : (
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+            )}
+          </button>
+
+          {test.id === 'benedict' && onOpenDedicatedLesson && (
+            <button
+              type="button"
+              onClick={() => onOpenDedicatedLesson(test.id)}
+              className="text-xs text-amber-400 hover:text-amber-300 font-bold underline flex items-center gap-1 cursor-pointer"
+            >
+              <span>فتح الدرس الكامل (Full Lesson)</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
+
+        {showDoctorVideo && videoInfo && (
+          <div className="animate-in fade-in duration-300 pt-2">
+            <DoctorVideoSection
+              videoId={videoInfo.videoId}
+              youtubeUrl={videoInfo.youtubeUrl}
+              title={videoInfo.title}
+              titleAr={videoInfo.titleAr}
+              doctorName={videoInfo.doctorName}
+              doctorTitle={videoInfo.doctorTitle}
+              channelTitle={videoInfo.channelTitle}
+              duration={videoInfo.duration}
+              objectives={videoInfo.objectives}
+              highYieldPoints={videoInfo.highYieldPoints}
+              status={videoInfo.status}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

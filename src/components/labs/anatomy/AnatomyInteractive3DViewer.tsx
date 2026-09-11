@@ -26,6 +26,7 @@ interface MuscleData {
   nameEn: string;
   nameAr: string;
   latinName: string;
+  imageSrc?: string;
   origin: string[];
   insertion: string[];
   action: string[];
@@ -49,6 +50,88 @@ interface MuscleData {
 }
 
 const MUSCLE_DATABASE: Record<string, MuscleData> = {
+  major_muscles: {
+    id: 'major_muscles',
+    region: 'Muscular System Overview (الهيكل العضلي الكامل)',
+    regionAr: 'عضلات الجسم الرئيسية • المنظرين الأمامي والخلفي',
+    nameEn: 'Major Muscles of the Body',
+    nameAr: 'عضلات الجسم الرئيسية (Anterior & Posterior)',
+    latinName: 'Systema musculare corporis humani',
+    imageSrc: '/assets/anatomy/muscles/major_muscles_of_the_body.jpg',
+    origin: [
+      'Anterior Division: Facial, Pectoral girdle, Anterior abdominal wall, Quadriceps group',
+      'Posterior Division: Trapezius, Latissimus dorsi, Gluteal region, Hamstrings, Gastrocnemius'
+    ],
+    insertion: [
+      'Integrated kinetic skeletal insertions via tendons and aponeuroses across axial & appendicular skeleton'
+    ],
+    action: [
+      'Locomotion and movement generation',
+      'Posture maintenance and core stabilization',
+      'Heat generation (thermogenesis) and metabolic homeostasis'
+    ],
+    actionAr: 'توليد الحركات الأساسية، الحفاظ على القوام والاستقرار الحركي، وتوليد الحرارة الحيوية.',
+    innervation: 'Somatic Nervous System (Cranial nerves & Spinal nerves plexus: Cervical, Brachial, Lumbosacral)',
+    bloodSupply: 'Systemic arterial branches derived from the Aorta',
+    clinicalPoint: 'Knowledge of anterior and posterior muscular anatomy is paramount for intramuscular injections (e.g., Deltoid, Gluteus medius), compartment syndrome diagnosis, and tendon reflex localization.',
+    examTrap: 'Remember that Deltoid is an abductor beyond 15 degrees, while Supraspinatus initiates the first 15 degrees. For posterior thigh, Hamstrings flex the knee and extend the hip!',
+    labels: [
+      {
+        title: 'Deltoid',
+        description: 'Shoulder abduction (15°-90°)',
+        x: 18,
+        y: 26
+      },
+      {
+        title: 'Pectoralis Major',
+        description: 'Arm adduction & medial rotation',
+        x: 28,
+        y: 28
+      },
+      {
+        title: 'Rectus Abdominis',
+        description: 'Flexes trunk & compresses abdomen',
+        x: 29,
+        y: 40
+      },
+      {
+        title: 'Quadriceps Femoris',
+        description: 'Great knee extensor (Femoral N.)',
+        x: 26,
+        y: 62
+      },
+      {
+        title: 'Trapezius',
+        description: 'Shoulder elevation & retraction (CN XI)',
+        x: 72,
+        y: 22
+      },
+      {
+        title: 'Latissimus Dorsi',
+        description: 'Adducts, extends & medially rotates arm',
+        x: 76,
+        y: 36
+      },
+      {
+        title: 'Gluteus Maximus',
+        description: 'Powerful hip extensor (Inf. gluteal N.)',
+        x: 75,
+        y: 50
+      },
+      {
+        title: 'Gastrocnemius',
+        description: 'Plantar flexion of ankle & knee flexion',
+        x: 78,
+        y: 78
+      }
+    ],
+    quickQuiz: {
+      question: 'Which muscle group is primarily responsible for knee extension in the anterior compartment of the thigh?',
+      options: ['Quadriceps femoris', 'Hamstrings', 'Adductor magnus', 'Iliopsoas'],
+      correctIndex: 0,
+      explanation: 'Quadriceps femoris (Rectus femoris, Vastus lateralis, medialis, and intermedius) is the powerful extensor of the knee joint, innervated by the femoral nerve.'
+    }
+  },
   biceps_brachii: {
     id: 'biceps_brachii',
     region: 'Muscles of the Upper Limb',
@@ -193,7 +276,7 @@ interface AnatomyInteractive3DViewerProps {
 }
 
 export const AnatomyInteractive3DViewer: React.FC<AnatomyInteractive3DViewerProps> = ({
-  initialMuscleId = 'biceps_brachii',
+  initialMuscleId = 'major_muscles',
   onBack,
   onOpenQuiz
 }) => {
@@ -207,7 +290,7 @@ export const AnatomyInteractive3DViewer: React.FC<AnatomyInteractive3DViewerProp
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [hasSubmittedQuiz, setHasSubmittedQuiz] = useState<boolean>(false);
 
-  const muscle = MUSCLE_DATABASE[selectedMuscleId] || MUSCLE_DATABASE.biceps_brachii;
+  const muscle = MUSCLE_DATABASE[selectedMuscleId] || MUSCLE_DATABASE.major_muscles || MUSCLE_DATABASE.biceps_brachii;
 
   const handleZoom = (delta: number) => {
     setZoomLevel(prev => Math.min(Math.max(0.8, prev + delta), 1.8));
@@ -252,8 +335,9 @@ export const AnatomyInteractive3DViewer: React.FC<AnatomyInteractive3DViewerProp
               setSelectedOption(null);
               setHasSubmittedQuiz(false);
             }}
-            className="bg-[#0F172A] border border-white/10 rounded-xl px-2.5 py-1.5 text-xs text-slate-200 font-medium focus:outline-none focus:border-purple-500"
+            className="bg-[#0F172A] border border-white/10 rounded-xl px-2.5 py-1.5 text-xs text-slate-200 font-medium focus:outline-none focus:border-purple-500 max-w-[200px] sm:max-w-none"
           >
+            <option value="major_muscles">Major Muscles of the Body (عضلات الجسم - Anterior & Posterior)</option>
             <option value="biceps_brachii">Biceps Brachii (Arm)</option>
             <option value="deltoid">Deltoid (Shoulder)</option>
             <option value="quadriceps">Quadriceps Femoris (Thigh)</option>
@@ -290,15 +374,15 @@ export const AnatomyInteractive3DViewer: React.FC<AnatomyInteractive3DViewerProp
         <div className="relative flex-1 flex items-center justify-center overflow-hidden my-2">
           {/* Main Visual Image with Zoom & Rotation */}
           <div
-            className="relative transition-transform duration-300 ease-out cursor-grab active:cursor-grabbing max-h-[460px]"
+            className="relative transition-transform duration-300 ease-out cursor-grab active:cursor-grabbing max-h-[480px]"
             style={{
               transform: `scale(${zoomLevel}) rotate(${rotationAngle}deg)`
             }}
           >
             <img
-              src={MEDICAL_ASSETS.bicepsBrachiiMuscle}
+              src={muscle.imageSrc || MEDICAL_ASSETS.bicepsBrachiiMuscle}
               alt={muscle.nameEn}
-              className={`max-h-[420px] object-contain rounded-2xl filter drop-shadow(0 0 35px rgba(168,85,247,0.3)) transition-opacity duration-300 ${
+              className={`max-h-[440px] w-auto object-contain rounded-2xl filter drop-shadow(0 0 35px rgba(168,85,247,0.3)) transition-opacity duration-300 ${
                 isIsolated ? 'brightness-110 contrast-125' : 'brightness-100'
               }`}
             />

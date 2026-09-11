@@ -625,7 +625,7 @@ export const AnatomyTopicVisual: React.FC<AnatomyVisualProps> = ({
     </svg>
   );
 
-  // 6. MAJOR MUSCLES VISUAL
+  // 6. MAJOR MUSCLES VISUAL (ORIGINAL REFERENCE MEDICAL IMAGE)
   const renderMusclesVisual = () => (
     <svg viewBox="0 0 600 520" className="w-full h-full select-none" xmlns="http://www.w3.org/2000/svg">
       <defs>
@@ -638,80 +638,35 @@ export const AnatomyTopicVisual: React.FC<AnatomyVisualProps> = ({
 
       <rect width="600" height="520" fill="#090d16" />
 
+      {/* Real Original Uploaded Reference Image for Muscles */}
+      <image
+        href="/assets/anatomy/muscles/major_muscles_of_the_body.jpg"
+        x="50"
+        y="50"
+        width="500"
+        height="450"
+        preserveAspectRatio="xMidYMid meet"
+      />
+
       {!isThumbnail && (
         <g>
-          <text x="300" y="28" fill="#f8fafc" fontSize="16" fontWeight="bold" textAnchor="middle">
-            MAJOR MUSCLES OF THE HUMAN BODY (ANTERIOR VIEW)
+          <rect x="50" y="8" width="500" height="38" rx="8" fill="#0f172a" fillOpacity="0.85" stroke="#334155" strokeWidth="1" />
+          <text x="300" y="24" fill="#f8fafc" fontSize="13" fontWeight="bold" textAnchor="middle">
+            MAJOR MUSCLES OF THE HUMAN BODY (ANTERIOR & POSTERIOR)
           </text>
-          <text x="300" y="45" fill="#94a3b8" fontSize="11" textAnchor="middle">
-            Deltoid • Pectoralis Major • Biceps Brachii • Rectus Abdominis • Quadriceps
+          <text x="300" y="38" fill="#38bdf8" fontSize="10" textAnchor="middle">
+            Original Medical Reference Atlas • Deltoid • Pectoralis • Biceps • Quads • Gluteus
           </text>
         </g>
       )}
 
-      <g transform="translate(300, 270)">
-        
-        {/* Head & Neck Sternocleidomastoid */}
-        <circle cx="0" cy="-185" r="24" fill="#334155" />
-        <path d="M-15 -160 L-5 -130 L5 -130 L15 -160 Z" fill="url(#muscleGrad)" stroke="#f43f5e" strokeWidth="1" />
-
-        {/* DELTOID MUSCLES (Shoulder Caps) */}
-        <g onClick={() => handleStructureClick(1)} className="cursor-pointer">
-          <path d="M-30 -130 C-60 -130 -65 -90 -45 -75 Z" fill="url(#muscleGrad)" stroke="#f43f5e" strokeWidth="1.5" />
-          <path d="M30 -130 C60 -130 65 -90 45 -75 Z" fill="url(#muscleGrad)" stroke="#f43f5e" strokeWidth="1.5" />
-          <text x="-75" y="-105" fill="#fb7185" fontSize="10" fontWeight="bold" textAnchor="end">Deltoid</text>
-          <text x="75" y="-105" fill="#fb7185" fontSize="10" fontWeight="bold">Deltoid (Abduction)</text>
-        </g>
-
-        {/* PECTORALIS MAJOR (Chest) */}
-        <g onClick={() => handleStructureClick(1)} className="cursor-pointer">
-          <path d="M-4 -128 L-35 -125 C-45 -100 -30 -85 -4 -85 Z" fill="url(#muscleGrad)" stroke="#f43f5e" strokeWidth="1.5" />
-          <path d="M4 -128 L35 -125 C45 -100 30 -85 4 -85 Z" fill="url(#muscleGrad)" stroke="#f43f5e" strokeWidth="1.5" />
-          <text x="0" y="-102" fill="#ffffff" fontSize="10" fontWeight="bold" textAnchor="middle">Pectoralis Major</text>
-        </g>
-
-        {/* BICEPS BRACHII (Anterior Arm) */}
-        <g onClick={() => handleStructureClick(2)} className="cursor-pointer">
-          <ellipse cx="-55" cy="-45" rx="9" ry="25" transform="rotate(15 -55 -45)" fill="url(#muscleGrad)" stroke="#f43f5e" strokeWidth="1.5" />
-          <ellipse cx="55" cy="-45" rx="9" ry="25" transform="rotate(-15 55 -45)" fill="url(#muscleGrad)" stroke="#f43f5e" strokeWidth="1.5" />
-          <text x="-75" y="-45" fill="#fb7185" fontSize="10" fontWeight="bold" textAnchor="end">Biceps Brachii</text>
-          <text x="75" y="-45" fill="#fb7185" fontSize="10" fontWeight="bold">Flexes & Supinates</text>
-        </g>
-
-        {/* RECTUS ABDOMINIS (6-Pack) */}
-        <g className="cursor-pointer">
-          <rect x="-18" y="-75" width="16" height="85" rx="4" fill="url(#muscleGrad)" stroke="#f43f5e" strokeWidth="1" />
-          <rect x="2" y="-75" width="16" height="85" rx="4" fill="url(#muscleGrad)" stroke="#f43f5e" strokeWidth="1" />
-          {/* Tendinous intersections */}
-          <line x1="-18" y1="-50" x2="18" y2="-50" stroke="#090d16" strokeWidth="2" />
-          <line x1="-18" y1="-25" x2="18" y2="-25" stroke="#090d16" strokeWidth="2" />
-          <line x1="-18" y1="0" x2="18" y2="0" stroke="#090d16" strokeWidth="2" />
-          <text x="35" y="-30" fill="#cbd5e1" fontSize="9" fontWeight="bold">Rectus Abdominis</text>
-        </g>
-
-        {/* QUADRICEPS FEMORIS (Anterior Thigh) */}
-        <g onClick={() => handleStructureClick(3)} className="cursor-pointer">
-          {/* Left Quad */}
-          <path d="M-38 35 C-48 70 -42 120 -32 135 C-22 120 -18 70 -25 35 Z" fill="url(#muscleGrad)" stroke="#f43f5e" strokeWidth="1.5" />
-          {/* Right Quad */}
-          <path d="M38 35 C48 70 42 120 32 135 C22 120 18 70 25 35 Z" fill="url(#muscleGrad)" stroke="#f43f5e" strokeWidth="1.5" />
-          <text x="-55" y="85" fill="#fb7185" fontSize="10" fontWeight="bold" textAnchor="end">Quadriceps Femoris</text>
-          <text x="55" y="85" fill="#fb7185" fontSize="10" fontWeight="bold">Extends Knee (Femoral N.)</text>
-        </g>
-
-        {/* TIBIALIS ANTERIOR & GASTROCNEMIUS */}
-        <g className="cursor-pointer">
-          <ellipse cx="-32" cy="175" rx="6" ry="30" fill="url(#muscleGrad)" stroke="#f43f5e" strokeWidth="1" />
-          <ellipse cx="32" cy="175" rx="6" ry="30" fill="url(#muscleGrad)" stroke="#f43f5e" strokeWidth="1" />
-          <text x="-48" y="175" fill="#94a3b8" fontSize="9" fontWeight="bold" textAnchor="end">Tibialis Anterior</text>
-          <text x="48" y="175" fill="#94a3b8" fontSize="9" fontWeight="bold">Gastrocnemius</text>
-        </g>
-      </g>
-
-      {/* Spotters */}
+      {/* Spotters Positioned on Real Anatomical Structures */}
       {spotters.map(pin => {
-        const cx = pin.pinNumber === 1 ? 250 : pin.pinNumber === 2 ? 355 : 265;
-        const cy = pin.pinNumber === 1 ? 170 : pin.pinNumber === 2 ? 225 : 355;
+        // Pin 1: Deltoid (Anterior shoulder)
+        // Pin 2: Biceps Brachii (Arm)
+        // Pin 3: Quadriceps (Anterior thigh)
+        const cx = pin.pinNumber === 1 ? 168 : pin.pinNumber === 2 ? 145 : 185;
+        const cy = pin.pinNumber === 1 ? 175 : pin.pinNumber === 2 ? 220 : 330;
         return (
           <g key={pin.pinNumber} onClick={() => handleStructureClick(pin.pinNumber)}>
             <circle cx={cx} cy={cy} r={selectedPinNumber === pin.pinNumber ? 16 : 13} className={getPinClass(pin.pinNumber)} />
