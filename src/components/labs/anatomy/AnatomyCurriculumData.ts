@@ -53,6 +53,30 @@ export interface MuscleLearningUnit {
   }[];
 }
 
+export interface LessonStructureLabel {
+  id: string;
+  nameEn: string;
+  nameAr: string;
+  descriptionEn?: string;
+  descriptionAr?: string;
+  xPercent?: number; // 0-100 for interactive pin placement on image
+  yPercent?: number; // 0-100
+}
+
+export interface LessonTopicItem {
+  id: string;
+  titleEn: string;
+  titleAr: string;
+  shortExplanationEn: string;
+  shortExplanationAr: string;
+  imageUrl: string;
+  imageSource: string;
+  imageCredit?: string;
+  labels: LessonStructureLabel[];
+  keyPoints: string[];
+  keyPointsAr?: string[];
+}
+
 export interface AnatomyLesson {
   id: string;
   titleEn: string;
@@ -64,9 +88,33 @@ export interface AnatomyLesson {
   descriptionAr: string;
   keyPoints: string[];
   keyPointsAr: string[];
+
+  // 1. MAIN COMPREHENSIVE IMAGE (covers overall lesson scope)
+  mainImageUrl: string;
+  mainImageSource: string;
+  mainImageCredit: string;
+  mainImageCaptionEn?: string;
+  mainImageCaptionAr?: string;
+  mainImageLabels?: LessonStructureLabel[];
+
+  // Backward compatibility alias for existing consumers
   imageUrl: string;
   imageSource: string;
   imageCredit: string;
+
+  // 2. TOPICS BREAKDOWN (ONE TOPIC -> ONE EXPLANATORY IMAGE)
+  topics: LessonTopicItem[];
+
+  // 3. DETAILED LABELED IMPORTANT STRUCTURES
+  importantStructuresImage?: {
+    titleEn: string;
+    titleAr: string;
+    imageUrl: string;
+    imageSource: string;
+    imageCredit: string;
+    labels: LessonStructureLabel[];
+  };
+
   video: {
     titleEn: string;
     titleAr: string;
@@ -563,8 +611,117 @@ export const ANATOMY_CORE_LESSONS: AnatomyLesson[] = [
       'المستوى الإكليلي الجبهي: يقسم الجسم عمودياً إلى جزء أمامي وجزء خلفي.',
       'المستوى المستعرض الأفقي: يقسم الجسم أفقياً إلى جزء علوي وجزء سفلي (هو أساس صور الأشعة المقطعية CT).'
     ],
-    imageUrl: '/images/anatomy/anatomical_planes_diagram.svg',    imageSource: 'OpenStax Anatomy & Physiology (CC BY 4.0)',
+    imageUrl: '/images/anatomy/anatomical_planes_diagram.svg',
+    imageSource: 'OpenStax Anatomy & Physiology (CC BY 4.0)',
     imageCredit: 'OpenStax College, Rice University',
+    mainImageUrl: '/images/anatomy/anatomical_planes_diagram.svg',
+    mainImageSource: 'OpenStax Anatomy & Physiology (CC BY 4.0)',
+    mainImageCredit: 'OpenStax College, Rice University',
+    mainImageCaptionEn: 'The three fundamental orthogonal anatomical planes: Sagittal, Coronal, and Transverse.',
+    mainImageCaptionAr: 'المستويات التشريحية الثلاثة المتعامدة: السهمي، الإكليلي، والمستعرض.',
+    mainImageLabels: [
+      {
+        id: 'pl_sagittal',
+        nameEn: 'Sagittal (Median) Plane',
+        nameAr: 'المستوى السهمي (المنصف)',
+        descriptionEn: 'Divides the body vertically into right and left portions.',
+        descriptionAr: 'يقسم الجسم عمودياً إلى نصفين أيمن وأيسر.',
+        xPercent: 32,
+        yPercent: 40
+      },
+      {
+        id: 'pl_coronal',
+        nameEn: 'Coronal (Frontal) Plane',
+        nameAr: 'المستوى الإكليلي (الجبهي)',
+        descriptionEn: 'Divides the body vertically into anterior (front) and posterior (back).',
+        descriptionAr: 'يقسم الجسم عمودياً إلى جزء أمامي وجزء خلفي.',
+        xPercent: 70,
+        yPercent: 35
+      },
+      {
+        id: 'pl_transverse',
+        nameEn: 'Transverse (Axial) Plane',
+        nameAr: 'المستوى المستعرض (المحوري)',
+        descriptionEn: 'Horizontal plane slicing into superior (upper) and inferior (lower). Basis of CT scans.',
+        descriptionAr: 'يقسم الجسم أفقياً إلى علوي وسفلي، وهو المستوى المعتمد في التصوير الطبقي المحوري CT.',
+        xPercent: 50,
+        yPercent: 70
+      }
+    ],
+    topics: [
+      {
+        id: 'top_sagittal',
+        titleEn: '1. Sagittal & Median Plane',
+        titleAr: 'المستوى السهمي والمنصف',
+        shortExplanationEn: 'A vertical plane parallel to the sagittal suture. The Median plane cuts exactly down the midline.',
+        shortExplanationAr: 'مستوى شاقولي يمر بموازاة الدرز السهمي. المستوى المنصف يقسم الجسم لنصفين متناظرين تماماً.',
+        imageUrl: '/images/anatomy/anatomical_planes_diagram.svg',
+        imageSource: 'OpenStax Anatomy',
+        labels: [
+          {
+            id: 'lbl_midsagittal',
+            nameEn: 'Midsagittal Midline',
+            nameAr: 'الخط المنصف السهمي',
+            descriptionEn: 'Produces symmetrical right and left halves.',
+            descriptionAr: 'ينتج نصفين متطابقين تشريحياً يميناً ويساراً.',
+            xPercent: 35,
+            yPercent: 42
+          }
+        ],
+        keyPoints: [
+          'Parasagittal planes run parallel to median plane but off-center.',
+          'Divisions produce medial (closer to midline) and lateral (further away).'
+        ]
+      },
+      {
+        id: 'top_coronal',
+        titleEn: '2. Coronal (Frontal) Plane',
+        titleAr: 'المستوى الإكليلي الجبهي',
+        shortExplanationEn: 'Perpendicular to sagittal plane; divides body into front (anterior/ventral) and back (posterior/dorsal).',
+        shortExplanationAr: 'عمودي على المستوى السهمي، يفصل الوجه والصدر (أمام) عن الظهر والقفا (خلف).',
+        imageUrl: '/images/anatomy/anatomical_planes_diagram.svg',
+        imageSource: 'OpenStax Anatomy',
+        labels: [
+          {
+            id: 'lbl_coronal',
+            nameEn: 'Coronal Slice',
+            nameAr: 'المقطع الإكليلي',
+            descriptionEn: 'Parallel to coronal suture of skull.',
+            descriptionAr: 'موازٍ للدرز الإكليلي في الجمجمة.',
+            xPercent: 68,
+            yPercent: 36
+          }
+        ],
+        keyPoints: [
+          'Standard plane for assessing facial and thoracic symmetry.',
+          'Crucial for interpreting frontal chest X-rays and MRI brain cuts.'
+        ]
+      },
+      {
+        id: 'top_transverse',
+        titleEn: '3. Transverse (Axial / Cross-Section) Plane',
+        titleAr: 'المستوى المستعرض الأفقي',
+        shortExplanationEn: 'Horizontal cut dividing into superior and inferior. Standard orientation viewed from patient feet looking up.',
+        shortExplanationAr: 'مستوى أفقي يقسم الجسم لقسم علوي وسفلي. يُقرأ في الأشعة بالنظر من قدمي المريض نحو الأعلى.',
+        imageUrl: '/images/anatomy/anatomical_planes_diagram.svg',
+        imageSource: 'OpenStax Anatomy',
+        labels: [
+          {
+            id: 'lbl_axial',
+            nameEn: 'Axial CT Cut',
+            nameAr: 'المقطع المحوري',
+            descriptionEn: 'The universal plane of Computed Tomography (CT).',
+            descriptionAr: 'المستوى القياسي العالمي في صور الأشعة المقطعية.',
+            xPercent: 50,
+            yPercent: 68
+          }
+        ],
+        keyPoints: [
+          'Used universally in abdominal, chest, and pelvic CT scans.',
+          'Right side of the image corresponds to the patient left side.'
+        ]
+      }
+    ],
     video: {
       titleEn: 'Anatomical Planes Explained Simply',
       titleAr: 'شرح المستويات التشريحية بطريقة مبسطة',
@@ -601,8 +758,159 @@ export const ANATOMY_CORE_LESSONS: AnatomyLesson[] = [
       'إنسي (Medial) مقابل وحشي (Lateral): أقرب للخط الناصف مقابل أبعد عن الخط الناصف.',
       'داني (Proximal) مقابل قاصي (Distal): يُستخدم للأطراف؛ أقرب لمنبت الطرف مقابل أبعد عن المنبت.'
     ],
-    imageUrl: '/images/anatomy/directional_terms_diagram.svg',    imageSource: 'OpenStax Anatomy & Physiology',
+    imageUrl: '/images/anatomy/directional_terms_diagram.svg',
+    imageSource: 'OpenStax Anatomy & Physiology',
     imageCredit: 'OpenStax College',
+    mainImageUrl: '/images/anatomy/directional_terms_diagram.svg',
+    mainImageSource: 'OpenStax Anatomy & Physiology',
+    mainImageCredit: 'OpenStax College',
+    mainImageCaptionEn: 'Primary directional terminology: Superior/Inferior, Anterior/Posterior, Medial/Lateral, Proximal/Distal.',
+    mainImageCaptionAr: 'المصطلحات الاتجاهية الأساسية وعلاقتها بالوضعية القياسية للجسم البشري.',
+    mainImageLabels: [
+      {
+        id: 'dir_sup',
+        nameEn: 'Superior (Cranial)',
+        nameAr: 'علوي (قحفي)',
+        descriptionEn: 'Toward the head end or upper part of a structure.',
+        descriptionAr: 'باتجاه الرأس أو الجزء العلوي من الجسم.',
+        xPercent: 50,
+        yPercent: 12
+      },
+      {
+        id: 'dir_inf',
+        nameEn: 'Inferior (Caudal)',
+        nameAr: 'سفلي (ذيلي)',
+        descriptionEn: 'Away from the head end or toward the lower part of a structure.',
+        descriptionAr: 'بعيداً عن الرأس وباتجاه القدمين.',
+        xPercent: 50,
+        yPercent: 90
+      },
+      {
+        id: 'dir_med',
+        nameEn: 'Medial',
+        nameAr: 'إنسي',
+        descriptionEn: 'Toward or at the midline of the body.',
+        descriptionAr: 'باتجاه الخط الناصف للجسم.',
+        xPercent: 45,
+        yPercent: 48
+      },
+      {
+        id: 'dir_lat',
+        nameEn: 'Lateral',
+        nameAr: 'وحشي',
+        descriptionEn: 'Away from the midline of the body.',
+        descriptionAr: 'بعيداً عن الخط الناصف باتجاه الأطراف الخارجية.',
+        xPercent: 82,
+        yPercent: 48
+      },
+      {
+        id: 'dir_prox',
+        nameEn: 'Proximal',
+        nameAr: 'داني / قريب',
+        descriptionEn: 'Closer to the origin of the body part or limb attachment point.',
+        descriptionAr: 'أقرب لمنبت الطرف أو جذع الجسم (مثل الكتف بالنسبة للمرفق).',
+        xPercent: 25,
+        yPercent: 35
+      },
+      {
+        id: 'dir_dist',
+        nameEn: 'Distal',
+        nameAr: 'قاصي / بعيد',
+        descriptionEn: 'Farther from the origin of a body part or point of attachment.',
+        descriptionAr: 'أبعد عن منبت الطرف (مثل أصابع اليد بالنسبة للرسغ).',
+        xPercent: 15,
+        yPercent: 65
+      }
+    ],
+    topics: [
+      {
+        id: 'top_sup_inf',
+        titleEn: '1. Superior vs Inferior',
+        titleAr: 'العلوي والسفلي',
+        shortExplanationEn: 'Superior refers to structures positioned above or closer to the skull; Inferior means below or toward the feet.',
+        shortExplanationAr: 'العلوي يعني أقرب للرأس أو الجمجمة؛ والسفلي يعني نحو الأسفل أو باتجاه القدمين.',
+        imageUrl: '/images/anatomy/directional_terms_diagram.svg',
+        imageSource: 'OpenStax',
+        labels: [
+          {
+            id: 'lbl_sup',
+            nameEn: 'Superior',
+            nameAr: 'علوي',
+            xPercent: 50,
+            yPercent: 15
+          },
+          {
+            id: 'lbl_inf',
+            nameEn: 'Inferior',
+            nameAr: 'سفلي',
+            xPercent: 50,
+            yPercent: 88
+          }
+        ],
+        keyPoints: [
+          'Example: The heart is superior to the diaphragm.',
+          'Example: The stomach is inferior to the lungs.'
+        ]
+      },
+      {
+        id: 'top_ant_post',
+        titleEn: '2. Anterior (Ventral) vs Posterior (Dorsal)',
+        titleAr: 'الأمامي والخلفي',
+        shortExplanationEn: 'Anterior indicates front of body (belly side); Posterior indicates back side.',
+        shortExplanationAr: 'أمامي (بطني) يعني نحو الواجهة الأمامية للجسم؛ وخلفي (ظهري) يعني نحو الظهر.',
+        imageUrl: '/images/anatomy/directional_terms_diagram.svg',
+        imageSource: 'OpenStax',
+        labels: [
+          {
+            id: 'lbl_ant',
+            nameEn: 'Anterior (Front)',
+            nameAr: 'أمامي',
+            xPercent: 62,
+            yPercent: 40
+          },
+          {
+            id: 'lbl_post',
+            nameEn: 'Posterior (Back)',
+            nameAr: 'خلفي',
+            xPercent: 38,
+            yPercent: 40
+          }
+        ],
+        keyPoints: [
+          'Example: The sternum is anterior to the heart.',
+          'Example: The esophagus is posterior to the trachea.'
+        ]
+      },
+      {
+        id: 'top_prox_dist',
+        titleEn: '3. Proximal vs Distal (Limbs Rule)',
+        titleAr: 'الداني والقاصي (قاعدة الأطراف)',
+        shortExplanationEn: 'Strictly applied to appendicular limbs: Proximal = closer to trunk attachment; Distal = further away.',
+        shortExplanationAr: 'تُستخدم خاصة للأطراف: الداني أقرب لمنشأ الطرف عند الجذع، والقاصي أبعد باتجاه الأصابع.',
+        imageUrl: '/images/anatomy/directional_terms_diagram.svg',
+        imageSource: 'OpenStax',
+        labels: [
+          {
+            id: 'lbl_prox_arm',
+            nameEn: 'Proximal (Elbow)',
+            nameAr: 'داني (المرفق)',
+            xPercent: 24,
+            yPercent: 38
+          },
+          {
+            id: 'lbl_dist_hand',
+            nameEn: 'Distal (Wrist)',
+            nameAr: 'قاصي (الرسغ)',
+            xPercent: 16,
+            yPercent: 62
+          }
+        ],
+        keyPoints: [
+          'The elbow is proximal to the wrist.',
+          'The ankle is distal to the knee.'
+        ]
+      }
+    ],
     video: {
       titleEn: 'Directional Terms in Human Anatomy',
       titleAr: 'المصطلحات الاتجاهية في التشريح البشري',
@@ -641,8 +949,159 @@ export const ANATOMY_CORE_LESSONS: AnatomyLesson[] = [
       'التقريب (Adduction): تحريك الطرف باتجاه الخط الناصف للجسم.',
       'البطح (Supination): دوران الساعد لتتجه راحة اليد للأمام؛ الكب (Pronation): دوران الساعد لتتجه الراحة للخلف.'
     ],
-    imageUrl: '/images/anatomy/body_movements_diagram.svg',    imageSource: 'OpenStax Anatomy & Physiology',
+    imageUrl: '/images/anatomy/body_movements_diagram.svg',
+    imageSource: 'OpenStax Anatomy & Physiology',
     imageCredit: 'OpenStax / Rice University',
+    mainImageUrl: '/images/anatomy/body_movements_diagram.svg',
+    mainImageSource: 'OpenStax Anatomy & Physiology',
+    mainImageCredit: 'OpenStax / Rice University',
+    mainImageCaptionEn: 'Primary anatomical joint movements demonstrated in standard planes.',
+    mainImageCaptionAr: 'الحركات المفصلية التشريحية الأساسية وتأثيرها على الزوايا بين العظام.',
+    mainImageLabels: [
+      {
+        id: 'mov_flex',
+        nameEn: 'Flexion (Bending)',
+        nameAr: 'العطف (الثني)',
+        descriptionEn: 'Bends joint, reducing angle between articulating bones.',
+        descriptionAr: 'ثني المفصل وإنقاص الزاوية بين العظام.',
+        xPercent: 22,
+        yPercent: 30
+      },
+      {
+        id: 'mov_ext',
+        nameEn: 'Extension (Straightening)',
+        nameAr: 'البسط (الفرد)',
+        descriptionEn: 'Straightens joint, increasing angle between bones back to anatomical position.',
+        descriptionAr: 'زيادة الزاوية وفرد المفصل باتجاه الوضعية التشريحية القياسية.',
+        xPercent: 42,
+        yPercent: 30
+      },
+      {
+        id: 'mov_abd',
+        nameEn: 'Abduction',
+        nameAr: 'التبعيد',
+        descriptionEn: 'Movement of limb laterally away from the midline sagittal plane.',
+        descriptionAr: 'إبعاد الطرف عن الخط الناصف للجسم.',
+        xPercent: 68,
+        yPercent: 30
+      },
+      {
+        id: 'mov_add',
+        nameEn: 'Adduction',
+        nameAr: 'التقريب',
+        descriptionEn: 'Movement of limb toward the midline ("adding" to body).',
+        descriptionAr: 'تقريب الطرف باتجاه الخط الناصف للجسم.',
+        xPercent: 88,
+        yPercent: 30
+      },
+      {
+        id: 'mov_sup',
+        nameEn: 'Supination',
+        nameAr: 'البطح (الاستلقاء)',
+        descriptionEn: 'Rotating forearm so palm faces anteriorly/superiorly (holding soup).',
+        descriptionAr: 'تدوير الساعد لتتجه راحة اليد للأمام أو للأعلى (مثل حمل صحن حساء).',
+        xPercent: 35,
+        yPercent: 78
+      },
+      {
+        id: 'mov_pron',
+        nameEn: 'Pronation',
+        nameAr: 'الكب (الانكباب)',
+        descriptionEn: 'Rotating forearm so palm faces posteriorly/inferiorly.',
+        descriptionAr: 'تدوير الساعد لتتجه راحة اليد للخلف أو للأسفل.',
+        xPercent: 65,
+        yPercent: 78
+      }
+    ],
+    topics: [
+      {
+        id: 'top_flex_ext',
+        titleEn: '1. Flexion vs Extension',
+        titleAr: 'العطف والبسط',
+        shortExplanationEn: 'Sagittal-plane movements: Flexion reduces joint angle; Extension straightens it.',
+        shortExplanationAr: 'حركات في المستوى السهمي: العطف ينقص الزاوية بين العظمين، والبسط يزيدها.',
+        imageUrl: '/images/anatomy/body_movements_diagram.svg',
+        imageSource: 'OpenStax',
+        labels: [
+          {
+            id: 'lbl_flx',
+            nameEn: 'Flexion',
+            nameAr: 'العطف',
+            xPercent: 24,
+            yPercent: 32
+          },
+          {
+            id: 'lbl_ext',
+            nameEn: 'Extension',
+            nameAr: 'البسط',
+            xPercent: 44,
+            yPercent: 32
+          }
+        ],
+        keyPoints: [
+          'Knee flexion brings calf toward posterior thigh.',
+          'Elbow flexion brings forearm toward anterior arm.'
+        ]
+      },
+      {
+        id: 'top_abd_add',
+        titleEn: '2. Abduction vs Adduction',
+        titleAr: 'التبعيد والتقريب',
+        shortExplanationEn: 'Coronal-plane movements: Abduction moves limb away from midline; Adduction draws it back.',
+        shortExplanationAr: 'حركات في المستوى الإكليلي: التبعيد يبعد الطرف عن محور الجسم، والتقريب يعيده نحو المحور.',
+        imageUrl: '/images/anatomy/body_movements_diagram.svg',
+        imageSource: 'OpenStax',
+        labels: [
+          {
+            id: 'lbl_abd',
+            nameEn: 'Abduction',
+            nameAr: 'التبعيد',
+            xPercent: 68,
+            yPercent: 32
+          },
+          {
+            id: 'lbl_add',
+            nameEn: 'Adduction',
+            nameAr: 'التقريب',
+            xPercent: 88,
+            yPercent: 32
+          }
+        ],
+        keyPoints: [
+          'Deltoid muscle abducts arm past 15 degrees.',
+          'Adductor longus adducts the thigh toward midline.'
+        ]
+      },
+      {
+        id: 'top_sup_pro',
+        titleEn: '3. Supination vs Pronation',
+        titleAr: 'البطح والكب',
+        shortExplanationEn: 'Forearm rotational movements at proximal and distal radioulnar joints.',
+        shortExplanationAr: 'حركات دورانية خاصة بالساعد تحدث في المفصلين الكعبري الزندي القريب والبعيد.',
+        imageUrl: '/images/anatomy/body_movements_diagram.svg',
+        imageSource: 'OpenStax',
+        labels: [
+          {
+            id: 'lbl_sup2',
+            nameEn: 'Supination (Soup)',
+            nameAr: 'البطح (راحة اليد للأمام)',
+            xPercent: 35,
+            yPercent: 78
+          },
+          {
+            id: 'lbl_pro2',
+            nameEn: 'Pronation',
+            nameAr: 'الكب (راحة اليد للخلف)',
+            xPercent: 65,
+            yPercent: 78
+          }
+        ],
+        keyPoints: [
+          'Biceps brachii is the most powerful supinator of the flexed forearm.',
+          'Pronator teres and pronator quadratus pronate the forearm.'
+        ]
+      }
+    ],
     video: {
       titleEn: 'Joint Movements & Anatomical Actions',
       titleAr: 'حركات المفاصل والأفعال التشريحية بالتفصيل',
@@ -677,8 +1136,163 @@ export const ANATOMY_CORE_LESSONS: AnatomyLesson[] = [
       'الهيكل الطرفي (126 عظمة): عظام الأطراف العلوية والسفلية وزناري الكتف والحوض.',
       'أشكال العظام: طويلة (الفخذ، العضد)، قصيرة (الرسغ)، مسطحة (القص، عظام القحف)، غير منتظمة (الفقرات)، وسمسمية (الرضفة).'
     ],
-    imageUrl: '/images/anatomy/skull_anterior_osteology.png',    imageSource: 'OpenStax Anatomy & Physiology',
-    imageCredit: 'OpenStax College',
+    imageUrl: '/images/anatomy/axial_skeleton_openstax.jpg',
+    imageSource: 'OpenStax Anatomy Plate 701',
+    imageCredit: 'OpenStax College, Rice University',
+    mainImageUrl: '/images/anatomy/axial_skeleton_openstax.jpg',
+    mainImageSource: 'OpenStax Anatomy Plate 701 (Axial Skeleton)',
+    mainImageCredit: 'OpenStax College, Rice University (CC BY 4.0)',
+    mainImageCaptionEn: 'The Axial Skeleton (80 bones forming central axis) in relation to the complete body.',
+    mainImageCaptionAr: 'الهيكل العظمي المحوري (80 عظمة تشكل المحور المركزي للجسم لحماية الأعضاء الحيوية).',
+    mainImageLabels: [
+      {
+        id: 'sk_cranium',
+        nameEn: 'Skull / Cranium',
+        nameAr: 'الجمجمة والقحف',
+        descriptionEn: 'Protects brain; consists of 8 cranial bones and 14 facial bones.',
+        descriptionAr: 'تحمي الدماغ وتتكون من 8 عظام قحفية و14 عظماً وجهياً.',
+        xPercent: 50,
+        yPercent: 12
+      },
+      {
+        id: 'sk_sternum',
+        nameEn: 'Sternum (Breastbone)',
+        nameAr: 'عظم القص',
+        descriptionEn: 'Manubrium, body, and xiphoid process.',
+        descriptionAr: 'يتكون من قبضة القص، الجسم، والناتئ الرهابي.',
+        xPercent: 50,
+        yPercent: 32
+      },
+      {
+        id: 'sk_ribs',
+        nameEn: 'Thoracic Cage (12 pairs of ribs)',
+        nameAr: 'القفص الصدري (12 زوجاً من الأضلاع)',
+        descriptionEn: '7 true ribs, 3 false ribs, 2 floating ribs.',
+        descriptionAr: '7 أضلاع حقيقية، 3 كاذبة، واثنان طافيان.',
+        xPercent: 36,
+        yPercent: 35
+      },
+      {
+        id: 'sk_vertebrae',
+        nameEn: 'Vertebral Column',
+        nameAr: 'العمود الفقري',
+        descriptionEn: '33 vertebrae: 7 Cervical, 12 Thoracic, 5 Lumbar, Sacrum, Coccyx.',
+        descriptionAr: '33 فقرة: 7 رقبي، 12 صدري، 5 قطني، العجز والعصعص.',
+        xPercent: 50,
+        yPercent: 48
+      }
+    ],
+    topics: [
+      {
+        id: 'top_axial_bones',
+        titleEn: '1. Axial Skeleton (80 Bones)',
+        titleAr: 'الهيكل العظمي المحوري',
+        shortExplanationEn: 'Forms the vertical central axis of the human body. Protects the brain, spinal cord, heart, and lungs.',
+        shortExplanationAr: 'يشكل المحور العمودي للجسم ويوفر حماية فائقة للدماغ والنخاع والقلب والرئتين.',
+        imageUrl: '/images/anatomy/axial_skeleton_openstax.jpg',
+        imageSource: 'OpenStax Plate 701',
+        labels: [
+          {
+            id: 'lbl_axial_skull',
+            nameEn: 'Skull',
+            nameAr: 'الجمجمة',
+            xPercent: 50,
+            yPercent: 14
+          },
+          {
+            id: 'lbl_axial_vert',
+            nameEn: 'Vertebral Column',
+            nameAr: 'العمود الفقري',
+            xPercent: 50,
+            yPercent: 48
+          },
+          {
+            id: 'lbl_axial_cage',
+            nameEn: 'Thoracic Rib Cage',
+            nameAr: 'القفص الصدري',
+            xPercent: 38,
+            yPercent: 34
+          }
+        ],
+        keyPoints: [
+          'Skull: 22 bones (8 cranial, 14 facial) + 6 auditory ossicles + 1 hyoid bone = 29 bones.',
+          'Vertebral column: 26 bones in adult (C7, T12, L5, Sacrum, Coccyx).',
+          'Thoracic cage: 25 bones (24 ribs + 1 sternum).'
+        ]
+      },
+      {
+        id: 'top_appendicular_bones',
+        titleEn: '2. Appendicular Skeleton (126 Bones)',
+        titleAr: 'الهيكل العظمي الطرفي',
+        shortExplanationEn: 'All bones of the upper and lower limbs, plus the pectoral (shoulder) and pelvic (hip) girdles.',
+        shortExplanationAr: 'عظام الأطراف العلوية والسفلية وزناري الكتف والحوض، مسؤولة عن الحركة والتنقل.',
+        imageUrl: '/images/anatomy/appendicular_skeleton_openstax.jpg',
+        imageSource: 'OpenStax Plate 801 (Appendicular Skeleton)',
+        labels: [
+          {
+            id: 'lbl_pec_girdle',
+            nameEn: 'Pectoral Girdle (Clavicle & Scapula)',
+            nameAr: 'زنار الكتف (الترقوة والكتف)',
+            xPercent: 32,
+            yPercent: 22
+          },
+          {
+            id: 'lbl_upper_limb',
+            nameEn: 'Upper Limb (Humerus, Radius, Ulna)',
+            nameAr: 'الطرف العلوي (العضد، الكعبرة، الزند)',
+            xPercent: 20,
+            yPercent: 42
+          },
+          {
+            id: 'lbl_pelvic_girdle',
+            nameEn: 'Pelvic Girdle (Os Coxae)',
+            nameAr: 'زنار الحوض (عظم الورك)',
+            xPercent: 50,
+            yPercent: 52
+          },
+          {
+            id: 'lbl_lower_limb',
+            nameEn: 'Lower Limb (Femur, Tibia, Fibula)',
+            nameAr: 'الطرف السفلي (الفخذ، الظنبوب، الشظية)',
+            xPercent: 42,
+            yPercent: 78
+          }
+        ],
+        keyPoints: [
+          'Pectoral girdle: 4 bones (2 clavicles, 2 scapulae).',
+          'Upper limbs: 60 bones (30 per arm: humerus, radius, ulna, 8 carpals, 5 metacarpals, 14 phalanges).',
+          'Pelvic girdle: 2 hip bones (ilium, ischium, pubis fused).',
+          'Lower limbs: 60 bones (30 per leg: femur, patella, tibia, fibula, 7 tarsals, 5 metatarsals, 14 phalanges).'
+        ]
+      },
+      {
+        id: 'top_bone_shapes',
+        titleEn: '3. Classification of Bone Shapes',
+        titleAr: 'تصنيف أشكال العظام',
+        shortExplanationEn: 'Bones are categorized into 5 morphological shapes based on architectural design and mechanical load.',
+        shortExplanationAr: 'تُصنف العظام لخمسة أشكال بناءً على تصميمها المعماري والحمل الميكانيكي الواقع عليها.',
+        imageUrl: '/images/anatomy/femur_anterior_osteology.png',
+        imageSource: 'OpenStax / Gray Anatomy',
+        labels: [
+          {
+            id: 'lbl_femur_long',
+            nameEn: 'Long Bone (Femur)',
+            nameAr: 'عظم طويل (الفخذ)',
+            descriptionEn: 'Shaft (diaphysis) with two ends (epiphyses).',
+            descriptionAr: 'جسم أسطواني مع نهايتين مفصليتين.',
+            xPercent: 50,
+            yPercent: 50
+          }
+        ],
+        keyPoints: [
+          'Long bones: Length > width (Femur, Humerus, Phalanges).',
+          'Short bones: Cube-shaped (Carpals in wrist, Tarsals in ankle).',
+          'Flat bones: Thin, curved, protective (Cranial roof, Sternum, Ribs, Scapula).',
+          'Irregular bones: Complex shapes (Vertebrae, Os coxae).',
+          'Sesamoid bones: Embedded in tendons (Patella, largest sesamoid).'
+        ]
+      }
+    ],
     video: {
       titleEn: 'The Skeletal System: Axial vs Appendicular',
       titleAr: 'الجهاز الهيكلي: الهيكل المحوري والطرفي',
@@ -713,8 +1327,181 @@ export const ANATOMY_CORE_LESSONS: AnatomyLesson[] = [
       'عظم العضد: عظم الذراع؛ يتميز بالرأس، العنق الجراحي (مكان الكسور الأكثر شيوعاً)، الأحدوبة الدالية، والبكرة واللقيمة.',
       'الجمجمة: تتكون من 8 عظام قحفية و14 عظماً وجهياً ملتحمة بدروز غير متحركة.'
     ],
-    imageUrl: '/images/anatomy/femur_anterior_osteology.png',    imageSource: 'NIH Visible Human / OpenStax',
+    imageUrl: '/images/anatomy/femur_anterior_osteology.png',
+    imageSource: 'NIH Visible Human / OpenStax',
     imageCredit: 'National Library of Medicine & OpenStax',
+    mainImageUrl: '/images/anatomy/femur_anterior_osteology.png',
+    mainImageSource: 'NIH Visible Human / OpenStax (Anterior Femur)',
+    mainImageCredit: 'National Library of Medicine & OpenStax',
+    mainImageCaptionEn: 'Femur Osteology: Head, Neck, Greater & Lesser Trochanters, Shaft, and Distal Condyles.',
+    mainImageCaptionAr: 'معالم عظم الفخذ: الرأس، العنق، المدور الكبير والصغير، والجسم، واللقمتان المفصليتان.',
+    mainImageLabels: [
+      {
+        id: 'fm_head',
+        nameEn: 'Head of Femur',
+        nameAr: 'رأس عظم الفخذ',
+        descriptionEn: 'Articulates with acetabulum of hip bone to form hip joint.',
+        descriptionAr: 'يتمفصل مع الحق في عظم الورك لتشكيل مفصل الورك.',
+        xPercent: 32,
+        yPercent: 12
+      },
+      {
+        id: 'fm_neck',
+        nameEn: 'Neck of Femur',
+        nameAr: 'عنق عظم الفخذ',
+        descriptionEn: 'Common fracture site in elderly osteoporotic patients.',
+        descriptionAr: 'مكان شائع جداً للكسور عند كبار السن المصابين بهشاشة العظام.',
+        xPercent: 44,
+        yPercent: 16
+      },
+      {
+        id: 'fm_trochanter',
+        nameEn: 'Greater Trochanter',
+        nameAr: 'المدور الكبير',
+        descriptionEn: 'Insertion site for gluteus medius and minimus.',
+        descriptionAr: 'مغرز العضلتين الإليوية المتوسطة والصغيرة.',
+        xPercent: 74,
+        yPercent: 15
+      },
+      {
+        id: 'fm_shaft',
+        nameEn: 'Femoral Shaft (Diaphysis)',
+        nameAr: 'جسم عظم الفخذ',
+        descriptionEn: 'Smooth anterior surface; posterior line aspera.',
+        descriptionAr: 'سطح أمامي أملس، ويتميز خلفياً بالخط الخشن.',
+        xPercent: 52,
+        yPercent: 52
+      },
+      {
+        id: 'fm_condyles',
+        nameEn: 'Medial & Lateral Condyles',
+        nameAr: 'اللقمتان الإنسية والوحشية',
+        descriptionEn: 'Articulate with tibia and menisci in knee joint.',
+        descriptionAr: 'تتمفصلان مع عظم الظنبوب والغضاريف الهلالية في الركبة.',
+        xPercent: 50,
+        yPercent: 92
+      }
+    ],
+    topics: [
+      {
+        id: 'top_femur_bone',
+        titleEn: '1. Femur Bone Osteology',
+        titleAr: 'عظم الفخذ (Femur)',
+        shortExplanationEn: 'The longest, heaviest, and strongest bone in the body, transmitting entire body weight to the tibia.',
+        shortExplanationAr: 'أطول وأثقل وأقوى عظم في جسم الإنسان، ينقل وزن الجسم كاملاً إلى عظم الظنبوب.',
+        imageUrl: '/images/anatomy/femur_anterior_osteology.png',
+        imageSource: 'Visible Human / OpenStax',
+        labels: [
+          {
+            id: 'lbl_fm_head',
+            nameEn: 'Femoral Head',
+            nameAr: 'رأس الفخذ',
+            xPercent: 32,
+            yPercent: 12
+          },
+          {
+            id: 'lbl_fm_troch',
+            nameEn: 'Greater Trochanter',
+            nameAr: 'المدور الكبير',
+            xPercent: 74,
+            yPercent: 16
+          },
+          {
+            id: 'lbl_fm_cond',
+            nameEn: 'Distal Condyles',
+            nameAr: 'اللقمتان السفليتان',
+            xPercent: 50,
+            yPercent: 90
+          }
+        ],
+        keyPoints: [
+          'Head features the fovea capitis for the ligamentum teres.',
+          'Neck-shaft angle is normally 125-130 degrees (Coxa vara vs Coxa valga).'
+        ]
+      },
+      {
+        id: 'top_humerus_bone',
+        titleEn: '2. Humerus Bone Osteology',
+        titleAr: 'عظم العضد (Humerus)',
+        shortExplanationEn: 'Arm bone featuring the anatomical neck, surgical neck, deltoid tuberosity, and distal elbow articulations.',
+        shortExplanationAr: 'عظم الذراع، يتميز بالعنق الجراحي (مكان خطير لكسور العصب الإبطي) والبكرة واللقيمة.',
+        imageUrl: '/images/anatomy/humerus_anterior_osteology.png',
+        imageSource: 'OpenStax / Gray Anatomy',
+        labels: [
+          {
+            id: 'lbl_hum_head',
+            nameEn: 'Head of Humerus',
+            nameAr: 'رأس العضد',
+            xPercent: 40,
+            yPercent: 12
+          },
+          {
+            id: 'lbl_hum_surg',
+            nameEn: 'Surgical Neck (Axillary Nerve Risk)',
+            nameAr: 'العنق الجراحي (خطر العصب الإبطي)',
+            xPercent: 48,
+            yPercent: 24
+          },
+          {
+            id: 'lbl_hum_deltoid',
+            nameEn: 'Deltoid Tuberosity',
+            nameAr: 'الأحدوبة الدالية',
+            xPercent: 52,
+            yPercent: 45
+          },
+          {
+            id: 'lbl_hum_trochlea',
+            nameEn: 'Trochlea & Capitulum',
+            nameAr: 'البكرة والرؤيس',
+            xPercent: 50,
+            yPercent: 88
+          }
+        ],
+        keyPoints: [
+          'Surgical neck fracture damages the Axillary nerve and posterior circumflex humeral artery.',
+          'Midshaft spiral fracture damages the Radial nerve in the radial groove.',
+          'Supracondylar fracture damages the Brachial artery and Median nerve.'
+        ]
+      },
+      {
+        id: 'top_skull_bones',
+        titleEn: '3. Skull Osteology & Sutures',
+        titleAr: 'عظام الجمجمة والدروز الليفية',
+        shortExplanationEn: 'Cranial vault enclosing brain (8 bones) and facial skeleton (14 bones) anchored by immovable fibrous sutures.',
+        shortExplanationAr: 'قبة القحف التي تحمي الدماغ (8 عظام) وهيكل الوجه (14 عظماً) ملتحمة بالدروز غير المتحركة.',
+        imageUrl: '/images/anatomy/skull_anterior_osteology.png',
+        imageSource: 'Visible Human / OpenStax',
+        labels: [
+          {
+            id: 'lbl_frontal',
+            nameEn: 'Frontal Bone',
+            nameAr: 'العظم الجبهي',
+            xPercent: 50,
+            yPercent: 22
+          },
+          {
+            id: 'lbl_maxilla',
+            nameEn: 'Maxilla',
+            nameAr: 'الفك العلوي',
+            xPercent: 50,
+            yPercent: 62
+          },
+          {
+            id: 'lbl_mandible',
+            nameEn: 'Mandible (Only Mobile Skull Bone)',
+            nameAr: 'الفك السفلي (العظم المتحرك الوحيد)',
+            xPercent: 50,
+            yPercent: 84
+          }
+        ],
+        keyPoints: [
+          'Coronal suture connects frontal and parietal bones.',
+          'Sagittal suture connects the two parietal bones.',
+          'Lambdoid suture connects parietal and occipital bones.',
+          'Mandible is the only movable bone of the adult skull, articulating at the TMJ.'
+        ]
+      }
+    ],
     video: {
       titleEn: 'Femur & Humerus Osteology Spotters',
       titleAr: 'تحديد المعالم العظمية للفخذ والعضد للامتحان العملي',
@@ -729,7 +1516,7 @@ export const ANATOMY_CORE_LESSONS: AnatomyLesson[] = [
     }
   },
 
-  // 6. JOINTS: Types of Joints
+  // 6. JOINTS: Types of Joints (COMPREHENSIVE MULTI-IMAGE LESSON)
   {
     id: 'lesson_joints',
     titleEn: 'Joints & Articulations',
@@ -737,21 +1524,342 @@ export const ANATOMY_CORE_LESSONS: AnatomyLesson[] = [
     category: 'joints',
     categoryLabelEn: 'Joints',
     categoryLabelAr: 'المفاصل',
-    descriptionEn: 'Structural classification of joints: Fibrous, Cartilaginous, and Synovial joints.',
-    descriptionAr: 'التصنيف البنيوي للمفاصل: ليفية (غير متحركة)، غضروفية، وزليلية (حرة الحركة).',
+    descriptionEn: 'Structural classification of joints: Fibrous (immovable), Cartilaginous (semi-movable), and Synovial (freely movable), highlighted by the knee joint ligaments and menisci.',
+    descriptionAr: 'التصنيف البنيوي والوظيفي للمفاصل: ليفية (عديمة الحركة)، غضروفية (محدودة الحركة)، وزليلية (حرة الحركة)، مع دراسة تشريحية عميقة لمفصل الركبة والأربطة والغضاريف الهلالية.',
     keyPoints: [
-      'Fibrous Joints (Synarthroses): Immovable joints joined by dense collagen (e.g. cranial sutures).',
-      'Cartilaginous Joints (Amphiarthroses): Slightly movable joints united by cartilage (e.g. pubic symphysis, intervertebral discs).',
-      'Synovial Joints (Diarthroses): Freely movable joints characterized by a fluid-filled joint cavity, articular cartilage, and capsule.'
+      'Fibrous Joints (Synarthroses): United by dense fibrous connective tissue; no joint cavity (e.g. sutures, syndesmoses, gomphoses).',
+      'Cartilaginous Joints (Amphiarthroses): United by hyaline cartilage or fibrocartilage; no joint cavity (e.g. synchondroses, symphyses).',
+      'Synovial Joints (Diarthroses): Characterized by a fluid-filled synovial cavity, articular hyaline cartilage, and fibrous capsule.',
+      'Types of Synovial Joints: Pivot, Hinge, Saddle, Plane, Condyloid, and Ball-and-socket.',
+      'Knee Joint Cruciate Ligaments: ACL prevents anterior translation of tibia; PCL prevents posterior translation of tibia.'
     ],
     keyPointsAr: [
-      'المفاصل الليفية: عديمة الحركة، ملتحمة بألياف كولاجينية كثيفة مثل دروز الجمجمة.',
-      'المفاصل الغضروفية: محدودة الحركة، ترتبط بغضروف مثل الارتفاق العاني والأقراص بين الفقرات.',
-      'المفاصل الزليلية: حرة الحركة، تتميز بجوف مفصلي يحتوي على السائل الزليلي، غضروف مفصلي، ومحفظة مفصلية.'
+      'المفاصل الليفية (Synarthroses): ترتبط بنسيج ضام ليفي كثيف، عديمة التجويف والحركة (الدروز، الرباط الليفي، والمفصل الوتدي للأسنان).',
+      'المفاصل الغضروفية (Amphiarthroses): ترتبط بغضروف زجاجي أو ليفي، محدودة الحركة (الالتحام الغضروفي، والارتفاق العاني وبين الفقرات).',
+      'المفاصل الزليلية (Diarthroses): تتميز بوجود جوف مفصلي يحتوي على سائل زليلي، غضروف مفصلي، ومحفظة مفصلية.',
+      'أنواع المفاصل الزليلية الستة: مداري/محوري، رزي/مفصلي، سرجي، مسطح، لقمي، وكروي حقي.',
+      'أربطة الركبة الصليبية: الرباط الصليبي الأمامي (ACL) يمنع انزلاق الظنبوب للأمام، والخلفي (PCL) يمنع انزلاقه للخلف.'
     ],
-    imageUrl: '/images/anatomy/knee_joint_interior_ligaments.png',
-    imageSource: "Gray's Anatomy Plate 348 / Synovial Knee Joint & Ligaments",
-    imageCredit: 'Right knee joint interior, cruciate ligaments, and menisci (Henry Gray, 1918)',
+    // COMPREHENSIVE MAIN IMAGE: All 6 types of synovial joints
+    imageUrl: '/images/anatomy/synovial_joints_types_openstax.jpg',
+    imageSource: 'OpenStax Anatomy Plate 909 (Types of Synovial Joints)',
+    imageCredit: 'OpenStax College, Rice University (CC BY 4.0)',
+    mainImageUrl: '/images/anatomy/synovial_joints_types_openstax.jpg',
+    mainImageSource: 'OpenStax Anatomy Plate 909 (Types of Synovial Joints)',
+    mainImageCredit: 'OpenStax College, Rice University (CC BY 4.0)',
+    mainImageCaptionEn: 'Comprehensive classification of Synovial Joints: Pivot, Hinge, Saddle, Plane, Condyloid, Ball-and-Socket.',
+    mainImageCaptionAr: 'الصورة الرئيسية الشاملة: الأنواع الستة للمفاصل الزليلية وأمثلتها التشريحية في الجسم البشري.',
+    mainImageLabels: [
+      {
+        id: 'sj_pivot',
+        nameEn: 'Pivot Joint (مفصل مداري/محوري)',
+        nameAr: 'المفصل المداري (الأطلسي المحوري / الكعبري الزندي)',
+        descriptionEn: 'Allows uniaxial rotation around a central axis (e.g. Atlantoaxial joint, Proximal Radioulnar joint).',
+        descriptionAr: 'يسمح بالدوران أحادي المحور (مثل المفصل الأطلسي المحوري لتدوير الرأس والمفصل الكعبري الزندي).',
+        xPercent: 18,
+        yPercent: 24
+      },
+      {
+        id: 'sj_hinge',
+        nameEn: 'Hinge Joint (مفصل رزي)',
+        nameAr: 'المفصل الرزي (المرفق / السلاميات)',
+        descriptionEn: 'Allows uniaxial flexion and extension in one plane, like a door hinge (e.g. Elbow, Knee, Interphalangeal).',
+        descriptionAr: 'يسمح بالحركة في مستوى واحد كعطف وبسط مثل رزة الباب (مفصل المرفق، الركبة، ومفاصل الأصابع).',
+        xPercent: 50,
+        yPercent: 24
+      },
+      {
+        id: 'sj_saddle',
+        nameEn: 'Saddle Joint (مفصل سرجي)',
+        nameAr: 'المفصل السرجي (قاعدة الإبهام)',
+        descriptionEn: 'Biaxial movement; both surfaces have concave and convex areas (e.g. 1st Carpometacarpal joint of thumb).',
+        descriptionAr: 'حركة ثنائية المحور تشبه السرج، يمنح الإبهام القدرة على المقابلة مع بقية الأصابع.',
+        xPercent: 82,
+        yPercent: 24
+      },
+      {
+        id: 'sj_plane',
+        nameEn: 'Plane / Gliding Joint (مفصل مسطح)',
+        nameAr: 'المفصل المسطح (بين عظام الرسغ)',
+        descriptionEn: 'Flat articular surfaces allowing nonaxial gliding movements (e.g. Intercarpal and Intertarsal joints).',
+        descriptionAr: 'سطوح مفصلية مسطحة تسمح بحركات انزلاقية محدودة دون محور (بين عظام الرسغ والكاحل).',
+        xPercent: 18,
+        yPercent: 74
+      },
+      {
+        id: 'sj_condyloid',
+        nameEn: 'Condyloid / Ellipsoid Joint (مفصل لقمي)',
+        nameAr: 'المفصل اللقمي (الرسغي الكعبري)',
+        descriptionEn: 'Biaxial movement allowing flexion, extension, abduction, and adduction (e.g. Radiocarpal wrist joint).',
+        descriptionAr: 'حركة ثنائية المحور تسمح بالعطف، البسط، التبعيد، والتقريب (مفصل الرسغ الكعبري).',
+        xPercent: 50,
+        yPercent: 74
+      },
+      {
+        id: 'sj_ball_socket',
+        nameEn: 'Ball-and-Socket Joint (مفصل كروي حقي)',
+        nameAr: 'المفصل الكروي الحقي (الكتف والورك)',
+        descriptionEn: 'Multiaxial movement with greatest range of motion in all planes (e.g. Shoulder and Hip joints).',
+        descriptionAr: 'أوسع المفاصل مجالاً في الحركة متعدد المحاور في جميع الاتجاهات (مفصل الكتف والورك).',
+        xPercent: 82,
+        yPercent: 74
+      }
+    ],
+
+    // STEP-BY-STEP TOPICS WITH INDIVIDUAL EXPLANATORY IMAGES (IMAGE MUST TEACH)
+    topics: [
+      {
+        id: 'top_joint_class',
+        titleEn: '1. Classification of Joints (Structural & Functional)',
+        titleAr: 'تصنيف المفاصل (البنيوي والوظيفي)',
+        shortExplanationEn: 'Joints are classified structurally by binding material (Fibrous, Cartilaginous, Synovial) and functionally by degree of movement.',
+        shortExplanationAr: 'تُصنف المفاصل تشريحياً حسب نوع النسيج الرابط إلى ليفية وغضروفية وزليلية، ووظيفياً حسب مدى الحركة.',
+        imageUrl: '/images/anatomy/synovial_joint_structure_openstax.jpg',
+        imageSource: 'OpenStax Plate 907',
+        labels: [
+          {
+            id: 'lbl_synovial_cavity',
+            nameEn: 'Synovial Joint Cavity',
+            nameAr: 'التجويف الزليلي (Diarthrosis)',
+            descriptionEn: 'Freely movable joint characterized by fluid-filled space.',
+            descriptionAr: 'مفصل حر الحركة يتميز بوجود جوف يحوي السائل الزليلي.',
+            xPercent: 50,
+            yPercent: 50
+          }
+        ],
+        keyPoints: [
+          'Synarthrosis: Immovable joint (e.g. skull sutures).',
+          'Amphiarthrosis: Slightly movable joint (e.g. pubic symphysis).',
+          'Diarthrosis: Freely movable joint (all synovial joints).'
+        ]
+      },
+      {
+        id: 'top_fibrous_joints',
+        titleEn: '2. Fibrous Joints (Synarthroses)',
+        titleAr: 'المفاصل الليفية (دروز الجمجمة والرباطية)',
+        shortExplanationEn: 'Bones joined directly by dense fibrous collagen with no joint cavity. Immovable or minimally movable.',
+        shortExplanationAr: 'ترتبط العظام مباشرة بألياف كولاجينية كثيفة دون وجود أي تجويف مفصلي، وتعتبر عديمة الحركة.',
+        imageUrl: '/images/anatomy/fibrous_joints_openstax.jpg',
+        imageSource: 'OpenStax Plate 904 (Fibrous Joints)',
+        labels: [
+          {
+            id: 'lbl_suture',
+            nameEn: 'Suture (Cranial)',
+            nameAr: 'الدرز القحفي',
+            descriptionEn: 'Interlocking seams between adjacent skull bones filled with short connective tissue fibers.',
+            descriptionAr: 'حواف مسننة متداخلة بين عظام الجمجمة ترتبط بألياف نسيج ضام قصيرة ومتينة جداً.',
+            xPercent: 28,
+            yPercent: 32
+          },
+          {
+            id: 'lbl_syndesmosis',
+            nameEn: 'Syndesmosis (Interosseous Membrane)',
+            nameAr: 'المفصل الرباطي (الغشاء بين العظمين)',
+            descriptionEn: 'Bones connected by a ligament or fibrous cord (e.g. between Radius & Ulna, Tibia & Fibula).',
+            descriptionAr: 'ترتبط العظام برباط أو غشاء ليفي متين كالغشاء بين عظمتي الساق (الظنبوب والشظية).',
+            xPercent: 74,
+            yPercent: 32
+          },
+          {
+            id: 'lbl_gomphosis',
+            nameEn: 'Gomphosis (Peg-in-Socket)',
+            nameAr: 'المفصل الوتدي (تثبيت السن في السنخ)',
+            descriptionEn: 'Peg-in-socket fibrous joint: Periodontal ligament anchoring tooth in alveolar bone.',
+            descriptionAr: 'مفصل ليفي وتدي فريد يثبت جذر السن في العظم السنخي عبر الرباط حول السني.',
+            xPercent: 50,
+            yPercent: 82
+          }
+        ],
+        keyPoints: [
+          'Sutures ossify in adulthood to become synostoses.',
+          'Syndesmosis length determines degree of movement (longer fibers in radius/ulna allow slight rotation).',
+          'Gomphosis periodontal fibers provide proprioception during mastication.'
+        ]
+      },
+      {
+        id: 'top_cartilaginous_joints',
+        titleEn: '3. Cartilaginous Joints (Amphiarthroses)',
+        titleAr: 'المفاصل الغضروفية (الالتحام الغضروفي والارتفاق)',
+        shortExplanationEn: 'Articulating bones united entirely by cartilage. No joint cavity; allows limited, shock-absorbing movement.',
+        shortExplanationAr: 'ترتبط العظام بغضروف نقي أو ليفي دون وجود تجويف مفصلي، وتسمح بحركات خفيفة تمتص الصدمات.',
+        imageUrl: '/images/anatomy/cartilaginous_joints_openstax.jpg',
+        imageSource: 'OpenStax Plate 906 (Cartilaginous Joints)',
+        labels: [
+          {
+            id: 'lbl_synchondrosis',
+            nameEn: 'Synchondrosis (Hyaline Cartilage)',
+            nameAr: 'الالتحام الغضروفي الزجاجي',
+            descriptionEn: 'Bar or plate of hyaline cartilage uniting bones (e.g. epiphyseal growth plate, 1st costochondral joint).',
+            descriptionAr: 'صفيحة من الغضروف الزجاجي تصل بين العظام مثل صفيحة النمو في العظام الطويلة.',
+            xPercent: 30,
+            yPercent: 44
+          },
+          {
+            id: 'lbl_symphysis',
+            nameEn: 'Symphysis (Fibrocartilage Pad)',
+            nameAr: 'الارتفاق (وسادة غضروفية ليفية)',
+            descriptionEn: 'Fibrocartilaginous pad acting as a shock absorber (e.g. Pubic symphysis, Intervertebral discs).',
+            descriptionAr: 'وسادة من الغضروف الليفي تعمل كممتص للصدمات مثل الارتفاق العاني والأقراص بين الفقرات.',
+            xPercent: 72,
+            yPercent: 44
+          }
+        ],
+        keyPoints: [
+          'Synchondroses are often temporary: epiphyseal plates fuse after adolescence.',
+          'Symphyses are designed for strength and flexibility under compressive loads.'
+        ]
+      },
+      {
+        id: 'top_synovial_structure',
+        titleEn: '4. Synovial Joint General Architecture',
+        titleAr: 'البنية المعمارية للمفصل الزليلي',
+        shortExplanationEn: 'Every synovial joint contains 5 hallmark features: Articular cartilage, Joint cavity, Articular capsule, Synovial fluid, and Reinforcing ligaments.',
+        shortExplanationAr: 'يتكون كل مفصل زليلي من 5 عناصر مميزة: غضروف مفصلي، جوف مفصلي، محفظة مفصلية، سائل زليلي، وأربطة داعمة.',
+        imageUrl: '/images/anatomy/synovial_joint_structure_openstax.jpg',
+        imageSource: 'OpenStax Plate 907 (Synovial Joint Structure)',
+        labels: [
+          {
+            id: 'lbl_art_cart',
+            nameEn: 'Articular Cartilage (Hyaline)',
+            nameAr: 'الغضروف المفصلي الزجاجي',
+            descriptionEn: 'Glassy smooth hyaline cartilage covering opposing bone ends to prevent wear and friction.',
+            descriptionAr: 'غضروف زجاجي أملس يغطي نهايتي العظمين لامتصاص الصدمات ومنع الاحتكاك.',
+            xPercent: 48,
+            yPercent: 36
+          },
+          {
+            id: 'lbl_cavity',
+            nameEn: 'Joint Cavity & Synovial Fluid',
+            nameAr: 'الجوف المفصلي والسائل الزليلي',
+            descriptionEn: 'Potential space holding egg-white like viscous fluid secreted by synovial membrane.',
+            descriptionAr: 'فراغ يحوي سائلاً لزجاً يشبه بياض البيض تفرزه المحفظة الزليلية لتغذية الغضروف وتزييت المفصل.',
+            xPercent: 48,
+            yPercent: 52
+          },
+          {
+            id: 'lbl_fibrous_capsule',
+            nameEn: 'Fibrous Capsule',
+            nameAr: 'المحفظة الليفية الخارجية',
+            descriptionEn: 'Dense irregular connective tissue continuous with bone periosteum, resisting pull.',
+            descriptionAr: 'طبقة خارجية كثيفة من نسيج ضام غير منتظم متصلة بسمحاق العظم تمنع تفكك المفصل.',
+            xPercent: 24,
+            yPercent: 50
+          },
+          {
+            id: 'lbl_synovial_membrane',
+            nameEn: 'Synovial Membrane',
+            nameAr: 'الغشاء الزليلي الداخلي',
+            descriptionEn: 'Vascular loose connective tissue lining inside of fibrous layer, producing synovial fluid.',
+            descriptionAr: 'طبقة وعائية داخلية رقيقة تبطن المحفظة الليفية وتقوم بإفراز السائل الزليلي باستمرار.',
+            xPercent: 30,
+            yPercent: 62
+          }
+        ],
+        keyPoints: [
+          'Synovial fluid provides lubrication, nutrient delivery, and shock absorption for avascular cartilage.',
+          'Nerve fibers detect pain and monitor joint position and stretch (proprioception).'
+        ]
+      },
+      {
+        id: 'top_knee_gross',
+        titleEn: '5. The Knee Joint (Articulatio Genus) Gross Anatomy',
+        titleAr: 'تشريح مفصل الركبة السطحي والأربطة الجانبية',
+        shortExplanationEn: 'The largest and most complex synovial joint in the body. Formed by femorotibial and femoropatellar articulations.',
+        shortExplanationAr: 'أكبر وأعقد مفصل زليلي في جسم الإنسان، يجمع بين لقمتي الفخذ والظنبوب والرضفة.',
+        imageUrl: '/images/anatomy/knee_joint_anatomy_openstax.jpg',
+        imageSource: 'OpenStax Plate 917 (Knee Joint Anatomy)',
+        labels: [
+          {
+            id: 'lbl_patella',
+            nameEn: 'Patella & Patellar Ligament',
+            nameAr: 'الرضفة والرباط الرضفي',
+            descriptionEn: 'Sesamoid bone protecting anterior joint and increasing lever arm of quadriceps.',
+            descriptionAr: 'عظم سمسمي يحمي مقدمة الركبة ويزيد من الذراع الميكانيكي لعضلة مربعة الرؤوس.',
+            xPercent: 50,
+            yPercent: 32
+          },
+          {
+            id: 'lbl_mcl',
+            nameEn: 'Tibial (Medial) Collateral Ligament (MCL)',
+            nameAr: 'الرباط الجانبي الإنسي (الظنبوبي)',
+            descriptionEn: 'Broad flat band extending from medial epicondyle of femur to medial condyle of tibia. Attached to medial meniscus.',
+            descriptionAr: 'شريط عريض يمتد من لقيمة الفخذ الإنسية إلى الظنبوب، ويلتحم بشدة مع الغضروف الهلالي الإنسي.',
+            xPercent: 22,
+            yPercent: 58
+          },
+          {
+            id: 'lbl_lcl',
+            nameEn: 'Fibular (Lateral) Collateral Ligament (LCL)',
+            nameAr: 'الرباط الجانبي الوحشي (الشظوي)',
+            descriptionEn: 'Cord-like band from lateral epicondyle of femur to fibular head. Separate from lateral meniscus.',
+            descriptionAr: 'رباط أسطواني كالحبل يمتد من الفخذ إلى رأس الشظية، ويفصله وتر المأبضية عن الغضروف الوحشي.',
+            xPercent: 78,
+            yPercent: 58
+          }
+        ],
+        keyPoints: [
+          'MCL protects against valgus stress (forces from lateral side pushing inward).',
+          'LCL protects against varus stress (forces from medial side pushing outward).'
+        ]
+      }
+    ],
+
+    // DETAILED LABELED IMAGE: Cruciate Ligaments and Menisci (Henry Gray Dissection Plate)
+    importantStructuresImage: {
+      titleEn: 'Knee Interior: Cruciate Ligaments (ACL & PCL) & Menisci',
+      titleAr: 'التشريح الداخلي للركبة: الأربطة الصليبية والغضاريف الهلالية',
+      imageUrl: '/images/anatomy/knee_joint_interior_ligaments.png',
+      imageSource: "Gray's Anatomy Plate 348 / Right Knee Joint Interior",
+      imageCredit: 'Henry Gray (1918), Dissection of Cruciate Ligaments and Menisci',
+      labels: [
+        {
+          id: 'str_acl',
+          nameEn: 'Anterior Cruciate Ligament (ACL)',
+          nameAr: 'الرباط الصليبي الأمامي (ACL)',
+          descriptionEn: 'Passes superiorly, posteriorly, and laterally from anterior intercondylar area of tibia to lateral femoral condyle. Prevents anterior displacement of tibia on femur.',
+          descriptionAr: 'ينطلق من الباحة بين اللقمتين الأمامية للظنبوب ويتجه للأعلى والخلف والوحشي إلى لقمة الفخذ الوحشية. يمنع انزلاق الظنبوب للأمام تحت الفخذ.',
+          xPercent: 47,
+          yPercent: 48
+        },
+        {
+          id: 'str_pcl',
+          nameEn: 'Posterior Cruciate Ligament (PCL)',
+          nameAr: 'الرباط الصليبي الخلفي (PCL)',
+          descriptionEn: 'Passes superiorly, anteriorly, and medially from posterior intercondylar area of tibia to medial femoral condyle. Stronger than ACL; prevents posterior displacement of tibia.',
+          descriptionAr: 'ينطلق من الباحة الخلفية للظنبوب ويتجه للأعلى والأمام والإنسي نحو لقمة الفخذ الإنسية. أثخن وأقوى من الأمامي، يمنع انزلاق الظنبوب للخلف.',
+          xPercent: 55,
+          yPercent: 44
+        },
+        {
+          id: 'str_med_meniscus',
+          nameEn: 'Medial Meniscus (C-Shaped)',
+          nameAr: 'الغضروف الهلالي الإنسي (شكل C)',
+          descriptionEn: 'Broad C-shaped fibrocartilage firmly attached to tibial collateral ligament (MCL). Less mobile and 20x more frequently injured than lateral meniscus.',
+          descriptionAr: 'قرص غضروفي ليفي واسع على شكل حرف C، ملتحم بقوة بالرباط الجانبي الإنسي، حركته محدودة لذا يتعرض للتمزق أكثر بكثير من الوحشي.',
+          xPercent: 28,
+          yPercent: 64
+        },
+        {
+          id: 'str_lat_meniscus',
+          nameEn: 'Lateral Meniscus (Circular)',
+          nameAr: 'الغضروف الهلالي الوحشي (شكل دائري)',
+          descriptionEn: 'Nearly circular fibrocartilage, not attached to LCL, separated by popliteus tendon. More mobile and resilient to injury.',
+          descriptionAr: 'قرص غضروفي ليفي شبه دائري غير ملتحم بالرباط الشظوي، ويفصله عنه وتر العضلة المأبضية؛ لذا يتمتع بحرية حركة أكبر تحميه من التمزق.',
+          xPercent: 72,
+          yPercent: 62
+        },
+        {
+          id: 'str_patellar_lig',
+          nameEn: 'Patellar Ligament Attachment',
+          nameAr: 'مغرز الرباط الرضفي',
+          descriptionEn: 'Attaches to tibial tuberosity, carrying the pull of the entire quadriceps tendon.',
+          descriptionAr: 'يرتكز على أحدوبة الظنبوب ناقلاً قوة شد عضلة مربعة الرؤوس الفخذية كاملة.',
+          xPercent: 50,
+          yPercent: 88
+        }
+      ]
+    },
+
     video: {
       titleEn: 'Types of Joints in the Human Body',
       titleAr: 'أنواع المفاصل في جسم الإنسان وتصنيفها',
@@ -759,10 +1867,10 @@ export const ANATOMY_CORE_LESSONS: AnatomyLesson[] = [
       duration: '05:25'
     },
     practiceQuestion: {
-      question: 'Which of the following is an example of a Synovial joint?',
-      options: ['Cranial suture', 'Knee joint', 'Pubic symphysis', 'Tooth in socket (Gomphosis)'],
+      question: 'Which of the following ligaments prevents the tibia from sliding anteriorly relative to the femur?',
+      options: ['Posterior Cruciate Ligament (PCL)', 'Anterior Cruciate Ligament (ACL)', 'Fibular Collateral Ligament (LCL)', 'Patellar Ligament'],
       correctIndex: 1,
-      explanation: 'The knee joint is a complex synovial joint with a synovial cavity and free movement.'
+      explanation: 'The Anterior Cruciate Ligament (ACL) prevents anterior displacement of the tibia on the femur, tested clinically with the anterior drawer test.'
     }
   },
 
@@ -774,7 +1882,7 @@ export const ANATOMY_CORE_LESSONS: AnatomyLesson[] = [
     category: 'organ_systems',
     categoryLabelEn: 'Organ Systems',
     categoryLabelAr: 'أجهزة الأعضاء',
-    descriptionEn: 'Central Nervous System (Brain and Spinal cord) and Peripheral Nervous System (12 pairs of cranial nerves and 31 pairs of spinal nerves).',
+    descriptionEn: 'Central Nervous System (Brain and Spinal cord) and Peripheral Nervous System (12 cranial nerves and 31 pairs of spinal nerves).',
     descriptionAr: 'الجهاز العصبي المركزي (الدماغ والنخاع الشوكي) والمحيطي (12 زوجاً من الأعصاب القحفية و31 زوجاً من الأعصاب الشوكية).',
     keyPoints: [
       'Brain: Consists of Cerebrum (telecephalon), Diencephalon, Brainstem (Midbrain, Pons, Medulla), and Cerebellum.',
@@ -786,8 +1894,112 @@ export const ANATOMY_CORE_LESSONS: AnatomyLesson[] = [
       'فصوص المخ: الجبهي (الحركي والشخصية)، الجداري (الحسي)، الصدغي (السمع والذاكرة)، القذالي (الرؤية).',
       'السحايا: ثلاثة أغشية تحمي الجهاز العصبي المركزي (الأم الجافية، الأم العنكبوتية، والأم الحنون).'
     ],
-    imageUrl: '/images/anatomy/brain_midsagittal_section.png',    imageSource: 'NIH Visible Human Project / OpenStax',
+    imageUrl: '/images/anatomy/brain_midsagittal_section.png',
+    imageSource: 'NIH Visible Human Project / OpenStax',
     imageCredit: 'National Library of Medicine & OpenStax',
+    mainImageUrl: '/images/anatomy/brain_midsagittal_section.png',
+    mainImageSource: 'NIH Visible Human / OpenStax (Midsagittal Brain)',
+    mainImageCredit: 'National Library of Medicine & OpenStax',
+    mainImageCaptionEn: 'Midsagittal section of the human brain: Corpus Callosum, Brainstem, and Cerebellum.',
+    mainImageCaptionAr: 'المقطع السهمي المنصف للدماغ البشري: الجسم الثفني، الدماغ البيني، جذع الدماغ، والمخيخ.',
+    mainImageLabels: [
+      {
+        id: 'br_corpus',
+        nameEn: 'Corpus Callosum',
+        nameAr: 'الجسم الثفني',
+        descriptionEn: 'Largest white matter commissural tract connecting right and left cerebral hemispheres.',
+        descriptionAr: 'أكبر حزمة من المادة البيضاء تربط بين نصفي الكرة المخية الأيمن والأيسر.',
+        xPercent: 52,
+        yPercent: 32
+      },
+      {
+        id: 'br_thalamus',
+        nameEn: 'Thalamus & Hypothalamus',
+        nameAr: 'المهاد والوطاء',
+        descriptionEn: 'Sensory relay hub of the brain and master autonomic/endocrine regulator.',
+        descriptionAr: 'محطة الترحيل الحسي الرئيسية في الدماغ ومركز التحكم الذاتي والهرموني.',
+        xPercent: 52,
+        yPercent: 44
+      },
+      {
+        id: 'br_stem',
+        nameEn: 'Brainstem (Pons & Medulla)',
+        nameAr: 'جذع الدماغ (الجسر والنخاع المستطيل)',
+        descriptionEn: 'Controls vital cardiac and respiratory autonomic centers.',
+        descriptionAr: 'يحتوي المراكز الحيوية التلقائية للتنفس وضربات القلب وضغط الدم.',
+        xPercent: 48,
+        yPercent: 68
+      },
+      {
+        id: 'br_cerebellum',
+        nameEn: 'Cerebellum',
+        nameAr: 'المخيخ',
+        descriptionEn: 'Coordinates voluntary motor movements, posture, and fine balance.',
+        descriptionAr: 'ينسق الحركات الإرادية والتوازن والتوافق الحركي الدقيق.',
+        xPercent: 78,
+        yPercent: 68
+      }
+    ],
+    topics: [
+      {
+        id: 'top_cerebrum',
+        titleEn: '1. Cerebral Hemispheres & Lobes',
+        titleAr: 'نصفا الكرة المخية والفصوص الوظيفية',
+        shortExplanationEn: 'The cerebrum consists of two hemispheres divided into Frontal, Parietal, Temporal, and Occipital lobes.',
+        shortExplanationAr: 'يتكون المخ من نصفي كرة مقسمين لأربعة فصوص رئيسية: جبهي، جداري، صدغي، وقذالي.',
+        imageUrl: '/images/anatomy/brain_midsagittal_section.png',
+        imageSource: 'NIH Visible Human',
+        labels: [
+          {
+            id: 'lbl_frontal_lobe',
+            nameEn: 'Frontal Cortex',
+            nameAr: 'القشرة الجبهية',
+            xPercent: 30,
+            yPercent: 28
+          },
+          {
+            id: 'lbl_occipital_lobe',
+            nameEn: 'Occipital Cortex (Vision)',
+            nameAr: 'القشرة القذالية (البصر)',
+            xPercent: 82,
+            yPercent: 42
+          }
+        ],
+        keyPoints: [
+          'Frontal lobe: Primary motor cortex and Broca speech area.',
+          'Occipital lobe: Primary visual cortex (Brodmann 17).'
+        ]
+      },
+      {
+        id: 'top_brainstem',
+        titleEn: '2. Brainstem & Cerebellum',
+        titleAr: 'جذع الدماغ والمخيخ',
+        shortExplanationEn: 'Brainstem contains Midbrain, Pons, and Medulla oblongata; transmits all ascending and descending pathways.',
+        shortExplanationAr: 'يتألف جذع الدماغ من الدماغ المتوسط والجسر والنخاع المستطيل، ويعبره كل السبُل الصاعدة والنازلة.',
+        imageUrl: '/images/anatomy/brain_midsagittal_section.png',
+        imageSource: 'NIH Visible Human',
+        labels: [
+          {
+            id: 'lbl_stem2',
+            nameEn: 'Brainstem',
+            nameAr: 'جذع الدماغ',
+            xPercent: 48,
+            yPercent: 68
+          },
+          {
+            id: 'lbl_cereb2',
+            nameEn: 'Cerebellum',
+            nameAr: 'المخيخ',
+            xPercent: 78,
+            yPercent: 68
+          }
+        ],
+        keyPoints: [
+          'Cranial nerves III-XII emerge from the brainstem.',
+          'Medulla oblongata houses cardiac, vasomotor, and respiratory reflex centers.'
+        ]
+      }
+    ],
     video: {
       titleEn: 'Brain Anatomy & Functional Lobes',
       titleAr: 'تشريح الدماغ والفصوص الوظيفية للأطباء',
@@ -815,15 +2027,124 @@ export const ANATOMY_CORE_LESSONS: AnatomyLesson[] = [
     keyPoints: [
       'Four Chambers: Right Atrium (receives deoxygenated blood from SVC/IVC), Right Ventricle, Left Atrium (receives 4 pulmonary veins), Left Ventricle.',
       'Valves: Tricuspid valve (between RA & RV), Mitral/Bicuspid valve (between LA & LV), Pulmonary and Aortic semilunar valves.',
-      'Left Ventricular wall is 3 times thicker than right ventricular wall to pump blood against systemic systemic vascular resistance.'
+      'Left Ventricular wall is 3 times thicker than right ventricular wall to pump blood against systemic vascular resistance.'
     ],
     keyPointsAr: [
       'الحجرات الأربع: الأذين الأيمن (يستقبل الدم الوريدي من الوريدين الأجوفين)، البطين الأيمن، الأذين الأيسر (يستقبل الأوردة الرئوية الأربعة)، والبطين الأيسر.',
       'الصمامات: مثلث الشرف (بين الأذين والبطين الأيمن)، الإكليلي/ثنائي الشرف (بين الأذين والبطين الأيسر)، والصمامان الهلاليان الرئوي والأبهري.',
       'جدار البطين الأيسر أثخن بثلاث مرات من البطين الأيمن ليضخ الدم للجسم كاملاً تحت ضغط عالٍ.'
     ],
-    imageUrl: '/images/anatomy/heart_anterior_anatomy.png',    imageSource: 'OpenStax Anatomy & Physiology',
+    imageUrl: '/images/anatomy/heart_anterior_anatomy.png',
+    imageSource: 'OpenStax Anatomy & Physiology',
     imageCredit: 'OpenStax / Rice University',
+    mainImageUrl: '/images/anatomy/heart_anterior_anatomy.png',
+    mainImageSource: 'OpenStax Anatomy & Physiology (Anterior Heart)',
+    mainImageCredit: 'OpenStax / Rice University',
+    mainImageCaptionEn: 'Anterior external and internal anatomy of the heart and great vessels.',
+    mainImageCaptionAr: 'التشريح الأمامي الخارجي والداخلي للقلب والأوعية الدموية الكبرى.',
+    mainImageLabels: [
+      {
+        id: 'ht_aorta',
+        nameEn: 'Ascending Aorta & Aortic Arch',
+        nameAr: 'الأبهر الصاعد وقوس الأبهر',
+        descriptionEn: 'Delivers oxygenated blood under high systolic pressure to systemic circulation.',
+        descriptionAr: 'يضخ الدم المؤكسج تحت ضغط مرتفع إلى جميع أنحاء الجسم.',
+        xPercent: 48,
+        yPercent: 14
+      },
+      {
+        id: 'ht_pa',
+        nameEn: 'Pulmonary Trunk',
+        nameAr: 'الجذع الرئوي',
+        descriptionEn: 'Carries deoxygenated blood from right ventricle to lungs.',
+        descriptionAr: 'يحمل الدم غير المؤكسج من البطين الأيمن إلى الرئتين.',
+        xPercent: 62,
+        yPercent: 24
+      },
+      {
+        id: 'ht_ra',
+        nameEn: 'Right Atrium',
+        nameAr: 'الأذين الأيمن',
+        descriptionEn: 'Receives deoxygenated blood from SVC, IVC, and coronary sinus.',
+        descriptionAr: 'يستقبل الدم غير المؤكسج من الوريدين الأجوفين العلوي والسفلي والجيب الإكليلي.',
+        xPercent: 28,
+        yPercent: 40
+      },
+      {
+        id: 'ht_lv',
+        nameEn: 'Left Ventricle (Thick Myocardium)',
+        nameAr: 'البطين الأيسر (عضلة سميكة)',
+        descriptionEn: 'Thick muscular wall pumping blood throughout systemic arterial system.',
+        descriptionAr: 'جدار عضلي سميك يضخ الدم عبر الدوران الجهازي تحت ضغط 120 ملم زئبقي.',
+        xPercent: 68,
+        yPercent: 65
+      }
+    ],
+    topics: [
+      {
+        id: 'top_heart_chambers',
+        titleEn: '1. Four Chambers & Blood Flow Cycle',
+        titleAr: 'حجرات القلب الأربع ودورة تدفق الدم',
+        shortExplanationEn: 'Right heart pumps to low-pressure pulmonary circuit; left heart pumps to high-pressure systemic circuit.',
+        shortExplanationAr: 'القلب الأيمن يضخ للدوران الرئوي منخفض الضغط، والقلب الأيسر يضخ للدوران الجهازي مرتفع الضغط.',
+        imageUrl: '/images/anatomy/heart_anterior_anatomy.png',
+        imageSource: 'OpenStax Heart Anatomy',
+        labels: [
+          {
+            id: 'lbl_ra',
+            nameEn: 'Right Atrium',
+            nameAr: 'الأذين الأيمن',
+            xPercent: 28,
+            yPercent: 40
+          },
+          {
+            id: 'lbl_lv',
+            nameEn: 'Left Ventricle',
+            nameAr: 'البطين الأيسر',
+            xPercent: 68,
+            yPercent: 65
+          }
+        ],
+        keyPoints: [
+          'Deoxygenated blood: SVC/IVC -> RA -> RV -> Pulmonary arteries -> Lungs.',
+          'Oxygenated blood: Pulmonary veins -> LA -> LV -> Aorta -> Systemic tissues.'
+        ]
+      },
+      {
+        id: 'top_valves',
+        titleEn: '2. Cardiac Valves (Atrioventricular & Semilunar)',
+        titleAr: 'الصمامات القلبية (الأذينية البطينية والهلالية)',
+        shortExplanationEn: 'Valves enforce unidirectional forward blood flow. AV valves have chordae tendineae attached to papillary muscles.',
+        shortExplanationAr: 'تضمن الصمامات جريان الدم باتجاه واحد فقط دون ارتداد، ومثبتة بالحبال الوترية والعضلات الحليمية.',
+        imageUrl: '/images/anatomy/heart_anterior_anatomy.png',
+        imageSource: 'OpenStax',
+        labels: [
+          {
+            id: 'lbl_mitral',
+            nameEn: 'Mitral / Bicuspid Valve',
+            nameAr: 'الصمام التاجي (ثنائي الشرف)',
+            descriptionEn: 'Between Left Atrium and Left Ventricle.',
+            descriptionAr: 'يفصل الأذين الأيسر عن البطين الأيسر.',
+            xPercent: 60,
+            yPercent: 48
+          },
+          {
+            id: 'lbl_tricuspid',
+            nameEn: 'Tricuspid Valve',
+            nameAr: 'الصمام مثلث الشرف',
+            descriptionEn: 'Between Right Atrium and Right Ventricle.',
+            descriptionAr: 'يفصل الأذين الأيمن عن البطين الأيمن.',
+            xPercent: 36,
+            yPercent: 48
+          }
+        ],
+        keyPoints: [
+          'Tricuspid valve: 3 cusps (Right side).',
+          'Mitral (bicuspid) valve: 2 cusps (Left side).',
+          'Aortic & Pulmonary valves: Semilunar pockets with no chordae tendineae.'
+        ]
+      }
+    ],
     video: {
       titleEn: 'Heart Anatomy, Chambers & Valves Dissection',
       titleAr: 'تشريح حجرات القلب والصمامات وتدفق الدم',
@@ -838,29 +2159,339 @@ export const ANATOMY_CORE_LESSONS: AnatomyLesson[] = [
     }
   },
 
-  // 9. ORGAN SYSTEMS: Respiratory System
+  // 9. ORGAN SYSTEMS: Respiratory System (COMPREHENSIVE MULTI-IMAGE LESSON)
   {
     id: 'lesson_respiratory',
     titleEn: 'The Respiratory System & Lungs',
-    titleAr: 'الجهاز التنفسي وتشريح الرئتين',
+    titleAr: 'الجهاز التنفسي وتشريح الرئتين والشجرة القصبية',
     category: 'organ_systems',
     categoryLabelEn: 'Organ Systems',
     categoryLabelAr: 'أجهزة الأعضاء',
-    descriptionEn: 'Trachea, bronchial tree, right and left lung lobes, and pulmonary hilum anatomy.',
-    descriptionAr: 'الرغامي، الشجرة القصبية، فصوص الرئتين اليمنى واليسرى، وسرة الرئة.',
+    descriptionEn: 'Complete anatomy of the respiratory tract from nose to alveoli, featuring the trachea, carina, bronchial tree differences, and anatomical comparison of right vs left lungs.',
+    descriptionAr: 'التشريح الكامل للجهاز التنفسي من الأنف إلى الأسناخ: الرغامي، الجؤجؤ، تفرعات الشجرة القصبية، والفروق التشريحية الدقيقة بين فصوص وشقوق الرئة اليمنى واليسرى.',
     keyPoints: [
-      'Right Lung: 3 lobes (Superior, Middle, Inferior) separated by horizontal and oblique fissures.',
-      'Left Lung: 2 lobes (Superior, Inferior) separated by oblique fissure; features cardiac notch and lingula.',
-      'Right Primary Bronchus is wider, shorter, and more vertical than left, making inhaled foreign bodies lodge there more frequently.'
+      'Upper Respiratory Tract: Nose, paranasal sinuses, and pharynx.',
+      'Lower Respiratory Tract: Larynx, trachea, bronchial tree, and lungs.',
+      'Trachea has 16-20 C-shaped hyaline cartilage rings; posterior wall closed by trachealis smooth muscle.',
+      'Carina: Internal ridge at trachea bifurcation (T4/T5 vertebral level, sternal angle).',
+      'Right Primary Bronchus is wider, shorter, and more vertical than left, making inhaled foreign objects lodge there.',
+      'Right Lung has 3 lobes (Superior, Middle, Inferior) and 2 fissures (Horizontal, Oblique).',
+      'Left Lung has 2 lobes (Superior, Inferior), 1 fissure (Oblique), Cardiac Notch, and Lingula.'
     ],
     keyPointsAr: [
-      'الرئة اليمنى: تتكون من 3 فصوص (علوي، متوسط، سفلي) يفصل بينها شقان أفقي ومائل.',
-      'الرئة اليسرى: تتكون من فصين (علوي وسفلي) يفصل بينهما شق مائل؛ وتحتوي على الثلمة القلبية واللسينة.',
-      'القصبة الهوائية اليمنى أوسع وأقصر وأكثر استقامة عمودياً؛ لذا تستقر الأجسام الأجنبية المستنشقة فيها غالباً.'
+      'السبيل التنفسي العلوي: الأنف، الجيوب جانب الأنفية، والبلعوم.',
+      'السبيل التنفسي السفلي: الحنجرة، الرغامي، الشجرة القصبية، والرئتان.',
+      'الرغامي تحوي 16-20 حلقة غضروفية زجاجية على شكل حرف C، يغلق جدارها الخلفي العضلة الرغامية الملساء.',
+      'الجؤجؤ (Carina): نتوء غضروفي داخلي عند تفرع الرغامي بمستوى T4/T5 (زاوية القص).',
+      'القصبة الهوائية اليمنى أوسع وأقصر وأكثر استقامة شاقولية؛ لذا تنحشر الأجسام الأجنبية المستنشقة فيها.',
+      'الرئة اليمنى تتكون من 3 فصوص (علوي، متوسط، سفلي) وشقين (أفقي ومائل).',
+      'الرئة اليسرى تتكون من فصين (علوي وسفلي) وشق مائل، وتحوي الثلمة القلبية واللسينة.'
     ],
-    imageUrl: '/images/anatomy/gross_anatomy_lungs_anterior.jpg',
-    imageSource: "OpenStax Anatomy & Physiology (Plate 2312 - Gross Anatomy of the Lungs)",
-    imageCredit: 'Gross anatomy of right and left lungs, lobes, fissures, and trachea (OpenStax / Rice University, CC BY 4.0)',
+    // COMPREHENSIVE MAIN IMAGE: All major respiratory organs
+    imageUrl: '/images/anatomy/respiratory_system_major_organs_openstax.jpg',
+    imageSource: 'OpenStax Anatomy Plate 2301 (Major Respiratory Organs)',
+    imageCredit: 'OpenStax College, Rice University (CC BY 4.0)',
+    mainImageUrl: '/images/anatomy/respiratory_system_major_organs_openstax.jpg',
+    mainImageSource: 'OpenStax Anatomy Plate 2301 (Major Respiratory Organs)',
+    mainImageCredit: 'OpenStax College, Rice University (CC BY 4.0)',
+    mainImageCaptionEn: 'Complete Respiratory Tract: Nasal Cavity, Pharynx, Larynx, Trachea, Bronchi, Right and Left Lungs.',
+    mainImageCaptionAr: 'الصورة الرئيسية الشاملة: السبيل التنفسي الكامل من التجويف الأنفي إلى الرغامي والرئتين والحجاب الحاجز.',
+    mainImageLabels: [
+      {
+        id: 'resp_nasal',
+        nameEn: 'Nasal Cavity & Pharynx',
+        nameAr: 'التجويف الأنفي والبلعوم',
+        descriptionEn: 'Filters, warms, and humidifies incoming air; shared conduit.',
+        descriptionAr: 'تنقية وتدفئة وترطيب الهواء المستنشق.',
+        xPercent: 50,
+        yPercent: 12
+      },
+      {
+        id: 'resp_larynx',
+        nameEn: 'Larynx (Voice Box)',
+        nameAr: 'الحنجرة (صندوق الصوت)',
+        descriptionEn: 'Contains thyroid and cricoid cartilages, vocal cords, and epiglottis.',
+        descriptionAr: 'تحوي الغضروفين الدرقي والحلقي والحبلين الصوتيين ولسان المزمار.',
+        xPercent: 50,
+        yPercent: 26
+      },
+      {
+        id: 'resp_trachea',
+        nameEn: 'Trachea (Windpipe)',
+        nameAr: 'الرغامي (القصبة الهوائية)',
+        descriptionEn: 'Rigid tube reinforced with C-shaped cartilages descending into mediastinum.',
+        descriptionAr: 'أنبوب صلب مدعم بحلقات غضروفية C ينزل في المنصف الصدري.',
+        xPercent: 50,
+        yPercent: 38
+      },
+      {
+        id: 'resp_right_lung',
+        nameEn: 'Right Lung (3 Lobes)',
+        nameAr: 'الرئة اليمنى (3 فصوص)',
+        descriptionEn: 'Larger lung with Superior, Middle, and Inferior lobes.',
+        descriptionAr: 'الرئة الأكبر تتكون من ثلاثة فصوص: علوي، متوسط، وسفلي.',
+        xPercent: 30,
+        yPercent: 58
+      },
+      {
+        id: 'resp_left_lung',
+        nameEn: 'Left Lung (2 Lobes + Cardiac Notch)',
+        nameAr: 'الرئة اليسرى (فصان + ثلمة قلبية)',
+        descriptionEn: 'Divided into Superior and Inferior lobes; accommodates the heart apex.',
+        descriptionAr: 'فصان علوي وسفلي، وتتميز بالثلمة القلبية لاحتواء قمة القلب.',
+        xPercent: 70,
+        yPercent: 58
+      },
+      {
+        id: 'resp_diaphragm',
+        nameEn: 'Diaphragm Muscle',
+        nameAr: 'عضلة الحجاب الحاجز',
+        descriptionEn: 'Primary muscle of respiration innervated by Phrenic nerve (C3, C4, C5).',
+        descriptionAr: 'العضلة الرئيسية للشهيق يغذيها العصب الحجابي (C3, C4, C5).',
+        xPercent: 50,
+        yPercent: 82
+      }
+    ],
+
+    // STEP-BY-STEP TOPICS WITH INDIVIDUAL EXPLANATORY IMAGES (IMAGE MUST TEACH)
+    topics: [
+      {
+        id: 'top_trachea_carina',
+        titleEn: '1. The Trachea & Carina (الرغامي وجؤجؤ التفرع)',
+        titleAr: 'تشريح الرغامي والجؤجؤ',
+        shortExplanationEn: 'The trachea is a 10-12 cm fibrocartilaginous tube extending from the cricoid cartilage (C6) to the carina bifurcation (T4/T5).',
+        shortExplanationAr: 'أنبوب غضروفي بطول 10-12 سم يمتد من الغضروف الحلقي (C6) حتى جؤجؤ التفرع عند T4/T5.',
+        imageUrl: '/images/anatomy/trachea_cartilages_carina_openstax.jpg',
+        imageSource: 'OpenStax Plate 2308 (The Trachea)',
+        labels: [
+          {
+            id: 'lbl_trach_rings',
+            nameEn: 'C-shaped Cartilage Rings',
+            nameAr: 'حلقات غضروفية على شكل C',
+            descriptionEn: '16-20 hyaline cartilage rings keeping lumen patent during pressure changes.',
+            descriptionAr: 'تحافظ على لمعة الرغامي مفتوحة دائماً وتمنع انخماصها أثناء الشهيق.',
+            xPercent: 50,
+            yPercent: 35
+          },
+          {
+            id: 'lbl_carina',
+            nameEn: 'Carina (Bifurcation Ridge)',
+            nameAr: 'الجؤجؤ (Carina)',
+            descriptionEn: 'Internal cartilage keel at tracheal bifurcation. Most sensitive area for triggering cough reflex.',
+            descriptionAr: 'نتوء غضروفي حاد عند نقطة التفرع، أشد مناطق الجهاز التنفسي حساسية لتحفيز منعكس السعال.',
+            xPercent: 50,
+            yPercent: 68
+          },
+          {
+            id: 'lbl_r_bronchus',
+            nameEn: 'Right Main Bronchus',
+            nameAr: 'القصبة الرئيسية اليمنى',
+            descriptionEn: 'Wider, shorter (2.5 cm), and more vertical.',
+            descriptionAr: 'أوسع وأقصر وأكثر استقامة شاقولية.',
+            xPercent: 34,
+            yPercent: 82
+          },
+          {
+            id: 'lbl_l_bronchus',
+            nameEn: 'Left Main Bronchus',
+            nameAr: 'القصبة الرئيسية اليسرى',
+            descriptionEn: 'Narrower, longer (5 cm), and more horizontal due to aortic arch.',
+            descriptionAr: 'أضيق وأطول وأكثر ميلاناً أفقياً بسبب مسير قوس الأبهر.',
+            xPercent: 66,
+            yPercent: 82
+          }
+        ],
+        keyPoints: [
+          'The carina sits at the sternal angle of Louis (T4-T5 intervertebral disc).',
+          'Trachealis smooth muscle allows slight expansion of the esophagus during swallowing.'
+        ]
+      },
+      {
+        id: 'top_bronchial_tree',
+        titleEn: '2. The Bronchial Tree & Foreign Body Inhalation',
+        titleAr: 'الشجرة القصبية واستقرار الأجسام الأجنبية',
+        shortExplanationEn: 'Branching airway network: Primary bronchi divide into Lobar (Secondary) bronchi, then Segmental (Tertiary) bronchi, and bronchioles.',
+        shortExplanationAr: 'تتفرع القصبات الرئيسية لقصبات فصية (3 في اليمين و2 في اليسار) ثم قصبات قطعية وقصيبات تنفسية.',
+        imageUrl: '/images/anatomy/lungs_bronchial_tree.png',
+        imageSource: 'OpenStax Bronchial Tree Anatomy',
+        labels: [
+          {
+            id: 'lbl_bt_right_main',
+            nameEn: 'Right Main Bronchus (Vertical Course)',
+            nameAr: 'القصبة اليمنى (مسار شاقولي مباشر)',
+            descriptionEn: 'Most aspirated foreign objects (peanuts, coins) lodge in the right bronchus.',
+            descriptionAr: 'المكان الأكثر شيوعاً لدخول الأجسام الغريبة المستنشقة بسبب اتساعها وشاقوليتها.',
+            xPercent: 36,
+            yPercent: 36
+          },
+          {
+            id: 'lbl_bt_left_main',
+            nameEn: 'Left Main Bronchus',
+            nameAr: 'القصبة اليسرى (مسار مائل)',
+            descriptionEn: 'Passes inferolaterally beneath the arch of the aorta.',
+            descriptionAr: 'تعبر بميلان نحو الأسفل والوحشي تحت قوس الأبهر.',
+            xPercent: 64,
+            yPercent: 36
+          },
+          {
+            id: 'lbl_bt_lobar',
+            nameEn: 'Lobar (Secondary) Bronchi',
+            nameAr: 'القصبات الفصية (3 يمين / 2 يسار)',
+            descriptionEn: 'Supply individual lung lobes.',
+            descriptionAr: 'تغذي فصوص الرئة المستقلة.',
+            xPercent: 50,
+            yPercent: 64
+          }
+        ],
+        keyPoints: [
+          'High-yield clinical fact: Inhaled peanuts/foreign bodies lodge in the Right Middle or Inferior lobar bronchus.',
+          'There are 10 bronchopulmonary segments in the right lung and 8-10 in the left lung.'
+        ]
+      },
+      {
+        id: 'top_lungs_gross',
+        titleEn: '3. Gross Anatomy of the Lungs (Lobes & Fissures)',
+        titleAr: 'التشريح العياني للرئتين والفصوص والشقوق',
+        shortExplanationEn: 'Detailed anatomical comparison of Right vs Left lungs. Right lung has 3 lobes and 2 fissures; Left lung has 2 lobes, 1 fissure, cardiac notch, and lingula.',
+        shortExplanationAr: 'مقارنة تشريحية دقيقة: الرئة اليمنى تحوي 3 فصوص وشقين؛ بينما اليسرى تحوي فصين وشقاً واحداً وثلمة قلبية ولسينة.',
+        imageUrl: '/images/anatomy/gross_anatomy_lungs_anterior.jpg',
+        imageSource: 'OpenStax Plate 2312 (Gross Anatomy of the Lungs)',
+        labels: [
+          {
+            id: 'lbl_r_sup_lobe',
+            nameEn: 'Right Superior Lobe',
+            nameAr: 'الفص العلوي الأيمن',
+            xPercent: 28,
+            yPercent: 28
+          },
+          {
+            id: 'lbl_r_horiz_fiss',
+            nameEn: 'Horizontal Fissure (Right Lung Only)',
+            nameAr: 'الشق الأفقي (خاص بالرئة اليمنى فقط)',
+            descriptionEn: 'Separates superior lobe from middle lobe; follows right 4th rib.',
+            descriptionAr: 'يفصل الفص العلوي عن الفص المتوسط ويسير بمستوى الضلع الرابع الأيمن.',
+            xPercent: 28,
+            yPercent: 44
+          },
+          {
+            id: 'lbl_r_mid_lobe',
+            nameEn: 'Right Middle Lobe',
+            nameAr: 'الفص المتوسط الأيمن',
+            xPercent: 28,
+            yPercent: 54
+          },
+          {
+            id: 'lbl_r_oblique_fiss',
+            nameEn: 'Oblique Fissure (Right Lung)',
+            nameAr: 'الشق المائل للرئة اليمنى',
+            descriptionEn: 'Separates middle and superior lobes from inferior lobe.',
+            descriptionAr: 'يفصل الفصين العلوي والمتوسط عن الفص السفلي.',
+            xPercent: 28,
+            yPercent: 68
+          },
+          {
+            id: 'lbl_r_inf_lobe',
+            nameEn: 'Right Inferior Lobe',
+            nameAr: 'الفص السفلي الأيمن',
+            xPercent: 28,
+            yPercent: 82
+          },
+          {
+            id: 'lbl_l_sup_lobe',
+            nameEn: 'Left Superior Lobe',
+            nameAr: 'الفص العلوي الأيسر',
+            xPercent: 72,
+            yPercent: 32
+          },
+          {
+            id: 'lbl_l_cardiac_notch',
+            nameEn: 'Cardiac Notch (Left Lung)',
+            nameAr: 'الثلمة القلبية (الرئة اليسرى)',
+            descriptionEn: 'Deep concavity on anterior margin accommodating the apex of the heart.',
+            descriptionAr: 'تقعر مميز على الحافة الأمامية للرئة اليسرى يفسح المجال لقمة القلب.',
+            xPercent: 62,
+            yPercent: 56
+          },
+          {
+            id: 'lbl_l_lingula',
+            nameEn: 'Lingula of Left Lung',
+            nameAr: 'لسينة الرئة اليسرى',
+            descriptionEn: 'Tongue-like projection of the left superior lobe below cardiac notch (homologue of right middle lobe).',
+            descriptionAr: 'بروز لساني الشكل في أسفل الفص العلوي الأيسر، وهو النظير التشريحي للفص المتوسط الأيمن.',
+            xPercent: 64,
+            yPercent: 68
+          },
+          {
+            id: 'lbl_l_inf_lobe',
+            nameEn: 'Left Inferior Lobe',
+            nameAr: 'الفص السفلي الأيسر',
+            xPercent: 72,
+            yPercent: 82
+          }
+        ],
+        keyPoints: [
+          'Right lung is shorter and wider because the liver pushes up from beneath the right hemidiaphragm.',
+          'Left lung is narrower and longer because of the heart apex tilt to the left.'
+        ]
+      }
+    ],
+
+    // DETAILED LABELED IMAGE: Gross Anatomy of Both Lungs
+    importantStructuresImage: {
+      titleEn: 'Gross Anatomical Structures of Lungs & Lobes',
+      titleAr: 'المعالم التشريحية الدقيقة لفصوص وشقوق الرئتين',
+      imageUrl: '/images/anatomy/gross_anatomy_lungs_anterior.jpg',
+      imageSource: 'OpenStax Plate 2312 / Gross Anatomy of Lungs',
+      imageCredit: 'OpenStax / Rice University (CC BY 4.0)',
+      labels: [
+        {
+          id: 'str_r_horiz',
+          nameEn: 'Horizontal Fissure',
+          nameAr: 'الشق الأفقي الأيمن',
+          descriptionEn: 'Present ONLY on the right lung. Runs along the 4th costal cartilage to meet the oblique fissure.',
+          descriptionAr: 'موجود في الرئة اليمنى فقط! يفصل الفص العلوي عن المتوسط بمحاذاة الضلع الرابع.',
+          xPercent: 26,
+          yPercent: 44
+        },
+        {
+          id: 'str_r_mid',
+          nameEn: 'Middle Lobe of Right Lung',
+          nameAr: 'الفص المتوسط للرئة اليمنى',
+          descriptionEn: 'Wedge-shaped lobe between horizontal and oblique fissures.',
+          descriptionAr: 'فص إسفيني مميز يقع بين الشقين الأفقي والمائل.',
+          xPercent: 26,
+          yPercent: 54
+        },
+        {
+          id: 'str_l_cardiac_notch',
+          nameEn: 'Cardiac Notch',
+          nameAr: 'الثلمة القلبية',
+          descriptionEn: 'Indentation in the anterior border of the left superior lobe formed by the heart.',
+          descriptionAr: 'ثلمة غائرة في الحافة الأمامية للرئة اليسرى شكلتها ضخامة البطين الأيسر للقلب.',
+          xPercent: 60,
+          yPercent: 56
+        },
+        {
+          id: 'str_l_lingula',
+          nameEn: 'Lingula of Left Lung',
+          nameAr: 'لسينة الرئة اليسرى',
+          descriptionEn: 'Tongue-like process homologous to the middle lobe of the right lung.',
+          descriptionAr: 'امتداد يشبه اللسان الصغير يقع تحت الثلمة القلبية مباشرة.',
+          xPercent: 62,
+          yPercent: 68
+        },
+        {
+          id: 'str_trachea_bif',
+          nameEn: 'Tracheal Bifurcation',
+          nameAr: 'تفرع الرغامي عند الجؤجؤ',
+          descriptionEn: 'Occurs at sternal angle dividing into right and left main bronchi.',
+          descriptionAr: 'يحدث عند زاوية القص حيث تتفرع الرغامي إلى القصبتين الرئيسيتين.',
+          xPercent: 50,
+          yPercent: 24
+        }
+      ]
+    },
+
     video: {
       titleEn: 'Lungs & Tracheobronchial Tree Anatomy',
       titleAr: 'تشريح الرئتين والشجرة القصبية والفروق بين الرئتين',
@@ -868,10 +2499,10 @@ export const ANATOMY_CORE_LESSONS: AnatomyLesson[] = [
       duration: '05:40'
     },
     practiceQuestion: {
-      question: 'How many lobes are present in the anatomical right lung?',
-      options: ['Two lobes', 'Three lobes', 'Four lobes', 'One lobe'],
+      question: 'Which anatomical feature is found exclusively on the right lung and not on the left lung?',
+      options: ['Oblique fissure', 'Horizontal fissure', 'Cardiac notch', 'Inferior lobe'],
       correctIndex: 1,
-      explanation: 'The right lung has three lobes: superior, middle, and inferior.'
+      explanation: 'The Horizontal fissure is unique to the right lung, separating its superior and middle lobes.'
     }
   },
 
@@ -895,8 +2526,105 @@ export const ANATOMY_CORE_LESSONS: AnatomyLesson[] = [
       'الأمعاء الدقيقة: الاثني عشر (العفج على شكل حرف C)، الصائم (جدار سميك وتروية غزيرة)، والدقاق (يحتوي لويحات باير).',
       'الزائدة الدودية: تنشأ من الوجه الإنسي الخلفي للأعور؛ قاعدتها تقع سريرياً عند نقطة ماكبيرني (McBurney point).'
     ],
-    imageUrl: '/images/anatomy/stomach_duodenum_anatomy.png',    imageSource: 'OpenStax Anatomy & Physiology',
+    imageUrl: '/images/anatomy/stomach_duodenum_anatomy.png',
+    imageSource: 'OpenStax Anatomy & Physiology',
     imageCredit: 'OpenStax College',
+    mainImageUrl: '/images/anatomy/stomach_duodenum_anatomy.png',
+    mainImageSource: 'OpenStax Anatomy (Stomach & Duodenum)',
+    mainImageCredit: 'OpenStax College',
+    mainImageCaptionEn: 'Gross anatomy of the stomach, pyloric sphincter, and C-shaped duodenum.',
+    mainImageCaptionAr: 'التشريح العياني للمعدة، المصرة البوابية، والاثني عشر (العفج).',
+    mainImageLabels: [
+      {
+        id: 'st_fundus',
+        nameEn: 'Fundus of Stomach',
+        nameAr: 'قاع المعدة',
+        descriptionEn: 'Dome-shaped upper portion filled with swallowed gas.',
+        descriptionAr: 'الجزء المقبب العلوي الذي يتجمع فيه غاز المعدة.',
+        xPercent: 62,
+        yPercent: 18
+      },
+      {
+        id: 'st_body',
+        nameEn: 'Body of Stomach',
+        nameAr: 'جسم المعدة',
+        descriptionEn: 'Largest central region with gastric rugae folds.',
+        descriptionAr: 'الجزء الأكبر في المنتصف المبطن بطيات الغشاء المخاطي.',
+        xPercent: 52,
+        yPercent: 44
+      },
+      {
+        id: 'st_pylorus',
+        nameEn: 'Pyloric Sphincter',
+        nameAr: 'المصرة البوابية',
+        descriptionEn: 'Thick muscular ring controlling stomach emptying into duodenum.',
+        descriptionAr: 'حلقة عضلية سميكة تنظم إفراغ محتويات المعدة إلى الاثني عشر.',
+        xPercent: 32,
+        yPercent: 65
+      },
+      {
+        id: 'st_duodenum',
+        nameEn: 'Duodenum (C-Loop)',
+        nameAr: 'الاثني عشر (العفج)',
+        descriptionEn: 'First part of small intestine receiving bile and pancreatic juices.',
+        descriptionAr: 'الجزء الأول من الأمعاء الدقيقة الذي يستقبل الصفراء وعصارة البنكرياس.',
+        xPercent: 22,
+        yPercent: 82
+      }
+    ],
+    topics: [
+      {
+        id: 'top_stomach',
+        titleEn: '1. Stomach Anatomy & Sphincters',
+        titleAr: 'تشريح المعدة والمصرات',
+        shortExplanationEn: 'J-shaped muscular pouch with 3 muscle layers (longitudinal, circular, oblique) providing mechanical digestion.',
+        shortExplanationAr: 'كيس عضلي بشكل حرف J بثلاث طبقات عضلية توفر طحناً وهضماً ميكانيكياً وكيميائياً.',
+        imageUrl: '/images/anatomy/stomach_duodenum_anatomy.png',
+        imageSource: 'OpenStax',
+        labels: [
+          {
+            id: 'lbl_st_fund',
+            nameEn: 'Fundus',
+            nameAr: 'قاع المعدة',
+            xPercent: 62,
+            yPercent: 18
+          },
+          {
+            id: 'lbl_st_pyl',
+            nameEn: 'Pyloric Canal',
+            nameAr: 'القناة البوابية',
+            xPercent: 32,
+            yPercent: 65
+          }
+        ],
+        keyPoints: [
+          'Guarded by Lower Esophageal Sphincter (LES) proximally and Pyloric Sphincter distally.',
+          'Parietal cells secrete HCl and intrinsic factor (essential for Vitamin B12 absorption).'
+        ]
+      },
+      {
+        id: 'top_small_intestine',
+        titleEn: '2. Small Intestine & McBurney Point',
+        titleAr: 'الأمعاء الدقيقة ونقطة ماكبيرني للزائدة',
+        shortExplanationEn: 'Duodenum (25 cm), Jejunum (2.5 m), and Ileum (3.5 m). Appendix arises from cecum at McBurney point.',
+        shortExplanationAr: 'العفج (25 سم)، الصائم (2.5 م)، والدقاق (3.5 م). تنشأ الزائدة من الأعور عند نقطة ماكبيرني.',
+        imageUrl: '/images/anatomy/stomach_duodenum_anatomy.png',
+        imageSource: 'OpenStax',
+        labels: [
+          {
+            id: 'lbl_duod2',
+            nameEn: 'Duodenum',
+            nameAr: 'الاثني عشر',
+            xPercent: 22,
+            yPercent: 82
+          }
+        ],
+        keyPoints: [
+          'Major duodenal papilla receives common bile duct and main pancreatic duct (Ampulla of Vater).',
+          'McBurney point: 1/3 distance from right ASIS to umbilicus (maximal tenderness in acute appendicitis).'
+        ]
+      }
+    ],
     video: {
       titleEn: 'Gastrointestinal Anatomy: Stomach, Intestines & Liver',
       titleAr: 'تشريح الجهاز الهضمي: المعدة والأمعاء والكبد',
@@ -923,16 +2651,98 @@ export const ANATOMY_CORE_LESSONS: AnatomyLesson[] = [
     descriptionAr: 'الكليتان، ترتيب تراكيب سرة الكلية، الحالبان، والمثانة البولية.',
     keyPoints: [
       'Kidneys are retroperitoneal organs lying between T12 and L3; right kidney sits slightly lower due to the liver.',
-      'Renal Hilum Arrangement (from anterior to posterior): Renal Vein -> Renal Artery -> Renal Pelvis (V-A-U).',
+      'Renal Hilum Arrangement (from anterior to posterior): Renal Vein -> Renal Artery -> Renal Pelvis (V-A-P).',
       'Ureter has 3 anatomical constrictions where kidney stones easily lodge: PUJ, pelvic brim crossing, and VUJ.'
     ],
     keyPointsAr: [
       'الكليتان عضوان خلف البريتوان بين الفقرتين T12 وL3؛ الكلية اليمنى أخفض قليلاً لوجود الكبد فوقها.',
-      'ترتيب سرة الكلية من الأمام للخلف (قاعدة V-A-U): الوريد الكلوي أولاً، ثم الشريان الكلوي، ثم حويضة الكلية خلفاً.',
+      'ترتيب سرة الكلية من الأمام للخلف (قاعدة V-A-P): الوريد الكلوي أولاً، ثم الشريان الكلوي، ثم حويضة الكلية خلفاً.',
       'للحالب 3 تضيقات تشريحية تنحشر عندها حصيات الكلية: الموصل الحويضي الحالبي، عبور حافة الحوض، والموصل الحالبي المثاني.'
     ],
-    imageUrl: '/images/anatomy/kidney_coronal_section.png',    imageSource: 'OpenStax Anatomy & Physiology',
+    imageUrl: '/images/anatomy/kidney_coronal_section.png',
+    imageSource: 'OpenStax Anatomy & Physiology',
     imageCredit: 'OpenStax College',
+    mainImageUrl: '/images/anatomy/kidney_coronal_section.png',
+    mainImageSource: 'OpenStax Anatomy (Coronal Section of Kidney)',
+    mainImageCredit: 'OpenStax College',
+    mainImageCaptionEn: 'Coronal section of the kidney: Cortex, Medullary Pyramids, Renal Columns, and Hilum.',
+    mainImageCaptionAr: 'مقطع إكليلي في الكلية: القشرة الكلوية، الأهرام اللبية، الأعمدة، وسرة الكلية.',
+    mainImageLabels: [
+      {
+        id: 'kd_cortex',
+        nameEn: 'Renal Cortex',
+        nameAr: 'القشرة الكلوية',
+        descriptionEn: 'Outer granular layer containing glomeruli and convoluted tubules.',
+        descriptionAr: 'الطبقة الحبيبية الخارجية التي تحوي الكبيبات الكلوية والأنابيب الملتوية.',
+        xPercent: 22,
+        yPercent: 32
+      },
+      {
+        id: 'kd_pyramids',
+        nameEn: 'Renal Medullary Pyramids',
+        nameAr: 'الأهرام اللبية الكلوية',
+        descriptionEn: 'Triangular tissue masses containing loops of Henle and collecting ducts.',
+        descriptionAr: 'كتل نسيجية مثلثة تحوي عُرى هانلي والأنابيب الجامعة لتكثيف البول.',
+        xPercent: 38,
+        yPercent: 52
+      },
+      {
+        id: 'kd_pelvis',
+        nameEn: 'Renal Pelvis & Ureter',
+        nameAr: 'حويضة الكلية والحالب',
+        descriptionEn: 'Funnel-shaped basin collecting urine from major calyces.',
+        descriptionAr: 'الحوض القمعي الذي يجمع البول من الكؤوس الكلوية الكبرى ليصبه في الحالب.',
+        xPercent: 68,
+        yPercent: 55
+      }
+    ],
+    topics: [
+      {
+        id: 'top_kidney_hilum',
+        titleEn: '1. Renal Hilum & Anterior-to-Posterior Rule',
+        titleAr: 'سرة الكلية وقاعدة V-A-P',
+        shortExplanationEn: 'At the medial margin hilum, structures enter/exit in a constant order: Vein anteriorly, Artery in middle, Pelvis posteriorly.',
+        shortExplanationAr: 'تدخل وتخرج التراكيب عبر سرة الكلية بترتيب ثابت لا يتغير: الوريد أولاً، ثم الشريان، ثم الحويضة خلفاً.',
+        imageUrl: '/images/anatomy/kidney_coronal_section.png',
+        imageSource: 'OpenStax',
+        labels: [
+          {
+            id: 'lbl_hilum_pelvis',
+            nameEn: 'Renal Pelvis (Posterior)',
+            nameAr: 'حويضة الكلية (خلفاً)',
+            xPercent: 68,
+            yPercent: 55
+          }
+        ],
+        keyPoints: [
+          'V-A-P mnemonic: Vein (anterior), Artery (intermediate), Pelvis (posterior).',
+          'Right renal vein is short; Left renal vein is longer and crossed by SMA (Nutcracker syndrome).'
+        ]
+      },
+      {
+        id: 'top_ureter',
+        titleEn: '2. The Ureter & 3 Narrowing Sites',
+        titleAr: 'الحالب ومواقع التضيق الثلاثة لحصيات الكلى',
+        shortExplanationEn: 'Muscular tubes (25 cm) that convey urine from kidneys to bladder. Exhibit 3 natural anatomical constrictions.',
+        shortExplanationAr: 'أنبوبان عضليان بطول 25 سم ينقلان البول بالتمعج نحو المثانة، ويمتلكان 3 تضيقات تشريحية هامة سريرياً.',
+        imageUrl: '/images/anatomy/kidney_coronal_section.png',
+        imageSource: 'OpenStax',
+        labels: [
+          {
+            id: 'lbl_puj',
+            nameEn: 'Pelviureteric Junction (PUJ)',
+            nameAr: 'الموصل الحويضي الحالبي (PUJ)',
+            xPercent: 72,
+            yPercent: 68
+          }
+        ],
+        keyPoints: [
+          '1st constriction: Pelviureteric Junction (PUJ) where renal pelvis joins ureter.',
+          '2nd constriction: Where ureter crosses pelvic brim over iliac vessels.',
+          '3rd constriction: Vesicoureteric Junction (VUJ) piercing bladder wall obliquely.'
+        ]
+      }
+    ],
     video: {
       titleEn: 'Kidney Anatomy, Renal Hilum & Ureter Constrictions',
       titleAr: 'تشريح الكلية وسرة الكلية وتضيقات الحالب الثلاثة',
@@ -967,8 +2777,67 @@ export const ANATOMY_CORE_LESSONS: AnatomyLesson[] = [
       'يحدث الإخصاب الطبيعي للبويضة في مجل قناة فالوب (Ampulla).',
       'الجهاز التناسلي الذكري: الخصيتان، البربخ، الأسهر، الحويصلتان المنويتان، وغدة البروستات.'
     ],
-    imageUrl: '/images/anatomy/female_pelvis_anatomy.png',    imageSource: 'OpenStax Anatomy & Physiology',
+    imageUrl: '/images/anatomy/female_pelvis_anatomy.png',
+    imageSource: 'OpenStax Anatomy & Physiology',
     imageCredit: 'OpenStax / Rice University',
+    mainImageUrl: '/images/anatomy/female_pelvis_anatomy.png',
+    mainImageSource: 'OpenStax Anatomy (Female Pelvic Anatomy)',
+    mainImageCredit: 'OpenStax / Rice University',
+    mainImageCaptionEn: 'Female reproductive organs: Uterus, Ovaries, Fallopian Tubes, and Cervix.',
+    mainImageCaptionAr: 'الأعضاء التناسلية الأنثوية: الرحم، المبيضان، قناتا فالوب، وعنق الرحم.',
+    mainImageLabels: [
+      {
+        id: 'rep_uterus',
+        nameEn: 'Uterus',
+        nameAr: 'الرحم',
+        descriptionEn: 'Thick muscular organ normally anteverted and anteflexed over the urinary bladder.',
+        descriptionAr: 'عضو عضلي سميك مائل ومنعطف للأمام فوق المثانة البولية.',
+        xPercent: 50,
+        yPercent: 44
+      },
+      {
+        id: 'rep_fallopian',
+        nameEn: 'Fallopian Tube (Ampulla)',
+        nameAr: 'قناة فالوب (المجل)',
+        descriptionEn: 'Site of ovum fertilization by sperm.',
+        descriptionAr: 'موقع حدوث الإخصاب الطبيعي للبويضة.',
+        xPercent: 68,
+        yPercent: 32
+      },
+      {
+        id: 'rep_ovary',
+        nameEn: 'Ovary',
+        nameAr: 'المبيض',
+        descriptionEn: 'Female gonad producing oocytes and estrogen/progesterone.',
+        descriptionAr: 'الغدة التناسلية الأنثوية المسؤولة عن إنتاج البويضات والهرمونات.',
+        xPercent: 78,
+        yPercent: 46
+      }
+    ],
+    topics: [
+      {
+        id: 'top_female_organs',
+        titleEn: '1. Female Pelvis & Uterine Position',
+        titleAr: 'الحوض الأنثوي ووضعية الرحم',
+        shortExplanationEn: 'Uterus lies in true pelvis between bladder and rectum. Standard position is Anteverted (90 deg to vagina) and Anteflexed (170 deg to cervix).',
+        shortExplanationAr: 'يقع الرحم في الحوض الحقيقي، ووضعيته الطبيعية مائل للأمام بزاوية 90 مع المهبل ومنعطف للأمام بزاوية 170 مع عنقه.',
+        imageUrl: '/images/anatomy/female_pelvis_anatomy.png',
+        imageSource: 'OpenStax',
+        labels: [
+          {
+            id: 'lbl_ut_pos',
+            nameEn: 'Uterus (Anteverted)',
+            nameAr: 'الرحم (المائل للأمام)',
+            xPercent: 50,
+            yPercent: 44
+          }
+        ],
+        keyPoints: [
+          'Uterine tubes: Fimbriae -> Infundibulum -> Ampulla (fertilization site) -> Isthmus.',
+          'Pouch of Douglas (Rectouterine pouch) is the lowest peritoneal space in female pelvis.'
+        ]
+      }
+    ],
     video: {
       titleEn: 'Pelvic Anatomy: Male & Female Reproductive Systems',
       titleAr: 'تشريح الحوض والأجهزة التناسلية الذكرية والأنثوية',
