@@ -176,7 +176,7 @@ const LAB_SHOWCASE_DATA: LabShowcaseData[] = [
     tagline: 'Carbohydrate Identification & Clinical Chemistry',
     heroHeadline: 'Understand the molecular processes of life.',
     description:
-      'Master fundamental clinical laboratory wet tests: Molisch, Iodine, Barfoed, Seliwanoff, Benedict, and Fehling assays for mono-, di-, and polysaccharides with virtual reagent titration.',
+      'Master fundamental clinical laboratory wet tests strictly in order: 1. Molisch\'s Test, 2. Iodine Test, 3. Benedict\'s Test, 4. Barfoed\'s Test, and 5. Seliwanoff\'s Test for mono-, di-, and polysaccharides with real bench images and doctor video explanations.',
     quote: 'From molecular chemical bonds to systemic metabolic energy pathways.',
     primaryImage: MEDICAL_ASSETS.biochemistryPathways,
     secondaryImage: 'https://images.unsplash.com/photo-1530026405186-ed1f139313f8?w=1200&auto=format&fit=crop&q=80',
@@ -185,35 +185,41 @@ const LAB_SHOWCASE_DATA: LabShowcaseData[] = [
     badgeBorder: 'border-amber-500/40 bg-amber-950/60 text-amber-300',
     icon: FlaskConical,
     stats: {
-      practicals: 6,
+      practicals: 5,
       spotters: 25,
-      quizzes: 6,
+      quizzes: 5,
       creditHours: '3.0 Cr'
     },
     topics: [
       {
-        title: "Molisch's General Carbohydrate Test",
-        titleAr: 'فحص موليش العام للسكريات',
-        desc: 'Dehydration by concentrated H2SO4 to form furfural derivatives forming a violet ring.',
+        title: "1. Molisch's Test",
+        titleAr: '1. اختبار موليش العام للكربوهيدرات',
+        desc: 'General screening: dehydration by concentrated H2SO4 to form furfural derivatives with violet ring.',
         icon: FlaskConical
       },
       {
-        title: "Iodine Polysaccharide Assay",
-        titleAr: 'فحص اليود للسكريات المعقدة',
-        desc: 'Amylose polyiodide helical entrapment producing deep diagnostic navy blue complex.',
+        title: "2. Iodine Test",
+        titleAr: '2. اختبار اليود للنشاء والسكريات المعقدة',
+        desc: 'Helical entrapment of iodine producing diagnostic deep blue amylose complex.',
         icon: Eye
       },
       {
-        title: "Barfoed's Monosaccharide Distinction",
-        titleAr: 'فحص بارفويد للسكريات الأحادية',
-        desc: 'Rapid reduction of cupric acetate in acidic medium distinguishing monosaccharides within 3 min.',
+        title: "3. Benedict's Test",
+        titleAr: '3. اختبار بندكت للسكريات المختزلة',
+        desc: 'Alkaline cupric reduction forming graded precipitates from green to brick-red cuprous oxide.',
+        icon: Award
+      },
+      {
+        title: "4. Barfoed's Test",
+        titleAr: '4. اختبار بارفود للتمييز بين السكريات',
+        desc: 'Acidic medium cupric reduction distinguishing monosaccharides (<3 min) from disaccharides.',
         icon: Zap
       },
       {
-        title: "Benedict & Fehling Reducing Sugars",
-        titleAr: 'فحوصات بنيدكت وفهلنج للسكريات المختزلة',
-        desc: 'Alkaline cupric reduction forming graded precipitates from green to brick-red cuprous oxide.',
-        icon: Award
+        title: "5. Seliwanoff's Test",
+        titleAr: '5. اختبار سيليفانوف للكيتوزات',
+        desc: 'Resorcinol condensation with rapid cherry-red color differentiating ketoses (fructose) from aldoses.',
+        icon: Sparkles
       }
     ],
     highlights: [

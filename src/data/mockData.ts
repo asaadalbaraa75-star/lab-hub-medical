@@ -895,7 +895,7 @@ export const INITIAL_PRACTICALS: Practical[] = [
         { id: 'chk_b1_2', text: 'Review acid pipetting precautions when layering concentrated H2SO4 down the tube wall' },
         { id: 'chk_b1_3', text: 'Understand the reaction time cutoffs for Barfoed (2-3 min) and Seliwanoff (<1 min)' }
       ],
-      preLabSummary: 'Carbohydrate identification follows a hierarchical algorithm: Molisch test screens for carbohydrate presence; Iodine distinguishes polysaccharides; Benedict identifies reducing capability; Barfoed differentiates monosaccharides from disaccharides; Seliwanoff identifies rapid ketose condensation.'
+      preLabSummary: 'Carbohydrate identification follows a hierarchical algorithm: 1. Molisch\'s Test screens for carbohydrate presence; 2. Iodine Test distinguishes polysaccharides; 3. Benedict\'s Test identifies reducing capability; 4. Barfoed\'s Test differentiates monosaccharides from disaccharides; 5. Seliwanoff\'s Test identifies rapid ketose condensation.'
     },
     equipment: [
       {
@@ -1279,7 +1279,7 @@ export const INITIAL_QUIZZES: Quiz[] = [
     labId: 'biochemistry',
     practicalId: 'prac_bio_01',
     title: 'Biochemistry Quiz: Qualitative Carbohydrate Identification',
-    description: 'Test your mastery of carbohydrate identification tests: Molisch, Iodine, Barfoed, Seliwanoff, Benedict, and Fehling reactions.',
+    description: 'Test your mastery of the carbohydrate practical identification sequence: 1. Molisch\'s Test, 2. Iodine Test, 3. Benedict\'s Test, 4. Barfoed\'s Test, and 5. Seliwanoff\'s Test.',
     timeLimitMinutes: 10,
     passingScorePercent: 75,
     questions: [

@@ -43,7 +43,7 @@ export const BIOCHEMISTRY_VISUAL_TESTS: VisualBioTest[] = [
   {
     id: 'molisch',
     testNumber: 1,
-    titleEn: "MOLISCH'S TEST",
+    titleEn: "Molisch's Test",
     titleAr: 'اختبار موليش للكربوهيدرات',
     reagents: [
       '2 drops α-naphthol',
@@ -67,7 +67,7 @@ export const BIOCHEMISTRY_VISUAL_TESTS: VisualBioTest[] = [
   {
     id: 'iodine',
     testNumber: 2,
-    titleEn: 'IODINE TEST',
+    titleEn: 'Iodine Test',
     titleAr: 'اختبار اليود للنشاء',
     reagents: ['2 drops iodine solution (I₂/KI)'],
     principle: 'Iodine forms a blue complex with amylose (starch).',
@@ -85,54 +85,9 @@ export const BIOCHEMISTRY_VISUAL_TESTS: VisualBioTest[] = [
       'Specific test for starch (amylose). Iodine traps inside the amylose helix forming blue complex. Color fades with heat and reappears on cooling.'
   },
   {
-    id: 'barfoed',
-    testNumber: 3,
-    titleEn: "BARFOED'S TEST",
-    titleAr: 'اختبار بارفود للتمييز بين السكريات',
-    reagents: [
-      "Barfoed's reagent",
-      'Heat in boiling water bath for 2–3 min'
-    ],
-    principle:
-      'Monosaccharides reduce cupric ions in acidic medium to cuprous oxide (brick-red precipitate) rapidly, while disaccharides react slowly or not at all.',
-    positiveDescAr: 'تشكل راسب أحمر آجري سريعاً في قاع الأنبوب خلال 2–3 دقائق',
-    positiveDescEn: 'Rapid brick-red cuprous oxide precipitate (2–3 min)',
-    positiveTarget: 'Monosaccharide (سكر أحادي مثل جلوكوز، فركتوز)',
-    negativeDescAr: 'عدم تشكل راسب أحمر آجري في قاع الأنبوب (محلول أزرق رائق)',
-    negativeDescEn: 'No brick-red precipitate formed (Solution remains blue)',
-    negativeTarget: 'Disaccharide (سكر ثنائي مثل لاكتوز، مالتوز)',
-    posTubeType: 'barfoed-pos',
-    negTubeType: 'barfoed-neg',
-    observationAr:
-      'الوسط الحمضي الضعيف يجعل قوة الإرجاع أضعف، لذلك تختزل السكريات الأحادية أيونات النحاس بسرعة (2-3 دقائق)، بينما تحتاج السكريات الثنائية وقتاً أطول بكثير.',
-    observationEn:
-      'Weakly acidic medium permits rapid reduction only by monosaccharides (2-3 min) to brick-red cuprous oxide, distinguishing them from disaccharides.'
-  },
-  {
-    id: 'seliwanoff',
-    testNumber: 4,
-    titleEn: "SELIWANOFF'S TEST",
-    titleAr: 'اختبار سيليفانوف للكيتوزات',
-    reagents: ["1 ml Seliwanoff's reagent"],
-    principle:
-      'Ketoses dehydrate rapidly in acidic medium to form hydroxymethylfurfural which condenses with resorcinol to give a cherry-red color, while aldoses react slowly or not at all.',
-    positiveDescAr: 'ظهور لون أحمر كرزي ساطع وواضح',
-    positiveDescEn: 'Bright cherry-red colored solution',
-    positiveTarget: 'Ketose (سكر كيتوني مثل الفركتوز)',
-    negativeDescAr: 'عدم ظهور اللون الأحمر الكرزي (محلول أصفر باهت أو عديم اللون)',
-    negativeDescEn: 'No cherry-red color (Pale yellow or faint color)',
-    negativeTarget: 'Aldose (سكر ألدوزي مثل الجلوكوز، الجلاكتوز)',
-    posTubeType: 'seliwanoff-pos',
-    negTubeType: 'seliwanoff-neg',
-    observationAr:
-      'تتميز الكيتوزات بسرعة نزع الماء منها في الوسط الحمضي وتفاعلها مع الريزورسينول لتعطي اللون الأحمر الكرزي بسرعة فائقة مقارنة بالألدوزات.',
-    observationEn:
-      'Ketoses undergo rapid dehydration in acidic medium condensing with resorcinol to produce a cherry-red color, differentiating them from aldoses.'
-  },
-  {
     id: 'benedict',
-    testNumber: 5,
-    titleEn: "BENEDICT'S TEST",
+    testNumber: 3,
+    titleEn: "Benedict's Test",
     titleAr: 'اختبار بندكت للسكريات المختزلة',
     reagents: [
       "Benedict's reagent",
@@ -155,29 +110,49 @@ export const BIOCHEMISTRY_VISUAL_TESTS: VisualBioTest[] = [
     hasSpecialScale: true
   },
   {
-    id: 'fehling',
-    testNumber: 6,
-    titleEn: "FEHLING'S TEST",
-    titleAr: 'اختبار فيهلنغ للسكريات المختزلة',
+    id: 'barfoed',
+    testNumber: 4,
+    titleEn: "Barfoed's Test",
+    titleAr: 'اختبار بارفود للتمييز بين السكريات',
     reagents: [
-      '1 ml Fehling A (CuSO₄ solution)',
-      '1 ml Fehling B (Alkaline tartrate solution)',
-      'Heat in boiling water bath'
+      "Barfoed's reagent",
+      'Heat in boiling water bath for 2–3 min'
     ],
     principle:
-      'Reducing sugars reduce cupric ions to red cuprous oxide precipitate in alkaline medium upon heating.',
-    positiveDescAr: 'تشكل راسب أحمر آجري واضح في قاع الأنبوب بعد التسخين',
-    positiveDescEn: 'Prominent brick-red cuprous oxide precipitate at bottom',
-    positiveTarget: 'Reducing Sugar (سكر مختزل)',
-    negativeDescAr: 'بقاء المحلول أزرق رائقاً بدون أي راسب أحمر',
-    negativeDescEn: 'Clear blue solution with no precipitate formed',
-    negativeTarget: 'Non-reducing Sugar (سكر غير مختزل)',
-    posTubeType: 'fehling-pos',
-    negTubeType: 'fehling-neg',
+      'Monosaccharides reduce cupric ions in acidic medium to cuprous oxide (brick-red precipitate) rapidly, while disaccharides react slowly or not at all.',
+    positiveDescAr: 'تشكل راسب أحمر آجري سريعاً في قاع الأنبوب خلال 2–3 دقائق',
+    positiveDescEn: 'Rapid brick-red cuprous oxide precipitate (2–3 min)',
+    positiveTarget: 'Monosaccharide (سكر أحادي مثل جلوكوز، فركتوز)',
+    negativeDescAr: 'عدم تشكل راسب أحمر آجري في قاع الأنبوب (محلول أزرق رائق)',
+    negativeDescEn: 'No brick-red precipitate formed (Solution remains blue)',
+    negativeTarget: 'Disaccharide (سكر ثنائي مثل لاكتوز، مالتوز)',
+    posTubeType: 'barfoed-pos',
+    negTubeType: 'barfoed-neg',
     observationAr:
-      'يخلط المحلولان A و B قبل الاستخدام مباشرة، ويعمل ترترات البوتاسيوم والصوديوم في B على منع ترسب هيدروكسيد النحاس حتى يتم اختزاله بالسكر.',
+      'الوسط الحمضي الضعيف يجعل قوة الإرجاع أضعف، لذلك تختزل السكريات الأحادية أيونات النحاس بسرعة (2-3 دقائق)، بينما تحتاج السكريات الثنائية وقتاً أطول بكثير.',
     observationEn:
-      'Fehling A and B are freshly mixed. Alkaline tartrate maintains cupric ions in solution until reduced by sugar to red cuprous oxide precipitate.'
+      'Weakly acidic medium permits rapid reduction only by monosaccharides (2-3 min) to brick-red cuprous oxide, distinguishing them from disaccharides.'
+  },
+  {
+    id: 'seliwanoff',
+    testNumber: 5,
+    titleEn: "Seliwanoff's Test",
+    titleAr: 'اختبار سيليفانوف للكيتوزات',
+    reagents: ["1 ml Seliwanoff's reagent"],
+    principle:
+      'Ketoses dehydrate rapidly in acidic medium to form hydroxymethylfurfural which condenses with resorcinol to give a cherry-red color, while aldoses react slowly or not at all.',
+    positiveDescAr: 'ظهور لون أحمر كرزي ساطع وواضح',
+    positiveDescEn: 'Bright cherry-red colored solution',
+    positiveTarget: 'Ketose (سكر كيتوني مثل الفركتوز)',
+    negativeDescAr: 'عدم ظهور اللون الأحمر الكرزي (محلول أصفر باهت أو عديم اللون)',
+    negativeDescEn: 'No cherry-red color (Pale yellow or faint color)',
+    negativeTarget: 'Aldose (سكر ألدوزي مثل الجلوكوز، الجلاكتوز)',
+    posTubeType: 'seliwanoff-pos',
+    negTubeType: 'seliwanoff-neg',
+    observationAr:
+      'تتميز الكيتوزات بسرعة نزع الماء منها في الوسط الحمضي وتفاعلها مع الريزورسينول لتعطي اللون الأحمر الكرزي بسرعة فائقة مقارنة بالألدوزات.',
+    observationEn:
+      'Ketoses undergo rapid dehydration in acidic medium condensing with resorcinol to produce a cherry-red color, differentiating them from aldoses.'
   }
 ];
 
@@ -533,7 +508,7 @@ export const BiochemistryTestCard: React.FC<BiochemistryTestCardProps> = ({
             )}
           </button>
 
-          {test.id === 'benedict' && onOpenDedicatedLesson && (
+          {onOpenDedicatedLesson && (
             <button
               type="button"
               onClick={() => onOpenDedicatedLesson(test.id)}
