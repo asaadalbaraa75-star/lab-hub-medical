@@ -336,8 +336,8 @@ export const ANATOMY_MUSCLES_SUITE: MuscleLearningUnit[] = [
     region: 'back',
     regionLabelEn: 'Back (Superficial Back & Neck)',
     regionLabelAr: 'الظهر (الناحية السطحية للظهر والعنق)',
-    imageUrl: '/images/anatomy/deltoid_shoulder_trapezius.png',    imageSource: "Gray's Anatomy Plate 409 / Wikimedia Commons",    imageLicense: 'Public Domain',
-    imageCredit: "Superficial muscles of neck and back (Henry Gray, 1918)",    location: 'Large diamond-shaped superficial back muscle connecting the skull, spine, and shoulder girdle.',
+    imageUrl: '/images/anatomy/trapezius_latissimus_back.png',    imageSource: "Gray's Anatomy Plate 409 / Wikimedia Commons",    imageLicense: 'Public Domain',
+    imageCredit: "Superficial muscles of neck and back: Trapezius and Latissimus dorsi (Henry Gray, 1918)",    location: 'Large diamond-shaped superficial back muscle connecting the skull, spine, and shoulder girdle.',
     locationAr: 'عضلة معينية سطحية كبيرة تصل الجمجمة والعمود الفقري مع لوح الكتف.',
     origin: 'External occipital protuberance, ligamentum nuchae, and spinous processes of C7-T12.',
     originAr: 'الناشزة القذالية الخارجية، الرباط القفوي، والنواتئ الشوكية من C7 حتى T12.',
@@ -858,8 +858,9 @@ export const ANATOMY_CORE_LESSONS: AnatomyLesson[] = [
       'الرئة اليسرى: تتكون من فصين (علوي وسفلي) يفصل بينهما شق مائل؛ وتحتوي على الثلمة القلبية واللسينة.',
       'القصبة الهوائية اليمنى أوسع وأقصر وأكثر استقامة عمودياً؛ لذا تستقر الأجسام الأجنبية المستنشقة فيها غالباً.'
     ],
-    imageUrl: '/images/anatomy/lungs_bronchial_tree.png',    imageSource: 'OpenStax Anatomy & Physiology',
-    imageCredit: 'OpenStax College',
+    imageUrl: '/images/anatomy/gross_anatomy_lungs_anterior.jpg',
+    imageSource: "OpenStax Anatomy & Physiology (Plate 2312 - Gross Anatomy of the Lungs)",
+    imageCredit: 'Gross anatomy of right and left lungs, lobes, fissures, and trachea (OpenStax / Rice University, CC BY 4.0)',
     video: {
       titleEn: 'Lungs & Tracheobronchial Tree Anatomy',
       titleAr: 'تشريح الرئتين والشجرة القصبية والفروق بين الرئتين',
@@ -1077,14 +1078,27 @@ export const ANATOMY_IMAGE_ATLAS: AnatomyImageAtlasItem[] = [
   },
   {
     id: 'atlas_organs_lungs',
-    titleEn: 'Lungs & Tracheobronchial Arborization',
-    titleAr: 'الرئتان والشجرة الرغامية القصبية',
+    titleEn: 'Gross Anatomy of Lungs & Lobes (Primary View)',
+    titleAr: 'التشريح العياني للرئتين والفصوص والشقوق (منظر أساسي)',
     category: 'Respiratory',
-    imageUrl: '/images/anatomy/lungs_bronchial_tree.png',    source: 'OpenStax Anatomy & Physiology',
+    imageUrl: '/images/anatomy/gross_anatomy_lungs_anterior.jpg',
+    source: 'OpenStax Anatomy & Physiology (Plate 2312)',
     license: 'CC BY 4.0',
-    credit: 'OpenStax College',
-    description: 'Trachea bifurcating at the carina into right and left primary bronchi, and lobar anatomy of right and left lungs.',
-    keyStructures: ['Trachea', 'Carina', 'Right bronchus (shorter & wider)', 'Left bronchus', 'Pulmonary fissures']
+    credit: 'OpenStax / Rice University',
+    description: 'Complete anterior anatomical plate demonstrating the trachea, right lung with 3 lobes and 2 fissures, and left lung with 2 lobes, cardiac notch, and lingula.',
+    keyStructures: ['Right superior lobe', 'Horizontal fissure', 'Right middle lobe', 'Oblique fissures', 'Right inferior lobe', 'Left superior lobe', 'Cardiac notch', 'Lingula', 'Left inferior lobe', 'Trachea', 'Carina']
+  },
+  {
+    id: 'atlas_organs_bronchial_tree',
+    titleEn: 'Tracheobronchial Tree & Arborization (Secondary Educational View)',
+    titleAr: 'الشجرة الرغامية القصبية وتفرعاتها (منظر تعليمي ثانوي)',
+    category: 'Respiratory',
+    imageUrl: '/images/anatomy/lungs_bronchial_tree.png',
+    source: "Gray's Anatomy Plate 961 / Wikimedia Commons",
+    license: 'Public Domain',
+    credit: 'Henry Gray (1918) / OpenStax',
+    description: 'Trachea bifurcating at the carina into right and left primary bronchi, and lobar and segmental bronchial arborization.',
+    keyStructures: ['Trachea', 'Carina', 'Right bronchus (shorter & wider)', 'Left bronchus', 'Segmental bronchi']
   },
   {
     id: 'atlas_organs_kidney',

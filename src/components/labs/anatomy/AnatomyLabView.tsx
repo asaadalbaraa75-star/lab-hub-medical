@@ -24,6 +24,7 @@ import { AnatomyTestsSection } from './AnatomyTestsSection';
 import {
   BookOpen,
   Image as ImageIcon,
+  Compass,
   Video,
   Target,
   ArrowRight,
@@ -61,6 +62,7 @@ export const AnatomyLabView: React.FC<AnatomyLabViewProps> = () => {
       <div className="max-w-7xl mx-auto px-3 sm:px-6 py-6">
         <AnatomyMusclesSection
           onBackToMain={() => setActiveTab('main')}
+          onOpenSpotter={() => setActiveTab('tests')}
         />
       </div>
     );
@@ -71,6 +73,7 @@ export const AnatomyLabView: React.FC<AnatomyLabViewProps> = () => {
       <div className="max-w-7xl mx-auto px-3 sm:px-6 py-6">
         <AnatomyImagesSection
           onBackToMain={() => setActiveTab('main')}
+          onOpenSpotter={() => setActiveTab('tests')}
         />
       </div>
     );
@@ -146,28 +149,33 @@ export const AnatomyLabView: React.FC<AnatomyLabViewProps> = () => {
           </div>
         </div>
 
-        {/* CARD 2: 🖼️ IMAGES */}
+        {/* CARD 2: 🗺️ INTERACTIVE ATLAS */}
         <div
           onClick={() => setActiveTab('images')}
           className="bg-slate-900/90 hover:bg-slate-850 border-2 border-slate-800 hover:border-amber-500 rounded-3xl p-6 sm:p-8 cursor-pointer transition-all duration-200 shadow-lg hover:shadow-amber-950/40 hover:-translate-y-1 flex flex-col justify-between group min-h-[220px]"
         >
           <div className="space-y-3">
             <div className="w-14 h-14 rounded-2xl bg-amber-950 text-amber-400 border border-amber-800 flex items-center justify-center group-hover:scale-110 group-hover:bg-amber-600 group-hover:text-white transition-all shadow-md">
-              <ImageIcon className="w-7 h-7" />
+              <Compass className="w-7 h-7" />
             </div>
 
             <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="px-2 py-0.5 rounded text-[10px] font-black bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase tracking-wider">
+                  Interactive Zoom & Pins
+                </span>
+              </div>
               <h2 className="text-xl sm:text-2xl font-black text-white group-hover:text-amber-300 transition-colors">
-                🖼️ IMAGES
+                🗺️ INTERACTIVE ATLAS
               </h2>
               <p className="text-xs sm:text-sm text-slate-400 mt-1 leading-relaxed">
-                أطلس الصور الطبية الحقيقية المعتمدة (OpenStax & NLM Visible Human). عظام، مفاصل، عضلات، وأحشاء بدون أي تزييف.
+                أطلس تشريحي تفاعلي: تكبير وتصغير وتحريك للصور، ونقاط تفاعلية على التراكيب للتعرف على أسمائها ووظائفها بدقة دون أي تعقيد.
               </p>
             </div>
           </div>
 
           <div className="pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-amber-400 group-hover:text-amber-300">
-            <span>استعرض أطلس الصور الطبية</span>
+            <span>تصفح أطلس التشريح التفاعلي</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
           </div>
         </div>
