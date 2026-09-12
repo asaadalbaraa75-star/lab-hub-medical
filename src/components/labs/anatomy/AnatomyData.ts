@@ -159,8 +159,7 @@ export const ANATOMY_TOPICS: AnatomyTopic[] = [
       en: 'Definitions (e.g., "Which plane divides into equal right and left halves? -> Median Plane") or identifying the slice plane on CT/MRI.'
     },
     highYieldSummary: 'Median Plane = Equal Right & Left | Coronal = Front & Back | Transverse = Top & Bottom',
-    imageUrl: 'https://images.unsplash.com/photo-1530497610245-94d3c16cda28?w=800&auto=format&fit=crop&q=80',
-    iconName: 'Compass',
+    imageUrl: '/images/anatomy/anatomical_planes_diagram.svg',    iconName: 'Compass',
     
     corePoints: [
       'الوضعية التشريحية القياسية (Anatomical Position): الوقوف مستقيماً، الوجه للأمام، الذراعان على الجانبين، وراحتا اليد تتجهان للأمام (Palms forward).',
@@ -369,8 +368,7 @@ export const ANATOMY_TOPICS: AnatomyTopic[] = [
       en: 'Comparison questions: "The elbow is Proximal to the wrist" or "The thumb is Lateral to the pinky".'
     },
     highYieldSummary: 'Medial = closer to midline | Lateral = away | Proximal = closer to trunk | Distal = farther',
-    imageUrl: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&auto=format&fit=crop&q=80',
-    iconName: 'Move3d',
+    imageUrl: '/images/anatomy/directional_terms_diagram.svg',    iconName: 'Move3d',
 
     corePoints: [
       'علوي / قحفي (Superior / Cranial): أقرب إلى الرأس أو للأعلى (القلب علوي بالنسبة للمعدة).',
@@ -583,8 +581,7 @@ export const ANATOMY_TOPICS: AnatomyTopic[] = [
       en: 'Matching a muscle to its joint action or identifying the movement shown in an illustration.'
     },
     highYieldSummary: 'Flexion = decrease angle | Extension = increase angle | Abduction = away | Adduction = toward midline',
-    imageUrl: 'https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=800&auto=format&fit=crop&q=80',
-    iconName: 'Activity',
+    imageUrl: '/images/anatomy/body_movements_diagram.svg',    iconName: 'Activity',
 
     corePoints: [
       'الانثناء (Flexion): حركة تقلل زاوية المفصل في المستوى السهمي (مثل ثني المرفق أو الركبة).',
@@ -785,8 +782,7 @@ export const ANATOMY_TOPICS: AnatomyTopic[] = [
       en: 'Identifying bone specimens/pins in OSPE spotters (e.g. Femur head, Greater trochanter) and classifying bone types.'
     },
     highYieldSummary: 'Femur = Longest & strongest bone in body | Total bones = 206 | Axial (80) + Appendicular (126)',
-    imageUrl: 'https://images.unsplash.com/photo-1530497610245-94d3c16cda28?w=800&auto=format&fit=crop&q=80',
-    iconName: 'Bone',
+    imageUrl: '/images/anatomy/femur_anterior_osteology.png',    iconName: 'Bone',
 
     corePoints: [
       'عدد عظام الإنسان البالغ = 206 عظمة.',
@@ -1010,8 +1006,7 @@ export const ANATOMY_TOPICS: AnatomyTopic[] = [
       en: 'Classifying a named joint (e.g. Knee = modified hinge; Shoulder = ball & socket) and identifying synovial features.'
     },
     highYieldSummary: 'Fibrous = Immovable | Cartilaginous = Limited | Synovial = Freely movable (6 subtypes)',
-    imageUrl: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&auto=format&fit=crop&q=80',
-    iconName: 'GitMerge',
+    imageUrl: '/images/anatomy/knee_joint_interior_ligaments.png',    iconName: 'GitMerge',
 
     corePoints: [
       'المفاصل الليفية (Fibrous Joints): عظام متصلة بأنسجة ليفية محكمة ولا تحتوي على تجويف مفصلي وغير متحركة (مثل دروز الجمجمة Sutures).',
@@ -1211,8 +1206,7 @@ export const ANATOMY_TOPICS: AnatomyTopic[] = [
       en: 'OSPE pinned muscle specimen asking: "Identify structure, state its primary action and motor nerve".'
     },
     highYieldSummary: 'Biceps = Elbow flexor & supinator | Triceps = Elbow extensor | Deltoid = Shoulder abductor (15-90°)',
-    imageUrl: 'https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=800&auto=format&fit=crop&q=80',
-    iconName: 'Activity',
+    imageUrl: '/images/anatomy/biceps_brachii_anterior_arm.png',    iconName: 'Activity',
 
     corePoints: [
       'العضلة ذات الرأسين العضدية (Biceps Brachii): في مقدمة الذراع، تثني المرفق وتستلقي الساعد (عصب Musculocutaneous).',
@@ -1413,8 +1407,7 @@ export const ANATOMY_TOPICS: AnatomyTopic[] = [
       en: 'Identifying brain lobes/ventricles on models and matching 12 Cranial Nerves to their sensory/motor roles.'
     },
     highYieldSummary: 'CNS = Brain + Spinal Cord | PNS = 12 Cranial + 31 Spinal Nerves | Cerebellum = Coordination & balance',
-    imageUrl: 'https://images.unsplash.com/photo-1559757175-5700dde675bc?w=800&auto=format&fit=crop&q=80',
-    iconName: 'Brain',
+    imageUrl: '/images/anatomy/brain_midsagittal_section.png',    iconName: 'Brain',
 
     corePoints: [
       'الجهاز العصبي المركزي (CNS): المخ (Brain) داخل الجمجمة، والحبل الشوكي (Spinal cord) داخل القناة الفقرية.',
@@ -1615,8 +1608,7 @@ export const ANATOMY_TOPICS: AnatomyTopic[] = [
       en: 'Spotting chambers, heart valves (Tricuspid vs Bicuspid/Mitral), Great vessels (Aorta, SVC, IVC), and coronary vessels.'
     },
     highYieldSummary: 'Left Ventricle = Thickest wall (pumps to whole body) | Mitral valve = Left side | Tricuspid = Right side',
-    imageUrl: 'https://images.unsplash.com/photo-1530026405186-ed1f139313f8?w=800&auto=format&fit=crop&q=80',
-    iconName: 'Heart',
+    imageUrl: '/images/anatomy/heart_anterior_anatomy.png',    iconName: 'Heart',
 
     corePoints: [
       'حجرات القلب الأربع: الأذين الأيمن (Right Atrium)، البطين الأيمن (Right Ventricle)، الأذين الأيسر (Left Atrium)، والبطين الأيسر (Left Ventricle).',
@@ -1831,8 +1823,7 @@ export const ANATOMY_TOPICS: AnatomyTopic[] = [
       en: 'Distinguishing right vs left lung lobes, bronchopulmonary segments, tracheal bifurcation (Carina), and diaphragm innervation.'
     },
     highYieldSummary: 'Right Lung = 3 Lobes (2 fissures) | Left Lung = 2 Lobes (Cardiac notch) | Trachea splits at T4/T5 (Carina)',
-    imageUrl: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=800&auto=format&fit=crop&q=80',
-    iconName: 'Wind',
+    imageUrl: '/images/anatomy/lungs_bronchial_tree.png',    iconName: 'Wind',
 
     corePoints: [
       'الرغامي (Trachea): أنبوب غضروفي مرن يبدأ أسفل الغضروف الحلقي (C6) وينقسم عند مستوى زاوية القص (T4/T5) إلى شعبتين رئيسيتين.',
@@ -2038,8 +2029,7 @@ export const ANATOMY_TOPICS: AnatomyTopic[] = [
       en: 'Identifying GI segments (Esophagus, Stomach, Duodenum, Jejunum, Ileum, Colon, Appendix), Liver lobes, and biliary ducts.'
     },
     highYieldSummary: 'Duodenum = C-loop around Pancreas | Liver = Largest internal gland | Appendix = McBurney point in RLQ',
-    imageUrl: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop&q=80',
-    iconName: 'Utensils',
+    imageUrl: '/images/anatomy/stomach_duodenum_anatomy.png',    iconName: 'Utensils',
 
     corePoints: [
       'المريء (Esophagus): أنبوب عضلي بطول 25 سم ينقل الطعام من البلعوم للمعدة عبر فتحة الحجاب الحاجز عند مستوى T10.',
@@ -2250,8 +2240,7 @@ export const ANATOMY_TOPICS: AnatomyTopic[] = [
       en: 'Identifying Renal cortex vs pyramids, renal hilum arrangement (Vein anterior, Artery middle, Pelvis/Ureter posterior: V-A-U), and bladder trigone.'
     },
     highYieldSummary: 'Right Kidney = Lower than left | Hilum arrangement = V-A-U (Vein, Artery, Ureter) | Nephron = Functional unit',
-    imageUrl: 'https://images.unsplash.com/photo-1559757175-5700dde675bc?w=800&auto=format&fit=crop&q=80',
-    iconName: 'Droplets',
+    imageUrl: '/images/anatomy/kidney_coronal_section.png',    iconName: 'Droplets',
 
     corePoints: [
       'الموقع خلف الصفاق (Retroperitoneal): الكليتان تقعان خلف الغشاء البريتوني مجاورتين للعمود الفقري بين T12 و L3.',
@@ -2462,8 +2451,7 @@ export const ANATOMY_TOPICS: AnatomyTopic[] = [
       en: 'Locating site of fertilization (Ampulla of fallopian tube), normal uterine orientation (Anteverted/Anteflexed), and prostate lobes.'
     },
     highYieldSummary: 'Fertilization site = Ampulla of Fallopian Tube | Normal Uterus = Anteverted & Anteflexed | Prostate = Below Bladder',
-    imageUrl: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&auto=format&fit=crop&q=80',
-    iconName: 'User',
+    imageUrl: '/images/anatomy/female_pelvis_anatomy.png',    iconName: 'User',
 
     corePoints: [
       'الرحم (Uterus): عضو عضلي سميك الجدار يشبه الكمثرى، يتكون من القاع (Fundus)، الجسم (Body)، والعنق (Cervix).',
@@ -2687,8 +2675,7 @@ export const ANATOMY_PRACTICAL_EXAMS: AnatomyExamConfig[] = [
     questions: [
       {
         id: 'q_ex_1',
-        image: 'https://images.unsplash.com/photo-1530497610245-94d3c16cda28?w=800&auto=format&fit=crop&q=80',
-        markerPosition: { x: 50, y: 35 },
+        image: '/images/anatomy/femur_anterior_osteology.png',        markerPosition: { x: 50, y: 35 },
         markerLabel: 'A',
         questionType: 'type_in',
         questionEn: 'Identify the highlighted longest and strongest bone in the human body.',
@@ -2706,8 +2693,7 @@ export const ANATOMY_PRACTICAL_EXAMS: AnatomyExamConfig[] = [
       },
       {
         id: 'q_ex_2',
-        image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&auto=format&fit=crop&q=80',
-        markerPosition: { x: 45, y: 50 },
+        image: '/images/anatomy/knee_tibia_menisci_cruciate.png',        markerPosition: { x: 45, y: 50 },
         markerLabel: 'B',
         questionType: 'multiple_choice',
         questionEn: 'Identify the weight-bearing medial bone of the leg indicated by the arrow.',
@@ -2726,8 +2712,7 @@ export const ANATOMY_PRACTICAL_EXAMS: AnatomyExamConfig[] = [
       },
       {
         id: 'q_ex_3',
-        image: 'https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=800&auto=format&fit=crop&q=80',
-        markerPosition: { x: 30, y: 25 },
+        image: '/images/anatomy/deltoid_shoulder_trapezius.png',        markerPosition: { x: 30, y: 25 },
         markerLabel: 'C',
         questionType: 'multiple_choice',
         questionEn: 'Identify the muscle covering the shoulder joint responsible for arm abduction from 15° to 90°.',
@@ -2751,8 +2736,7 @@ export const ANATOMY_PRACTICAL_EXAMS: AnatomyExamConfig[] = [
       },
       {
         id: 'q_ex_4',
-        image: 'https://images.unsplash.com/photo-1530026405186-ed1f139313f8?w=800&auto=format&fit=crop&q=80',
-        markerPosition: { x: 55, y: 60 },
+        image: '/images/anatomy/heart_anterior_anatomy.png',        markerPosition: { x: 55, y: 60 },
         markerLabel: 'D',
         questionType: 'multiple_choice',
         questionEn: 'Identify the heart chamber with the thickest muscular wall pumping oxygenated blood to the body.',
@@ -2776,8 +2760,7 @@ export const ANATOMY_PRACTICAL_EXAMS: AnatomyExamConfig[] = [
       },
       {
         id: 'q_ex_5',
-        image: 'https://images.unsplash.com/photo-1559757175-5700dde675bc?w=800&auto=format&fit=crop&q=80',
-        markerPosition: { x: 65, y: 55 },
+        image: '/images/anatomy/brain_midsagittal_section.png',        markerPosition: { x: 65, y: 55 },
         markerLabel: 'E',
         questionType: 'multiple_choice',
         questionEn: 'Identify the brain region located in the posterior cranial fossa responsible for balance and motor coordination.',
@@ -2801,8 +2784,7 @@ export const ANATOMY_PRACTICAL_EXAMS: AnatomyExamConfig[] = [
       },
       {
         id: 'q_ex_6',
-        image: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=800&auto=format&fit=crop&q=80',
-        markerPosition: { x: 60, y: 50 },
+        image: '/images/anatomy/lungs_bronchial_tree.png',        markerPosition: { x: 60, y: 50 },
         markerLabel: 'F',
         questionType: 'multiple_choice',
         questionEn: 'Which landmark on the anterior border of the LEFT lung accommodates the apex of the heart?',
@@ -2826,8 +2808,7 @@ export const ANATOMY_PRACTICAL_EXAMS: AnatomyExamConfig[] = [
       },
       {
         id: 'q_ex_7',
-        image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop&q=80',
-        markerPosition: { x: 38, y: 78 },
+        image: '/images/anatomy/stomach_duodenum_anatomy.png',        markerPosition: { x: 38, y: 78 },
         markerLabel: 'G',
         questionType: 'type_in',
         questionEn: 'Name the clinical landmark on the abdominal wall located 2/3 distance from umbilicus to ASIS representing the appendix.',
@@ -2845,8 +2826,7 @@ export const ANATOMY_PRACTICAL_EXAMS: AnatomyExamConfig[] = [
       },
       {
         id: 'q_ex_8',
-        image: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&auto=format&fit=crop&q=80',
-        markerPosition: { x: 68, y: 38 },
+        image: '/images/anatomy/female_pelvis_anatomy.png',        markerPosition: { x: 68, y: 38 },
         markerLabel: 'H',
         questionType: 'multiple_choice',
         questionEn: 'Where does normal fertilization of the human ovum by a spermatozoon occur?',
@@ -2870,8 +2850,7 @@ export const ANATOMY_PRACTICAL_EXAMS: AnatomyExamConfig[] = [
       },
       {
         id: 'q_ex_9',
-        image: 'https://images.unsplash.com/photo-1559757175-5700dde675bc?w=800&auto=format&fit=crop&q=80',
-        markerPosition: { x: 50, y: 50 },
+        image: '/images/anatomy/kidney_coronal_section.png',        markerPosition: { x: 50, y: 50 },
         markerLabel: 'I',
         questionType: 'multiple_choice',
         questionEn: 'From anterior to posterior, what is the arrangement of structures at the renal hilum?',
@@ -2895,8 +2874,7 @@ export const ANATOMY_PRACTICAL_EXAMS: AnatomyExamConfig[] = [
       },
       {
         id: 'q_ex_10',
-        image: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&auto=format&fit=crop&q=80',
-        markerPosition: { x: 30, y: 30 },
+        image: '/images/anatomy/knee_joint_interior_ligaments.png',        markerPosition: { x: 30, y: 30 },
         markerLabel: 'J',
         questionType: 'multiple_choice',
         questionEn: 'Which type of joint classification permits the greatest range of multiaxial motion (e.g. Shoulder & Hip)?',
@@ -2934,8 +2912,7 @@ export const ANATOMY_PRACTICAL_EXAMS: AnatomyExamConfig[] = [
     questions: [
       {
         id: 'q_bon_1',
-        image: 'https://images.unsplash.com/photo-1530497610245-94d3c16cda28?w=800&auto=format&fit=crop&q=80',
-        markerPosition: { x: 50, y: 20 },
+        image: '/images/anatomy/femur_anterior_osteology.png',        markerPosition: { x: 50, y: 20 },
         markerLabel: 'A',
         questionType: 'type_in',
         questionEn: 'Identify the longest bone in the human body shown in the specimen.',
@@ -2953,8 +2930,7 @@ export const ANATOMY_PRACTICAL_EXAMS: AnatomyExamConfig[] = [
       },
       {
         id: 'q_bon_2',
-        image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&auto=format&fit=crop&q=80',
-        markerPosition: { x: 45, y: 50 },
+        image: '/images/anatomy/knee_tibia_menisci_cruciate.png',        markerPosition: { x: 45, y: 50 },
         markerLabel: 'B',
         questionType: 'multiple_choice',
         questionEn: 'Identify the medial weight-bearing bone of the leg.',
@@ -2973,8 +2949,7 @@ export const ANATOMY_PRACTICAL_EXAMS: AnatomyExamConfig[] = [
       },
       {
         id: 'q_bon_3',
-        image: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&auto=format&fit=crop&q=80',
-        markerPosition: { x: 50, y: 40 },
+        image: '/images/anatomy/humerus_anterior_osteology.png',        markerPosition: { x: 50, y: 40 },
         markerLabel: 'C',
         questionType: 'type_in',
         questionEn: 'Identify the single long bone of the arm (Brachium).',
@@ -2992,8 +2967,7 @@ export const ANATOMY_PRACTICAL_EXAMS: AnatomyExamConfig[] = [
       },
       {
         id: 'q_bon_4',
-        image: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?w=800&auto=format&fit=crop&q=80',
-        markerPosition: { x: 45, y: 35 },
+        image: '/images/anatomy/deltoid_shoulder_trapezius.png',        markerPosition: { x: 45, y: 35 },
         markerLabel: 'D',
         questionType: 'multiple_choice',
         questionEn: 'Identify the triangular flat bone on the posterolateral thorax.',
@@ -3026,8 +3000,7 @@ export const ANATOMY_PRACTICAL_EXAMS: AnatomyExamConfig[] = [
     questions: [
       {
         id: 'q_mus_e1',
-        image: 'https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=800&auto=format&fit=crop&q=80',
-        markerPosition: { x: 30, y: 25 },
+        image: '/images/anatomy/deltoid_shoulder_trapezius.png',        markerPosition: { x: 30, y: 25 },
         markerLabel: 'A',
         questionType: 'multiple_choice',
         questionEn: 'Which nerve innervates the Deltoid muscle of the shoulder?',
@@ -3046,8 +3019,7 @@ export const ANATOMY_PRACTICAL_EXAMS: AnatomyExamConfig[] = [
       },
       {
         id: 'q_mus_e2',
-        image: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&auto=format&fit=crop&q=80',
-        markerPosition: { x: 35, y: 40 },
+        image: '/images/anatomy/biceps_brachii_anterior_arm.png',        markerPosition: { x: 35, y: 40 },
         markerLabel: 'B',
         questionType: 'type_in',
         questionEn: 'Name the anterior arm muscle that acts as a powerful flexor of the elbow and supinator of the forearm.',
@@ -3065,8 +3037,7 @@ export const ANATOMY_PRACTICAL_EXAMS: AnatomyExamConfig[] = [
       },
       {
         id: 'q_mus_e3',
-        image: 'https://images.unsplash.com/photo-1530497610245-94d3c16cda28?w=800&auto=format&fit=crop&q=80',
-        markerPosition: { x: 50, y: 55 },
+        image: '/images/anatomy/quadriceps_femoris_anterior_thigh.png',        markerPosition: { x: 50, y: 55 },
         markerLabel: 'C',
         questionType: 'multiple_choice',
         questionEn: 'Which powerful muscle group in the anterior compartment of the thigh extends the knee joint?',
@@ -3104,8 +3075,7 @@ export const ANATOMY_PRACTICAL_EXAMS: AnatomyExamConfig[] = [
     questions: [
       {
         id: 'q_org_1',
-        image: 'https://images.unsplash.com/photo-1530026405186-ed1f139313f8?w=800&auto=format&fit=crop&q=80',
-        markerPosition: { x: 55, y: 60 },
+        image: '/images/anatomy/heart_anterior_anatomy.png',        markerPosition: { x: 55, y: 60 },
         markerLabel: 'A',
         questionType: 'multiple_choice',
         questionEn: 'Which heart valve is situated between the Left Atrium and the Left Ventricle?',
@@ -3129,8 +3099,7 @@ export const ANATOMY_PRACTICAL_EXAMS: AnatomyExamConfig[] = [
       },
       {
         id: 'q_org_2',
-        image: 'https://images.unsplash.com/photo-1559757175-5700dde675bc?w=800&auto=format&fit=crop&q=80',
-        markerPosition: { x: 75, y: 40 },
+        image: '/images/anatomy/brain_midsagittal_section.png',        markerPosition: { x: 75, y: 40 },
         markerLabel: 'B',
         questionType: 'multiple_choice',
         questionEn: 'Which cerebral lobe contains the primary visual cortex responsible for sight?',
@@ -3168,8 +3137,7 @@ export const ANATOMY_PRACTICAL_EXAMS: AnatomyExamConfig[] = [
     questions: [
       {
         id: 'q_pln_1',
-        image: 'https://images.unsplash.com/photo-1530497610245-94d3c16cda28?w=800&auto=format&fit=crop&q=80',
-        markerPosition: { x: 50, y: 30 },
+        image: '/images/anatomy/anatomical_planes_diagram.svg',        markerPosition: { x: 50, y: 30 },
         markerLabel: 'A',
         questionType: 'multiple_choice',
         questionEn: 'Which anatomical plane divides the human body into Anterior (front) and Posterior (back) halves?',
@@ -3193,8 +3161,7 @@ export const ANATOMY_PRACTICAL_EXAMS: AnatomyExamConfig[] = [
       },
       {
         id: 'q_pln_2',
-        image: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&auto=format&fit=crop&q=80',
-        markerPosition: { x: 30, y: 50 },
+        image: '/images/anatomy/directional_terms_diagram.svg',        markerPosition: { x: 30, y: 50 },
         markerLabel: 'B',
         questionType: 'multiple_choice',
         questionEn: 'In anatomical position with palms forward, the THUMB is __________ to the little finger.',

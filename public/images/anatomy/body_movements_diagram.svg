@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%">
+  <rect width="800" height="600" fill="#0B1120"/>
+  <text x="400" y="45" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="#38BDF8" text-anchor="middle">PRIMARY BODY MOVEMENTS &amp; JOINT ACTIONS</text>
+  <text x="400" y="70" font-family="Arial, sans-serif" font-size="14" fill="#94A3B8" text-anchor="middle">Biomechanics of Skeletal Articulations</text>
+
+  <!-- BOX 1: FLEXION vs EXTENSION -->
+  <g transform="translate(60, 110)">
+    <rect width="320" height="210" rx="10" fill="#1E293B" stroke="#3B82F6" stroke-width="2"/>
+    <text x="160" y="32" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#60A5FA" text-anchor="middle">FLEXION vs EXTENSION</text>
+    <text x="160" y="55" font-family="Arial, sans-serif" font-size="12" fill="#94A3B8" text-anchor="middle">Elbow / Knee Sagittal Plane Actions</text>
+    <!-- Elbow joint schematics -->
+    <circle cx="160" cy="120" r="8" fill="#F59E0B"/>
+    <line x1="160" y1="120" x2="160" y2="70" stroke="#E2E8F0" stroke-width="6" stroke-linecap="round"/>
+    <line x1="160" y1="120" x2="220" y2="120" stroke="#38BDF8" stroke-width="6" stroke-linecap="round"/>
+    <!-- Flexion arrow -->
+    <path d="M 210,110 A 50 50 0 0 0 170,80" fill="none" stroke="#F43F5E" stroke-width="3" stroke-dasharray="4,2"/>
+    <polygon points="166,74 165,85 176,82" fill="#F43F5E"/>
+    <text x="215" y="90" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#F43F5E">Flexion (angle decreases)</text>
+    <text x="160" y="195" font-family="Arial, sans-serif" font-size="11" fill="#CBD5E1" text-anchor="middle">Extension increases angle back to 180°</text>
+  </g>
+
+  <!-- BOX 2: ABDUCTION vs ADDUCTION -->
+  <g transform="translate(420, 110)">
+    <rect width="320" height="210" rx="10" fill="#1E293B" stroke="#10B981" stroke-width="2"/>
+    <text x="160" y="32" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#34D399" text-anchor="middle">ABDUCTION vs ADDUCTION</text>
+    <text x="160" y="55" font-family="Arial, sans-serif" font-size="12" fill="#94A3B8" text-anchor="middle">Movement relative to Midline (Coronal)</text>
+    <!-- Center midline -->
+    <line x1="160" y1="70" x2="160" y2="175" stroke="#64748B" stroke-width="2" stroke-dasharray="4,4"/>
+    <!-- Limb -->
+    <line x1="160" y1="85" x2="225" y2="155" stroke="#34D399" stroke-width="6" stroke-linecap="round"/>
+    <text x="240" y="130" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#10B981">AB-duction →</text>
+    <text x="240" y="146" font-family="Arial, sans-serif" font-size="10" fill="#94A3B8">(away from body)</text>
+    <text x="80" y="130" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#06B6D4">← AD-duction</text>
+    <text x="80" y="146" font-family="Arial, sans-serif" font-size="10" fill="#94A3B8">(adding to body)</text>
+    <text x="160" y="195" font-family="Arial, sans-serif" font-size="11" fill="#CBD5E1" text-anchor="middle">Deltoid = Prime abductor (15°-90°)</text>
+  </g>
+
+  <!-- BOX 3: SUPINATION vs PRONATION -->
+  <g transform="translate(240, 350)">
+    <rect width="320" height="210" rx="10" fill="#1E293B" stroke="#A855F7" stroke-width="2"/>
+    <text x="160" y="32" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#C084FC" text-anchor="middle">SUPINATION vs PRONATION</text>
+    <text x="160" y="55" font-family="Arial, sans-serif" font-size="12" fill="#94A3B8" text-anchor="middle">Forearm Rotational Biomechanics</text>
+    <g transform="translate(160, 115)">
+      <!-- Radius & Ulna schematic -->
+      <line x1="-35" y1="-30" x2="-35" y2="40" stroke="#CBD5E1" stroke-width="5" stroke-linecap="round"/>
+      <text x="-40" y="55" font-family="Arial, sans-serif" font-size="10" fill="#94A3B8" text-anchor="middle">Ulna</text>
+      <!-- Supination: Parallel -->
+      <line x1="35" y1="-30" x2="35" y2="40" stroke="#C084FC" stroke-width="5" stroke-linecap="round"/>
+      <text x="35" y="55" font-family="Arial, sans-serif" font-size="10" fill="#94A3B8" text-anchor="middle">Radius</text>
+    </g>
+    <text x="160" y="180" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#C084FC" text-anchor="middle">Supination: Palm up (holds soup!)</text>
+    <text x="160" y="198" font-family="Arial, sans-serif" font-size="11" fill="#94A3B8" text-anchor="middle">Pronation: Radius crosses over Ulna (palm down)</text>
+  </g>
+</svg>

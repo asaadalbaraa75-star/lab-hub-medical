@@ -139,6 +139,7 @@ const MUSCLE_DATABASE: Record<string, MuscleData> = {
     nameEn: 'Biceps Brachii',
     nameAr: 'العضلة ذات الرأسين العضدية',
     latinName: 'Musculus biceps brachii',
+    imageSrc: '/images/anatomy/biceps_brachii_anterior_arm.png',
     origin: [
       'Short Head: Apex of Coracoid process of scapula',
       'Long Head: Supraglenoid tubercle of scapula'
@@ -191,6 +192,7 @@ const MUSCLE_DATABASE: Record<string, MuscleData> = {
     nameEn: 'Deltoid',
     nameAr: 'العضلة الدالية',
     latinName: 'Musculus deltoideus',
+    imageSrc: '/images/anatomy/deltoid_shoulder_trapezius.png',
     origin: [
       'Anterior (Clavicular): Lateral 1/3 of clavicle',
       'Middle (Acromial): Acromion process',
@@ -235,6 +237,7 @@ const MUSCLE_DATABASE: Record<string, MuscleData> = {
     nameEn: 'Quadriceps Femoris',
     nameAr: 'العضلة رباعية الرؤوس الفخذية',
     latinName: 'Musculus quadriceps femoris',
+    imageSrc: '/images/anatomy/quadriceps_femoris_anterior_thigh.png',
     origin: [
       'Rectus Femoris: Anterior inferior iliac spine (AIIS)',
       'Vastus Lateralis, Medialis, Intermedius: Femoral shaft'
