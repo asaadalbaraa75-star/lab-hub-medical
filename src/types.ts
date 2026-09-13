@@ -427,6 +427,8 @@ export interface ExamQuestion {
   specimenCategory: string; // e.g. "Osteology", "Epithelia", "Carbohydrate Tests"
   imageUrl: string;
   magnificationOrView?: string;
+  markerPosition?: { x: number; y: number };
+  markerLabel?: string;
   options: string[];
   correctAnswer: string; // matches one option or typed text
   correctIndex?: number;

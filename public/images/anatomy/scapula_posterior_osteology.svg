@@ -1,0 +1,172 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 650" width="100%" height="100%" style="background-color: #0b1120;">
+  <defs>
+    <!-- Bone gradient and shading -->
+    <linearGradient id="scapulaBoneGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#fef3c7" />
+      <stop offset="25%" stopColor="#fde68a" />
+      <stop offset="50%" stopColor="#f59e0b" stopOpacity="0.85" />
+      <stop offset="80%" stopColor="#d97706" stopOpacity="0.9" />
+      <stop offset="100%" stopColor="#b45309" />
+    </linearGradient>
+
+    <linearGradient id="spineRidgeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stopColor="#fffbeb" />
+      <stop offset="50%" stopColor="#fef08a" />
+      <stop offset="100%" stopColor="#ca8a04" />
+    </linearGradient>
+
+    <linearGradient id="glenoidGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stopColor="#fde047" />
+      <stop offset="100%" stopColor="#a16207" />
+    </linearGradient>
+
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="4" dy="8" stdDeviation="6" flood-color="#000" flood-opacity="0.6" />
+    </filter>
+  </defs>
+
+  <!-- Title Badge (Discreet Academic Header) -->
+  <g id="specimen-header" opacity="0.9">
+    <rect x="30" y="24" width="340" height="42" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+    <text x="45" y="45" fill="#38bdf8" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="bold" letter-spacing="1">
+      OSTEOLOGY SPECIMEN: SCAPULA
+    </text>
+    <text x="45" y="58" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="10">
+      Right Scapula (Shoulder Blade) — Posterior View
+    </text>
+  </g>
+
+  <!-- Bone Body (Main Triangular Plate: Infraspinous and Supraspinous fossae) -->
+  <g id="scapula-bone" filter="url(#shadow)">
+    <!-- Main Triangular Body -->
+    <!-- Superior border, Medial (Vertebral) border, Inferior angle, Lateral (Axillary) border, Glenoid neck -->
+    <path d="
+      M 480 130 
+      C 430 145, 340 160, 270 175
+      C 260 178, 250 190, 252 205
+      C 256 260, 265 370, 285 450
+      C 292 480, 305 520, 335 565
+      C 345 580, 355 585, 365 580
+      C 390 545, 470 420, 520 320
+      C 545 270, 565 220, 570 190
+      C 575 160, 540 140, 510 135
+      Z" 
+      fill="url(#scapulaBoneGrad)" 
+      stroke="#78350f" 
+      stroke-width="3" 
+    />
+
+    <!-- Infraspinous Fossa Concavity & Texture -->
+    <path d="
+      M 285 240
+      C 330 250, 420 280, 490 320
+      C 440 410, 380 490, 345 540
+      C 320 490, 290 390, 275 280
+      Z"
+      fill="#b45309"
+      opacity="0.25"
+    />
+
+    <!-- Medial Border Ridge Details -->
+    <path d="M 260 210 Q 275 360 335 560" stroke="#78350f" stroke-width="2" fill="none" opacity="0.6" />
+    <path d="M 265 220 Q 280 365 340 550" stroke="#fef08a" stroke-width="1" fill="none" opacity="0.4" />
+
+    <!-- Lateral (Axillary) Thickened Border (Pillar of Scapula) -->
+    <path d="M 550 210 C 530 270, 460 410, 355 570" stroke="#78350f" stroke-width="4" fill="none" opacity="0.7" />
+    <path d="M 545 215 C 525 275, 455 415, 352 565" stroke="#fef08a" stroke-width="1.5" fill="none" opacity="0.5" />
+
+    <!-- Spine of the Scapula (Spina Scapulae) -->
+    <!-- Originates at triangular smooth surface at vertebral border and crests out laterally into Acromion -->
+    <path d="
+      M 260 215
+      C 320 215, 430 205, 520 185
+      C 560 175, 600 160, 635 130
+      C 645 120, 640 105, 620 100
+      C 590 95, 550 115, 510 135
+      C 430 165, 340 180, 260 185
+      Z"
+      fill="url(#spineRidgeGrad)"
+      stroke="#78350f"
+      stroke-width="2.5"
+    />
+
+    <!-- Spine Upper Shelf / Crest Highlight -->
+    <path d="M 270 190 Q 400 185 530 155 Q 585 135 630 112" stroke="#fff" stroke-width="2" fill="none" opacity="0.8" />
+    <path d="M 265 210 Q 390 205 520 180" stroke="#78350f" stroke-width="2" fill="none" opacity="0.5" />
+
+    <!-- Supraspinous Fossa (Above the spine) -->
+    <path d="
+      M 270 175
+      C 340 160, 430 145, 480 130
+      C 450 120, 390 125, 340 135
+      C 300 145, 280 160, 270 175
+      Z"
+      fill="#b45309"
+      opacity="0.3"
+    />
+
+    <!-- Acromion Process (Lateral expanded end of spine overhang) -->
+    <path d="
+      M 615 105
+      C 645 95, 675 110, 685 135
+      C 690 150, 675 165, 650 165
+      C 620 165, 595 160, 580 175
+      C 595 150, 605 120, 615 105
+      Z"
+      fill="url(#spineRidgeGrad)"
+      stroke="#78350f"
+      stroke-width="2.5"
+    />
+    <!-- Acromial articular facet for clavicle -->
+    <ellipse cx="660" cy="140" rx="14" ry="7" fill="#fef9c3" stroke="#854d0e" stroke-width="1.5" />
+
+    <!-- Coracoid Process (Beak-like projection directed anterolaterally) -->
+    <path d="
+      M 545 130
+      C 560 100, 585 85, 605 95
+      C 615 100, 610 115, 595 120
+      C 575 128, 555 135, 545 145
+      Z"
+      fill="#fde68a"
+      stroke="#78350f"
+      stroke-width="2"
+    />
+
+    <!-- Glenoid Cavity & Neck (Articulates with Head of Humerus) -->
+    <path d="
+      M 550 160
+      C 580 165, 610 185, 610 215
+      C 610 245, 580 270, 555 260
+      C 540 240, 540 180, 550 160
+      Z"
+      fill="url(#glenoidGrad)"
+      stroke="#78350f"
+      stroke-width="2.5"
+    />
+    <!-- Supraglenoid and infraglenoid tubercles -->
+    <circle cx="560" cy="165" r="4" fill="#78350f" opacity="0.6" />
+    <circle cx="565" cy="255" r="4" fill="#78350f" opacity="0.6" />
+
+    <!-- Anatomical Landmarks Shading Lines (Trabecular striations) -->
+    <line x1="320" y1="300" x2="380" y2="420" stroke="#78350f" stroke-width="1" opacity="0.3" stroke-dasharray="3 3" />
+    <line x1="350" y1="280" x2="420" y2="390" stroke="#78350f" stroke-width="1" opacity="0.3" stroke-dasharray="4 4" />
+    <line x1="380" y1="270" x2="450" y2="360" stroke="#78350f" stroke-width="1" opacity="0.3" stroke-dasharray="3 3" />
+  </g>
+
+  <!-- Neutral Practical Exam Marker: ① over the Scapular Body -->
+  <g id="practical-exam-marker" transform="translate(410, 360)">
+    <!-- Subtle target crosshair -->
+    <circle cx="0" cy="0" r="26" fill="none" stroke="#ef4444" stroke-width="2" stroke-dasharray="4 3" opacity="0.8">
+      <animate attributeName="r" values="24;28;24" dur="2.5s" repeatCount="indefinite" />
+    </circle>
+    <circle cx="0" cy="0" r="16" fill="#dc2626" stroke="#ffffff" stroke-width="2.5" />
+    <text x="0" y="5.5" fill="#ffffff" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="900" text-anchor="middle">
+      ①
+    </text>
+  </g>
+
+  <!-- Clean Bottom Watermark -->
+  <text x="400" y="625" fill="#475569" font-family="system-ui, -apple-system, sans-serif" font-size="11" text-anchor="middle" font-weight="500">
+    LAB HUB Practical OSPE Station • Authentic Human Osteology Specimen
+  </text>
+</svg>

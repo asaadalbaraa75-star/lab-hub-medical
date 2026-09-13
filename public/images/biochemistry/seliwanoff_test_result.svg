@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%" style="background-color: #0b1120;">
+  <defs>
+    <!-- Deep Cherry-Red / Ruby-Red Gradient for Fructose -->
+    <linearGradient id="cherryRedGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stopColor="#881337" />
+      <stop offset="40%" stopColor="#e11d48" />
+      <stop offset="70%" stopColor="#be123c" />
+      <stop offset="100%" stopColor="#4c0519" />
+    </linearGradient>
+
+    <!-- Faint Pale Pink / Colorless for Aldose / Glucose -->
+    <linearGradient id="faintPinkGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stopColor="#fdf2f8" stopOpacity="0.4" />
+      <stop offset="50%" stopColor="#fce7f3" stopOpacity="0.3" />
+      <stop offset="100%" stopColor="#fbcfe8" stopOpacity="0.4" />
+    </linearGradient>
+
+    <linearGradient id="glassReflect" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stopColor="#ffffff" stopOpacity="0.3" />
+      <stop offset="20%" stopColor="#ffffff" stopOpacity="0.05" />
+      <stop offset="80%" stopColor="#ffffff" stopOpacity="0.05" />
+      <stop offset="100%" stopColor="#ffffff" stopOpacity="0.25" />
+    </linearGradient>
+  </defs>
+
+  <!-- Station Header -->
+  <g id="header">
+    <rect x="30" y="24" width="500" height="46" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+    <text x="45" y="46" fill="#fb7185" font-family="system-ui, sans-serif" font-size="13" font-weight="bold" letter-spacing="1">
+      BIOCHEMISTRY PRACTICAL OSPE • KETOSE DIFFERENTIATION
+    </text>
+    <text x="45" y="60" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="11">
+      Seliwanoff's Test (Resorcinol in 3M HCl — Reaction within 60 seconds)
+    </text>
+  </g>
+
+  <!-- Test Tube Rack -->
+  <g id="rack" opacity="0.9">
+    <rect x="140" y="380" width="520" height="24" rx="4" fill="#334155" />
+    <rect x="140" y="460" width="520" height="20" rx="4" fill="#1e293b" stroke="#475569" />
+    <rect x="160" y="404" width="16" height="56" fill="#475569" />
+    <rect x="624" y="404" width="16" height="56" fill="#475569" />
+  </g>
+
+  <!-- TUBE 1: Ketohexose (Fructose) -> Rapid Cherry Red (< 60s) -->
+  <g id="tube-fructose" transform="translate(260, 110)">
+    <rect x="0" y="0" width="60" height="340" rx="30" fill="none" stroke="#94a3b8" stroke-width="2.5" />
+    <!-- Vibrant Cherry Red Liquid -->
+    <path d="M 3 130 L 57 130 L 57 310 A 27 27 0 0 1 3 310 Z" fill="url(#cherryRedGrad)" />
+    <ellipse cx="30" cy="130" rx="27" ry="4.5" fill="#be123c" />
+    <ellipse cx="30" cy="130" rx="27" ry="4.5" fill="none" stroke="#fecdd3" stroke-width="1" />
+    <rect x="0" y="0" width="60" height="340" rx="30" fill="url(#glassReflect)" />
+
+    <!-- Label -->
+    <rect x="-16" y="385" width="92" height="42" rx="6" fill="#0f172a" stroke="#e11d48" stroke-width="1.5" />
+    <text x="30" y="403" fill="#fecdd3" font-family="system-ui, sans-serif" font-size="11" font-weight="bold" text-anchor="middle">
+      Sample 1: Fructose
+    </text>
+    <text x="30" y="418" fill="#fb7185" font-family="monospace" font-size="9" font-weight="bold" text-anchor="middle">
+      Cherry-Red (&lt; 1 min)
+    </text>
+
+    <!-- Neutral Marker ① -->
+    <g transform="translate(30, 210)">
+      <circle cx="0" cy="0" r="22" fill="none" stroke="#ef4444" stroke-width="2" stroke-dasharray="3 3">
+        <animate attributeName="r" values="20;24;20" dur="2s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="0" cy="0" r="14" fill="#dc2626" stroke="#ffffff" stroke-width="2" />
+      <text x="0" y="5" fill="#ffffff" font-family="system-ui, sans-serif" font-size="12" font-weight="bold" text-anchor="middle">
+        ①
+      </text>
+    </g>
+  </g>
+
+  <!-- TUBE 2: Aldohexose (Glucose) -> Negative / Faint Pink at 1 min -->
+  <g id="tube-glucose" transform="translate(480, 110)">
+    <rect x="0" y="0" width="60" height="340" rx="30" fill="none" stroke="#94a3b8" stroke-width="2.5" />
+    <!-- Faint pale solution -->
+    <path d="M 3 130 L 57 130 L 57 310 A 27 27 0 0 1 3 310 Z" fill="url(#faintPinkGrad)" />
+    <ellipse cx="30" cy="130" rx="27" ry="4.5" fill="#fce7f3" opacity="0.4" />
+    <ellipse cx="30" cy="130" rx="27" ry="4.5" fill="none" stroke="#ffffff" stroke-width="1" />
+    <rect x="0" y="0" width="60" height="340" rx="30" fill="url(#glassReflect)" />
+
+    <!-- Label -->
+    <rect x="-16" y="385" width="92" height="42" rx="6" fill="#0f172a" stroke="#475569" stroke-width="1.5" />
+    <text x="30" y="403" fill="#cbd5e1" font-family="system-ui, sans-serif" font-size="11" font-weight="bold" text-anchor="middle">
+      Sample 2: Glucose
+    </text>
+    <text x="30" y="418" fill="#94a3b8" font-family="monospace" font-size="9" text-anchor="middle">
+      No Color / Pale
+    </text>
+  </g>
+
+  <!-- Explanation footer -->
+  <text x="400" y="565" fill="#64748b" font-family="system-ui, sans-serif" font-size="11" text-anchor="middle">
+    Ketoses dehydrate rapidly forming 5-hydroxymethylfurfural which condenses with resorcinol to yield a red chromophore.
+  </text>
+</svg>

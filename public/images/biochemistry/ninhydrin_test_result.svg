@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%" style="background-color: #0b1120;">
+  <defs>
+    <!-- Ruhemann's Purple Gradient -->
+    <linearGradient id="ruhemannGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stopColor="#4c1d95" />
+      <stop offset="40%" stopColor="#7c3aed" />
+      <stop offset="80%" stopColor="#6d28d9" />
+      <stop offset="100%" stopColor="#2e1065" />
+    </linearGradient>
+
+    <!-- Proline Yellow Gradient -->
+    <linearGradient id="prolineYellowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stopColor="#eab308" />
+      <stop offset="40%" stopColor="#facc15" />
+      <stop offset="80%" stopColor="#ca8a04" />
+      <stop offset="100%" stopColor="#a16207" />
+    </linearGradient>
+
+    <linearGradient id="glassReflect" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stopColor="#ffffff" stopOpacity="0.3" />
+      <stop offset="20%" stopColor="#ffffff" stopOpacity="0.05" />
+      <stop offset="80%" stopColor="#ffffff" stopOpacity="0.05" />
+      <stop offset="100%" stopColor="#ffffff" stopOpacity="0.25" />
+    </linearGradient>
+  </defs>
+
+  <!-- Station Header -->
+  <g id="header">
+    <rect x="30" y="24" width="480" height="46" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+    <text x="45" y="46" fill="#fbbf24" font-family="system-ui, sans-serif" font-size="13" font-weight="bold" letter-spacing="1">
+      BIOCHEMISTRY PRACTICAL OSPE • AMINO ACID REACTIONS
+    </text>
+    <text x="45" y="60" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="11">
+      Ninhydrin Test: Primary α-Amino Acids vs Secondary Amino Acid (Proline)
+    </text>
+  </g>
+
+  <!-- Test Tube Rack -->
+  <g id="rack" opacity="0.9">
+    <rect x="140" y="380" width="520" height="24" rx="4" fill="#334155" />
+    <rect x="140" y="460" width="520" height="20" rx="4" fill="#1e293b" stroke="#475569" />
+    <rect x="160" y="404" width="16" height="56" fill="#475569" />
+    <rect x="624" y="404" width="16" height="56" fill="#475569" />
+  </g>
+
+  <!-- TUBE 1: Primary Amino Acid (Glycine/Alanine) -> Ruhemann's Purple -->
+  <g id="tube-glycine" transform="translate(260, 110)">
+    <rect x="0" y="0" width="60" height="340" rx="30" fill="none" stroke="#94a3b8" stroke-width="2.5" />
+    <path d="M 3 130 L 57 130 L 57 310 A 27 27 0 0 1 3 310 Z" fill="url(#ruhemannGrad)" />
+    <ellipse cx="30" cy="130" rx="27" ry="4.5" fill="#6d28d9" />
+    <ellipse cx="30" cy="130" rx="27" ry="4.5" fill="none" stroke="#ddd6fe" stroke-width="1" />
+    <rect x="0" y="0" width="60" height="340" rx="30" fill="url(#glassReflect)" />
+
+    <!-- Label -->
+    <rect x="-16" y="385" width="92" height="42" rx="6" fill="#0f172a" stroke="#475569" stroke-width="1.5" />
+    <text x="30" y="403" fill="#cbd5e1" font-family="system-ui, sans-serif" font-size="11" font-weight="bold" text-anchor="middle">
+      Sample 1: Glycine
+    </text>
+    <text x="30" y="418" fill="#c084fc" font-family="monospace" font-size="9" text-anchor="middle">
+      Ruhemann's Purple
+    </text>
+  </g>
+
+  <!-- TUBE 2: Imino Acid (Proline) -> Distinct Yellow Color -->
+  <g id="tube-proline" transform="translate(480, 110)">
+    <rect x="0" y="0" width="60" height="340" rx="30" fill="none" stroke="#94a3b8" stroke-width="2.5" />
+    <path d="M 3 130 L 57 130 L 57 310 A 27 27 0 0 1 3 310 Z" fill="url(#prolineYellowGrad)" />
+    <ellipse cx="30" cy="130" rx="27" ry="4.5" fill="#eab308" />
+    <ellipse cx="30" cy="130" rx="27" ry="4.5" fill="none" stroke="#fef08a" stroke-width="1" />
+    <rect x="0" y="0" width="60" height="340" rx="30" fill="url(#glassReflect)" />
+
+    <!-- Label -->
+    <rect x="-16" y="385" width="92" height="42" rx="6" fill="#0f172a" stroke="#eab308" stroke-width="1.5" />
+    <text x="30" y="403" fill="#fef08a" font-family="system-ui, sans-serif" font-size="11" font-weight="bold" text-anchor="middle">
+      Sample 2: Unknown
+    </text>
+    <text x="30" y="418" fill="#fde047" font-family="monospace" font-size="9" font-weight="bold" text-anchor="middle">
+      Distinct Yellow
+    </text>
+
+    <!-- Neutral Marker ① -->
+    <g transform="translate(30, 210)">
+      <circle cx="0" cy="0" r="22" fill="none" stroke="#ef4444" stroke-width="2" stroke-dasharray="3 3">
+        <animate attributeName="r" values="20;24;20" dur="2s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="0" cy="0" r="14" fill="#dc2626" stroke="#ffffff" stroke-width="2" />
+      <text x="0" y="5" fill="#ffffff" font-family="system-ui, sans-serif" font-size="12" font-weight="bold" text-anchor="middle">
+        ①
+      </text>
+    </g>
+  </g>
+
+  <!-- Explanation footer -->
+  <text x="400" y="565" fill="#64748b" font-family="system-ui, sans-serif" font-size="11" text-anchor="middle">
+    Proline and hydroxyproline possess a secondary pyrrolidine amino ring, preventing the formation of Ruhemann's purple.
+  </text>
+</svg>

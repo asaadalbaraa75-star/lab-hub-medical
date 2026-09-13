@@ -364,10 +364,29 @@ export const PracticalExamRunner: React.FC<PracticalExamRunnerProps> = ({
               onClick={() => setIsZoomed(!isZoomed)}
               loading="eager"
             />
+
+            {/* Small Neutral OSPE Pin Marker (e.g. ① or ●) - Never reveals the answer */}
+            {currentQuestion.markerPosition && (
+              <div
+                className="absolute z-20 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                style={{
+                  left: `${currentQuestion.markerPosition.x}%`,
+                  top: `${currentQuestion.markerPosition.y}%`
+                }}
+              >
+                <div className="relative flex items-center justify-center">
+                  <span className="absolute animate-ping inline-flex h-7 w-7 rounded-full bg-rose-400 opacity-75" />
+                  <div className="relative w-7 h-7 rounded-full bg-rose-600 text-white font-mono font-bold text-xs flex items-center justify-center border-2 border-white shadow-xl">
+                    {currentQuestion.markerLabel || '①'}
+                  </div>
+                </div>
+              </div>
+            )}
+
             <button
               type="button"
               onClick={() => setIsZoomed(!isZoomed)}
-              className="absolute bottom-3 right-3 p-2 bg-slate-900/80 hover:bg-slate-900 text-white rounded-lg backdrop-blur-xs text-xs flex items-center gap-1 shadow-md"
+              className="absolute bottom-3 right-3 p-2 bg-slate-900/80 hover:bg-slate-900 text-white rounded-lg backdrop-blur-xs text-xs flex items-center gap-1 shadow-md z-30"
               title="تكبير / تصغير العينة"
             >
               <Maximize2 className="w-4 h-4" />

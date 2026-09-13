@@ -2967,7 +2967,8 @@ export const ANATOMY_PRACTICAL_EXAMS: AnatomyExamConfig[] = [
       },
       {
         id: 'q_bon_4',
-        image: '/images/anatomy/deltoid_shoulder_trapezius.png',        markerPosition: { x: 45, y: 35 },
+        image: '/images/anatomy/scapula_posterior_osteology.svg',
+        markerPosition: { x: 50, y: 55 },
         markerLabel: 'D',
         questionType: 'multiple_choice',
         questionEn: 'Identify the triangular flat bone on the posterolateral thorax.',

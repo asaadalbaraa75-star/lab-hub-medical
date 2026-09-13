@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%" style="background-color: #0b1120;">
+  <defs>
+    <!-- Characteristic Blue-Green / Turquoise Complex for Pentose -->
+    <linearGradient id="blueGreenGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stopColor="#0f766e" />
+      <stop offset="40%" stopColor="#14b8a6" />
+      <stop offset="80%" stopColor="#0d9488" />
+      <stop offset="100%" stopColor="#042f2e" />
+    </linearGradient>
+
+    <!-- Muddy Olive/Brown Complex for Hexose -->
+    <linearGradient id="muddyBrownGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stopColor="#713f12" />
+      <stop offset="40%" stopColor="#a16207" />
+      <stop offset="80%" stopColor="#854d0e" />
+      <stop offset="100%" stopColor="#422006" />
+    </linearGradient>
+
+    <linearGradient id="glassReflect" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stopColor="#ffffff" stopOpacity="0.3" />
+      <stop offset="20%" stopColor="#ffffff" stopOpacity="0.05" />
+      <stop offset="80%" stopColor="#ffffff" stopOpacity="0.05" />
+      <stop offset="100%" stopColor="#ffffff" stopOpacity="0.25" />
+    </linearGradient>
+  </defs>
+
+  <!-- Station Header -->
+  <g id="header">
+    <rect x="30" y="24" width="480" height="46" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+    <text x="45" y="46" fill="#2dd4bf" font-family="system-ui, sans-serif" font-size="13" font-weight="bold" letter-spacing="1">
+      BIOCHEMISTRY PRACTICAL OSPE • PENTOSE DETECTION
+    </text>
+    <text x="45" y="60" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="11">
+      Bial's Test (Orcinol + FeCl₃ in Conc. HCl — Blue-Green Condensation Complex)
+    </text>
+  </g>
+
+  <!-- Test Tube Rack -->
+  <g id="rack" opacity="0.9">
+    <rect x="140" y="380" width="520" height="24" rx="4" fill="#334155" />
+    <rect x="140" y="460" width="520" height="20" rx="4" fill="#1e293b" stroke="#475569" />
+    <rect x="160" y="404" width="16" height="56" fill="#475569" />
+    <rect x="624" y="404" width="16" height="56" fill="#475569" />
+  </g>
+
+  <!-- TUBE 1: Pentose (Ribose) -> Intense Blue-Green Complex -->
+  <g id="tube-ribose" transform="translate(260, 110)">
+    <rect x="0" y="0" width="60" height="340" rx="30" fill="none" stroke="#94a3b8" stroke-width="2.5" />
+    <path d="M 3 130 L 57 130 L 57 310 A 27 27 0 0 1 3 310 Z" fill="url(#blueGreenGrad)" />
+    <ellipse cx="30" cy="130" rx="27" ry="4.5" fill="#0d9488" />
+    <ellipse cx="30" cy="130" rx="27" ry="4.5" fill="none" stroke="#99f6e4" stroke-width="1" />
+    <rect x="0" y="0" width="60" height="340" rx="30" fill="url(#glassReflect)" />
+
+    <!-- Label -->
+    <rect x="-16" y="385" width="92" height="42" rx="6" fill="#0f172a" stroke="#14b8a6" stroke-width="1.5" />
+    <text x="30" y="403" fill="#99f6e4" font-family="system-ui, sans-serif" font-size="11" font-weight="bold" text-anchor="middle">
+      Sample 1: Ribose
+    </text>
+    <text x="30" y="418" fill="#2dd4bf" font-family="monospace" font-size="9" font-weight="bold" text-anchor="middle">
+      Blue-Green (Pentose)
+    </text>
+
+    <!-- Neutral Marker ① -->
+    <g transform="translate(30, 210)">
+      <circle cx="0" cy="0" r="22" fill="none" stroke="#ef4444" stroke-width="2" stroke-dasharray="3 3">
+        <animate attributeName="r" values="20;24;20" dur="2s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="0" cy="0" r="14" fill="#dc2626" stroke="#ffffff" stroke-width="2" />
+      <text x="0" y="5" fill="#ffffff" font-family="system-ui, sans-serif" font-size="12" font-weight="bold" text-anchor="middle">
+        ①
+      </text>
+    </g>
+  </g>
+
+  <!-- TUBE 2: Hexose (Glucose) -> Muddy Brown/Yellow -->
+  <g id="tube-glucose" transform="translate(480, 110)">
+    <rect x="0" y="0" width="60" height="340" rx="30" fill="none" stroke="#94a3b8" stroke-width="2.5" />
+    <path d="M 3 130 L 57 130 L 57 310 A 27 27 0 0 1 3 310 Z" fill="url(#muddyBrownGrad)" />
+    <ellipse cx="30" cy="130" rx="27" ry="4.5" fill="#854d0e" opacity="0.8" />
+    <ellipse cx="30" cy="130" rx="27" ry="4.5" fill="none" stroke="#fef08a" stroke-width="1" />
+    <rect x="0" y="0" width="60" height="340" rx="30" fill="url(#glassReflect)" />
+
+    <!-- Label -->
+    <rect x="-16" y="385" width="92" height="42" rx="6" fill="#0f172a" stroke="#475569" stroke-width="1.5" />
+    <text x="30" y="403" fill="#cbd5e1" font-family="system-ui, sans-serif" font-size="11" font-weight="bold" text-anchor="middle">
+      Sample 2: Glucose
+    </text>
+    <text x="30" y="418" fill="#ca8a04" font-family="monospace" font-size="9" text-anchor="middle">
+      Muddy Brown
+    </text>
+  </g>
+
+  <!-- Explanation footer -->
+  <text x="400" y="565" fill="#64748b" font-family="system-ui, sans-serif" font-size="11" text-anchor="middle">
+    Pentoses dehydrate to form furfural which condenses with orcinol in the presence of ferric ions to give a blue-green color.
+  </text>
+</svg>
