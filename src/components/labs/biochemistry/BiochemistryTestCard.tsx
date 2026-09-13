@@ -325,7 +325,7 @@ export const BiochemistryTestCard: React.FC<BiochemistryTestCardProps> = ({
 
         {/* Action Buttons & Lab Icon */}
         <div className="flex items-center gap-2">
-          {test.id === 'benedict' && onOpenDedicatedLesson && (
+          {onOpenDedicatedLesson && (
             <button
               type="button"
               onClick={() => onOpenDedicatedLesson(test.id)}

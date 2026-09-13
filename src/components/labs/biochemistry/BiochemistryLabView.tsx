@@ -1,32 +1,39 @@
+/*
+ * © LAB HUB · Developed by Sakina Asaad
+ * Master Biochemistry Lab View (مختبر الكيمياء الحيوية السريرية)
+ *
+ * Core Curriculum Structure:
+ * Section 01: Carbohydrates (5 Practical Identification Tests in Strict Order)
+ *   1. Molisch's Test
+ *   2. Iodine Test
+ *   3. Benedict's Test
+ *   4. Barfoed's Test
+ *   5. Seliwanoff's Test
+ * Section 02: Proteins (Practical Biuret & Casein Isoelectric Precipitation + Theory)
+ */
+
 import React, { useState } from 'react';
 import { CarbohydratesSection } from './CarbohydratesSection';
-import { ProteinsTheorySection } from './ProteinsTheorySection';
 import { ProteinPracticalLab } from './ProteinPracticalLab';
+import { ProteinsTheorySection } from './ProteinsTheorySection';
 import { BiochemistryCertificateModal } from './BiochemistryCertificateModal';
 import { BiochemistryPathwaysViewer } from './BiochemistryPathwaysViewer';
 import {
   FlaskConical,
   Dna,
-  Layers,
-  Sparkles,
   Award,
-  BookOpen
+  Sparkles
 } from 'lucide-react';
 
 interface BiochemistryLabViewProps {
   searchQuery?: string;
-  onSelectTest?: (testId: string) => void;
 }
 
 export const BiochemistryLabView: React.FC<BiochemistryLabViewProps> = ({
-  searchQuery = '',
-  onSelectTest
+  searchQuery = ''
 }) => {
-  // STRICT REQUIREMENT: Only TWO main sections on the main page:
-  // 01 — CARBOHYDRATES
-  // 02 — PROTEINS
   const [activeMainSection, setActiveMainSection] = useState<'carbohydrates' | 'proteins'>('carbohydrates');
-  const [proteinSubTab, setProteinSubTab] = useState<'theory' | 'practical'>('practical');
+  const [proteinSubTab, setProteinSubTab] = useState<'practical' | 'theory'>('practical');
   const [isCertificateOpen, setIsCertificateOpen] = useState<boolean>(false);
   const [showPathways, setShowPathways] = useState<boolean>(false);
 
@@ -104,11 +111,11 @@ export const BiochemistryLabView: React.FC<BiochemistryLabViewProps> = ({
                   01 — CARBOHYDRATES
                 </div>
                 <div className="text-xs font-arabic text-slate-400">
-                  السكريات والاختبارات النوعية الـ 6
+                  السكريات والاختبارات النوعية الـ 5 بالترتيب المعتمد
                 </div>
               </div>
             </div>
-            <span className="text-xs font-mono text-amber-300/80">6 Tests</span>
+            <span className="text-xs font-mono text-amber-300/80">5 Tests</span>
           </button>
 
           <button
