@@ -11,7 +11,7 @@ import {
   Shuffle
 } from 'lucide-react';
 import { HistologySlideViewer } from './HistologySlideViewer';
-import { ALL_HISTOLOGY_LESSONS, HistologyLessonItem } from './HistologyCurriculumData';
+import { ALL_HISTOLOGY_LESSONS, HistologyLessonItem, getSlideMetadata } from './HistologyCurriculumData';
 import { OwnershipWatermark } from '../../common/OwnershipWatermark';
 
 interface ExamQuestionItem {
@@ -45,10 +45,10 @@ export const HistologyPracticalExamView: React.FC<HistologyPracticalExamViewProp
       const shuffledOptions = [...rawOptions].sort(() => 0.5 - Math.random());
       const correctIdx = shuffledOptions.indexOf(lesson.titleEn);
 
-      return {
+        return {
         id: `exam_${idx}`,
         lesson,
-        prompt: 'What tissue or structure is shown under the microscope?',
+        prompt: 'Identify the tissue or structure indicated by ① under the microscope:',
         options: shuffledOptions,
         correctIndex: correctIdx,
         explanation: `${lesson.titleEn}: ${lesson.quickExplanation} Diagnostic features: ${lesson.labels.map(l => l.label).join(', ')}.`
@@ -132,6 +132,8 @@ export const HistologyPracticalExamView: React.FC<HistologyPracticalExamViewProp
       {/* 3. LARGE MICROSCOPIC IMAGE (BLIND PRACTICE MODE) */}
       <div className="space-y-3">
         <HistologySlideViewer
+          realImagePath={currentQ.lesson.realImagePath}
+          isRealMicroscopy={currentQ.lesson.isRealMicroscopy}
           visualId={currentQ.lesson.visualId}
           titleEn={currentQ.lesson.titleEn}
           stain={currentQ.lesson.stain}
@@ -140,6 +142,9 @@ export const HistologyPracticalExamView: React.FC<HistologyPracticalExamViewProp
           mode="practice"
           labels={currentQ.lesson.labels}
           showLabelsDefault={false}
+          examMarker={currentQ.lesson.examMarker}
+          whatToLookFor={currentQ.lesson.whatToLookFor}
+          slideMetadata={getSlideMetadata(currentQ.lesson)}
         />
       </div>
 
