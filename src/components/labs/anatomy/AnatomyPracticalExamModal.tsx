@@ -4,6 +4,7 @@ import {
   AnatomyExamQuestionItem,
   ANATOMY_PRACTICAL_EXAMS
 } from './AnatomyData';
+import { AnatomyPracticalSpecimenViewer } from './components/AnatomyPracticalSpecimenViewer';
 import { AnatomyTopicVisual } from './AnatomyTopicVisuals';
 import { anatomyProgressService } from './AnatomyStudentProgressService';
 import { storageService } from '../../../services/storageService';
@@ -442,59 +443,17 @@ export const AnatomyPracticalExamModal: React.FC<AnatomyPracticalExamModalProps>
             {/* Main Central Specimen Card */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 flex-1">
               {/* Left Column: Specimen Image with Pin */}
-              <div className="lg:col-span-7 relative bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden min-h-[260px] sm:min-h-[340px] flex items-center justify-center group">
-                {currentQuestion.topicId ? (
-                  <div className={`w-full h-full flex items-center justify-center transition-transform duration-300 ${isZoomed ? 'scale-125' : 'scale-100'}`}>
-                    <AnatomyTopicVisual
-                      topicId={currentQuestion.topicId}
-                      interactive={false}
-                      variant="full"
-                      className="w-full h-full"
-                    />
-                  </div>
-                ) : (
-                  <img
-                    src={currentQuestion.image}
-                    alt={currentQuestion.structureNameEn}
-                    className={`w-full h-full object-cover transition-transform duration-300 ${
-                      isZoomed ? 'scale-125' : 'scale-100'
-                    }`}
-                  />
-                )}
-
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-slate-950/40 pointer-events-none" />
-
-                {/* Target Marker Pin */}
-                {currentQuestion.markerPosition && (
-                  <div
-                    className="absolute z-20 -translate-x-1/2 -translate-y-1/2 cursor-pointer pointer-events-auto"
-                    style={{
-                      left: `${currentQuestion.markerPosition.x}%`,
-                      top: `${currentQuestion.markerPosition.y}%`
-                    }}
-                  >
-                    <div className="relative flex items-center justify-center">
-                      <span className="absolute animate-ping inline-flex h-8 w-8 rounded-full bg-rose-400 opacity-75" />
-                      <div className="relative w-8 h-8 rounded-full bg-rose-600 text-white font-mono font-black text-xs flex items-center justify-center border-2 border-white shadow-xl">
-                        {currentQuestion.markerLabel || (currentQuestionIndex + 1)}
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Zoom toggle button */}
-                <button
-                  type="button"
-                  onClick={() => setIsZoomed(!isZoomed)}
-                  className="absolute top-3 left-3 p-2 rounded-xl bg-slate-900/80 backdrop-blur-md text-slate-300 hover:text-white border border-slate-700 transition-colors"
-                >
-                  {isZoomed ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
-                </button>
-
-                {/* Specimen Badge */}
-                <div className="absolute bottom-3 right-3 px-3 py-1 rounded-lg bg-slate-900/90 backdrop-blur-md border border-slate-700 text-[11px] font-mono text-slate-300">
-                  📍 محطة التحديد العملي
-                </div>
+              <div className="lg:col-span-7 flex flex-col">
+                <AnatomyPracticalSpecimenViewer
+                  imageUrl={currentQuestion.image}
+                  altText={currentQuestion.structureNameEn}
+                  pointerX={currentQuestion.markerPosition?.x}
+                  pointerY={currentQuestion.markerPosition?.y}
+                  pointerLabel={currentQuestion.markerLabel || `محطة #${currentQuestionIndex + 1}`}
+                  stationNumber={currentQuestionIndex + 1}
+                  sourceText="LAB HUB Anatomy OSPE Practical"
+                  aspectClass="h-[300px] sm:h-[380px] md:h-[440px]"
+                />
               </div>
 
               {/* Right Column: Question & Interaction Controls */}

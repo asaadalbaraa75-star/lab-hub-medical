@@ -1,0 +1,611 @@
+{
+  "users": [
+    {
+      "id": "usr_student_1",
+      "userId": "usr_student_1",
+      "name": "Sarah Al-Mansoor",
+      "fullName": "Sarah Al-Mansoor",
+      "email": "student@med.edu",
+      "role": "student",
+      "passwordHash": "36573902530099b13f14c2cdd32aa7c3c0b5add337fe7d5f8368c5215e4ac1c4",
+      "studentId": "MED-2026-4891",
+      "department": "Faculty of Medicine — 2nd Year MBBS",
+      "year": "Year 2 (Pre-Clinical)",
+      "enrolledLabs": [
+        "anatomy",
+        "histology",
+        "biochemistry"
+      ],
+      "avatarUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+      "createdAt": "2026-01-10T08:00:00.000Z",
+      "lastLoginAt": "2026-09-13T18:01:52.231Z",
+      "lastActivityAt": "2026-09-13T18:01:52.231Z",
+      "sessionCount": 14
+    },
+    {
+      "id": "usr_admin_1",
+      "userId": "usr_admin_1",
+      "name": "Prof. Eleanor Hayes, MD, FRCPath",
+      "fullName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "email": "admin@med.edu",
+      "role": "admin",
+      "passwordHash": "1738ae7c56af0bd3405912086f652d7b588a8b7b138b62b03a8eb9e5180118e4",
+      "studentId": "ADM-MED-001",
+      "department": "Academic Directorate & Laboratory Board",
+      "year": "Dean of Medical Laboratory Curricula",
+      "enrolledLabs": [
+        "anatomy",
+        "histology",
+        "biochemistry"
+      ],
+      "avatarUrl": "https://images.unsplash.com/photo-1594824813680-79883506ecf5?w=150&auto=format&fit=crop&q=80",
+      "createdAt": "2025-09-01T08:00:00.000Z",
+      "lastLoginAt": "2026-09-13T18:01:52.231Z",
+      "lastActivityAt": "2026-09-13T19:33:43.081Z",
+      "sessionCount": 42
+    },
+    {
+      "id": "usr_instructor_1",
+      "userId": "usr_instructor_1",
+      "name": "Dr. Tariq Vance, MD, MSc",
+      "fullName": "Dr. Tariq Vance, MD, MSc",
+      "email": "instructor@med.edu",
+      "role": "instructor",
+      "passwordHash": "b25688c809748e9bc0a4ec3f0b07327b5f6ab65bd2b5028e04954835c69abb2b",
+      "studentId": "FAC-MED-104",
+      "department": "Department of Anatomy & Histology",
+      "year": "Senior Teaching Faculty",
+      "enrolledLabs": [
+        "anatomy",
+        "histology",
+        "biochemistry"
+      ],
+      "avatarUrl": "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150&auto=format&fit=crop&q=80",
+      "createdAt": "2025-10-15T08:00:00.000Z",
+      "lastLoginAt": "2026-09-13T18:01:52.231Z",
+      "lastActivityAt": "2026-09-13T18:01:52.231Z",
+      "sessionCount": 29
+    },
+    {
+      "id": "usr_student_2",
+      "userId": "usr_student_2",
+      "name": "Omar Farooq",
+      "fullName": "Omar Farooq",
+      "email": "omar@med.edu",
+      "role": "student",
+      "passwordHash": "36573902530099b13f14c2cdd32aa7c3c0b5add337fe7d5f8368c5215e4ac1c4",
+      "studentId": "MED-2026-5120",
+      "department": "Faculty of Medicine — 1st Year MBBS",
+      "year": "Year 1 (Pre-Clinical)",
+      "enrolledLabs": [
+        "anatomy",
+        "histology",
+        "biochemistry"
+      ],
+      "avatarUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+      "createdAt": "2026-02-01T09:30:00.000Z",
+      "lastLoginAt": "2026-09-13T13:01:52.231Z",
+      "lastActivityAt": "2026-09-13T14:01:52.231Z",
+      "sessionCount": 8
+    }
+  ],
+  "activities": [
+    {
+      "id": "act_1789328023081_yjsf",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "بدء امتحان OSPE عملي: Anatomy Lab Practical Identification Exam",
+      "section": "OSPE",
+      "timestamp": "2026-09-13T19:33:43.081Z",
+      "metadata": "Exam: exam_anat_ospe"
+    },
+    {
+      "id": "act_1789328019232_4pls",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "تصفح قسم: medical_exams",
+      "section": "medical_exams",
+      "timestamp": "2026-09-13T19:33:39.232Z"
+    },
+    {
+      "id": "act_1789328013819_7lz9",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "تصفح قسم: dashboard",
+      "section": "dashboard",
+      "timestamp": "2026-09-13T19:33:33.819Z"
+    },
+    {
+      "id": "act_1789327998869_z5kv",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "تصفح قسم: visual_map",
+      "section": "visual_map",
+      "timestamp": "2026-09-13T19:33:18.869Z"
+    },
+    {
+      "id": "act_1789327995330_rj7k",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "تصفح قسم: dashboard",
+      "section": "dashboard",
+      "timestamp": "2026-09-13T19:33:15.330Z"
+    },
+    {
+      "id": "act_1789327910699_ju2v",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "فتح مختبر: HISTOLOGY",
+      "section": "histology",
+      "timestamp": "2026-09-13T19:31:50.699Z"
+    },
+    {
+      "id": "act_1789327904860_srs4",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "تصفح قسم: dashboard",
+      "section": "dashboard",
+      "timestamp": "2026-09-13T19:31:44.860Z"
+    },
+    {
+      "id": "act_1789327608234_zfxs",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "فتح مختبر: HISTOLOGY",
+      "section": "histology",
+      "timestamp": "2026-09-13T19:26:48.234Z"
+    },
+    {
+      "id": "act_1789327600916_8ly3",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "تصفح قسم: dashboard",
+      "section": "dashboard",
+      "timestamp": "2026-09-13T19:26:40.916Z"
+    },
+    {
+      "id": "act_1789327588115_h10f",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "فتح مختبر: HISTOLOGY",
+      "section": "histology",
+      "timestamp": "2026-09-13T19:26:28.115Z"
+    },
+    {
+      "id": "act_1789327580626_jwga",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "تصفح قسم: dashboard",
+      "section": "dashboard",
+      "timestamp": "2026-09-13T19:26:20.626Z"
+    },
+    {
+      "id": "act_1789327530995_uid1",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "فتح مختبر: HISTOLOGY",
+      "section": "histology",
+      "timestamp": "2026-09-13T19:25:30.995Z"
+    },
+    {
+      "id": "act_1789327498213_q4fi",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "تصفح قسم: dashboard",
+      "section": "dashboard",
+      "timestamp": "2026-09-13T19:24:58.213Z"
+    },
+    {
+      "id": "act_1789327411302_rh99",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "فتح مختبر: HISTOLOGY",
+      "section": "histology",
+      "timestamp": "2026-09-13T19:23:31.302Z"
+    },
+    {
+      "id": "act_1789327408249_f9dg",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "تصفح قسم: dashboard",
+      "section": "dashboard",
+      "timestamp": "2026-09-13T19:23:28.249Z"
+    },
+    {
+      "id": "act_1789327371561_n7qm",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "فتح مختبر: HISTOLOGY",
+      "section": "histology",
+      "timestamp": "2026-09-13T19:22:51.561Z"
+    },
+    {
+      "id": "act_1789327371559_7azr",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "تصفح قسم: dashboard",
+      "section": "dashboard",
+      "timestamp": "2026-09-13T19:22:51.559Z"
+    },
+    {
+      "id": "act_1789327245329_mknm",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "فتح مختبر: HISTOLOGY",
+      "section": "histology",
+      "timestamp": "2026-09-13T19:20:45.329Z"
+    },
+    {
+      "id": "act_1789327143297_94mu",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "تصفح قسم: dashboard",
+      "section": "dashboard",
+      "timestamp": "2026-09-13T19:19:03.297Z"
+    },
+    {
+      "id": "act_1789327117418_o7bn",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "فتح مختبر: HISTOLOGY",
+      "section": "histology",
+      "timestamp": "2026-09-13T19:18:37.418Z"
+    },
+    {
+      "id": "act_1789327011635_aqa4",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "فتح مختبر: ANATOMY",
+      "section": "anatomy",
+      "timestamp": "2026-09-13T19:16:51.635Z"
+    },
+    {
+      "id": "act_1789327009560_qx6j",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "تصفح قسم: dashboard",
+      "section": "dashboard",
+      "timestamp": "2026-09-13T19:16:49.560Z"
+    },
+    {
+      "id": "act_1789326227137_12em",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "فتح مختبر: HISTOLOGY",
+      "section": "histology",
+      "timestamp": "2026-09-13T19:03:47.137Z"
+    },
+    {
+      "id": "act_1789326218614_czik",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "تصفح قسم: dashboard",
+      "section": "dashboard",
+      "timestamp": "2026-09-13T19:03:38.614Z"
+    },
+    {
+      "id": "act_1789326191689_elaz",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "فتح مختبر: HISTOLOGY",
+      "section": "histology",
+      "timestamp": "2026-09-13T19:03:11.689Z"
+    },
+    {
+      "id": "act_1789326185873_5b3m",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "تصفح قسم: dashboard",
+      "section": "dashboard",
+      "timestamp": "2026-09-13T19:03:05.873Z"
+    },
+    {
+      "id": "act_1789326149193_mx1n",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "فتح مختبر: HISTOLOGY",
+      "section": "histology",
+      "timestamp": "2026-09-13T19:02:29.193Z"
+    },
+    {
+      "id": "act_1789326135668_gp4q",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "فتح مختبر: HISTOLOGY",
+      "section": "histology",
+      "timestamp": "2026-09-13T19:02:15.668Z"
+    },
+    {
+      "id": "act_1789326135662_ivoq",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "تصفح قسم: dashboard",
+      "section": "dashboard",
+      "timestamp": "2026-09-13T19:02:15.662Z"
+    },
+    {
+      "id": "act_1789325911957_u9z2",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "فتح مختبر: ANATOMY",
+      "section": "anatomy",
+      "timestamp": "2026-09-13T18:58:31.957Z"
+    },
+    {
+      "id": "act_1789325909600_tkgf",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "تصفح قسم: dashboard",
+      "section": "dashboard",
+      "timestamp": "2026-09-13T18:58:29.600Z"
+    },
+    {
+      "id": "act_1789325884275_4fx8",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "فتح مختبر: ANATOMY",
+      "section": "anatomy",
+      "timestamp": "2026-09-13T18:58:04.275Z"
+    },
+    {
+      "id": "act_1789325752295_yop0",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "تصفح قسم: dashboard",
+      "section": "dashboard",
+      "timestamp": "2026-09-13T18:55:52.295Z"
+    },
+    {
+      "id": "act_1789325383954_8a71",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "فتح مختبر: HISTOLOGY",
+      "section": "histology",
+      "timestamp": "2026-09-13T18:49:43.954Z"
+    },
+    {
+      "id": "act_1789325374265_tfyy",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "تصفح قسم: dashboard",
+      "section": "dashboard",
+      "timestamp": "2026-09-13T18:49:34.265Z"
+    },
+    {
+      "id": "act_1789325343129_fafo",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "بدء امتحان OSPE عملي: Histology Microscopic Slide Identification Exam",
+      "section": "OSPE",
+      "timestamp": "2026-09-13T18:49:03.129Z",
+      "metadata": "Exam: exam_hist_ospe"
+    },
+    {
+      "id": "act_1789325334555_y0uu",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "تصفح قسم: medical_exams",
+      "section": "medical_exams",
+      "timestamp": "2026-09-13T18:48:54.555Z"
+    },
+    {
+      "id": "act_1789325331137_ghev",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "تصفح قسم: dashboard",
+      "section": "dashboard",
+      "timestamp": "2026-09-13T18:48:51.137Z"
+    },
+    {
+      "id": "act_1789325317885_qhwu",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "فتح مختبر: ANATOMY",
+      "section": "anatomy",
+      "timestamp": "2026-09-13T18:48:37.885Z"
+    },
+    {
+      "id": "act_1789325315805_ipo5",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "تصفح قسم: dashboard",
+      "section": "dashboard",
+      "timestamp": "2026-09-13T18:48:35.806Z"
+    },
+    {
+      "id": "act_1789325200556_azth",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "فتح مختبر: HISTOLOGY",
+      "section": "histology",
+      "timestamp": "2026-09-13T18:46:40.556Z"
+    },
+    {
+      "id": "act_1789325195950_q51i",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "تصفح قسم: dashboard",
+      "section": "dashboard",
+      "timestamp": "2026-09-13T18:46:35.950Z"
+    },
+    {
+      "id": "act_1789325139571_yzvc",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "فتح مختبر: BIOCHEMISTRY",
+      "section": "biochemistry",
+      "timestamp": "2026-09-13T18:45:39.571Z"
+    },
+    {
+      "id": "act_1789324944465_5yrn",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "تصفح قسم: dashboard",
+      "section": "dashboard",
+      "timestamp": "2026-09-13T18:42:24.465Z"
+    },
+    {
+      "id": "act_1789324132007_2xed",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "تسليم امتحان OSPE: Anatomy Lab Practical Identification Exam",
+      "section": "OSPE",
+      "timestamp": "2026-09-13T18:28:52.007Z",
+      "metadata": "النتيجة: 0% (راسب)"
+    },
+    {
+      "id": "act_1789323774196_8xs1",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "بدء امتحان OSPE عملي: Anatomy Lab Practical Identification Exam",
+      "section": "OSPE",
+      "timestamp": "2026-09-13T18:22:54.196Z",
+      "metadata": "Exam: exam_anat_ospe"
+    },
+    {
+      "id": "act_1789323770959_xcgq",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "تصفح قسم: medical_exams",
+      "section": "medical_exams",
+      "timestamp": "2026-09-13T18:22:50.959Z"
+    },
+    {
+      "id": "act_1789323712688_9dtg",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "تصفح قسم: dashboard",
+      "section": "dashboard",
+      "timestamp": "2026-09-13T18:21:52.688Z"
+    },
+    {
+      "id": "act_1789323698406_fnu4",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "فتح مختبر: BIOCHEMISTRY",
+      "section": "biochemistry",
+      "timestamp": "2026-09-13T18:21:38.406Z"
+    },
+    {
+      "id": "act_1789323695237_j9hf",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "تصفح قسم: dashboard",
+      "section": "dashboard",
+      "timestamp": "2026-09-13T18:21:35.237Z"
+    },
+    {
+      "id": "act_1789323224752_9gp4",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "فتح مختبر: BIOCHEMISTRY",
+      "section": "biochemistry",
+      "timestamp": "2026-09-13T18:13:44.752Z"
+    },
+    {
+      "id": "act_seed_1",
+      "userId": "usr_student_1",
+      "userName": "Sarah Al-Mansoor",
+      "userEmail": "student@med.edu",
+      "activity": "Completed Gross Anatomy Quiz: Cranial Nerves",
+      "section": "Anatomy",
+      "timestamp": "2026-09-13T16:01:52.231Z"
+    },
+    {
+      "id": "act_seed_2",
+      "userId": "usr_student_1",
+      "userName": "Sarah Al-Mansoor",
+      "userEmail": "student@med.edu",
+      "activity": "Opened Virtual Histology Microscope: Hyaline Cartilage",
+      "section": "Histology",
+      "timestamp": "2026-09-13T12:01:52.231Z"
+    },
+    {
+      "id": "act_seed_3",
+      "userId": "usr_student_1",
+      "userName": "Sarah Al-Mansoor",
+      "userEmail": "student@med.edu",
+      "activity": "Explored Qualitative Carbohydrate Reactions: Molisch & Benedict",
+      "section": "Biochemistry",
+      "timestamp": "2026-09-13T06:01:52.231Z"
+    },
+    {
+      "id": "act_seed_4",
+      "userId": "usr_student_1",
+      "userName": "Sarah Al-Mansoor",
+      "userEmail": "student@med.edu",
+      "activity": "Watched High-Yield Video: Benedict Qualitative Reaction",
+      "section": "Biochemistry",
+      "timestamp": "2026-09-13T00:01:52.231Z"
+    },
+    {
+      "id": "act_seed_5",
+      "userId": "usr_student_2",
+      "userName": "Omar Farooq",
+      "userEmail": "omar@med.edu",
+      "activity": "Submitted OSPE Practical Simulation: Skeletal System",
+      "section": "Anatomy",
+      "timestamp": "2026-09-13T14:01:52.231Z"
+    },
+    {
+      "id": "act_seed_6",
+      "userId": "usr_student_2",
+      "userName": "Omar Farooq",
+      "userEmail": "omar@med.edu",
+      "activity": "Started Quiz: Carbohydrate Identification Reactions",
+      "section": "Biochemistry",
+      "timestamp": "2026-09-12T18:01:52.231Z"
+    }
+  ]
+}
