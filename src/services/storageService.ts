@@ -447,6 +447,12 @@ class StorageService {
       list.unshift(exam);
     }
     this.set(STORAGE_KEYS.MEDICAL_EXAMS, list);
+    // Background sync to server API
+    fetch('/api/exams', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(exam)
+    }).catch(e => console.warn('Could not sync exam to server:', e));
     return true;
   }
 
@@ -459,6 +465,8 @@ class StorageService {
     const list = this.get<MedicalExam[]>(STORAGE_KEYS.MEDICAL_EXAMS, MEDICAL_PRACTICAL_EXAMS);
     const updated = list.filter(e => e.id !== id);
     this.set(STORAGE_KEYS.MEDICAL_EXAMS, updated);
+    // Background sync to server API
+    fetch(`/api/exams/${id}`, { method: 'DELETE' }).catch(e => console.warn('Could not sync exam deletion to server:', e));
     return true;
   }
 
@@ -489,6 +497,12 @@ class StorageService {
       list.unshift(question);
     }
     this.set(STORAGE_KEYS.EXAM_QUESTIONS, list);
+    // Background sync to server API
+    fetch('/api/questions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(question)
+    }).catch(e => console.warn('Could not sync question to server:', e));
     return true;
   }
 
@@ -501,7 +515,108 @@ class StorageService {
     const list = this.get<ExamQuestion[]>(STORAGE_KEYS.EXAM_QUESTIONS, PRACTICAL_EXAM_QUESTIONS);
     const updated = list.filter(q => q.id !== id);
     this.set(STORAGE_KEYS.EXAM_QUESTIONS, updated);
+    // Background sync to server API
+    fetch(`/api/questions/${id}`, { method: 'DELETE' }).catch(e => console.warn('Could not sync question deletion to server:', e));
     return true;
+  }
+
+  // --- Sync with Server DB ---
+  async syncDataWithServer(): Promise<void> {
+    try {
+      const [examsRes, questionsRes, notifsRes] = await Promise.all([
+        fetch('/api/exams').catch(() => null),
+        fetch('/api/questions').catch(() => null),
+        fetch('/api/notifications').catch(() => null)
+      ]);
+      if (examsRes && examsRes.ok) {
+        const exams = await examsRes.json();
+        if (Array.isArray(exams) && exams.length > 0) {
+          this.set(STORAGE_KEYS.MEDICAL_EXAMS, exams);
+        }
+      }
+      if (questionsRes && questionsRes.ok) {
+        const questions = await questionsRes.json();
+        if (Array.isArray(questions) && questions.length > 0) {
+          this.set(STORAGE_KEYS.EXAM_QUESTIONS, questions);
+        }
+      }
+      if (notifsRes && notifsRes.ok) {
+        const notifs = await notifsRes.json();
+        if (Array.isArray(notifs) && notifs.length > 0) {
+          this.set(STORAGE_KEYS.NOTIFICATIONS, notifs);
+        }
+      }
+    } catch (e) {
+      console.warn('Server background sync failed, using local cache:', e);
+    }
+  }
+
+  // --- Notifications Helper Methods ---
+  getNotificationItems(): NotificationItem[] {
+    const defaultNotifs: NotificationItem[] = [
+      {
+        id: 'notif_1',
+        title: 'أهلًا بك في LAB HUB 🌟',
+        message: 'أنت تقوم بعمل رائع. كل درس تدرسه اليوم يقربك خطوة من الطبيب الذي تريد أن تصبحه.',
+        type: 'system',
+        isRead: false,
+        createdAt: new Date().toISOString(),
+        link: '/dashboard'
+      },
+      {
+        id: 'notif_2',
+        title: 'امتحانات التشريح العملية جاهزة 🦴',
+        message: 'ابدأ باختبار العظام (Bones Exam) أو العضلات (Muscles Exam) لاختبار مهاراتك العملية.',
+        type: 'exam',
+        isRead: false,
+        createdAt: new Date(Date.now() - 3600000 * 2).toISOString(),
+        link: '/exams'
+      },
+      {
+        id: 'notif_3',
+        title: 'نصيحة المساعد الطبي الذكي 💡',
+        message: 'ركز على العلامات التشريحية الرئيسية (Landmarks) ونقاط الارتكاز والتعصيب العصبي للتحضير لامتحان OSPE.',
+        type: 'achievement',
+        isRead: false,
+        createdAt: new Date(Date.now() - 3600000 * 12).toISOString(),
+        link: '/tutor'
+      }
+    ];
+    return this.get<NotificationItem[]>(STORAGE_KEYS.NOTIFICATIONS, defaultNotifs);
+  }
+
+  addNotificationItem(item: Omit<NotificationItem, 'id' | 'createdAt'>): NotificationItem {
+    const list = this.getNotificationItems();
+    const newNotif: NotificationItem = {
+      ...item,
+      id: `notif_${Date.now()}`,
+      createdAt: new Date().toISOString()
+    };
+    list.unshift(newNotif);
+    this.set(STORAGE_KEYS.NOTIFICATIONS, list);
+    fetch('/api/notifications', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(item)
+    }).catch(() => {});
+    return newNotif;
+  }
+
+  markNotificationAsRead(id: string): void {
+    const list = this.getNotificationItems();
+    const target = list.find(n => n.id === id);
+    if (target) {
+      target.isRead = true;
+      this.set(STORAGE_KEYS.NOTIFICATIONS, list);
+      fetch(`/api/notifications/${id}/read`, { method: 'PUT' }).catch(() => {});
+    }
+  }
+
+  markAllNotificationsAsRead(): void {
+    const list = this.getNotificationItems();
+    list.forEach(n => { n.isRead = true; });
+    this.set(STORAGE_KEYS.NOTIFICATIONS, list);
+    fetch('/api/notifications/read-all', { method: 'POST' }).catch(() => {});
   }
 
   // --- Exam Attempts & Results History (Partitioned by user) ---

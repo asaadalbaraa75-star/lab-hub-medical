@@ -57,7 +57,11 @@ export type AdminSubPage =
   | 'analytics' 
   | 'content' 
   | 'videos' 
-  | 'security';
+  | 'security'
+  | 'exams'
+  | 'question_bank'
+  | 'notifications'
+  | 'ai_settings';
 
 export interface AdminAnalyticsMetrics {
   totalUsers: number;
@@ -349,9 +353,11 @@ export interface NotificationItem {
   id: string;
   title: string;
   message: string;
-  time: string;
-  type: 'practical' | 'quiz' | 'schedule' | 'approval' | 'announcement';
+  time?: string;
+  type: 'practical' | 'quiz' | 'schedule' | 'approval' | 'announcement' | 'system' | 'exam' | 'achievement' | 'update';
   linkTarget?: { tab: string; labId?: LabSubjectId; practicalId?: string };
+  link?: string;
+  createdAt?: string;
   isRead: boolean;
 }
 
@@ -416,12 +422,26 @@ export interface BiochemistryTestDetail {
   };
 }
 
-export type ExamType = 'identification' | 'mcq' | 'image_recognition' | 'practical_interpretation' | 'mixed';
+export type ExamType = 
+  | 'identification' 
+  | 'mcq' 
+  | 'image_recognition' 
+  | 'practical_interpretation' 
+  | 'mixed'
+  | 'write_answer'
+  | 'label_structure'
+  | 'true_false'
+  | 'movement_id'
+  | 'bone_id'
+  | 'muscle_id'
+  | 'joint_id'
+  | 'spotter';
 
 export interface ExamQuestion {
   id: string;
   labId: LabSubjectId;
   type: ExamType;
+  questionType?: ExamType;
   questionText: string;
   questionTextArabic?: string;
   specimenCategory: string; // e.g. "Osteology", "Epithelia", "Carbohydrate Tests"
@@ -431,9 +451,13 @@ export interface ExamQuestion {
   markerLabel?: string;
   options: string[];
   correctAnswer: string; // matches one option or typed text
+  alternativeAnswers?: string[]; // accepted synonyms (e.g. ['Femur', 'os femoris', 'thigh bone'])
   correctIndex?: number;
   explanation: string;
   clinicalNote?: string;
+  topic?: string; // Bones, Muscles, Joints, Movements, Anatomical Terms, Skeletal System, Organ Systems
+  difficulty?: 'easy' | 'medium' | 'hard';
+  language?: 'en' | 'ar' | 'bilingual';
   timeSeconds: number; // e.g. 30, 45, 60
   marks: number; // e.g. 1, 2
 }
@@ -452,8 +476,15 @@ export interface MedicalExam {
   isPublished: boolean;
   questionIds: string[];
   questions?: ExamQuestion[];
+  totalQuestions?: number;
   createdAt: string;
   authorName: string;
+  randomizeQuestions?: boolean;
+  randomizeAnswers?: boolean;
+  allowRetake?: boolean;
+  showAnswersAfterExam?: boolean;
+  timePerQuestionSeconds?: number;
+  status?: 'available' | 'completed' | 'locked' | 'draft' | 'published' | 'archived';
 }
 
 export interface ExamAnswerRecord {

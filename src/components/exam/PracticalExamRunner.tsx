@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
   MedicalExam,
   ExamQuestion,
@@ -6,6 +6,7 @@ import {
   ExamAnswerRecord,
   User
 } from '../../types';
+import { storageService } from '../../services/storageService';
 import {
   Clock,
   CheckCircle2,
@@ -43,7 +44,22 @@ export const PracticalExamRunner: React.FC<PracticalExamRunnerProps> = ({
     if (onComplete) onComplete(attempt);
     else if (onFinishExam) onFinishExam(attempt);
   };
-  const questions: ExamQuestion[] = exam.questions && exam.questions.length > 0 ? exam.questions : [];
+
+  const questions: ExamQuestion[] = useMemo(() => {
+    if (exam.questions && exam.questions.length > 0) {
+      return exam.questions;
+    }
+    if (exam.questionIds && exam.questionIds.length > 0) {
+      const bank = storageService.getExamQuestions();
+      const matched = exam.questionIds
+        .map(id => bank.find(q => q.id === id))
+        .filter((q): q is ExamQuestion => !!q);
+      if (matched.length > 0) return matched;
+    }
+    const defaultBank = storageService.getExamQuestions();
+    return defaultBank.filter(q => q.labId === exam.labId || exam.labId === 'mixed');
+  }, [exam]);
+
   const totalQuestions = questions.length;
 
   const [currentIndex, setCurrentIndex] = useState(0);

@@ -183,6 +183,9 @@ export const CinematicMedicalDashboard: React.FC<CinematicMedicalDashboardProps>
                   First-Year MBBS Medical Core Platform
                 </span>
               </div>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-[11px] font-bold">
+                <span>🩺 مرحبًا، د. {currentUser?.name || 'طالب الطب'}</span>
+              </div>
               <OwnershipWatermark variant="badge" className="text-[11px]" />
             </div>
 

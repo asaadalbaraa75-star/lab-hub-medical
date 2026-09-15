@@ -13,6 +13,7 @@ import fs from 'fs';
 import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI } from '@google/genai';
 import dotenv from 'dotenv';
+import { MEDICAL_PRACTICAL_EXAMS, PRACTICAL_EXAM_QUESTIONS } from './src/data/medicalExamData';
 
 dotenv.config();
 
@@ -289,33 +290,89 @@ async function startServer() {
   // Persistent File DB Helpers
   const DB_FILE = path.join(process.cwd(), 'labhub_server_db.json');
 
-  const loadDb = (): { users: ServerUser[]; activities: ServerActivity[] } => {
+  const defaultNotifications = [
+    {
+      id: 'notif_welcome',
+      title: 'أهلًا بك في LAB HUB 🌟',
+      message: 'أنت تقوم بعمل رائع. كل درس تدرسه اليوم يقربك خطوة من الطبيب الذي تريد أن تصبحه.',
+      type: 'system',
+      isRead: false,
+      createdAt: new Date().toISOString(),
+      link: '/dashboard'
+    },
+    {
+      id: 'notif_anatomy_exam',
+      title: 'امتحانات التشريح العملية جاهزة 🦴',
+      message: 'ابدأ باختبار العظام (Bones Exam) أو العضلات (Muscles Exam) لاختبار مهاراتك العملية.',
+      type: 'exam',
+      isRead: false,
+      createdAt: new Date(Date.now() - 3600000 * 2).toISOString(),
+      link: '/exams'
+    },
+    {
+      id: 'notif_tutor_tip',
+      title: 'نصيحة المساعد الطبي الذكي 💡',
+      message: 'ركز على العلامات التشريحية الرئيسية (Landmarks) ونقاط الارتكاز والتعصيب العصبي للتحضير لامتحان OSPE.',
+      type: 'achievement',
+      isRead: false,
+      createdAt: new Date(Date.now() - 3600000 * 12).toISOString(),
+      link: '/tutor'
+    }
+  ];
+
+  const loadDb = (): { 
+    users: ServerUser[]; 
+    activities: ServerActivity[];
+    exams: any[];
+    questions: any[];
+    notifications: any[];
+    customVideos: any[];
+  } => {
     try {
       if (fs.existsSync(DB_FILE)) {
         const raw = fs.readFileSync(DB_FILE, 'utf-8');
         const parsed = JSON.parse(raw);
-        if (parsed && Array.isArray(parsed.users) && parsed.users.length > 0) {
+        if (parsed && typeof parsed === 'object') {
           return {
-            users: parsed.users,
-            activities: Array.isArray(parsed.activities) ? parsed.activities : defaultActivities
+            users: Array.isArray(parsed.users) && parsed.users.length > 0 ? parsed.users : defaultUsers,
+            activities: Array.isArray(parsed.activities) ? parsed.activities : defaultActivities,
+            exams: Array.isArray(parsed.exams) && parsed.exams.length > 0 ? parsed.exams : (MEDICAL_PRACTICAL_EXAMS as any[]),
+            questions: Array.isArray(parsed.questions) && parsed.questions.length > 0 ? parsed.questions : (PRACTICAL_EXAM_QUESTIONS as any[]),
+            notifications: Array.isArray(parsed.notifications) && parsed.notifications.length > 0 ? parsed.notifications : defaultNotifications,
+            customVideos: Array.isArray(parsed.customVideos) ? parsed.customVideos : []
           };
         }
       }
     } catch (e) {
       console.warn('[DB] Could not load persisted database, falling back to defaults:', e);
     }
-    return { users: defaultUsers, activities: defaultActivities };
+    return { 
+      users: defaultUsers, 
+      activities: defaultActivities,
+      exams: MEDICAL_PRACTICAL_EXAMS as any[],
+      questions: PRACTICAL_EXAM_QUESTIONS as any[],
+      notifications: defaultNotifications,
+      customVideos: []
+    };
   };
 
   const initialData = loadDb();
   const serverUsers: ServerUser[] = initialData.users;
   const serverActivities: ServerActivity[] = initialData.activities;
+  let serverExams: any[] = initialData.exams;
+  let serverQuestions: any[] = initialData.questions;
+  let serverNotifications: any[] = initialData.notifications;
+  let serverCustomVideos: any[] = initialData.customVideos;
 
   const saveDb = () => {
     try {
       fs.writeFileSync(DB_FILE, JSON.stringify({
         users: serverUsers,
-        activities: serverActivities
+        activities: serverActivities,
+        exams: serverExams,
+        questions: serverQuestions,
+        notifications: serverNotifications,
+        customVideos: serverCustomVideos
       }, null, 2), 'utf-8');
     } catch (e) {
       console.error('[DB] Failed to save database to disk:', e);
@@ -1129,10 +1186,181 @@ async function startServer() {
     });
   });
 
-  // API Route: "Ask LAB HUB" AI Medical Lab Assistant (Protected with rate limiting and sanitization)
-  app.post('/api/ai/ask-tutor', apiRateLimiter(20, 60000), async (req: Request, res: Response) => {
+  // ==================== EXAMS API ====================
+  app.get('/api/exams', (req: Request, res: Response) => {
+    res.json(serverExams);
+  });
+
+  app.post('/api/exams', (req: Request, res: Response) => {
+    const exam = req.body;
+    if (!exam || !exam.title) {
+      return res.status(400).json({ error: 'Exam title is required' });
+    }
+    const examId = exam.id || `exam_${Date.now()}`;
+    const newExam = {
+      ...exam,
+      id: examId,
+      createdAt: exam.createdAt || new Date().toISOString()
+    };
+    const existingIndex = serverExams.findIndex(e => e.id === examId);
+    if (existingIndex >= 0) {
+      serverExams[existingIndex] = newExam;
+    } else {
+      serverExams.push(newExam);
+    }
+    saveDb();
+    res.json({ success: true, exam: newExam });
+  });
+
+  app.delete('/api/exams/:id', (req: Request, res: Response) => {
+    const { id } = req.params;
+    serverExams = serverExams.filter(e => e.id !== id);
+    saveDb();
+    res.json({ success: true });
+  });
+
+  // ==================== QUESTION BANK API ====================
+  app.get('/api/questions', (req: Request, res: Response) => {
+    const { topic, labId, difficulty, search } = req.query;
+    let filtered = [...serverQuestions];
+    if (topic && typeof topic === 'string') {
+      filtered = filtered.filter(q => q.topic?.toLowerCase() === topic.toLowerCase());
+    }
+    if (labId && typeof labId === 'string') {
+      filtered = filtered.filter(q => q.labId === labId);
+    }
+    if (difficulty && typeof difficulty === 'string') {
+      filtered = filtered.filter(q => q.difficulty === difficulty);
+    }
+    if (search && typeof search === 'string') {
+      const s = search.toLowerCase();
+      filtered = filtered.filter(q => 
+        q.questionText?.toLowerCase().includes(s) || 
+        q.questionTextArabic?.includes(s) ||
+        q.correctAnswer?.toLowerCase().includes(s) ||
+        q.specimenCategory?.toLowerCase().includes(s)
+      );
+    }
+    res.json(filtered);
+  });
+
+  app.post('/api/questions', (req: Request, res: Response) => {
+    const q = req.body;
+    if (!q || !q.questionText || !q.correctAnswer) {
+      return res.status(400).json({ error: 'Question text and correct answer are required.' });
+    }
+    const qId = q.id || `q_${Date.now()}`;
+    const newQuestion = {
+      ...q,
+      id: qId,
+      timeSeconds: q.timeSeconds || 30,
+      marks: q.marks || 1
+    };
+    const existingIndex = serverQuestions.findIndex(item => item.id === qId);
+    if (existingIndex >= 0) {
+      serverQuestions[existingIndex] = newQuestion;
+    } else {
+      serverQuestions.push(newQuestion);
+    }
+    saveDb();
+    res.json({ success: true, question: newQuestion });
+  });
+
+  app.delete('/api/questions/:id', (req: Request, res: Response) => {
+    const { id } = req.params;
+    serverQuestions = serverQuestions.filter(q => q.id !== id);
+    saveDb();
+    res.json({ success: true });
+  });
+
+  app.post('/api/questions/duplicate/:id', (req: Request, res: Response) => {
+    const { id } = req.params;
+    const existing = serverQuestions.find(q => q.id === id);
+    if (!existing) {
+      return res.status(404).json({ error: 'Question not found' });
+    }
+    const duplicated = {
+      ...existing,
+      id: `${existing.id}_copy_${Date.now()}`,
+      questionText: `${existing.questionText} (Copy)`,
+      questionTextArabic: existing.questionTextArabic ? `${existing.questionTextArabic} (نسخة)` : undefined
+    };
+    serverQuestions.push(duplicated);
+    saveDb();
+    res.json(duplicated);
+  });
+
+  // ==================== NOTIFICATIONS API ====================
+  app.get('/api/notifications', (req: Request, res: Response) => {
+    res.json(serverNotifications);
+  });
+
+  app.post('/api/notifications', (req: Request, res: Response) => {
+    const { title, message, type, link } = req.body;
+    if (!title || !message) {
+      return res.status(400).json({ error: 'Title and message are required' });
+    }
+    const notif = {
+      id: `notif_${Date.now()}`,
+      title,
+      message,
+      type: type || 'system',
+      link: link || '/dashboard',
+      isRead: false,
+      createdAt: new Date().toISOString()
+    };
+    serverNotifications.unshift(notif);
+    saveDb();
+    res.json(notif);
+  });
+
+  app.put('/api/notifications/:id/read', (req: Request, res: Response) => {
+    const { id } = req.params;
+    const target = serverNotifications.find(n => n.id === id);
+    if (target) {
+      target.isRead = true;
+      saveDb();
+    }
+    res.json({ success: true });
+  });
+
+  app.post('/api/notifications/read-all', (req: Request, res: Response) => {
+    serverNotifications.forEach(n => { n.isRead = true; });
+    saveDb();
+    res.json({ success: true });
+  });
+
+  // ==================== VIDEOS MANAGER API ====================
+  app.get('/api/videos', (req: Request, res: Response) => {
+    res.json(serverCustomVideos);
+  });
+
+  app.post('/api/videos/replace', (req: Request, res: Response) => {
+    const { lessonId, videoUrl, originalUrl, title } = req.body;
+    if (!lessonId || !videoUrl) {
+      return res.status(400).json({ error: 'lessonId and videoUrl are required' });
+    }
+    const existingIndex = serverCustomVideos.findIndex(v => v.lessonId === lessonId);
+    const record = {
+      lessonId,
+      videoUrl,
+      originalUrl,
+      title,
+      updatedAt: new Date().toISOString()
+    };
+    if (existingIndex >= 0) {
+      serverCustomVideos[existingIndex] = record;
+    } else {
+      serverCustomVideos.push(record);
+    }
+    saveDb();
+    res.json({ success: true, record });
+  });
+
+  // ==================== AI MEDICAL TUTOR API ====================
+  app.post('/api/ai/ask-tutor', apiRateLimiter(30, 60000), async (req: Request, res: Response) => {
     try {
-      const { question, labContext, practicalTitle } = req.body;
+      const { question, labContext, practicalTitle, mode, imageUrl } = req.body;
       
       if (!question || typeof question !== 'string') {
         return res.status(400).json({ error: 'A valid question string is required.' });
@@ -1140,48 +1368,68 @@ async function startServer() {
 
       // Input bounding & sanitization
       const cleanQuestion = question.trim().substring(0, 1500);
-      if (cleanQuestion.length < 3) {
+      if (cleanQuestion.length < 2) {
         return res.status(400).json({ error: 'Question is too short.' });
       }
 
       const client = getGeminiClient();
       if (client && process.env.GEMINI_API_KEY) {
         try {
-          const systemPrompt = `You are "LAB HUB AI Tutor", an authoritative, friendly, and precise medical laboratory tutor for medical students.
-Your specialty encompasses:
-1. Gross Anatomy & Osteology (bone landmarks, muscle origins/insertions, neurovascular relations, clinical fractures)
-2. Histology (microscopic cellular morphology, stains e.g. H&E, tissue differentiation, intercalated discs, striations)
-3. Biochemistry (Carbohydrate identification tests e.g. Benedict, Barfoed, Seliwanoff, Bial, Molisch, Iodine, Osazone, Fehling)
+          const modeInstructions = {
+            explain_simple: 'Provide a very simple, intuitive explanation suitable for a beginner medical student. Avoid overly dense medical jargon where a simple analogy works better.',
+            example: 'Provide a concrete clinical spotter or cadaveric / microscopic specimen example demonstrating this structure or reaction.',
+            quiz_me: 'Formulate an interactive 1-question OSCE/OSPE spotter challenge based on this topic with 4 options (A, B, C, D) and then reveal the correct answer with the anatomical/histological reasoning.',
+            exam_tip: 'Provide the top 3 high-yield examination pearls, common pitfalls, and typical question styles for this topic in university practical exams.',
+            compare: 'Provide a clear comparison table or point-by-point contrast highlighting key differentiating features.',
+            summarize: 'Summarize the core takeaways in 3 concise bullet points.',
+            dont_understand: 'Re-explain this concept from scratch in the simplest possible terms with an everyday relatable analogy.',
+            normal: 'Provide a comprehensive high-yield medical answer.'
+          }[mode as string] || 'Provide a structured, high-yield answer.';
 
-Guidelines:
-- Provide structured, high-yield answers tailored to pre-clinical and clinical medical students.
-- Always include:
-  1. Direct High-Yield Summary (2-3 sentences)
-  2. Key Identification Features / Distinctive Hallmarks
-  3. Clinical & Practical Correlation (e.g., nerve injury, pathology, reagent reaction)
-  4. Standard Medical Text Reference (e.g. Junqueira's Basic Histology, Moore's Clinically Oriented Anatomy, Harper's Illustrated Biochemistry).
-- Focus specifically on the requested laboratory subject: ${labContext || 'General Medical Laboratory'}.
-- Keep the response clear, academically rigorous, and encouraging.`;
+          const systemPrompt = `You are "LAB HUB AI Tutor", an authoritative, friendly, and precise medical laboratory tutor for university medical students.
+Your expertise encompasses:
+1. Gross Anatomy & Osteology (bone landmarks, muscle attachments, actions, neurovascular relations, clinical fractures)
+2. Histology (microscopic cellular morphology, tissue layers, H&E stains, distinctive hallmarks)
+3. Biochemistry (carbohydrate, protein, and lipid qualitative tests, reaction mechanisms, clinical interpretations)
 
-          const userPrompt = `Student Context:
-Laboratory Subject: ${labContext || 'General Medical Laboratory'}
-Current Practical Focus: ${practicalTitle || 'General Lab Preparation'}
+Required Pedagogical Structure:
+Format your response with these clear Arabic & English headings:
+1. 💡 **Concept (المفهوم الطبي الأساسي):** Clear, 1-2 sentence definition.
+2. 📖 **Simple Explanation (الشرح المبسط):** Conversational, crystal-clear explanation of the structure or mechanism.
+3. 🔬 **Example / Clinical Spotter (مثال عملي / عينة سريرية):** Concrete specimen identification or patient correlation (nerve injury, reflex, pathology).
+4. ⚠️ **Important Point (نقطة جوهرية للمعمل):** What the student must look for under the microscope or on the dissection cadaver.
+5. 🎯 **Exam Tip (نصيحة امتحانية OSPE):** High-yield pearl or common trap in practical exams.
 
-Student Question:
-"${cleanQuestion}"`;
+Specific Request Mode Instruction:
+${modeInstructions}
+
+Current Context:
+- Laboratory: ${labContext || 'General Medical Laboratory'}
+- Lesson / Topic: ${practicalTitle || 'General Lab Preparation'}
+${imageUrl ? `- Referenced Medical Specimen Image: ${imageUrl}` : ''}`;
 
           const response = await client.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-3.8-flash',
             contents: [
-              { role: 'user', parts: [{ text: `${systemPrompt}\n\n${userPrompt}` }] }
+              { role: 'user', parts: [{ text: `${systemPrompt}\n\nStudent Question:\n"${cleanQuestion}"` }] }
             ]
           });
 
           const replyText = response.text || 'Unable to generate response from medical tutor.';
-          return res.json({ answer: replyText, source: 'gemini-2.5-flash' });
+          return res.json({ answer: replyText, source: 'gemini-3.8-flash' });
         } catch (apiErr) {
-          console.warn('Gemini API call failed, falling back to curriculum knowledgebase:', apiErr);
-          // Proceed to curriculum knowledge base fallback below
+          console.warn('Gemini 3.8 Flash failed, attempting fallback to gemini-2.5-flash:', apiErr);
+          try {
+            const fallbackResponse = await client.models.generateContent({
+              model: 'gemini-2.5-flash',
+              contents: [
+                { role: 'user', parts: [{ text: `You are LAB HUB AI Medical Tutor.\nQuestion: ${cleanQuestion}\nSubject: ${labContext || 'Anatomy & Histology'}` }] }
+              ]
+            });
+            return res.json({ answer: fallbackResponse.text || '', source: 'gemini-2.5-flash' });
+          } catch (e2) {
+            console.warn('Both Gemini models failed, falling back to curriculum knowledge base:', e2);
+          }
         }
       }
 
@@ -1192,77 +1440,75 @@ Student Question:
       if (normalizedQ.includes('skeletal') && normalizedQ.includes('cardiac')) {
         fallbackAnswer = `### Skeletal vs. Cardiac Muscle: Key Identification Pearls
 
-**1. High-Yield Summary:**
+1. 💡 **Concept (المفهوم الطبي):**
+Skeletal muscle is voluntary, somatic, and attached to bones. Cardiac muscle is involuntary, autonomic, and exclusive to the myocardium.
+
+2. 📖 **Simple Explanation (الشرح المبسط):**
 Skeletal muscle fibers are long, cylindrical, non-branching syncytia with multiple **peripheral nuclei** located immediately under the sarcolemma. In contrast, Cardiac myocytes are shorter, **branching**, and feature **1–2 centrally located nuclei** and prominent transverse **intercalated discs**.
 
-**2. Distinctive Microscopic Features:**
-- **Skeletal Muscle:** Multiple flattened peripheral nuclei, distinct sarcomeric A/I cross-striations, voluntary somatic motor innervation, no intercalated discs.
-- **Cardiac Muscle:** Centrally placed oval nuclei, branching anastomosing fiber architecture, transverse step-like intercalated discs (containing desmosomes and gap junctions for electrical syncytium).
-- **Smooth Muscle:** Non-striated, single central cigar-shaped nucleus, fusiform spindle shape.
+3. 🔬 **Example / Clinical Spotter (مثال عملي):**
+Under high-power H&E, look for intercalated discs (step-like junctions) — if present, it is definitively cardiac muscle.
 
-**3. Clinical Correlation:**
-- Central nucleation in skeletal muscle indicates regenerative myopathy or *Duchenne Muscular Dystrophy*.
-- Disruption of cardiac intercalated disc proteins leads to arrhythmogenic right ventricular cardiomyopathy.
+4. ⚠️ **Important Point (نقطة جوهرية):**
+Cardiac fibers branch and anastomose; skeletal fibers run parallel without branching.
 
-**4. Verified Academic Reference:**
-*Junqueira's Basic Histology: Text and Atlas (16th Ed.), Chapter 10: Muscle Tissue, pp. 195–218.*`;
-      } else if (normalizedQ.includes('gram') || normalizedQ.includes('stain')) {
-        fallbackAnswer = `### Gram Staining Mechanism & Diagnostic Troubleshooting
+5. 🎯 **Exam Tip (نصيحة امتحانية OSPE):**
+Do not confuse peripheral nuclei of skeletal muscle with fibroblasts in surrounding endomysium!`;
+      } else if (normalizedQ.includes('femur') || normalizedQ.includes('bone') || normalizedQ.includes('osteology') || normalizedQ.includes('tibia') || normalizedQ.includes('humerus')) {
+        fallbackAnswer = `### Osteology High-Yield Identification Guide
 
-**1. High-Yield Summary:**
-Gram staining differentiates bacteria based on the chemical and physical composition of their cell wall. **Gram-positive** bacteria retain the primary Crystal Violet-Iodine (CV-I) complex and appear **purple/violet**, while **Gram-negative** bacteria lose the primary dye during alcohol decolorization and are counterstained **pink/red** by Safranin.
+1. 💡 **Concept (المفهوم الطبي):**
+Long bones comprise a proximal epiphysis, metaphysis, diaphysis (shaft), and distal epiphysis.
 
-**2. Key Reagents & Critical Timing:**
-1. **Crystal Violet (60s):** Primary stain penetrates peptidoglycan.
-2. **Gram’s Iodine (60s):** Mordant forms insoluble CV-I complexes.
-3. **95% Ethanol (10–15s - CRITICAL):** Dissolves lipid outer membrane in Gram-negatives allowing CV-I wash out; dehydrates thick peptidoglycan in Gram-positives, trapping the dye.
-4. **Safranin (60s):** Counterstains cleared Gram-negative cells.
+2. 📖 **Simple Explanation (الشرح المبسط):**
+- **Femur:** Spherical head directed medially/upward, anatomical neck, greater trochanter laterally, lesser trochanter posteromedially.
+- **Tibia:** Weight-bearing shin bone; medial malleolus distally, tibial tuberosity anteriorly.
+- **Humerus:** Rounded head, surgical neck (axillary nerve vulnerability), deltoid tuberosity, distal capitulum (lateral) and trochlea (medial).
 
-**3. Common Exam Pitfall:**
-Over-decolorization (>20s) extracts dye from Gram-positive cells causing false pink Gram-negative interpretations. Always use 18–24 hour fresh cultures to avoid autolysis.
+3. 🔬 **Example / Clinical Spotter (مثال عملي):**
+Surgical neck fracture of humerus endangers the **Axillary nerve** and posterior circumflex humeral artery.
 
-**4. Verified Academic Reference:**
-*Murray's Medical Microbiology (9th Ed.), Chapter 3: Bacterial Cell Wall Architecture, pp. 12–25.*`;
-      } else if (normalizedQ.includes('scapula') || normalizedQ.includes('humerus') || normalizedQ.includes('bone') || normalizedQ.includes('rotator cuff')) {
-        fallbackAnswer = `### Upper Limb Osteology & Rotator Cuff Landmarks
+4. ⚠️ **Important Point (نقطة جوهرية):**
+Always determine side (Right vs Left) by aligning the anterior landmarks forward and the medial head inwards.
 
-**1. High-Yield Summary:**
-The scapula serves as the attachment site for 17 muscles. The **Rotator Cuff (SITS)** consists of Supraspinatus, Infraspinatus, Teres Minor (which insert on the greater tubercle facets of the humerus), and Subscapularis (which inserts on the lesser tubercle).
+5. 🎯 **Exam Tip (نصيحة امتحانية OSPE):**
+In OSPE write-in stations, capitalize the official anatomical bone name (e.g. **Femur**, **Humerus**, **Tibia**).`;
+      } else if (normalizedQ.includes('biceps') || normalizedQ.includes('muscle') || normalizedQ.includes('triceps') || normalizedQ.includes('deltoid')) {
+        fallbackAnswer = `### Upper Limb Myology High-Yield Guide
 
-**2. Bony Landmarks & Nerve Vulnerability:**
-- **Surgical Neck Fracture:** Endangers the **Axillary nerve** (loss of Deltoid abduction, numbness over regimental badge area) and Posterior Circumflex Humeral artery.
-- **Midshaft Humeral Fracture:** Endangers the **Radial nerve** in the spiral groove (causes Wrist Drop).
-- **Medial Epicondyle Trauma:** Endangers the **Ulnar nerve** (claw hand deformity).
+1. 💡 **Concept (المفهوم الطبي):**
+Muscles act across synovial joints to produce specific vectors of movement determined by their origin, insertion, and mechanical axis.
 
-**3. Verified Academic Reference:**
-*Moore's Clinically Oriented Anatomy (9th Ed.), Chapter 6: Upper Limb, pp. 680–715.*`;
-      } else if (normalizedQ.includes('benedict') || normalizedQ.includes('barfoed') || normalizedQ.includes('seliwanoff') || normalizedQ.includes('biochemistry')) {
-        fallbackAnswer = `### Carbohydrate Identification Qualitative Tests
+2. 📖 **Simple Explanation (الشرح المبسط):**
+- **Biceps Brachii:** Powerful supinator of the flexed forearm and flexor of the elbow. Innervated by Musculocutaneous nerve (C5, C6).
+- **Triceps Brachii:** Main extensor of the elbow joint. Innervated by Radial nerve (C6, C7, C8).
+- **Deltoid:** Multipennate middle fibers abduct arm 15° to 90°. Axillary nerve (C5, C6).
 
-**1. High-Yield Summary:**
-- **Benedict's Test:** Identifies reducing sugars (glucose, fructose, maltose, lactose) via Cu2+ reduction in alkaline medium yielding red Cu2O precipitate.
-- **Barfoed's Test:** Differentiates reducing monosaccharides (reacts in < 3 mins) from reducing disaccharides (reacts in > 10 mins) in acidic medium.
-- **Seliwanoff's Test:** Differentiates ketohexoses (Fructose gives rapid cherry-red in 1 min) from aldoses (slow faint pink).
-- **Bial's Test:** Differentiates pentoses (blue-green) from hexoses (muddy brown).
+3. 🔬 **Example / Clinical Spotter (مثال عملي):**
+Testing the biceps reflex assesses the C5-C6 spinal cord segments; testing triceps reflex assesses C7.
 
-**2. Practical Pearl:**
-Always use boiling water baths and check timing strictly according to standardized lab SOPs.
+4. ⚠️ **Important Point (نقطة جوهرية):**
+Supraspinatus initiates abduction (0-15°); Deltoid continues it from 15° to 90°.
 
-**3. Verified Academic Reference:**
-*Harper's Illustrated Biochemistry (32nd Ed.), Section 2: Bioenergetics & Carbohydrate Metabolism.*`;
+5. 🎯 **Exam Tip (نصيحة امتحانية OSPE):**
+Always state both the muscle name and its motor innervation when asked about action and nerve supply.`;
       } else {
-        fallbackAnswer = `### LAB HUB Medical Knowledge Pearl
+        fallbackAnswer = `### LAB HUB Medical Knowledge Guide
 
-Thank you for your question regarding **"${cleanQuestion}"**.
+1. 💡 **Concept (المفهوم الطبي الأساسي):**
+Regarding **"${cleanQuestion}"**: In medical laboratory sciences, precision in structural morphology and biochemical mechanism is essential for clinical diagnosis.
 
-**Key Academic Concepts:**
-- In our approved university curriculum, all laboratory observations rely on correlating structure with physiological function and clinical pathology.
-- Always cross-reference your findings with the high-resolution slide viewers, labeled landmarks, and safety SOPs in the respective laboratory modules.
+2. 📖 **Simple Explanation (الشرح المبسط):**
+Always connect macroscopic organ / bone topography with microscopic histology and physiological function. 
 
-**Recommended Action:**
-- Explore the **Interactive Slide Viewer** and **Spotter Stations** in this laboratory for direct hands-on practice before your next practical session.
+3. 🔬 **Example / Clinical Spotter (مثال عملي):**
+In practical stations, identify orientation first (Anterior vs Posterior, Medial vs Lateral), then trace landmarks to adjacent neurovascular bundles.
 
-*Reference: University Medical Laboratory Curriculum Board (2026).*`;
+4. ⚠️ **Important Point (نقطة جوهرية للمعمل):**
+Review the high-power interactive specimens and 3D diagrams in this laboratory station to observe true tissue color and borders.
+
+5. 🎯 **Exam Tip (نصيحة امتحانية OSPE):**
+Practice with the Station Countdown Timer in the **Anatomy Practical Examination** to build confidence under real exam conditions!`;
       }
 
       return res.json({ answer: fallbackAnswer, source: 'approved-curriculum-knowledgebase' });

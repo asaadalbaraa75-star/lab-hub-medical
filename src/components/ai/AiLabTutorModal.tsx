@@ -23,12 +23,13 @@ export const AiLabTutorModal: React.FC<AiLabTutorModalProps> = ({
   currentSubject,
   currentTopic
 }) => {
+  const [selectedMode, setSelectedMode] = useState<'explain_simple' | 'example' | 'quiz_me' | 'exam_tip' | 'compare'>('explain_simple');
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 'welcome',
       sender: 'tutor',
-      text: `Hello! I am your **LAB HUB AI Medical Laboratory Tutor**. 🔬\n\nI can assist you with:\n- **Histological slide identification** (stains, cell layers, artifacts)\n- **Biochemistry practical tests** (Carbohydrate qualitative tests, Biuret test, Casein precipitation)\n- **Anatomical landmarks & relations** (bones, muscles, nerves, blood supply)\n- **OSPE spotter exam preparation**\n\nHow can I help you master your laboratory practical today?`,
-      timestamp: 'Just now'
+      text: `مرحبًا بك في **المساعد الطبي الذكي (LAB HUB AI Tutor)** 🔬\n\nأنا هنا لمساعدتك في كل ما يتعلق بمعامل كلية الطب:\n- **فحص العينات وتحديد المعالم التشريحية** (Bones, Muscles, Nerves)\n- **تمييز الشرائح المجهرية والأصباغ** (H&E stains, cell layers)\n- **تجارب الكيمياء الحيوية** (Biuret, Fehling, Precipitation)\n- **نصائح وتدريبات على محطات امتحانات الـ OSPE**\n\nاختر نمط الإجابة المفضل لديك من الأزرار السريعة بالأسفل وابدأ بسؤالك!`,
+      timestamp: 'الآن'
     }
   ]);
   const [inputValue, setInputValue] = useState('');
@@ -36,11 +37,19 @@ export const AiLabTutorModal: React.FC<AiLabTutorModalProps> = ({
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  const pedagogicalModes = [
+    { id: 'explain_simple', label: '📖 اشرح ببساطة', desc: 'تبسيط للمبتدئين' },
+    { id: 'example', label: '🔬 مثال سريري', desc: 'Clinical correlation' },
+    { id: 'quiz_me', label: '🎯 اختبرني (Quiz)', desc: 'سؤال محطة OSPE' },
+    { id: 'exam_tip', label: '💡 نصيحة امتحان', desc: 'High-Yield Spotter' },
+    { id: 'compare', label: '⚖️ مقارنة تفريقية', desc: 'Differential table' }
+  ] as const;
+
   const quickPrompts = [
     'How do I distinguish skeletal vs cardiac muscle under light microscopy?',
-    'Explain the chemical principle of the Biuret test for proteins.',
     'What are the key bony landmarks on the scapula for OSPE spotters?',
-    'What is the mechanism of isoelectric precipitation of casein at pH 4.6?'
+    'Explain the clinical significance of radial groove fractures on the humerus.',
+    'Explain the chemical principle of the Biuret test for proteins.'
   ];
 
   useEffect(() => {
@@ -67,11 +76,12 @@ export const AiLabTutorModal: React.FC<AiLabTutorModalProps> = ({
     setIsLoading(true);
 
     try {
-      const response = await apiService.askAiTutor(
+      const response = await apiService.askAiTutor({
         question,
-        currentSubject,
-        currentTopic
-      );
+        labContext: currentSubject,
+        practicalTitle: currentTopic,
+        mode: selectedMode
+      });
 
       const tutorMsg: Message = {
         id: `tut_${Date.now()}`,
@@ -203,6 +213,28 @@ export const AiLabTutorModal: React.FC<AiLabTutorModalProps> = ({
           )}
 
           <div ref={messagesEndRef} />
+        </div>
+
+        {/* Pedagogical Modes Selector Bar */}
+        <div className="px-3 py-2 bg-slate-100/70 border-t border-[#E2E8F0] flex items-center gap-1.5 overflow-x-auto">
+          <span className="text-[10px] font-bold text-slate-500 whitespace-nowrap px-1">
+            نمط الشرح:
+          </span>
+          {pedagogicalModes.map(m => (
+            <button
+              key={m.id}
+              type="button"
+              onClick={() => setSelectedMode(m.id)}
+              className={`px-2.5 py-1 rounded-lg text-[11px] font-bold whitespace-nowrap transition-all flex items-center gap-1 cursor-pointer ${
+                selectedMode === m.id
+                  ? 'bg-indigo-600 text-white shadow-xs scale-102'
+                  : 'bg-white text-slate-700 hover:bg-slate-200 border border-slate-200'
+              }`}
+              title={m.desc}
+            >
+              <span>{m.label}</span>
+            </button>
+          ))}
         </div>
 
         {/* Quick Prompts Bar */}

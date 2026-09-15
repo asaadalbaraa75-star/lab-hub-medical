@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MedicalExam, LabSubjectId } from '../../types';
 import { storageService } from '../../services/storageService';
+import { apiService } from '../../services/apiService';
 import {
   Bone,
   Microscope,
@@ -16,7 +17,8 @@ import {
   BookOpen,
   BarChart2,
   ShieldAlert,
-  Layers
+  Layers,
+  RefreshCw
 } from 'lucide-react';
 
 interface AvailableExamsPageProps {
@@ -32,20 +34,51 @@ export const AvailableExamsPage: React.FC<AvailableExamsPageProps> = ({
   onOpenLab,
   onOpenTeacherDashboard
 }) => {
-  const exams = passedExams || storageService.getMedicalExams();
+  const [exams, setExams] = useState<MedicalExam[]>(passedExams || []);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (passedExams && passedExams.length > 0) {
+      setExams(passedExams);
+      return;
+    }
+
+    const fetchAllExams = async () => {
+      setIsLoading(true);
+      try {
+        const serverExams = await apiService.fetchExams();
+        if (serverExams && serverExams.length > 0) {
+          setExams(serverExams);
+        } else {
+          setExams(storageService.getMedicalExams());
+        }
+      } catch {
+        setExams(storageService.getMedicalExams());
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAllExams();
+  }, [passedExams]);
 
   const filteredExams = exams.filter(exam => {
-    const matchesCategory =
-      selectedCategory === 'all' ||
-      (selectedCategory === 'mixed' && exam.labId === 'mixed') ||
-      exam.labId === selectedCategory;
+    let matchesCategory = true;
+    if (selectedCategory === 'all') matchesCategory = true;
+    else if (selectedCategory === 'anatomy') matchesCategory = exam.labId === 'anatomy';
+    else if (selectedCategory === 'bones') matchesCategory = exam.title.toLowerCase().includes('bone') || exam.titleArabic?.includes('عظام');
+    else if (selectedCategory === 'muscles') matchesCategory = exam.title.toLowerCase().includes('muscle') || exam.titleArabic?.includes('عضلات');
+    else if (selectedCategory === 'movements') matchesCategory = exam.title.toLowerCase().includes('movement') || exam.titleArabic?.includes('حركات');
+    else if (selectedCategory === 'histology') matchesCategory = exam.labId === 'histology';
+    else if (selectedCategory === 'biochemistry') matchesCategory = exam.labId === 'biochemistry';
+    else matchesCategory = exam.labId === selectedCategory;
 
     const matchesSearch =
       exam.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      exam.titleArabic.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      exam.description.toLowerCase().includes(searchQuery.toLowerCase());
+      (exam.titleArabic && exam.titleArabic.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (exam.description && exam.description.toLowerCase().includes(searchQuery.toLowerCase()));
 
     return matchesCategory && matchesSearch;
   });
@@ -123,7 +156,43 @@ export const AvailableExamsPage: React.FC<AvailableExamsPageProps> = ({
             }`}
           >
             <Bone className="w-3.5 h-3.5" />
-            <span>Anatomy Lab</span>
+            <span>Anatomy</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setSelectedCategory('bones')}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors whitespace-nowrap flex items-center gap-1.5 ${
+              selectedCategory === 'bones'
+                ? 'bg-indigo-600 text-white shadow-xs'
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+            }`}
+          >
+            <Bone className="w-3.5 h-3.5" />
+            <span>Bones Exam</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setSelectedCategory('muscles')}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors whitespace-nowrap flex items-center gap-1.5 ${
+              selectedCategory === 'muscles'
+                ? 'bg-indigo-600 text-white shadow-xs'
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+            }`}
+          >
+            <Layers className="w-3.5 h-3.5" />
+            <span>Muscles Exam</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setSelectedCategory('movements')}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors whitespace-nowrap flex items-center gap-1.5 ${
+              selectedCategory === 'movements'
+                ? 'bg-indigo-600 text-white shadow-xs'
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+            }`}
+          >
+            <BarChart2 className="w-3.5 h-3.5" />
+            <span>Movements Exam</span>
           </button>
           <button
             type="button"
@@ -135,7 +204,7 @@ export const AvailableExamsPage: React.FC<AvailableExamsPageProps> = ({
             }`}
           >
             <Microscope className="w-3.5 h-3.5" />
-            <span>Histology Lab</span>
+            <span>Histology Exam</span>
           </button>
           <button
             type="button"
@@ -147,7 +216,7 @@ export const AvailableExamsPage: React.FC<AvailableExamsPageProps> = ({
             }`}
           >
             <FlaskConical className="w-3.5 h-3.5" />
-            <span>Biochemistry Lab</span>
+            <span>Biochemistry</span>
           </button>
           <button
             type="button"

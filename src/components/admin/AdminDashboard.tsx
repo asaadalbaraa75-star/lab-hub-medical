@@ -40,7 +40,11 @@ import { AdminAnalyticsTab } from './tabs/AdminAnalyticsTab';
 import { AdminContentTab } from './tabs/AdminContentTab';
 import { AdminVideosTab } from './tabs/AdminVideosTab';
 import { AdminSecurityTab } from './tabs/AdminSecurityTab';
-import { Radio } from 'lucide-react';
+import { AdminExamsTab } from './tabs/AdminExamsTab';
+import { AdminQuestionBankTab } from './tabs/AdminQuestionBankTab';
+import { AdminNotificationsTab } from './tabs/AdminNotificationsTab';
+import { AdminAiSettingsTab } from './tabs/AdminAiSettingsTab';
+import { Radio, HelpCircle, Award, Bell, Bot } from 'lucide-react';
 import { OwnershipWatermark } from '../common/OwnershipWatermark';
 
 interface AdminDashboardProps {
@@ -49,6 +53,7 @@ interface AdminDashboardProps {
   onNavigateSubPage?: (page: AdminSubPage) => void;
   onSelectLab?: (labId: LabSubjectId) => void;
   onOpenPractical?: (labId: string, practicalId: string) => void;
+  onPreviewExam?: (exam: any) => void;
   onReturnToStudent?: () => void;
 }
 
@@ -58,6 +63,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   onNavigateSubPage,
   onSelectLab,
   onOpenPractical,
+  onPreviewExam,
   onReturnToStudent
 }) => {
   const [activeSubPage, setActiveSubPage] = useState<AdminSubPage>(initialSubPage);
@@ -86,6 +92,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       else if (hash.includes('admin/active_users') || hash.includes('admin/active-users')) setActiveSubPage('active_users');
       else if (hash.includes('admin/activity')) setActiveSubPage('activity');
       else if (hash.includes('admin/analytics')) setActiveSubPage('analytics');
+      else if (hash.includes('admin/exams')) setActiveSubPage('exams');
+      else if (hash.includes('admin/question_bank') || hash.includes('admin/questions')) setActiveSubPage('question_bank');
+      else if (hash.includes('admin/notifications')) setActiveSubPage('notifications');
+      else if (hash.includes('admin/ai_settings') || hash.includes('admin/ai')) setActiveSubPage('ai_settings');
       else if (hash.includes('admin/content')) setActiveSubPage('content');
       else if (hash.includes('admin/videos')) setActiveSubPage('videos');
       else if (hash.includes('admin/security')) setActiveSubPage('security');
@@ -192,12 +202,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   // Navigation Tabs Configuration (Fully in Professional Administrative Arabic)
   const navTabs: { id: AdminSubPage; label: string; icon: React.ReactNode; badge?: number }[] = [
     { id: 'overview', label: 'الرئيسية والإحصائيات', icon: <Home className="w-4 h-4" /> },
+    { id: 'exams', label: 'إدارة الامتحانات (Exams)', icon: <Award className="w-4 h-4 text-purple-600" /> },
+    { id: 'question_bank', label: 'بنك الأسئلة (OSPE Bank)', icon: <HelpCircle className="w-4 h-4 text-indigo-600" /> },
     { id: 'users', label: 'إدارة الطلاب والمستخدمين', icon: <Users className="w-4 h-4" />, badge: users.length },
     { id: 'active_users', label: 'النشطون حالياً', icon: <Radio className="w-4 h-4 text-emerald-500" /> },
     { id: 'activity', label: 'سجل الدخول والأنشطة', icon: <Activity className="w-4 h-4" />, badge: activities.length },
     { id: 'analytics', label: 'التحليلات المتقدمة', icon: <TrendingUp className="w-4 h-4" /> },
     { id: 'content', label: 'إدارة المحتوى المعملي', icon: <BookOpen className="w-4 h-4" /> },
     { id: 'videos', label: 'إدارة الفيديوهات', icon: <Video className="w-4 h-4" /> },
+    { id: 'notifications', label: 'مركز الإشعارات', icon: <Bell className="w-4 h-4 text-amber-500" /> },
+    { id: 'ai_settings', label: 'المساعد الذكي (AI Tutor)', icon: <Bot className="w-4 h-4 text-cyan-600" /> },
     { id: 'security', label: 'الأمان والامتيازات', icon: <Lock className="w-4 h-4" /> }
   ];
 
@@ -332,6 +346,31 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
         {activeSubPage === 'videos' && (
           <AdminVideosTab
+            currentUser={currentUser}
+          />
+        )}
+
+        {activeSubPage === 'exams' && (
+          <AdminExamsTab
+            currentUser={currentUser}
+            onPreviewExam={onPreviewExam}
+          />
+        )}
+
+        {activeSubPage === 'question_bank' && (
+          <AdminQuestionBankTab
+            currentUser={currentUser}
+          />
+        )}
+
+        {activeSubPage === 'notifications' && (
+          <AdminNotificationsTab
+            currentUser={currentUser}
+          />
+        )}
+
+        {activeSubPage === 'ai_settings' && (
+          <AdminAiSettingsTab
             currentUser={currentUser}
           />
         )}
