@@ -263,7 +263,7 @@ export class AuthService {
           }
           this.saveSession(session);
           this.syncLocalUserLogin(data.user);
-          this.trackActivity('تسجيل الدخول إلى المنصة (Logged In)', 'Authentication');
+          this.trackActivity('تسجيل الدخول إلى المنصة (Logged In)', 'Authentication', { type: 'login', role: data.user.role });
           return { success: true, user: data.user };
         }
       }
@@ -320,7 +320,7 @@ export class AuthService {
     };
 
     this.saveSession(session);
-    this.trackActivity(`تسجيل الدخول للمنصة (جلسة رقم ${user.sessionCount})`, 'Authentication');
+    this.trackActivity(`تسجيل الدخول للمنصة (جلسة رقم ${user.sessionCount})`, 'Authentication', { type: 'login', role: safeUser.role, sessionNumber: user.sessionCount });
 
     return { success: true, user: safeUser };
   }
@@ -502,11 +502,13 @@ export class AuthService {
     const currentUser = this.getCurrentUser();
     if (!currentUser) return;
 
-    // Throttle check: Don't repeat identical activity within 15 seconds
+    // Throttle check: Don't repeat identical general activity within 15 seconds.
+    // Never throttle critical events (logins, logouts, security actions).
+    const isCriticalAuthEvent = section === 'Authentication' || section === 'Security' || metadata?.type === 'login' || metadata?.type === 'logout';
     const throttleKey = `${currentUser.id}_${activity}_${section}`;
     const now = Date.now();
     const lastTrigger = this.throttledActivities.get(throttleKey);
-    if (lastTrigger && now - lastTrigger < 15000) {
+    if (!isCriticalAuthEvent && lastTrigger && now - lastTrigger < 15000) {
       return;
     }
     this.throttledActivities.set(throttleKey, now);
@@ -1043,7 +1045,7 @@ export class AuthService {
     };
 
     this.saveSession(session);
-    this.trackActivity(`تسجيل الدخول كـ ${user.name} (${user.role.toUpperCase()})`, 'Authentication');
+    this.trackActivity(`تسجيل الدخول كـ ${user.name} (${user.role.toUpperCase()})`, 'Authentication', { type: 'login', role: user.role });
     return { success: true, session, message: `Successfully authenticated as ${user.name} (${user.role.toUpperCase()})` };
   }
 

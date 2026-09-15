@@ -7,6 +7,7 @@ import {
   Activity,
   RotateCcw,
   BookmarkCheck,
+  Shield,
   ArrowRight,
   ArrowLeft,
   Target,
@@ -41,6 +42,7 @@ export const HistologyHomeView: React.FC<HistologyHomeViewProps> = ({
       case 'Activity': return <Activity className="w-6 h-6 text-emerald-400" />;
       case 'RotateCcw': return <RotateCcw className="w-6 h-6 text-indigo-400" />;
       case 'BookmarkCheck': return <BookmarkCheck className="w-6 h-6 text-teal-400" />;
+      case 'Shield': return <Shield className="w-6 h-6 text-sky-400" />;
       default: return <BookOpen className="w-6 h-6 text-teal-400" />;
     }
   };

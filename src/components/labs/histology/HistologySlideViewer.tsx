@@ -7,10 +7,12 @@ import {
   Minimize2,
   Tag,
   Eye,
-  EyeOff
+  EyeOff,
+  AlertCircle
 } from 'lucide-react';
 import { HistologySanaaAtlasVisual } from './HistologySanaaAtlasVisuals';
 import { HistologyLabel, HistologyExamMarker, HistologySlideMetadata } from './HistologyCurriculumData';
+import { HistologyExamPointer } from './HistologyExamPointer';
 
 interface HistologySlideViewerProps {
   realImagePath?: string;
@@ -171,8 +173,10 @@ export const HistologySlideViewer: React.FC<HistologySlideViewerProps> = ({
   const markerY = examMarker?.y ?? 50;
   const markerNum = examMarker?.pointerNumber ?? 1;
 
-  // Determine if using real image or diagram fallback
-  const isUsingRealImage = Boolean(realImagePath);
+  // Determine if verified real slide is available
+  const isRealSlideAvailable = Boolean(realImagePath) && 
+    realImagePath !== '/images/histology/real_histology_slide_required.svg' && 
+    isRealMicroscopy;
 
   return (
     <div
@@ -198,9 +202,13 @@ export const HistologySlideViewer: React.FC<HistologySlideViewerProps> = ({
             {magnification}
           </span>
 
-          {isUsingRealImage && isRealMicroscopy && (
+          {isRealSlideAvailable ? (
             <span className="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 backdrop-blur-md">
               Real Slide ✓
+            </span>
+          ) : (
+            <span className="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-amber-500/10 text-amber-300 border border-amber-500/30 backdrop-blur-md">
+              Slide Flagged
             </span>
           )}
         </div>
@@ -250,82 +258,97 @@ export const HistologySlideViewer: React.FC<HistologySlideViewerProps> = ({
           }}
           className="w-full h-full flex items-center justify-center relative"
         >
-          {isUsingRealImage ? (
-            <div className="relative w-full h-full flex items-center justify-center p-2">
+          {isRealSlideAvailable ? (
+            <div className="relative inline-flex items-center justify-center max-w-full max-h-full">
               <img
                 src={realImagePath}
                 alt={titleEn}
-                className="max-w-full max-h-full object-contain rounded-lg shadow-inner pointer-events-none select-none transition-opacity duration-300"
+                className="max-w-full max-h-[calc(100vh-280px)] sm:max-h-[540px] object-contain rounded-lg shadow-inner pointer-events-none select-none transition-opacity duration-300 block"
                 loading="eager"
                 referrerPolicy="no-referrer"
               />
 
-              {/* OVERLAY: STUDY LABELS (When enabled in study mode) */}
+              {/* OVERLAY: STUDY LABELS (When enabled in study mode - ONLY for labels with verified coordinates) */}
               {showLabels && mode !== 'practice' && labels.length > 0 && (
                 <div className="absolute inset-0 pointer-events-none">
-                  {labels.map((lbl, idx) => {
-                    const posX = lbl.x ?? (20 + (idx % 3) * 30);
-                    const posY = lbl.y ?? (25 + Math.floor(idx / 3) * 35);
-                    const isSelected = activeLabelId === lbl.id;
+                  {labels
+                    .filter((lbl) => lbl.x !== undefined && lbl.y !== undefined)
+                    .map((lbl, idx) => {
+                      const posX = lbl.x!;
+                      const posY = lbl.y!;
+                      const isSelected = activeLabelId === lbl.id;
 
-                    return (
-                      <div
-                        key={lbl.id || idx}
-                        style={{ left: `${posX}%`, top: `${posY}%` }}
-                        className="absolute -translate-x-1/2 -translate-y-1/2 pointer-events-auto transition-transform hover:scale-110 z-20"
-                      >
-                        <button
-                          onClick={() => setActiveLabelId(isSelected ? null : lbl.id)}
-                          className="group relative flex items-center gap-1.5 focus:outline-none"
+                      return (
+                        <div
+                          key={lbl.id || idx}
+                          style={{ left: `${posX}%`, top: `${posY}%` }}
+                          className="absolute -translate-x-1/2 -translate-y-1/2 pointer-events-auto transition-transform hover:scale-110 z-20"
                         >
-                          <span className="relative flex h-5 w-5 items-center justify-center">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-60" />
-                            <span className="relative inline-flex rounded-full h-4 w-4 bg-teal-500 border-2 border-white shadow-lg text-[9px] font-black text-slate-950 items-center justify-center">
-                              {idx + 1}
-                            </span>
-                          </span>
-
-                          <div className="px-2.5 py-1 rounded-lg bg-slate-950/90 text-white border border-teal-500/50 backdrop-blur-md text-[11px] font-bold shadow-xl whitespace-nowrap">
-                            <span>{lbl.label}</span>
-                            {lbl.labelAr && (
-                              <span className="block text-[9px] text-teal-300 font-arabic">
-                                {lbl.labelAr}
+                          <button
+                            onClick={() => setActiveLabelId(isSelected ? null : lbl.id)}
+                            className="group relative flex items-center gap-1.5 focus:outline-none"
+                          >
+                            <span className="relative flex h-5 w-5 items-center justify-center">
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-60" />
+                              <span className="relative inline-flex rounded-full h-4 w-4 bg-teal-500 border-2 border-white shadow-lg text-[9px] font-black text-slate-950 items-center justify-center">
+                                {idx + 1}
                               </span>
-                            )}
-                          </div>
-                        </button>
-                      </div>
-                    );
-                  })}
+                            </span>
+
+                            <div className="px-2.5 py-1 rounded-lg bg-slate-950/90 text-white border border-teal-500/50 backdrop-blur-md text-[11px] font-bold shadow-xl whitespace-nowrap">
+                              <span>{lbl.label}</span>
+                              {lbl.labelAr && (
+                                <span className="block text-[9px] text-teal-300 font-arabic">
+                                  {lbl.labelAr}
+                                </span>
+                              )}
+                            </div>
+                          </button>
+                        </div>
+                      );
+                    })}
                 </div>
               )}
 
-              {/* OVERLAY: NEUTRAL EXAM MARKER ① (For Practice / Exam Mode) */}
+              {/* OVERLAY: HIGH-PRECISION HISTOLOGY EXAM POINTER ① (For Practice / Exam Mode) */}
               {mode === 'practice' && (
-                <div
-                  style={{ left: `${markerX}%`, top: `${markerY}%` }}
-                  className="absolute -translate-x-1/2 -translate-y-1/2 pointer-events-none z-30 transition-transform"
-                >
-                  <div className="relative flex items-center justify-center">
-                    <div className="w-12 h-12 rounded-full border-2 border-dashed border-white/80 pointer-events-none" />
-                    
-                    <div className="absolute w-7 h-7 rounded-full bg-slate-950 text-white border-2 border-white shadow-2xl flex items-center justify-center text-xs font-black ring-2 ring-black/80 font-mono">
-                      {markerNum === 1 ? '①' : markerNum === 2 ? '②' : markerNum === 3 ? '③' : markerNum}
-                    </div>
-
-                    <div className="absolute -bottom-6 px-2 py-0.5 rounded-md bg-black/90 text-white border border-white/40 text-[10px] font-bold tracking-wide shadow-lg whitespace-nowrap">
-                      Structure {markerNum === 1 ? '①' : markerNum}
-                    </div>
-                  </div>
-                </div>
+                <HistologyExamPointer
+                  x={markerX}
+                  y={markerY}
+                  pointerNumber={markerNum}
+                  label={`Structure ${markerNum === 1 ? '①' : markerNum}`}
+                  theme="cyan"
+                />
               )}
             </div>
-          ) : (
+          ) : visualId === 'microscope_parts' ? (
             <HistologySanaaAtlasVisual
               visualId={visualId}
               mode={showLabels && mode !== 'practice' ? 'labeled' : 'unlabeled'}
               zoomLevel={zoomLevel}
             />
+          ) : (
+            <div className="max-w-md p-6 rounded-2xl bg-slate-900/90 border border-amber-500/30 text-center space-y-4 shadow-2xl backdrop-blur-md m-4">
+              <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-400">
+                <AlertCircle className="w-6 h-6" />
+              </div>
+              <div className="space-y-1.5">
+                <span className="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                  Academic Policy: Real Slides Only
+                </span>
+                <h4 className="text-base sm:text-lg font-bold text-white pt-1">
+                  Real Histology Slide Unavailable
+                </h4>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  Per strict medical laboratory standards, artificial or AI-generated histology slides are forbidden. This specimen is queued for an authentic university whole-slide scan.
+                </p>
+              </div>
+              <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 text-left text-xs space-y-1.5 text-slate-300">
+                <div><span className="text-slate-400">Specimen:</span> <strong className="text-white">{specimen}</strong></div>
+                <div><span className="text-slate-400">Stain Protocol:</span> <strong className="text-teal-300">{stain}</strong></div>
+                <div><span className="text-slate-400">Magnification:</span> <strong className="text-slate-200">{magnification}</strong></div>
+              </div>
+            </div>
           )}
         </div>
 

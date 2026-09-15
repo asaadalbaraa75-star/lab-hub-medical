@@ -1316,18 +1316,18 @@ export const HISTOLOGY_PRACTICAL_SLIDES: HistologyPracticalSlide[] = [
     stainUsed: 'Hematoxylin & Eosin (H&E)',
     specimenSource: 'Kidney Cortex (Renal Convoluted Tubules)',
     characteristicDiagnosticFeature: 'Circular cross sections of tubules lined by a single layer of square cells with round, perfectly centered nuclei.',
-    imageUrl: 'https://images.unsplash.com/photo-1579154204601-01588f351e67?w=1000&auto=format&fit=crop&q=80',
+    imageUrl: '/images/histology/histology_kidney_tubules.jpg',
     zoomLevels: {
-      '4x': 'https://images.unsplash.com/photo-1579154204601-01588f351e67?w=800&auto=format&fit=crop&q=80',
-      '10x': 'https://images.unsplash.com/photo-1579154204601-01588f351e67?w=1000&auto=format&fit=crop&q=80',
-      '40x': 'https://images.unsplash.com/photo-1579154204601-01588f351e67?w=1200&auto=format&fit=crop&q=80',
-      '100x': 'https://images.unsplash.com/photo-1579154204601-01588f351e67?w=1400&auto=format&fit=crop&q=80'
+      '4x': '/images/histology/histology_kidney_tubules.jpg',
+      '10x': '/images/histology/histology_kidney_tubules.jpg',
+      '40x': '/images/histology/histology_kidney_tubules.jpg',
+      '100x': '/images/histology/histology_kidney_tubules.jpg'
     },
     labels: [
-      { id: 'p1', nameEn: 'Renal Tubule Lumen', nameAr: 'تجويف النبيب الكلوي', x: 50, y: 48, description: 'Central lumen where glomerular filtrate flows.' },
-      { id: 'p2', nameEn: 'Simple Cuboidal Cell', nameAr: 'خلية مكعبة بسيطة', x: 38, y: 46, description: 'Cube-like cell with equal height and width.' },
-      { id: 'p3', nameEn: 'Spherical Central Nucleus', nameAr: 'نواة كروية مركزية', x: 34, y: 52, description: 'Dark round nucleus situated exactly in cell center.' },
-      { id: 'p4', nameEn: 'Basement Membrane', nameAr: 'الغشاء القاعدي', x: 28, y: 56, description: 'Delicate basal lamina anchoring the epithelial cells.' }
+      { id: 'p1', nameEn: 'Renal Tubule Lumen', nameAr: 'تجويف النبيب الكلوي', x: 50, y: 50, description: 'Central lumen where glomerular filtrate flows.' },
+      { id: 'p2', nameEn: 'Simple Cuboidal Cell', nameAr: 'خلية مكعبة بسيطة', x: 42, y: 58, description: 'Cube-like cell with equal height and width.' },
+      { id: 'p3', nameEn: 'Spherical Central Nucleus', nameAr: 'نواة كروية مركزية', x: 38, y: 64, description: 'Dark round nucleus situated exactly in cell center.' },
+      { id: 'p4', nameEn: 'Basement Membrane', nameAr: 'الغشاء القاعدي', x: 32, y: 70, description: 'Delicate basal lamina anchoring the epithelial cells.' }
     ],
     ospeQuestion: {
       prompt: 'Station 1: Examine the pointed microscopic field under 40x objective:',
@@ -1346,18 +1346,18 @@ export const HISTOLOGY_PRACTICAL_SLIDES: HistologyPracticalSlide[] = [
     stainUsed: 'Hematoxylin & Eosin (H&E)',
     specimenSource: 'Trachea (Respiratory Mucosa)',
     characteristicDiagnosticFeature: 'Multi-tiered nuclei at different heights, prominent apical fringe of cilia, and pale goblet cells, resting on hyaline cartilage ring.',
-    imageUrl: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=1000&auto=format&fit=crop&q=80',
+    imageUrl: '/images/histology/2304_Pseudostratified_Epithelium.jpg',
     zoomLevels: {
-      '4x': 'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800&auto=format&fit=crop&q=80',
-      '10x': 'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=1000&auto=format&fit=crop&q=80',
-      '40x': 'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=1200&auto=format&fit=crop&q=80',
-      '100x': 'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=1400&auto=format&fit=crop&q=80'
+      '4x': '/images/histology/2304_Pseudostratified_Epithelium.jpg',
+      '10x': '/images/histology/2304_Pseudostratified_Epithelium.jpg',
+      '40x': '/images/histology/2304_Pseudostratified_Epithelium.jpg',
+      '100x': '/images/histology/2304_Pseudostratified_Epithelium.jpg'
     },
     labels: [
-      { id: 't1', nameEn: 'Apical Cilia (الأهداب)', nameAr: 'الأهداب السطحية', x: 52, y: 22, description: 'Dense border of motile hair-like cilia sweeping mucus upward.' },
-      { id: 't2', nameEn: 'Goblet Cell (خلية كأسية)', nameAr: 'خلية كأسية مخاطية', x: 44, y: 34, description: 'Pale clear cup-shaped mucus-secreting unicellular gland.' },
-      { id: 't3', nameEn: 'Multi-tiered Nuclei', nameAr: 'أنوية على مستويات متعددة', x: 50, y: 44, description: 'Nuclei positioned at varied heights creating the false layered look.' },
-      { id: 't4', nameEn: 'Thick Basement Membrane', nameAr: 'الغشاء القاعدي السميك', x: 52, y: 64, description: 'Distinct glassy eosinophilic basal boundary.' }
+      { id: 't1', nameEn: 'Apical Cilia (الأهداب)', nameAr: 'الأهداب السطحية', x: 48, y: 32, description: 'Dense border of motile hair-like cilia sweeping mucus upward.' },
+      { id: 't2', nameEn: 'Goblet Cell (خلية كأسية)', nameAr: 'خلية كأسية مخاطية', x: 38, y: 44, description: 'Pale clear cup-shaped mucus-secreting unicellular gland.' },
+      { id: 't3', nameEn: 'Multi-tiered Nuclei', nameAr: 'أنوية على مستويات متعددة', x: 50, y: 56, description: 'Nuclei positioned at varied heights creating the false layered look.' },
+      { id: 't4', nameEn: 'Basement Membrane & Lamina Propria', nameAr: 'الغشاء القاعدي والصفيحة المخصوصة', x: 52, y: 72, description: 'Glassy basal boundary supporting mucosa.' }
     ],
     ospeQuestion: {
       prompt: 'Station 2: Examine the mucosa of this tubular respiratory organ:',
@@ -1376,25 +1376,25 @@ export const HISTOLOGY_PRACTICAL_SLIDES: HistologyPracticalSlide[] = [
     stainUsed: 'Hematoxylin & Eosin (H&E)',
     specimenSource: 'Skin (Epidermis of Thick Skin)',
     characteristicDiagnosticFeature: 'Multi-layered epithelium with basal cuboidal cells, prickle cell layer, and superficial dead eosinophilic flaky stratum corneum lacking nuclei.',
-    imageUrl: 'https://images.unsplash.com/photo-1530026405186-ed1f139313f8?w=1000&auto=format&fit=crop&q=80',
+    imageUrl: '/images/histology/503_Epidermis.jpg',
     zoomLevels: {
-      '4x': 'https://images.unsplash.com/photo-1530026405186-ed1f139313f8?w=800&auto=format&fit=crop&q=80',
-      '10x': 'https://images.unsplash.com/photo-1530026405186-ed1f139313f8?w=1000&auto=format&fit=crop&q=80',
-      '40x': 'https://images.unsplash.com/photo-1530026405186-ed1f139313f8?w=1200&auto=format&fit=crop&q=80',
-      '100x': 'https://images.unsplash.com/photo-1530026405186-ed1f139313f8?w=1400&auto=format&fit=crop&q=80'
+      '4x': '/images/histology/503_Epidermis.jpg',
+      '10x': '/images/histology/503_Epidermis.jpg',
+      '40x': '/images/histology/503_Epidermis.jpg',
+      '100x': '/images/histology/503_Epidermis.jpg'
     },
     labels: [
-      { id: 's1', nameEn: 'Stratum Corneum (Keratin)', nameAr: 'طبقة الكيراتين المتقرنة', x: 50, y: 18, description: 'Acellular dense wavy pink sheets of dead keratin.' },
-      { id: 's2', nameEn: 'Stratum Granulosum', nameAr: 'الطبقة الحبيبية', x: 50, y: 32, description: 'Dark basophilic keratohyalin granules.' },
-      { id: 's3', nameEn: 'Stratum Spinosum', nameAr: 'الطبقة الشائكة', x: 50, y: 48, description: 'Polygonal cells linked by spine-like desmosomes.' },
-      { id: 's4', nameEn: 'Stratum Basale', nameAr: 'الطبقة القاعدية المولدة', x: 50, y: 68, description: 'Single row of proliferating cuboidal/columnar stem cells.' }
+      { id: 's1', nameEn: 'Stratum Corneum (Keratin)', nameAr: 'طبقة الكيراتين المتقرنة', x: 50, y: 22, description: 'Acellular dense wavy pink sheets of dead keratin.' },
+      { id: 's2', nameEn: 'Stratum Granulosum', nameAr: 'الطبقة الحبيبية', x: 50, y: 38, description: 'Dark basophilic keratohyalin granules.' },
+      { id: 's3', nameEn: 'Stratum Spinosum', nameAr: 'الطبقة الشائكة', x: 50, y: 52, description: 'Polygonal cells linked by spine-like desmosomes.' },
+      { id: 's4', nameEn: 'Stratum Basale & Dermal Papillae', nameAr: 'الطبقة القاعدية وحليمات الأدمة', x: 50, y: 72, description: 'Single row of proliferating stem cells abutting dermis.' }
     ],
     ospeQuestion: {
       prompt: 'Station 3: Examine the specimen under the microscope:',
       questionA: 'A) Identify the tissue and state whether keratinized or non-keratinized:',
       answerA: 'Keratinized stratified squamous epithelium — Skin (epidermis)',
       questionB: 'B) Why is the uppermost layer (stratum corneum) acellular?',
-      answerB: 'The cells have undergone cornification, losing their nuclei and organelles to form dense keratin sheets'
+      answerB: 'The cells have undergone cornification, losing their nuclei and organelles to form dense protective keratin sheets'
     }
   },
   {
@@ -1406,18 +1406,18 @@ export const HISTOLOGY_PRACTICAL_SLIDES: HistologyPracticalSlide[] = [
     stainUsed: 'Hematoxylin & Eosin (H&E)',
     specimenSource: 'Urinary Bladder (Empty / Relaxed State)',
     characteristicDiagnosticFeature: 'Scalloped surface with large dome-shaped umbrella cells bulging into lumen, frequently binucleate, with pear-shaped intermediate cells.',
-    imageUrl: 'https://images.unsplash.com/photo-1576086213369-97a306d36557?w=1000&auto=format&fit=crop&q=80',
+    imageUrl: '/images/histology/2605_The_Bladder.jpg',
     zoomLevels: {
-      '4x': 'https://images.unsplash.com/photo-1576086213369-97a306d36557?w=800&auto=format&fit=crop&q=80',
-      '10x': 'https://images.unsplash.com/photo-1576086213369-97a306d36557?w=1000&auto=format&fit=crop&q=80',
-      '40x': 'https://images.unsplash.com/photo-1576086213369-97a306d36557?w=1200&auto=format&fit=crop&q=80',
-      '100x': 'https://images.unsplash.com/photo-1576086213369-97a306d36557?w=1400&auto=format&fit=crop&q=80'
+      '4x': '/images/histology/2605_The_Bladder.jpg',
+      '10x': '/images/histology/2605_The_Bladder.jpg',
+      '40x': '/images/histology/2605_The_Bladder.jpg',
+      '100x': '/images/histology/2605_The_Bladder.jpg'
     },
     labels: [
-      { id: 'b1', nameEn: 'Umbrella Cell (Dome Cell)', nameAr: 'خلية مظلية محدبة', x: 50, y: 26, description: 'Large pillowy surface cell bulging convexly into the bladder lumen.' },
-      { id: 'b2', nameEn: 'Binucleated Cell', nameAr: 'خلية ثنائية النواة', x: 40, y: 30, description: 'Umbrella cell possessing two distinct round nuclei.' },
-      { id: 'b3', nameEn: 'Pear-shaped Intermediate Cells', nameAr: 'خلايا وسيطة كمثرية الشكل', x: 52, y: 50, description: 'Multiple layers of polygonal cells tapering basally.' },
-      { id: 'b4', nameEn: 'Lamina Propria (Connective Tissue)', nameAr: 'الصفيحة المخصوصة', x: 52, y: 76, description: 'Vascular supporting connective tissue layer.' }
+      { id: 'b1', nameEn: 'Umbrella Cell (Dome Cell)', nameAr: 'خلية مظلية محدبة', x: 48, y: 35, description: 'Large pillowy surface cell bulging convexly into the bladder lumen.' },
+      { id: 'b2', nameEn: 'Binucleated Dome Cell', nameAr: 'خلية ثنائية النواة', x: 38, y: 38, description: 'Umbrella cell possessing two distinct round nuclei.' },
+      { id: 'b3', nameEn: 'Pear-shaped Intermediate Cells', nameAr: 'خلايا وسيطة كمثرية الشكل', x: 50, y: 54, description: 'Multiple layers of polygonal cells tapering basally.' },
+      { id: 'b4', nameEn: 'Lamina Propria', nameAr: 'الصفيحة المخصوصة', x: 52, y: 76, description: 'Vascular supporting connective tissue layer.' }
     ],
     ospeQuestion: {
       prompt: 'Station 4: Examine the mucosal lining of this hollow pelvic organ:',
@@ -1436,17 +1436,17 @@ export const HISTOLOGY_PRACTICAL_SLIDES: HistologyPracticalSlide[] = [
     stainUsed: 'Hematoxylin & Eosin (H&E)',
     specimenSource: 'Tendon (Longitudinal Section)',
     characteristicDiagnosticFeature: 'Dense parallel bundles of collagen fibers with single-file linear rows of compressed dark inactive fibrocyte nuclei.',
-    imageUrl: 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=1000&auto=format&fit=crop&q=80',
+    imageUrl: '/images/histology/dense_regular_tendon.jpg',
     zoomLevels: {
-      '4x': 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=800&auto=format&fit=crop&q=80',
-      '10x': 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=1000&auto=format&fit=crop&q=80',
-      '40x': 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=1200&auto=format&fit=crop&q=80',
-      '100x': 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=1400&auto=format&fit=crop&q=80'
+      '4x': '/images/histology/dense_regular_tendon.jpg',
+      '10x': '/images/histology/dense_regular_tendon.jpg',
+      '40x': '/images/histology/dense_regular_tendon.jpg',
+      '100x': '/images/histology/dense_regular_tendon.jpg'
     },
     labels: [
-      { id: 'td1', nameEn: 'Parallel Collagen Bundles', nameAr: 'حزم الكولاجين المتوازية', x: 50, y: 35, description: 'Densely packed, wave-like parallel ribbons of Type I collagen.' },
+      { id: 'td1', nameEn: 'Parallel Collagen Bundles', nameAr: 'حزم الكولاجين المتوازية', x: 50, y: 38, description: 'Densely packed, wave-like parallel ribbons of Type I collagen.' },
       { id: 'td2', nameEn: 'Rows of Fibrocytes (Tendon Cells)', nameAr: 'صفوف الخلايا الوترية المتراصة', x: 50, y: 55, description: 'Dark, flattened rod-like nuclei aligned in neat single-file lines.' },
-      { id: 'td3', nameEn: 'Endotenon Septum', nameAr: 'الحاجز الضام الداخلي', x: 50, y: 78, description: 'Delicate loose connective tissue wrapping primary bundles.' }
+      { id: 'td3', nameEn: 'Endotenon Septum', nameAr: 'الحاجز الضام الداخلي', x: 50, y: 75, description: 'Delicate loose connective tissue wrapping primary bundles.' }
     ],
     ospeQuestion: {
       prompt: 'Station 5: Examine this high-tensile musculoskeletal specimen:',
@@ -1465,17 +1465,17 @@ export const HISTOLOGY_PRACTICAL_SLIDES: HistologyPracticalSlide[] = [
     stainUsed: 'Hematoxylin & Eosin (H&E)',
     specimenSource: 'Subcutaneous Tissue (Hypodermis)',
     characteristicDiagnosticFeature: 'Chicken-wire or honeycomb pattern of clear polygonal spaces with peripheral crescent-shaped flattened nuclei ("signet-ring" appearance).',
-    imageUrl: 'https://images.unsplash.com/photo-1559757175-5700dde675bc?w=1000&auto=format&fit=crop&q=80',
+    imageUrl: '/images/histology/409_Adipose_Tissue.jpg',
     zoomLevels: {
-      '4x': 'https://images.unsplash.com/photo-1559757175-5700dde675bc?w=800&auto=format&fit=crop&q=80',
-      '10x': 'https://images.unsplash.com/photo-1559757175-5700dde675bc?w=1000&auto=format&fit=crop&q=80',
-      '40x': 'https://images.unsplash.com/photo-1559757175-5700dde675bc?w=1200&auto=format&fit=crop&q=80',
-      '100x': 'https://images.unsplash.com/photo-1559757175-5700dde675bc?w=1400&auto=format&fit=crop&q=80'
+      '4x': '/images/histology/409_Adipose_Tissue.jpg',
+      '10x': '/images/histology/409_Adipose_Tissue.jpg',
+      '40x': '/images/histology/409_Adipose_Tissue.jpg',
+      '100x': '/images/histology/409_Adipose_Tissue.jpg'
     },
     labels: [
-      { id: 'ad1', nameEn: 'Extracted Lipid Droplet Space', nameAr: 'الفراغ الدهني المذاب', x: 48, y: 48, description: 'Large empty space left after xylene dissolved the triglyceride droplet.' },
-      { id: 'ad2', nameEn: 'Peripheral Flattened Nucleus', nameAr: 'نواة طرفية مسطحة', x: 32, y: 42, description: 'Dark flattened nucleus pushed to the cell border ("Signet Ring").' },
-      { id: 'ad3', nameEn: 'Delicate Cytoplasmic Rim', nameAr: 'حافة سيتوبلازمية رقيقة', x: 62, y: 52, description: 'Ultra-thin membrane of remaining cytoplasm enclosing the fat droplet.' }
+      { id: 'ad1', nameEn: 'Extracted Lipid Droplet Space', nameAr: 'الفراغ الدهني المذاب', x: 45, y: 52, description: 'Large empty space left after xylene dissolved the triglyceride droplet.' },
+      { id: 'ad2', nameEn: 'Peripheral Flattened Nucleus', nameAr: 'نواة طرفية مسطحة', x: 30, y: 46, description: 'Dark flattened nucleus pushed to the cell border ("Signet Ring").' },
+      { id: 'ad3', nameEn: 'Delicate Cytoplasmic Rim', nameAr: 'حافة سيتوبلازمية رقيقة', x: 60, y: 54, description: 'Ultra-thin membrane of remaining cytoplasm enclosing the fat droplet.' }
     ],
     ospeQuestion: {
       prompt: 'Station 6: Examine this subcutaneous biopsy section:',
@@ -1483,6 +1483,180 @@ export const HISTOLOGY_PRACTICAL_SLIDES: HistologyPracticalSlide[] = [
       answerA: 'Adipose tissue (white / unilocular fat)',
       questionB: 'B) Why does the cytoplasm appear empty/clear under routine H&E preparation?',
       answerB: 'Lipid is dissolved and extracted by organic solvents (alcohol and xylene) during tissue processing'
+    }
+  },
+  {
+    id: 'slide_lung_alveoli',
+    slideNumber: 7,
+    tissueNameEn: 'Simple Squamous Epithelium',
+    tissueNameAr: 'الظهارة الحرشفية البسيطة (الحويصلات الرئوية)',
+    epitheliumOrCTType: 'Simple Squamous Epithelium',
+    stainUsed: 'Hematoxylin & Eosin (H&E)',
+    specimenSource: 'Lung Tissue (Pulmonary Alveoli & Interalveolar Septa)',
+    characteristicDiagnosticFeature: 'Extremely thin, attenuated cells with flattened bulging nuclei lining air spaces, optimal for rapid gas diffusion.',
+    imageUrl: '/images/histology/2311_Lung_Tissue.jpg',
+    zoomLevels: {
+      '4x': '/images/histology/2311_Lung_Tissue.jpg',
+      '10x': '/images/histology/2311_Lung_Tissue.jpg',
+      '40x': '/images/histology/2311_Lung_Tissue.jpg',
+      '100x': '/images/histology/2311_Lung_Tissue.jpg'
+    },
+    labels: [
+      { id: 'sq1', nameEn: 'Alveolar Air Space', nameAr: 'التجويف الهوائي للحويصلة', x: 46, y: 38, description: 'Large open air space of pulmonary alveolus.' },
+      { id: 'sq2', nameEn: 'Type I Pneumocyte (Squamous)', nameAr: 'خلية سنخية حرشفية (نمط 1)', x: 54, y: 50, description: 'Attenuated flattened cytoplasm forming the blood-air barrier.' },
+      { id: 'sq3', nameEn: 'Interalveolar Septum Capillary', nameAr: 'شعيرة دموية في الحاجز بين الأسناخ', x: 50, y: 64, description: 'Capillary containing erythrocytes within septum.' }
+    ],
+    ospeQuestion: {
+      prompt: 'Station 7: Examine this spongy respiratory organ under 40x:',
+      questionA: 'A) Identify the lining epithelium and organ:',
+      answerA: 'Simple squamous epithelium — Lung (pulmonary alveoli)',
+      questionB: 'B) What functional advantage does this ultra-thin epithelial layer provide?',
+      answerB: 'Provides minimal diffusion distance for rapid gas exchange (O2 and CO2) across the blood-air barrier'
+    }
+  },
+  {
+    id: 'slide_intestine_columnar',
+    slideNumber: 8,
+    tissueNameEn: 'Simple Columnar Epithelium with Goblet Cells',
+    tissueNameAr: 'الظهارة العمودية البسيطة مع الخلايا الكأسية (الأمعاء)',
+    epitheliumOrCTType: 'Simple Columnar Epithelium',
+    stainUsed: 'Hematoxylin & Eosin (H&E)',
+    specimenSource: 'Small Intestine (Intestinal Villi & Crypts)',
+    characteristicDiagnosticFeature: 'Single layer of tall rectangular cells with oval basal nuclei and clear goblet cells producing protective mucin.',
+    imageUrl: '/images/histology/404_Goblet_Cell_new.jpg',
+    zoomLevels: {
+      '4x': '/images/histology/404_Goblet_Cell_new.jpg',
+      '10x': '/images/histology/404_Goblet_Cell_new.jpg',
+      '40x': '/images/histology/404_Goblet_Cell_new.jpg',
+      '100x': '/images/histology/404_Goblet_Cell_new.jpg'
+    },
+    labels: [
+      { id: 'col1', nameEn: 'Mucus Goblet Cell', nameAr: 'خلية كأسية مخاطية', x: 50, y: 40, description: 'Expanded apical cytoplasm filled with pale mucigen granules.' },
+      { id: 'col2', nameEn: 'Absorptive Columnar Cell', nameAr: 'خلية عمودية ماصة', x: 44, y: 55, description: 'Tall cylindrical enterocyte with microvillar brush border.' },
+      { id: 'col3', nameEn: 'Basal Oval Nucleus', nameAr: 'نواة بيضاوية قاعدية', x: 46, y: 72, description: 'Elongated nucleus aligned near the basal lamina.' }
+    ],
+    ospeQuestion: {
+      prompt: 'Station 8: Examine this gastrointestinal villus section:',
+      questionA: 'A) Identify the epithelium and specialized unicellular gland:',
+      answerA: 'Simple columnar epithelium with Goblet cells — Small Intestine',
+      questionB: 'B) What is the function of the pointed goblet cells?',
+      answerB: 'Synthesis and secretion of lubricating and protective mucus onto the luminal surface'
+    }
+  },
+  {
+    id: 'slide_cervix_nonkeratinized',
+    slideNumber: 9,
+    tissueNameEn: 'Non-Keratinized Stratified Squamous Epithelium',
+    tissueNameAr: 'الظهارة المطبقة الحرشفية غير المتقرنة (المهبل / عنق الرحم / المريء)',
+    epitheliumOrCTType: 'Stratified Squamous Epithelium (Non-Keratinized)',
+    stainUsed: 'Hematoxylin & Eosin (H&E)',
+    specimenSource: 'Cervix / Esophagus Mucosa',
+    characteristicDiagnosticFeature: 'Multiple layers of cells where superficial squamous cells remain moist, living, and retain flattened nuclei all the way to the free surface.',
+    imageUrl: '/images/histology/400_Micrograph_of_Cervical_Tissue_updated.jpg',
+    zoomLevels: {
+      '4x': '/images/histology/400_Micrograph_of_Cervical_Tissue_updated.jpg',
+      '10x': '/images/histology/400_Micrograph_of_Cervical_Tissue_updated.jpg',
+      '40x': '/images/histology/400_Micrograph_of_Cervical_Tissue_updated.jpg',
+      '100x': '/images/histology/400_Micrograph_of_Cervical_Tissue_updated.jpg'
+    },
+    labels: [
+      { id: 'csq1', nameEn: 'Superficial Squamous Layer with Nuclei', nameAr: 'الطبقة الحرشفية السطحية مع الأنوية', x: 50, y: 28, description: 'Flat living squamous cells with retained oval nuclei.' },
+      { id: 'csq2', nameEn: 'Intermediate Polygonal Layer', nameAr: 'الطبقة المتوسطة متعددة الأضلاع', x: 50, y: 50, description: 'Cells with abundant glycogen-rich pale cytoplasm.' },
+      { id: 'csq3', nameEn: 'Basal Germinative Layer', nameAr: 'الطبقة القاعدية المولدة', x: 50, y: 78, description: 'Columnar mitotic stem cells resting on basement membrane.' }
+    ],
+    ospeQuestion: {
+      prompt: 'Station 9: Examine this mucosal lining under 20x objective:',
+      questionA: 'A) Identify the tissue type:',
+      answerA: 'Non-keratinized stratified squamous epithelium — Cervix / Esophagus',
+      questionB: 'B) How do you distinguish this from skin epidermis?',
+      answerB: 'The superficial cells are living and retain their nuclei (no stratum corneum keratin layer)'
+    }
+  },
+  {
+    id: 'slide_hyaline_cartilage',
+    slideNumber: 10,
+    tissueNameEn: 'Hyaline Cartilage',
+    tissueNameAr: 'الغضروف الزجاجي (حلقات القصبة / الأسطح المفصلية)',
+    epitheliumOrCTType: 'Supportive Connective Tissue (Cartilage)',
+    stainUsed: 'Hematoxylin & Eosin (H&E)',
+    specimenSource: 'Tracheal Cartilage Ring',
+    characteristicDiagnosticFeature: 'Glassy, basophilic amorphous extracellular matrix containing chondrocytes housed in rounded lacunae, often clustered in isogenous groups.',
+    imageUrl: '/images/histology/hyaline_cartilage.jpg',
+    zoomLevels: {
+      '4x': '/images/histology/hyaline_cartilage.jpg',
+      '10x': '/images/histology/hyaline_cartilage.jpg',
+      '40x': '/images/histology/hyaline_cartilage.jpg',
+      '100x': '/images/histology/hyaline_cartilage.jpg'
+    },
+    labels: [
+      { id: 'hy1', nameEn: 'Chondrocyte in Lacuna', nameAr: 'خلية غضروفية داخل جوبة', x: 48, y: 48, description: 'Mature cartilage cell located inside a rounded lacunar cavity.' },
+      { id: 'hy2', nameEn: 'Glassy Ground Substance (Matrix)', nameAr: 'المادة الخلالية الزجاجية (الفرش)', x: 62, y: 55, description: 'Homogeneous basophilic matrix rich in Type II collagen and aggrecan.' },
+      { id: 'hy3', nameEn: 'Perichondrium', nameAr: 'سمحاق الغضروف', x: 50, y: 18, description: 'Fibrous vascular capsule surrounding cartilage.' }
+    ],
+    ospeQuestion: {
+      prompt: 'Station 10: Examine this supportive skeletal tissue:',
+      questionA: 'A) Identify the tissue and structural units:',
+      answerA: 'Hyaline cartilage — Chondrocytes in lacunae',
+      questionB: 'B) What type of collagen predominates in this matrix?',
+      answerB: 'Type II collagen fibrils (invisible under light microscopy due to identical refractive index)'
+    }
+  },
+  {
+    id: 'slide_compact_bone',
+    slideNumber: 11,
+    tissueNameEn: 'Compact Ground Bone',
+    tissueNameAr: 'العظم المكتنز (نظام هافرس / الجسيم العظمي)',
+    epitheliumOrCTType: 'Supportive Connective Tissue (Bone)',
+    stainUsed: 'Ground Bone Preparation (Unstained / India Ink)',
+    specimenSource: 'Shaft of Long Bone (Diaphysis)',
+    characteristicDiagnosticFeature: 'Classic Osteons (Haversian systems) composed of a central Haversian canal surrounded by concentric lamellae, lacunae containing osteocytes, and radiating canaliculi.',
+    imageUrl: '/images/histology/605_Compact_Bone.jpg',
+    zoomLevels: {
+      '4x': '/images/histology/605_Compact_Bone.jpg',
+      '10x': '/images/histology/605_Compact_Bone.jpg',
+      '40x': '/images/histology/605_Compact_Bone.jpg',
+      '100x': '/images/histology/605_Compact_Bone.jpg'
+    },
+    labels: [
+      { id: 'bn1', nameEn: 'Central Haversian Canal', nameAr: 'قناة هافرس المركزية', x: 50, y: 48, description: 'Vascular channel running longitudinally through center of osteon.' },
+      { id: 'bn2', nameEn: 'Concentric Bony Lamellae', nameAr: 'صفائح عظمية متحدة المركز', x: 42, y: 38, description: 'Rings of calcified collagenous bone matrix.' },
+      { id: 'bn3', nameEn: 'Osteocyte Lacuna & Canaliculi', nameAr: 'جوبات الخلايا العظمية والقنيات الدقيقة', x: 58, y: 56, description: 'Dark spider-like cavities with radiating micro-tunnels for nutrition.' }
+    ],
+    ospeQuestion: {
+      prompt: 'Station 11: Examine this ground skeletal section:',
+      questionA: 'A) Identify the tissue and pointed functional unit:',
+      answerA: 'Compact ground bone — Osteon (Haversian System)',
+      questionB: 'B) What structures pass through the central canal in living bone?',
+      answerB: 'Blood vessels (capillaries/arterioles, venules), unmyelinated nerve fibers, and lymphatic vessels'
+    }
+  },
+  {
+    id: 'slide_cardiac_muscle',
+    slideNumber: 12,
+    tissueNameEn: 'Cardiac Muscle Tissue',
+    tissueNameAr: 'النسيج العضلي القلبي (أقراص بينية وألياف متفرعة)',
+    epitheliumOrCTType: 'Muscular Tissue (Striated Involuntary)',
+    stainUsed: 'Hematoxylin & Eosin (H&E)',
+    specimenSource: 'Heart Wall (Myocardium)',
+    characteristicDiagnosticFeature: 'Branching striated fibers with single central oval nuclei, abundant capillaries, and dark transverse junctional lines called Intercalated Discs.',
+    imageUrl: '/images/histology/1020_Cardiac_Muscle.jpg',
+    zoomLevels: {
+      '4x': '/images/histology/1020_Cardiac_Muscle.jpg',
+      '10x': '/images/histology/1020_Cardiac_Muscle.jpg',
+      '40x': '/images/histology/1020_Cardiac_Muscle.jpg',
+      '100x': '/images/histology/1020_Cardiac_Muscle.jpg'
+    },
+    labels: [
+      { id: 'cm1', nameEn: 'Intercalated Disc (Transverse Line)', nameAr: 'قرص بيني (اتصال بيني)', x: 50, y: 48, description: 'Dark transverse step-like line linking adjacent cardiomyocytes with gap junctions.' },
+      { id: 'cm2', nameEn: 'Branching Muscle Fiber', nameAr: 'ليف عضلي قلبي متفرع', x: 60, y: 40, description: 'Bifurcating striated muscle cell.' },
+      { id: 'cm3', nameEn: 'Single Central Nucleus', nameAr: 'نواة مفردة مركزية', x: 38, y: 55, description: 'Oval vesicular nucleus positioned centrally within cardiomyocyte.' }
+    ],
+    ospeQuestion: {
+      prompt: 'Station 12: Examine this visceral contractile tissue under 40x:',
+      questionA: 'A) Identify the tissue type and key diagnostic junction:',
+      answerA: 'Cardiac muscle — Intercalated disc (Discus intercalaris)',
+      questionB: 'B) State two features distinguishing this from skeletal muscle:',
+      answerB: 'Branching fibers with single centrally located nuclei, and presence of intercalated discs'
     }
   }
 ];

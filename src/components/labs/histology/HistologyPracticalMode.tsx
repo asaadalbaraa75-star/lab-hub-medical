@@ -3,6 +3,7 @@ import {
   HISTOLOGY_PRACTICAL_SLIDES,
   HistologyPracticalSlide
 } from './HistologyData';
+import { HistologyExamPointer } from './HistologyExamPointer';
 import {
   Microscope,
   Eye,
@@ -155,62 +156,78 @@ export const HistologyPracticalMode: React.FC = () => {
           </div>
 
           {/* Virtual Slide Field Circular/Rectangular Viewport */}
-          <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden border-2 border-slate-700 bg-black shadow-inner select-none group">
-            {/* Background Micrograph Image */}
-            <img
-              src={activeSlide.zoomLevels[zoomLevel]}
-              alt={activeSlide.tissueNameEn}
-              className={`w-full h-full object-cover transition-transform duration-500 ${
-                zoomLevel === '100x' ? 'scale-150' : zoomLevel === '40x' ? 'scale-110' : zoomLevel === '10x' ? 'scale-100' : 'scale-90'
-              }`}
-              style={{ filter: 'contrast(1.08) brightness(1.02)' }}
-            />
+          <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden border-2 border-slate-700 bg-slate-950 shadow-inner select-none group flex items-center justify-center">
+            <div
+              className="relative w-full h-full transition-transform duration-300 origin-center"
+              style={{
+                transform: zoomLevel === '100x' ? 'scale(1.4)' : zoomLevel === '40x' ? 'scale(1.15)' : zoomLevel === '10x' ? 'scale(1.0)' : 'scale(0.92)'
+              }}
+            >
+              {/* Background Micrograph Image */}
+              <img
+                src={activeSlide.zoomLevels[zoomLevel]}
+                alt={activeSlide.tissueNameEn}
+                className="w-full h-full object-cover"
+                style={{ filter: 'contrast(1.08) brightness(1.02)' }}
+              />
+
+              {/* OSPE Needle Pointer (When Quiz Mode is active) */}
+              {quizMode && activeSlide.labels.length > 0 && (
+                <HistologyExamPointer
+                  x={activeSlide.labels[0].x}
+                  y={activeSlide.labels[0].y}
+                  pointerNumber={1}
+                  label="Target Structure ①"
+                  theme="amber"
+                />
+              )}
+
+              {/* Interactive Anatomical Pins (When in Study Mode and labels are enabled) */}
+              {!quizMode && showLabels &&
+                activeSlide.labels.map((label, index) => {
+                  const isSelected = selectedPinId === label.id;
+
+                  return (
+                    <button
+                      key={label.id}
+                      type="button"
+                      id={`slide-pin-${label.id}`}
+                      onClick={() => setSelectedPinId(label.id)}
+                      style={{ left: `${label.x}%`, top: `${label.y}%` }}
+                      className="absolute -translate-x-1/2 -translate-y-1/2 z-20 cursor-pointer group/pin transition-transform"
+                    >
+                      <div className="relative flex items-center justify-center">
+                        {isSelected && (
+                          <span className="absolute w-8 h-8 rounded-full bg-cyan-400/40 animate-ping" />
+                        )}
+
+                        <div
+                          className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold font-mono shadow-xl border ${
+                            isSelected
+                              ? 'bg-cyan-400 text-slate-950 border-white ring-2 ring-cyan-400/60 scale-125'
+                              : 'bg-slate-900/90 text-cyan-300 border-cyan-400/70 group-hover/pin:scale-110'
+                          }`}
+                        >
+                          {index + 1}
+                        </div>
+
+                        {/* Hover Tooltip */}
+                        <div className="absolute left-1/2 -bottom-6 -translate-x-1/2 opacity-0 group-hover/pin:opacity-100 transition-opacity pointer-events-none bg-slate-950/95 border border-slate-700 px-2 py-0.5 rounded text-[10px] font-bold text-white whitespace-nowrap z-30 shadow-lg">
+                          {label.nameEn}
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+            </div>
 
             {/* Lens Vignette & Circular Aperture Overlay */}
             <div className="absolute inset-0 pointer-events-none rounded-2xl ring-1 ring-inset ring-white/10 shadow-[inset_0_0_80px_rgba(0,0,0,0.8)]" />
 
             {/* Microscope Calibration Reticle (Crosshairs) Watermark */}
-            <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10 text-[11px] font-mono text-cyan-300">
+            <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10 text-[11px] font-mono text-cyan-300 pointer-events-none">
               Mag: {zoomLevel} • {activeSlide.stainUsed}
             </div>
-
-            {/* Interactive Anatomical Pins */}
-            {showLabels &&
-              activeSlide.labels.map((label, index) => {
-                const isSelected = selectedPinId === label.id;
-
-                return (
-                  <button
-                    key={label.id}
-                    type="button"
-                    id={`slide-pin-${label.id}`}
-                    onClick={() => setSelectedPinId(label.id)}
-                    style={{ left: `${label.x}%`, top: `${label.y}%` }}
-                    className="absolute -translate-x-1/2 -translate-y-1/2 z-20 cursor-pointer group/pin transition-transform"
-                  >
-                    <div className="relative flex items-center justify-center">
-                      {isSelected && (
-                        <span className="absolute w-8 h-8 rounded-full bg-cyan-400/40 animate-ping" />
-                      )}
-
-                      <div
-                        className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold font-mono shadow-xl border ${
-                          isSelected
-                            ? 'bg-cyan-400 text-slate-950 border-white ring-2 ring-cyan-400/60 scale-125'
-                            : 'bg-slate-900/90 text-cyan-300 border-cyan-400/70 group-hover/pin:scale-110'
-                        }`}
-                      >
-                        {index + 1}
-                      </div>
-
-                      {/* Hover Tooltip */}
-                      <div className="absolute left-1/2 -bottom-6 -translate-x-1/2 opacity-0 group-hover/pin:opacity-100 transition-opacity pointer-events-none bg-slate-950/95 border border-slate-700 px-2 py-0.5 rounded text-[10px] font-bold text-white whitespace-nowrap z-30 shadow-lg">
-                        {label.nameEn}
-                      </div>
-                    </div>
-                  </button>
-                );
-              })}
           </div>
 
           {/* Navigation Between Slides */}

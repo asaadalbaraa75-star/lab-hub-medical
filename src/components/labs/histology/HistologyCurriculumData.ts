@@ -55,7 +55,7 @@ export interface HistologyLessonItem {
   titleEn: string;
   titleAr: string;
   badge: string;
-  category?: 'simple' | 'stratified' | 'specialized' | 'loose' | 'dense' | 'general';
+  category?: 'simple' | 'stratified' | 'specialized' | 'loose' | 'dense' | 'general' | 'cartilage' | 'bone' | 'blood' | 'muscle';
   
   // Real Microscopy Slide & Exam Marker
   realImagePath?: string;
@@ -874,26 +874,25 @@ export const HISTOLOGY_SECTIONS: HistologySection[] = [
           { term: 'Karyokinesis', termAr: 'الانقسام النووي', definition: 'The division of the cell nucleus into two daughter nuclei.' }
         ],
         visualId: 'cell_division_mitosis',
-        realImagePath: '/images/histology/0331_Stages_of_Mitosis_and_Cytokinesis.jpg',
+        realImagePath: '/images/histology/mitosis_prophase.jpg',
         isRealMicroscopy: true,
         whatToLookFor: [
           "Condensation of chromatin into distinct visible dark thread-like chromosomes",
           "Nuclear envelope and nucleolus breakdown during late prophase",
           "Centrosomes moving toward opposite cell poles"
-],
+        ],
         examMarker: {
-          "x": 26,
-          "y": 35,
-          "targetStructure": "Prophase cell with condensed chromosomes",
-          "targetStructureAr": "\u062e\u0644\u064a\u0629 \u0641\u064a \u0627\u0644\u0637\u0648\u0631 \u0627\u0644\u062a\u0645\u0647\u064a\u062f\u064a \u0645\u0639 \u062a\u0643\u062b\u0641 \u0627\u0644\u0643\u0631\u0648\u0645\u0648\u0633\u0648\u0645\u0627\u062a"
-},
+          x: 50,
+          y: 50,
+          pointerNumber: 1,
+          targetStructure: "Prophase cell with condensed chromosomes",
+          targetStructureAr: "خلية في الطور التمهيدي مع تكثف الصبغيات"
+        },
         stain: 'Iron Hematoxylin / Basic Nuclear Dyes',
         magnification: '1000x Oil Immersion',
-        specimen: 'Dividing cells (Onion root tip / Blastula / Bone marrow)',
+        specimen: 'Dividing cells (Prophase stage)',
         labels: [
-          { id: '1', label: 'Condensed Chromosomes', clue: 'Dark coiled chromosome threads' },
-          { id: '2', label: 'Disintegrating Nuclear Envelope', clue: 'Dissolving nuclear border' },
-          { id: '3', label: 'Forming Spindle Poles', clue: 'Centrosomes at opposite sides' }
+          { id: '1', label: 'Condensed Chromosomes', clue: 'Dark coiled chromosome threads', x: 50, y: 50 }
         ],
         practiceQuestions: [
           {
@@ -931,26 +930,25 @@ export const HISTOLOGY_SECTIONS: HistologySection[] = [
           { term: 'Kinetochore', termAr: 'الحيز الحركي', definition: 'Protein complex on the centromere serving as attachment point for spindle microtubules.' }
         ],
         visualId: 'cell_division_mitosis',
-        realImagePath: '/images/histology/0331_Stages_of_Mitosis_and_Cytokinesis.jpg',
+        realImagePath: '/images/histology/mitosis_metaphase.jpg',
         isRealMicroscopy: true,
         whatToLookFor: [
           "Chromosomes maximally condensed and aligned along the equatorial metaphase plate",
           "Mitotic spindle fibers attaching to kinetochores of centromeres",
           "Distinct linear dark band across the cell equator"
-],
+        ],
         examMarker: {
-          "x": 50,
-          "y": 35,
-          "targetStructure": "Metaphase plate alignment of chromosomes",
-          "targetStructureAr": "\u0627\u0635\u0637\u0641\u0627\u0641 \u0627\u0644\u0643\u0631\u0648\u0645\u0648\u0633\u0648\u0645\u0627\u062a \u0641\u064a \u0627\u0644\u0644\u0648\u062d\u0629 \u0627\u0644\u0627\u0633\u062a\u0648\u0627\u0626\u064a\u0629"
-},
+          x: 50,
+          y: 50,
+          pointerNumber: 1,
+          targetStructure: "Metaphase plate alignment of chromosomes",
+          targetStructureAr: "اصطفاف الصبغيات في اللوحة الاستوائية"
+        },
         stain: 'Nuclear Stain',
         magnification: '1000x Oil Immersion',
         specimen: 'Dividing tissue (Metaphase stage)',
         labels: [
-          { id: '1', label: 'Equatorial Metaphase Plate', clue: 'Chromosomes aligned in center line' },
-          { id: '2', label: 'Mitotic Spindle Fibers', clue: 'Radiating microtubules' },
-          { id: '3', label: 'Spindle Pole Centrosomes', clue: 'Opposite cell poles' }
+          { id: '1', label: 'Equatorial Metaphase Plate', clue: 'Chromosomes aligned in center line', x: 50, y: 50 }
         ],
         practiceQuestions: [
           {
@@ -988,25 +986,25 @@ export const HISTOLOGY_SECTIONS: HistologySection[] = [
           { term: 'Daughter Chromosomes', termAr: 'الصبغيات البنوية', definition: 'Separated chromatids moving toward opposite poles.' }
         ],
         visualId: 'cell_division_mitosis',
-        realImagePath: '/images/histology/0331_Stages_of_Mitosis_and_Cytokinesis.jpg',
+        realImagePath: '/images/histology/mitosis_anaphase.jpg',
         isRealMicroscopy: true,
         whatToLookFor: [
           "Centromeres split and sister chromatids separate toward opposite poles",
           "Chromosomes form V-shaped or U-shaped groups pointing toward the poles",
           "Clear space widens between the two separating chromosome clusters"
-],
+        ],
         examMarker: {
-          "x": 74,
-          "y": 35,
-          "targetStructure": "Anaphase separation of sister chromatids",
-          "targetStructureAr": "\u0627\u0646\u0641\u0635\u0627\u0644 \u0627\u0644\u0643\u0631\u0648\u0645\u0627\u062a\u064a\u062f\u0627\u062a \u0627\u0644\u0634\u0642\u064a\u0642\u0629 \u0641\u064a \u0627\u0644\u0637\u0648\u0631 \u0627\u0644\u0627\u0646\u0641\u0635\u0627\u0644\u064a"
-},
+          x: 50,
+          y: 50,
+          pointerNumber: 1,
+          targetStructure: "Anaphase separation of sister chromatids",
+          targetStructureAr: "انفصال الكروماتيدات الشقيقة في الطور الانفصالي"
+        },
         stain: 'Nuclear Stain',
         magnification: '1000x Oil Immersion',
         specimen: 'Dividing tissue (Anaphase stage)',
         labels: [
-          { id: '1', label: 'Separating Chromosome Sets', clue: 'Two V-shaped groups moving apart' },
-          { id: '2', label: 'Shortening Spindle Fibers', clue: 'Microtubules pulling toward poles' }
+          { id: '1', label: 'Separating Chromosome Sets', clue: 'Two V-shaped groups moving apart', x: 50, y: 50 }
         ],
         practiceQuestions: [
           {
@@ -1045,25 +1043,25 @@ export const HISTOLOGY_SECTIONS: HistologySection[] = [
           { term: 'Cleavage Furrow', termAr: 'ثلم الانقسام', definition: 'Constriction indentation in animal cells that deepens until cells separate.' }
         ],
         visualId: 'cell_division_mitosis',
-        realImagePath: '/images/histology/0331_Stages_of_Mitosis_and_Cytokinesis.jpg',
+        realImagePath: '/images/histology/mitosis_telophase.jpg',
         isRealMicroscopy: true,
         whatToLookFor: [
           "Chromosomes uncoil back into fine chromatin at each spindle pole",
           "Nuclear envelope reassembles around each daughter nucleus",
           "Cytokinesis cleavage furrow pinches the cell into two daughter cells"
-],
+        ],
         examMarker: {
-          "x": 50,
-          "y": 75,
-          "targetStructure": "Telophase daughter nuclei and cleavage furrow",
-          "targetStructureAr": "\u0646\u0648\u0627\u062a\u0627 \u0627\u0644\u0637\u0648\u0631 \u0627\u0644\u0646\u0647\u0627\u0626\u064a \u0648\u062b\u0644\u0645 \u0627\u0644\u0627\u0646\u0642\u0633\u0627\u0645 \u0627\u0644\u062e\u0644\u0648\u064a"
-},
+          x: 50,
+          y: 50,
+          pointerNumber: 1,
+          targetStructure: "Telophase daughter nuclei and cleavage furrow",
+          targetStructureAr: "نواتا الطور النهائي وثلم الانقسام الخلوي"
+        },
         stain: 'Nuclear Stain',
         magnification: '1000x Oil Immersion',
         specimen: 'Dividing tissue (Telophase stage)',
         labels: [
-          { id: '1', label: 'Reforming Daughter Nuclei', clue: 'Two pale nuclei with reforming envelopes' },
-          { id: '2', label: 'Cleavage Furrow (Cytokinesis)', clue: 'Indentation constricting equator' }
+          { id: '1', label: 'Reforming Daughter Nuclei & Cleavage Furrow', clue: 'Two poles and cytokinesis constriction', x: 50, y: 50 }
         ],
         practiceQuestions: [
           {
@@ -1572,25 +1570,26 @@ export const HISTOLOGY_SECTIONS: HistologySection[] = [
           'Strengthens duct lining during sweat secretion'
         ],
         visualId: 'stratified_cuboidal_sweat',
-        realImagePath: '/images/histology/502ab_Thin_Skin_versus_Thick_Skin.jpg',
-        isRealMicroscopy: false,
+        realImagePath: '/images/histology/stratified_cuboidal_duct.jpg',
+        isRealMicroscopy: true,
         whatToLookFor: [
           "Two (rarely three) distinct layers of cube-shaped cells",
           "Round spherical nuclei arranged in two concentric rows",
           "Lines large excretory ducts of sweat glands and salivary glands"
-],
+        ],
         examMarker: {
-          "x": 50,
-          "y": 50,
-          "targetStructure": "Stratified cuboidal duct lining",
-          "targetStructureAr": "\u0628\u0637\u0627\u0646\u0629 \u0645\u0643\u0639\u0628\u064a\u0629 \u0645\u0637\u0628\u0642\u0629 \u0644\u0642\u0646\u0627\u0629 \u0627\u0644\u063a\u062f\u0629 \u0627\u0644\u0639\u0631\u0642\u064a\u0629"
-},
+          x: 50,
+          y: 50,
+          pointerNumber: 1,
+          targetStructure: "Stratified cuboidal duct lining",
+          targetStructureAr: "بطانة مكعبية مطبقة لقناة الغدة العرقية"
+        },
         stain: 'H&E (Hematoxylin and Eosin)',
         magnification: '400x High Power',
         specimen: 'Skin Dermis (Sweat Gland Ducts)',
         labels: [
-          { id: '1', label: 'Double Layer of Cuboidal Cells', clue: 'Two rings of round nuclei around lumen' },
-          { id: '2', label: 'Duct Lumen', clue: 'Central sweat passage' }
+          { id: '1', label: 'Stratified Cuboidal Epithelium (Double Layer)', clue: 'Two concentric rows of cuboidal cells', x: 50, y: 44 },
+          { id: '2', label: 'Duct Lumen', clue: 'Central excretory passage', x: 50, y: 50 }
         ],
         practiceQuestions: [
           {
@@ -1643,19 +1642,20 @@ export const HISTOLOGY_SECTIONS: HistologySection[] = [
           "Umbrella cells often binucleated and stretch into flattened cells during distension"
 ],
         examMarker: {
-          "x": 48,
-          "y": 35,
-          "targetStructure": "Dome-shaped umbrella cell of transitional epithelium",
-          "targetStructureAr": "\u062e\u0644\u064a\u0629 \u0645\u0638\u0644\u064a\u0629 \u0645\u0642\u0628\u0628\u0629 \u0644\u0644\u0646\u0633\u064a\u062c \u0627\u0644\u0637\u0644\u0627\u0626\u064a \u0627\u0644\u0627\u0646\u062a\u0642\u0627\u0644\u064a"
-},
+          x: 48,
+          y: 35,
+          pointerNumber: 1,
+          targetStructure: "Dome-shaped umbrella cell of transitional epithelium",
+          targetStructureAr: "خلية مظلية مقببة للنسيج الطلائي الانتقالي"
+        },
         stain: 'H&E (Hematoxylin and Eosin)',
         magnification: '400x High Power',
         specimen: 'Urinary Bladder (Relaxed state)',
         labels: [
-          { id: '1', label: 'Umbrella / Dome Surface Cells', clue: 'Large rounded caps, often binucleate' },
-          { id: '2', label: 'Intermediate Pear-Shaped Cells', clue: 'Polygonal cells with vertical axis' },
-          { id: '3', label: 'Basal Layer', clue: 'Small cuboidal stem cells on basement membrane' },
-          { id: '4', label: 'Lamina Propria', clue: 'Underlying loose connective tissue' }
+          { id: '1', label: 'Umbrella / Dome Surface Cells', clue: 'Large rounded caps, often binucleate', x: 48, y: 35 },
+          { id: '2', label: 'Intermediate Pear-Shaped Cells', clue: 'Polygonal cells with vertical axis', x: 50, y: 50 },
+          { id: '3', label: 'Basal Layer', clue: 'Small cuboidal stem cells on basement membrane', x: 50, y: 65 },
+          { id: '4', label: 'Lamina Propria', clue: 'Underlying loose connective tissue', x: 50, y: 80 }
         ],
         practiceQuestions: [
           {
@@ -1712,19 +1712,20 @@ export const HISTOLOGY_SECTIONS: HistologySection[] = [
           'Transduction of acoustic sound waves into auditory sensations'
         ],
         visualId: 'neuroepithelium_taste_bud',
-        realImagePath: '/images/histology/1319B_Nerve_Mag.jpg',
+        realImagePath: '/images/histology/real_histology_slide_required.svg',
         isRealMicroscopy: false,
         whatToLookFor: [
           "Specialized epithelial sensory receptor cells grouped into barrel-shaped taste buds",
           "Contains elongated gustatory sensory cells, supporting sustentacular cells, and basal stem cells",
           "Apical microvilli project into a small external taste pore"
-],
+        ],
         examMarker: {
-          "x": 50,
-          "y": 50,
-          "targetStructure": "Taste bud neuroepithelial sensory cells",
-          "targetStructureAr": "\u062e\u0644\u0627\u064a\u0627 \u062d\u0633\u064a\u0629 \u0639\u0635\u0628\u064a\u0629 \u0637\u0644\u0627\u0626\u064a\u0629 \u0641\u064a \u0628\u0631\u0639\u0645 \u0627\u0644\u062a\u0630\u0648\u0642"
-},
+          x: 50,
+          y: 50,
+          pointerNumber: 1,
+          targetStructure: "Taste bud neuroepithelial sensory cells",
+          targetStructureAr: "خلايا حسية عصبية طلائية في برعم التذوق"
+        },
         stain: 'H&E (Hematoxylin and Eosin)',
         magnification: '400x High Power',
         specimen: 'Tongue (Circumvallate Papilla Taste Buds)',
@@ -2181,25 +2182,26 @@ export const HISTOLOGY_SECTIONS: HistologySection[] = [
           'Expands under systolic blood pressure and recoils during diastole to propel blood'
         ],
         visualId: 'yellow_elastic_aorta',
-        realImagePath: '/images/histology/elastic_cartilage.jpg',
+        realImagePath: '/images/histology/yellow_elastic_aorta.jpg',
         isRealMicroscopy: true,
         whatToLookFor: [
-          "Abundant dark-staining, branched, wavy elastic fibers",
-          "High resilience, flexibility, and recoil ability",
-          "Found in elastic cartilage (epiglottis, ear pinna) and elastic arterial walls"
-],
+          "Concentric parallel wavy elastic laminae stained dark brown/purple with Orcein",
+          "Interspersed smooth muscle cells in the tunica media",
+          "Enables passive arterial recoil (Windkessel effect) in the Aorta"
+        ],
         examMarker: {
-          "x": 48,
-          "y": 52,
-          "targetStructure": "Branching network of elastic fibers",
-          "targetStructureAr": "\u0634\u0628\u0643\u0629 \u0645\u062a\u0641\u0631\u0639\u0629 \u0645\u0646 \u0627\u0644\u0623\u0644\u064a\u0627\u0641 \u0627\u0644\u0645\u0631\u0646\u0629"
-},
+          x: 50,
+          y: 50,
+          pointerNumber: 1,
+          targetStructure: "Wavy elastic laminae of Aorta tunica media (Orcein)",
+          targetStructureAr: "صفائح مرنة متموجة في الطبقة المتوسطة للأبهر (صبغة أورسين)"
+        },
         stain: 'Orcein Stain (Dark Brown/Purple Wavy Fibers)',
         magnification: '400x High Power',
         specimen: 'Aorta Wall (Tunica Media)',
         labels: [
-          { id: '1', label: 'Wavy Elastic Laminae (Orcein Stained)', clue: 'Dark brown/purple undulating ribbons' },
-          { id: '2', label: 'Smooth Muscle Nuclei', clue: 'Elongated nuclei between elastic waves' }
+          { id: '1', label: 'Wavy Elastic Laminae (Orcein Stained)', clue: 'Dark brown/purple undulating ribbons', x: 50, y: 46 },
+          { id: '2', label: 'Interspersed Smooth Muscle Cells', clue: 'Cells between elastic sheets', x: 50, y: 60 }
         ],
         practiceQuestions: [
           {
@@ -2223,6 +2225,696 @@ export const HISTOLOGY_SECTIONS: HistologySection[] = [
           }
         ],
         motivation: '🎯 Train your eyes, not only your memory.'
+      }
+    ]
+  },
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // 9. SPECIALIZED CONNECTIVE TISSUE (CARTILAGE, BONE, BLOOD)
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  {
+    id: 'sec_specialized_connective',
+    number: 9,
+    titleEn: 'Specialized Connective Tissue: Cartilage, Bone & Blood',
+    titleAr: 'النسيج الضام المتخصص: الغضروف، العظم، والدم',
+    descriptionEn: 'Skeletal and fluid connective tissues: Hyaline, Elastic, and Fibrocartilage, Haversian systems of Compact Bone, and Peripheral Blood Smear cytology.',
+    iconName: 'Shield',
+    badge: 'SUPPORT & FLUID',
+    lessons: [
+      {
+        id: 'lesson_hyaline_cartilage',
+        sectionId: 'sec_specialized_connective',
+        numberString: 'LESSON 9.1',
+        titleEn: 'Hyaline Cartilage',
+        titleAr: 'الغضروف الزجاجي (Hyaline Cartilage)',
+        badge: 'CARTILAGE',
+        category: 'cartilage',
+        quickExplanation: 'Most common cartilage type; characterized by a glassy, homogeneous basophilic matrix containing chondrocytes in lacunae and isogenous groups.',
+        quickExplanationAr: 'أكثر أنواع الغضاريف شيوعاً؛ يتميز بمادة بينية زجاجية متجانسة وقاعدية الصبغ تحتوي على خلايا غضروفية في جفوات وضمن أعشاش خلوية متماثلة.',
+        keyPoints: [
+          'Matrix appears completely smooth and glassy (hyaloid) under light microscopy because Type II collagen fibrils have the same refractive index as the ground substance.',
+          'Chondrocytes sit inside small cavities called lacunae.',
+          'Isogenous groups (cell nests) consist of 2–4 chondrocytes derived from the mitotic division of a single progenitor.',
+          'Surrounded by a vascular perichondrium (except on articular surfaces of synovial joints).',
+          'Locations: Tracheal rings, costal cartilages, thyroid & cricoid cartilages, articular surfaces of long bones, and fetal skeletal model.'
+        ],
+        importantTerms: [
+          { term: 'Hyaline Cartilage', termAr: 'الغضروف الزجاجي', definition: 'Glassy, semitransparent cartilage containing fine Type II collagen fibrils.' },
+          { term: 'Lacuna', termAr: 'الجفوة الغضروفية', definition: 'Small matrix cavity occupied by a living chondrocyte.' },
+          { term: 'Isogenous Group', termAr: 'العش الخلوي المتماثل', definition: 'Cluster of 2 to 4 chondrocytes formed from mitotic division of one cell.' },
+          { term: 'Perichondrium', termAr: 'سمحاق الغضروف', definition: 'Dense irregular CT sheath encapsulating cartilage and providing vascular supply.' }
+        ],
+        cells: ['Chondrocytes inside lacunae', 'Chondroblasts in inner chondrogenic layer of perichondrium'],
+        fibers: ['Fine submicroscopic fibrils of Type II collagen'],
+        matrix: 'Basophilic ground substance rich in chondroitin sulfate and aggrecan',
+        location: [
+          'C-shaped rings of Trachea and Bronchi',
+          'Costal cartilages connecting ribs to sternum',
+          'Articular surfaces of movable joints (no perichondrium)',
+          'Nasal septum and larynx (thyroid and cricoid cartilages)'
+        ],
+        function: [
+          'Provides smooth, low-friction gliding surfaces in joints',
+          'Structural patency and flexible support for the respiratory tract'
+        ],
+        visualId: 'hyaline_cartilage_trachea',
+        realImagePath: '/images/histology/hyaline_cartilage.jpg',
+        isRealMicroscopy: true,
+        whatToLookFor: [
+          "Homogeneous, glassy (hyaloid) basophilic matrix without visible fiber bundles",
+          "Chondrocytes enclosed inside rounded lacunar spaces",
+          "Isogenous groups (cell nests of 2-4 chondrocytes clustered together)",
+          "Outer fibrous and chondrogenic perichondrium sheath"
+        ],
+        examMarker: {
+          x: 50,
+          y: 50,
+          pointerNumber: 1,
+          targetStructure: "Chondrocyte inside lacuna surrounded by glassy basophilic matrix",
+          targetStructureAr: "خلية غضروفية داخل جفوة محاطة بمادة خلوية زجاجية قاعدية"
+        },
+        stain: 'H&E (Hematoxylin and Eosin)',
+        magnification: '400x High Power',
+        specimen: 'Tracheal Wall Hyaline Cartilage Ring',
+        labels: [
+          { id: '1', label: 'Chondrocyte in Lacuna', clue: 'Round cartilage cell in cavity', x: 50, y: 50 },
+          { id: '2', label: 'Isogenous Group (Cell Nest)', clue: 'Cluster of 2-4 daughter chondrocytes', x: 42, y: 46 },
+          { id: '3', label: 'Glassy Homogeneous Matrix', clue: 'Smooth basophilic ground substance', x: 58, y: 62 },
+          { id: '4', label: 'Perichondrium', clue: 'Outer dense CT capsule', x: 20, y: 20 }
+        ],
+        practiceQuestions: [
+          {
+            id: 'q1',
+            question: 'Why does the matrix of hyaline cartilage appear glassy and homogeneous under standard light microscopy?',
+            options: [
+              'Because it contains no collagen whatsoever',
+              'Because Type II collagen fibrils have virtually the same refractive index as the surrounding ground substance',
+              'Because it is calcified into bone crystals',
+              'Because it consists purely of lipid droplets'
+            ],
+            correctIndex: 1,
+            explanation: 'The Type II collagen fibrils possess a refractive index identical to the ground substance, giving a glassy (hyaloid) appearance.'
+          },
+          {
+            id: 'q2',
+            question: 'Where is hyaline cartilage found in the adult human body?',
+            options: ['Pinna of external ear', 'Epiglottis', 'C-shaped rings of the trachea', 'Intervertebral disc'],
+            correctIndex: 2,
+            explanation: 'Tracheal rings are composed of hyaline cartilage to maintain airway patency.'
+          }
+        ],
+        motivation: '🔬 Observe → Identify → Answer.'
+      },
+      {
+        id: 'lesson_elastic_cartilage',
+        sectionId: 'sec_specialized_connective',
+        numberString: 'LESSON 9.2',
+        titleEn: 'Elastic Cartilage',
+        titleAr: 'الغضروف المرن (Elastic Cartilage)',
+        badge: 'CARTILAGE',
+        category: 'cartilage',
+        quickExplanation: 'Highly flexible cartilage possessing an extensive network of dark-staining branched elastic fibers in its matrix alongside chondrocytes.',
+        quickExplanationAr: 'غضروف مرن للغاية يمتلك شبكة متفرعة كثيفة من الألياف المرنة داكنة الصبغ داخل مادته البينية بجانب الخلايا الغضروفية.',
+        keyPoints: [
+          'Histologically similar to hyaline cartilage, but contains abundant dark-staining, branching elastic fibers in addition to Type II collagen.',
+          'Chondrocytes are larger, more numerous, and more crowded together than in hyaline cartilage.',
+          'Always surrounded by a perichondrium.',
+          'Provides exceptional flexibility, resilience, and elastic recoil.',
+          'Locations: External ear pinna (auricle), external auditory meatus, auditory (Eustachian) tube, and epiglottis.'
+        ],
+        importantTerms: [
+          { term: 'Elastic Cartilage', termAr: 'الغضروف المرن', definition: 'Flexible cartilage characterized by abundant branching elastic fiber network.' },
+          { term: 'Epiglottis', termAr: 'لسان المزمار', definition: 'Laryngeal flap composed of elastic cartilage preventing food entry into the airway.' },
+          { term: 'Auricle (Pinna)', termAr: 'صيوان الأذن', definition: 'External ear framework providing acoustic funneling with elastic recoil.' }
+        ],
+        cells: ['Abundant large chondrocytes in lacunae', 'Chondroblasts in perichondrium'],
+        fibers: ['Dense anastomosing network of elastic fibers', 'Fine Type II collagen fibrils'],
+        matrix: 'Ground substance rich in proteoglycans traversed by elastic fibers',
+        location: [
+          'Auricle (pinna) of external ear',
+          'External acoustic meatus',
+          'Auditory (Eustachian) tube',
+          'Epiglottis and cuneiform/corniculate laryngeal cartilages'
+        ],
+        function: [
+          'Maintains shape while allowing repeated deformation and elastic recoil'
+        ],
+        visualId: 'elastic_cartilage_ear',
+        realImagePath: '/images/histology/elastic_cartilage.jpg',
+        isRealMicroscopy: true,
+        whatToLookFor: [
+          "Dense dark-staining network of branched, wavy elastic fibers traversing matrix",
+          "Chondrocytes are larger, more frequent, and more packed in lacunae",
+          "Distinct outer perichondrium sheath"
+        ],
+        examMarker: {
+          x: 50,
+          y: 50,
+          pointerNumber: 1,
+          targetStructure: "Dense network of dark elastic fibers around chondrocytes",
+          targetStructureAr: "شبكة كثيفة من الألياف المرنة الداكنة حول الخلايا الغضروفية"
+        },
+        stain: 'Orcein / Verhoeff / Weigert Resorcin-Fuchsin',
+        magnification: '400x High Power',
+        specimen: 'Epiglottis / Auricle of Ear',
+        labels: [
+          { id: '1', label: 'Elastic Fiber Meshwork', clue: 'Dense dark branched elastic fibers in matrix', x: 50, y: 50 },
+          { id: '2', label: 'Large Chondrocyte in Lacuna', clue: 'More crowded, larger chondrocytes', x: 38, y: 45 },
+          { id: '3', label: 'Perichondrium', clue: 'Surrounding fibrous protective layer', x: 15, y: 15 }
+        ],
+        practiceQuestions: [
+          {
+            id: 'q1',
+            question: 'Which anatomical structure is primarily supported by elastic cartilage?',
+            options: ['Tracheal rings', 'Epiglottis', 'Intervertebral disc', 'Costal cartilage'],
+            correctIndex: 1,
+            explanation: 'The epiglottis requires flexibility and elastic recoil, and is supported by elastic cartilage.'
+          },
+          {
+            id: 'q2',
+            question: 'How can you distinguish elastic cartilage from hyaline cartilage under the microscope?',
+            options: [
+              'Elastic cartilage lacks chondrocytes completely',
+              'Elastic cartilage contains a dense dark network of branched elastic fibers in its matrix',
+              'Elastic cartilage has blood vessels inside its matrix',
+              'Elastic cartilage is lined by simple squamous epithelium'
+            ],
+            correctIndex: 1,
+            explanation: 'Abundant dark-staining branching elastic fibers in the matrix distinguish elastic cartilage.'
+          }
+        ],
+        motivation: '🎯 Train your eyes, not only your memory.'
+      },
+      {
+        id: 'lesson_fibrocartilage',
+        sectionId: 'sec_specialized_connective',
+        numberString: 'LESSON 9.3',
+        titleEn: 'Fibrocartilage',
+        titleAr: 'الغضروف الليفي (Fibrocartilage)',
+        badge: 'CARTILAGE',
+        category: 'cartilage',
+        quickExplanation: 'Tough, resilient transitional tissue combining heavy parallel bundles of Type I collagen with rows of chondrocytes in lacunae; lacks a perichondrium.',
+        quickExplanationAr: 'نسيج متين مقاوم يجمع بين حزم متوازية كثيفة من كولاجين النوع الأول مع صفوف من الخلايا الغضروفية داخل جفوات؛ يخلو من السمحاق الغضروفي.',
+        keyPoints: [
+          'Intermediate between dense regular connective tissue and hyaline cartilage.',
+          'Consists of alternating layers of dense Type I collagen fiber bundles and rows of rounded chondrocytes.',
+          'Chondrocytes sit in lacunae arranged in characteristic straight, parallel linear rows.',
+          'HAS NO PERICHONDRIUM: Merges imperceptibly into adjacent dense connective tissue or bone.',
+          'Resists extreme compression, shear stresses, and mechanical shock.',
+          'Locations: Annulus fibrosus of Intervertebral Discs, Pubic Symphysis, and Menisci of knee joint.'
+        ],
+        importantTerms: [
+          { term: 'Fibrocartilage', termAr: 'الغضروف الليفي', definition: 'Tough shock-absorbing cartilage with dense Type I collagen bundles and rows of chondrocytes.' },
+          { term: 'Intervertebral Disc', termAr: 'القرص بين الفقرات', definition: 'Spinal shock absorber containing an outer fibrocartilaginous annulus fibrosus.' },
+          { term: 'Pubic Symphysis', termAr: 'الارتفاق العاني', definition: 'Fibrocartilaginous midline joint uniting the two pubic bones.' }
+        ],
+        cells: ['Chondrocytes arranged in neat parallel rows in lacunae', 'Interspersed fibroblasts'],
+        fibers: ['Heavy, dense bundles of Type I collagen (strongly eosinophilic)'],
+        matrix: 'Scant basophilic ground substance limited to immediate territorial zones around chondrocytes',
+        location: [
+          'Annulus fibrosus of intervertebral discs',
+          'Pubic symphysis',
+          'Articular menisci of knee joint',
+          'Glenoid and acetabular labrum'
+        ],
+        function: [
+          'Absorbs heavy compressive shocks and resists shearing forces without tearing'
+        ],
+        visualId: 'fibrocartilage_disc',
+        realImagePath: '/images/histology/fibrocartilage.jpg',
+        isRealMicroscopy: true,
+        whatToLookFor: [
+          "Prominent coarse eosinophilic bundles of Type I collagen running parallel",
+          "Chondrocytes inside lacunae neatly aligned in linear single-file rows",
+          "Total absence of a perichondrium sheath"
+        ],
+        examMarker: {
+          x: 50,
+          y: 50,
+          pointerNumber: 1,
+          targetStructure: "Chondrocytes arranged in linear rows between dense collagen bundles",
+          targetStructureAr: "خلايا غضروفية مصطفة في صفوف بين حزم الكولاجين الكثيفة"
+        },
+        stain: 'H&E (Hematoxylin and Eosin)',
+        magnification: '400x High Power',
+        specimen: 'Intervertebral Disc Fibrocartilage',
+        labels: [
+          { id: '1', label: 'Chondrocytes in Linear Rows', clue: 'Small lacunae arranged along parallel fiber bundles', x: 50, y: 50 },
+          { id: '2', label: 'Dense Parallel Collagen Type I Bundles', clue: 'Coarse eosinophilic wavy bundles', x: 52, y: 65 }
+        ],
+        practiceQuestions: [
+          {
+            id: 'q1',
+            question: 'Which key histological feature distinguishes fibrocartilage from hyaline and elastic cartilage?',
+            options: [
+              'Presence of stratified squamous epithelium',
+              'Lack of a perichondrium and presence of prominent Type I collagen bundles with chondrocytes in rows',
+              'Absence of lacunae',
+              'Presence of Haversian canals'
+            ],
+            correctIndex: 1,
+            explanation: 'Fibrocartilage uniquely lacks a perichondrium and features chondrocytes aligned in rows between dense Type I collagen bundles.'
+          },
+          {
+            id: 'q2',
+            question: 'Where is fibrocartilage found in the human body?',
+            options: ['External ear pinna', 'Intervertebral discs and pubic symphysis', 'Tracheal rings', 'Nasal septum'],
+            correctIndex: 1,
+            explanation: 'Intervertebral discs and the pubic symphysis are classic sites of shock-absorbing fibrocartilage.'
+          }
+        ],
+        motivation: '🧠 Your microscopic eye is getting stronger.'
+      },
+      {
+        id: 'lesson_compact_bone',
+        sectionId: 'sec_specialized_connective',
+        numberString: 'LESSON 9.4',
+        titleEn: 'Compact Bone (Ground Section)',
+        titleAr: 'العظم المكتنز (Compact Bone - Haversian Systems)',
+        badge: 'BONE',
+        category: 'bone',
+        quickExplanation: 'Dense mineralized osseous tissue organized into cylindrical units called Osteons (Haversian systems) surrounding central vascular canals.',
+        quickExplanationAr: 'نسيج عظمي معدني كثيف ينتظم في وحدات أسطوانية تسمى أجهزة هافرس (Osteons) تحيط بقنوات وعائية مركزية.',
+        keyPoints: [
+          'Osteon (Haversian System): The structural and functional cylindrical unit of compact bone.',
+          'Haversian Canal (Central Canal): Longitudinal lumen containing neurovascular bundles, lined by endosteum.',
+          'Concentric Lamellae: 4 to 20 concentric rings of calcified collagenous matrix surrounding each central canal.',
+          'Lacunae: Small almond-shaped cavities between lamellae housing osteocytes.',
+          'Canaliculi: Minute radiating micro-tunnels interconnecting adjacent lacunae for metabolic exchange via gap junctions.',
+          'Volkmann’s Canals: Transverse canals connecting adjacent Haversian canals and carrying vessels from periosteum.'
+        ],
+        importantTerms: [
+          { term: 'Osteon (Haversian System)', termAr: 'جهاز هافرس (الوحدة العظمية)', definition: 'Cylindrical structural unit of compact bone with concentric lamellae.' },
+          { term: 'Haversian Canal', termAr: 'القناة الهافرسية', definition: 'Central neurovascular canal running longitudinally through an osteon.' },
+          { term: 'Osteocyte', termAr: 'الخلية العظمية', definition: 'Mature bone cell maintaining mineralized matrix from within its lacuna.' },
+          { term: 'Canaliculi', termAr: 'القُنيّات العظمية', definition: 'Radiating micro-channels connecting osteocyte processes for nutrient transport.' }
+        ],
+        cells: ['Osteocytes trapped inside lacunae', 'Osteoblasts on bone surfaces', 'Osteoclasts in Howship lacunae'],
+        fibers: ['Type I collagen fibers arranged spirally in concentric lamellae'],
+        matrix: 'Mineralized hydroxyapatite crystals [Ca10(PO4)6(OH)2] deposited on osteoid organic matrix',
+        location: [
+          'Diaphysis (shaft) of long bones (Femur, Humerus, Tibia)',
+          'Outer cortex of all bones'
+        ],
+        function: [
+          'Provides rigid mechanical support, protection of internal organs, and calcium homeostatic reservoir'
+        ],
+        visualId: 'compact_bone_osteon',
+        realImagePath: '/images/histology/compact_bone.jpg',
+        isRealMicroscopy: true,
+        whatToLookFor: [
+          "Circular or oval Osteons (Haversian systems) resembling tree trunk cross sections",
+          "Central dark Haversian canal surrounded by concentric mineralized lamellae",
+          "Dark spider-like osteocyte lacunae with radiating delicate canaliculi lines"
+        ],
+        examMarker: {
+          x: 50,
+          y: 50,
+          pointerNumber: 1,
+          targetStructure: "Central Haversian canal of Osteon",
+          targetStructureAr: "القناة الهافرسية المركزية لجهاز هافرس"
+        },
+        stain: 'Ground Bone Section (Unstained / India Ink)',
+        magnification: '400x High Power',
+        specimen: 'Human Long Bone Diaphysis (Ground Section)',
+        labels: [
+          { id: '1', label: 'Haversian Canal (Central Canal)', clue: 'Central circular lumen carrying blood vessels & nerves', x: 50, y: 50 },
+          { id: '2', label: 'Concentric Bony Lamellae', clue: 'Concentric mineralized matrix rings', x: 62, y: 44 },
+          { id: '3', label: 'Osteocyte Lacuna', clue: 'Dark almond-shaped spaces housing osteocytes', x: 58, y: 60 },
+          { id: '4', label: 'Canaliculi', clue: 'Tiny radiating hair-like micro-canals connecting lacunae', x: 40, y: 56 }
+        ],
+        practiceQuestions: [
+          {
+            id: 'q1',
+            question: 'What is the structural and functional unit of compact bone called?',
+            options: ['Chondron', 'Osteon (Haversian system)', 'Sarcomere', 'Nephron'],
+            correctIndex: 1,
+            explanation: 'The Osteon (Haversian system) is the cylindrical functional unit of compact bone.'
+          },
+          {
+            id: 'q2',
+            question: 'How do osteocytes in lacunae receive oxygen and nutrients through the calcified mineral matrix?',
+            options: [
+              'Direct diffusion across the solid mineralized matrix',
+              'Via cytoplasmic processes extending through radiating micro-channels called canaliculi',
+              'By phagocytosis of bone crystals',
+              'Through lymphatic spaces in the matrix'
+            ],
+            correctIndex: 1,
+            explanation: 'Osteocyte processes communicate through canaliculi, permitting diffusion of ions and nutrients.'
+          }
+        ],
+        motivation: '✓ Excellent identification!'
+      },
+      {
+        id: 'lesson_blood_smear',
+        sectionId: 'sec_specialized_connective',
+        numberString: 'LESSON 9.5',
+        titleEn: 'Peripheral Blood Smear',
+        titleAr: 'لطاخة الدم المحيطية (Blood Smear - Cytology)',
+        badge: 'FLUID CT',
+        category: 'blood',
+        quickExplanation: 'Specialized fluid connective tissue comprising blood plasma and formed elements: Erythrocytes (RBCs), Leukocytes (WBCs), and Thrombocytes (Platelets).',
+        quickExplanationAr: 'نسيج ضام سائل متخصص يتكون من بلازما الدم والعناصر المشكلة: كريات الدم الحمراء، كريات الدم البيضاء، والصفائح الدموية.',
+        keyPoints: [
+          'ERYTHROCYTES (RBCs): Biconcave non-nucleated discs (~7.5 µm in diameter) with a pale central zone (central pallor).',
+          'NEUTROPHIL: Most abundant white blood cell (60–70%); characterized by a multi-lobed nucleus (3–5 lobes connected by thin chromatin strands) and fine lilac cytoplasmic granules.',
+          'PLATELETS (Thrombocytes): Small anucleate cytoplasmic fragments (~2–4 µm) derived from megakaryocytes in bone marrow; crucial for hemostasis.',
+          'Stained selectively with Romanowsky stains (Leishman or Wright-Giemsa).'
+        ],
+        importantTerms: [
+          { term: 'Erythrocyte', termAr: 'كرية الدم الحمراء', definition: 'Anucleate biconcave disc specialized for oxygen and CO2 transport via hemoglobin.' },
+          { term: 'Neutrophil Granulocyte', termAr: 'الخلية الحبيبية المتعادلة', definition: 'Polymorphonuclear phagocytic leukocyte with 3 to 5 nuclear lobes.' },
+          { term: 'Platelets (Thrombocytes)', termAr: 'الصفائح الدموية', definition: 'Small anucleate cytoplasmic fragments vital for blood clotting.' }
+        ],
+        cells: ['Erythrocytes (RBCs)', 'Neutrophils, Lymphocytes, Monocytes, Eosinophils, Basophils', 'Platelets'],
+        fibers: ['Soluble fibrinogen that polymerizes into insoluble fibrin during coagulation'],
+        matrix: 'Blood plasma (liquid extracellular fluid containing electrolytes, albumin, and globulins)',
+        location: [
+          'Within blood vessels (arteries, capillaries, veins) of the cardiovascular system'
+        ],
+        function: [
+          'Transport of respiratory gases (O2 and CO2), nutrients, hormones, and immune defense'
+        ],
+        visualId: 'blood_smear_wbc',
+        realImagePath: '/images/histology/blood_smear.jpg',
+        isRealMicroscopy: true,
+        whatToLookFor: [
+          "Sea of anucleate pink-orange biconcave RBCs with lighter central pallor",
+          "Neutrophil leukocyte with characteristic 3-5 lobed segmented nucleus",
+          "Tiny clustered purplish anucleate platelet fragments between RBCs"
+        ],
+        examMarker: {
+          x: 48,
+          y: 48,
+          pointerNumber: 1,
+          targetStructure: "Neutrophil with multi-lobed nucleus and pale granules",
+          targetStructureAr: "خلية بيضاء متعادلة بنواة مفصصة وحبيبات شاحبة"
+        },
+        stain: 'Leishman / Wright-Giemsa Romanowsky Stain',
+        magnification: '1000x Oil Immersion',
+        specimen: 'Human Peripheral Blood Smear',
+        labels: [
+          { id: '1', label: 'Neutrophil Granulocyte (Multi-lobed Nucleus)', clue: 'Segmented 3-5 lobes connected by thin strands', x: 48, y: 48 },
+          { id: '2', label: 'Erythrocyte (Red Blood Cell)', clue: 'Anucleate biconcave disc with pale central zone', x: 34, y: 36 },
+          { id: '3', label: 'Blood Platelets (Thrombocytes)', clue: 'Small purple cell fragments in clusters', x: 66, y: 54 }
+        ],
+        practiceQuestions: [
+          {
+            id: 'q1',
+            question: 'What is the characteristic nuclear morphology of a mature neutrophil seen in a blood smear?',
+            options: [
+              'Large kidney-shaped single nucleus',
+              'Single round dark nucleus filling most of the cell',
+              'Segmented nucleus composed of 3 to 5 interconnected lobes',
+              'No nucleus (anucleate)'
+            ],
+            correctIndex: 2,
+            explanation: 'Neutrophils are polymorphonuclear leukocytes featuring a 3 to 5 lobed nucleus.'
+          },
+          {
+            id: 'q2',
+            question: 'Why do normal mature mammalian erythrocytes have a pale central region (central pallor)?',
+            options: [
+              'Because the nucleus is located in the center',
+              'Because of their biconcave disc shape, which makes them thinner in the center (~1 µm) than at the rim (~2.5 µm)',
+              'Because of lack of hemoglobin in the center',
+              'Because of a central water vacuole'
+            ],
+            correctIndex: 1,
+            explanation: 'The biconcave shape makes the erythrocyte center thinner than the perimeter, creating the central pallor.'
+          }
+        ],
+        motivation: '🔬 Observe → Identify → Answer.'
+      }
+    ]
+  },
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // 10. MUSCLE TISSUE
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  {
+    id: 'sec_muscle_tissue',
+    number: 10,
+    titleEn: 'Muscular Tissue: Skeletal, Cardiac & Smooth',
+    titleAr: 'النسيج العضلي: الهيكلي، القلبي، والأملس',
+    descriptionEn: 'The three contractile muscle varieties: Skeletal (striated & voluntary), Cardiac (striated, branching & intercalated discs), and Smooth (fusiform & non-striated).',
+    iconName: 'Activity',
+    badge: 'CONTRACTILE',
+    lessons: [
+      {
+        id: 'lesson_skeletal_muscle',
+        sectionId: 'sec_muscle_tissue',
+        numberString: 'LESSON 10.1',
+        titleEn: 'Skeletal Muscle',
+        titleAr: 'العضلات الهيكلية (Skeletal Muscle)',
+        badge: 'STRIATED',
+        category: 'muscle',
+        quickExplanation: 'Voluntary striated muscle consisting of long, multinucleated cylindrical fibers with peripherally placed nuclei and prominent cross-striations.',
+        quickExplanationAr: 'عضلات إرادية مخططة تتألف من ألياف أسطوانية طويلة متعددة الأنوية، تقع أنويتها على المحيط وتتميز بتخطيطات عرضية واضحة.',
+        keyPoints: [
+          'Fibers are long, unbranched cylinders running parallel to one another.',
+          'MULTINUCLEATED WITH PERIPHERAL NUCLEI: Multiple flattened nuclei are pushed to the cell periphery just beneath the sarcolemma.',
+          'CROSS STRIATIONS: Alternating dark anisotropic (A bands) and light isotropic (I bands) resulting from sarcomere organization of actin and myosin filaments.',
+          'Innervated by the somatic nervous system (voluntary control).',
+          'Locations: All skeletal muscles attached to bones (biceps, quadriceps), diaphragm, tongue, and pharynx.'
+        ],
+        importantTerms: [
+          { term: 'Skeletal Muscle', termAr: 'العضلات الهيكلية', definition: 'Striated, voluntary muscle with elongated multinucleated cylindrical cells.' },
+          { term: 'Sarcolemma', termAr: 'غمد الليف العضلي', definition: 'The plasma membrane of a muscle cell.' },
+          { term: 'A & I Bands', termAr: 'أشرطة A و I', definition: 'Alternating dark (A) and light (I) transverse striation bands along myofibrils.' },
+          { term: 'Peripheral Nuclei', termAr: 'الأنوية المحيطية', definition: 'Multiple flattened nuclei located just beneath the sarcolemma.' }
+        ],
+        cells: ['Multinucleated syncytial skeletal myocytes (myofibers)'],
+        fibers: ['Myofilaments (thick myosin and thin actin) organized in sarcomeres'],
+        matrix: 'Endomysium (delicate reticular CT surrounding each muscle fiber)',
+        location: [
+          'Skeletal muscles attached to the skeleton',
+          'Tongue, pharynx, and upper esophagus',
+          'Diaphragm and external anal sphincter'
+        ],
+        function: [
+          'Voluntary body locomotion, postural support, breathing, and thermal regulation'
+        ],
+        visualId: 'skeletal_muscle_ls',
+        realImagePath: '/images/histology/skeletal_muscle.jpg',
+        isRealMicroscopy: true,
+        whatToLookFor: [
+          "Long, unbranched parallel cylindrical fibers",
+          "Distinct transverse cross-striations (alternating dark A and light I bands)",
+          "Multiple flattened nuclei situated at the extreme periphery under the sarcolemma"
+        ],
+        examMarker: {
+          x: 50,
+          y: 50,
+          pointerNumber: 1,
+          targetStructure: "Cross striations (alternating dark A and light I bands)",
+          targetStructureAr: "التخطيطات العرضية (أشرطة A الداكنة وأشرطة I الفاتحة)"
+        },
+        stain: 'H&E (Hematoxylin and Eosin)',
+        magnification: '400x High Power',
+        specimen: 'Tongue / Skeletal Muscle (Longitudinal Section)',
+        labels: [
+          { id: '1', label: 'Transverse Striations (A & I bands)', clue: 'Regular perpendicular dark and light bands', x: 50, y: 50 },
+          { id: '2', label: 'Peripheral Multinucleated Myocyte', clue: 'Flattened oval nuclei pushed against sarcolemma', x: 45, y: 32 },
+          { id: '3', label: 'Longitudinal Muscle Fiber (Myofiber)', clue: 'Unbranched long cylindrical fiber', x: 55, y: 65 }
+        ],
+        practiceQuestions: [
+          {
+            id: 'q1',
+            question: 'Where are the nuclei located in skeletal muscle fibers?',
+            options: [
+              'Centrally in the middle of each cell',
+              'Peripherally just beneath the sarcolemma',
+              'Inside the intercalated discs',
+              'Inside connective tissue fascicles only'
+            ],
+            correctIndex: 1,
+            explanation: 'Skeletal muscle fibers are unique in having multiple nuclei located at the periphery of the fiber.'
+          },
+          {
+            id: 'q2',
+            question: 'What gives skeletal muscle fibers their characteristic cross-striated appearance?',
+            options: [
+              'Irregular lipid droplet deposition',
+              'The regular, repeating crystalline alignment of actin and myosin filaments in sarcomeres',
+              'Wavy elastic fibers running perpendicular to the fiber',
+              'The presence of multiple cell membranes'
+            ],
+            correctIndex: 1,
+            explanation: 'Sarcomeres with aligned thick (myosin) and thin (actin) filaments generate the alternating A and I bands.'
+          }
+        ],
+        motivation: '🎯 Train your eyes, not only your memory.'
+      },
+      {
+        id: 'lesson_cardiac_muscle',
+        sectionId: 'sec_muscle_tissue',
+        numberString: 'LESSON 10.2',
+        titleEn: 'Cardiac Muscle (Myocardium)',
+        titleAr: 'العضلات القلبية (Cardiac Muscle - Intercalated Discs)',
+        badge: 'STRIATED',
+        category: 'muscle',
+        quickExplanation: 'Involuntary striated muscle characterized by branching fibers, one or two central nuclei, and dark step-like intercalated discs uniting adjacent myocytes.',
+        quickExplanationAr: 'عضلات لاإرادية مخططة تتميز بألياف متفرعة، نواة مركزية واحدة أو اثنتين، وأقراص بينية داكنة متدرجة تصل بين الخلايا المجاورة.',
+        keyPoints: [
+          'Branching and anastomosing cylindrical cells forming a three-dimensional contractile network.',
+          'CENTRAL NUCLEI: Each myocyte contains one (or occasionally two) large oval pale nuclei located centrally, often with a pale perinuclear glycogen halo.',
+          'INTERCALATED DISCS: Specialized junctional complexes that appear as dark transverse step-like lines crossing fibers; contain fascia adherens, desmosomes, and gap junctions.',
+          'Possesses cross-striations, but less prominent than skeletal muscle.',
+          'Involuntary, autonomous, rhythmic contractions governed by pacemaker nodes.',
+          'Location: Myocardium of the heart and roots of the venae cavae.'
+        ],
+        importantTerms: [
+          { term: 'Cardiac Muscle', termAr: 'العضلات القلبية', definition: 'Involuntary striated muscle consisting of branching cells joined by intercalated discs.' },
+          { term: 'Intercalated Disc', termAr: 'القرص البيني', definition: 'Specialized step-like junctional complex joining cardiac myocytes end-to-end.' },
+          { term: 'Gap Junction', termAr: 'المشابك الفجوية', definition: 'Low-resistance ionic channels in intercalated discs allowing coordinated contraction.' }
+        ],
+        cells: ['Branching mono- or bi-nucleated cardiac myocytes'],
+        fibers: ['Sarcomeric myofilaments with cross-striations'],
+        matrix: 'Endomysium rich in fenestrated capillary networks for high oxygen demand',
+        location: [
+          'Myocardium (muscular middle layer of heart ventricles and atria)'
+        ],
+        function: [
+          'Involuntary, rhythmic, lifelong pumping of blood through pulmonary and systemic circulations'
+        ],
+        visualId: 'cardiac_muscle_heart',
+        realImagePath: '/images/histology/cardiac_muscle.jpg',
+        isRealMicroscopy: true,
+        whatToLookFor: [
+          "Branching and anastomosing cylindrical muscle fibers",
+          "Single or paired oval nuclei located in the cell center (perinuclear halo)",
+          "Dark transverse step-like intercalated discs joining cells end-to-end",
+          "Fine cross-striations with abundant intervening blood capillaries"
+        ],
+        examMarker: {
+          x: 50,
+          y: 50,
+          pointerNumber: 1,
+          targetStructure: "Intercalated disc (step-like junctional complex)",
+          targetStructureAr: "القرص البيني (Intercalated Disc)"
+        },
+        stain: 'H&E / Iron Hematoxylin',
+        magnification: '400x High Power',
+        specimen: 'Heart Wall Ventricle (Myocardium)',
+        labels: [
+          { id: '1', label: 'Intercalated Disc (Specialized Junction)', clue: 'Dark transverse step-like lines connecting adjacent myocytes', x: 50, y: 50 },
+          { id: '2', label: 'Central Oval Nucleus', clue: 'Single or double centrally located nucleus', x: 42, y: 44 },
+          { id: '3', label: 'Branching Muscle Fiber', clue: 'Y-shaped bifurcating cardiac cell', x: 62, y: 56 }
+        ],
+        practiceQuestions: [
+          {
+            id: 'q1',
+            question: 'What is the diagnostic histological feature that uniquely identifies cardiac muscle?',
+            options: [
+              'Peripheral multinucleation',
+              'Presence of dark step-like intercalated discs between branching cells',
+              'Spindle-shaped cells without striations',
+              'Presence of Haversian canals'
+            ],
+            correctIndex: 1,
+            explanation: 'Intercalated discs with branching fibers and central nuclei are pathognomonic for cardiac muscle.'
+          },
+          {
+            id: 'q2',
+            question: 'How do the location and number of nuclei in cardiac muscle differ from skeletal muscle?',
+            options: [
+              'Cardiac has multiple peripheral nuclei; skeletal has one central nucleus',
+              'Cardiac has 1–2 centrally located nuclei; skeletal has multiple peripheral nuclei',
+              'Cardiac muscle has no nuclei',
+              'Both have identical nuclear arrangements'
+            ],
+            correctIndex: 1,
+            explanation: 'Cardiac myocytes have 1–2 central nuclei, whereas skeletal myofibers have multiple peripheral nuclei.'
+          }
+        ],
+        motivation: '🧠 Your microscopic eye is getting stronger.'
+      },
+      {
+        id: 'lesson_smooth_muscle',
+        sectionId: 'sec_muscle_tissue',
+        numberString: 'LESSON 10.3',
+        titleEn: 'Smooth Muscle (Involuntary)',
+        titleAr: 'العضلات الملساء (Smooth Muscle)',
+        badge: 'NON-STRIATED',
+        category: 'muscle',
+        quickExplanation: 'Involuntary non-striated muscle composed of individual spindle-shaped (fusiform) cells, each with a single centrally located elongated or corkscrew nucleus.',
+        quickExplanationAr: 'عضلات لاإرادية غير مخططة تتكون من خلايا مغزلية مفردة ذات نهايات مستدقة، لكل منها نواة واحدة متطاولة أو لولبية تقع في المركز.',
+        keyPoints: [
+          'Cells are fusiform (spindle-shaped) with thick center and tapering ends.',
+          'CENTRAL SINGLE NUCLEUS: Elongated, rod-shaped nucleus located in the widest central portion; appears folded or corkscrew-shaped during contraction.',
+          'NO CROSS STRIATIONS: Actin and myosin filaments criss-cross obliquely and anchor into dense bodies rather than regular sarcomeres.',
+          'Involuntary autonomic regulation and slow, prolonged contractions.',
+          'Locations: Walls of the gastrointestinal tract (muscularis externa), blood vessels (tunica media), urinary bladder, uterus, and respiratory airways.'
+        ],
+        importantTerms: [
+          { term: 'Smooth Muscle', termAr: 'العضلات الملساء', definition: 'Involuntary, non-striated muscle with spindle-shaped cells and central nuclei.' },
+          { term: 'Dense Bodies', termAr: 'الأجسام الكثيفة', definition: 'Cytoplasmic and membrane-associated protein anchors for actin, functionally equivalent to Z-discs.' },
+          { term: 'Fusiform Shape', termAr: 'الشكل المغزلي', definition: 'Spindle-like cellular geometry with a thick center and tapering ends.' }
+        ],
+        cells: ['Individual fusiform (spindle-shaped) smooth muscle cells'],
+        fibers: ['Actin and myosin microfilaments criss-crossing obliquely, anchored to dense bodies'],
+        matrix: 'Fine external lamina and endomysial reticular fibers uniting cells into functional bundles',
+        location: [
+          'Muscularis externa of gastrointestinal tract (stomach, small and large intestine)',
+          'Tunica media of muscular arteries and arterioles',
+          'Wall of urinary bladder and ureter',
+          'Myometrium of uterus and respiratory bronchioles'
+        ],
+        function: [
+          'Involuntary peristaltic propulsion of contents through hollow viscera and vascular tone control'
+        ],
+        visualId: 'smooth_muscle_gut',
+        realImagePath: '/images/histology/smooth_muscle.jpg',
+        isRealMicroscopy: true,
+        whatToLookFor: [
+          "Closely packed fusiform (spindle-shaped) cells with tapering ends",
+          "Single elongated or corkscrew-like nucleus situated in the cell center",
+          "Absence of any cross-striations (smooth eosinophilic sarcoplasm)"
+        ],
+        examMarker: {
+          x: 50,
+          y: 50,
+          pointerNumber: 1,
+          targetStructure: "Spindle-shaped smooth muscle cell with central elongated nucleus",
+          targetStructureAr: "خلية عضلية مغزلية بنواة مركزية متطاولة"
+        },
+        stain: 'H&E (Hematoxylin and Eosin)',
+        magnification: '400x High Power',
+        specimen: 'Intestine Muscularis Externa (Longitudinal Section)',
+        labels: [
+          { id: '1', label: 'Central Elongated / Corkscrew Nucleus', clue: 'Single rod-shaped central nucleus in thickest part of cell', x: 50, y: 50 },
+          { id: '2', label: 'Fusiform / Spindle-shaped Sarcoplasm', clue: 'Tapered ends with smooth non-striated cytoplasm', x: 55, y: 42 },
+          { id: '3', label: 'Intercellular Endomysium', clue: 'Fine reticular framework between fibers', x: 40, y: 60 }
+        ],
+        practiceQuestions: [
+          {
+            id: 'q1',
+            question: 'Why do smooth muscle cells lack the transverse striations seen in skeletal and cardiac muscle?',
+            options: [
+              'Because they contain no actin or myosin',
+              'Because myofilaments are not arranged into repeating sarcomeres, but rather criss-cross obliquely and attach to dense bodies',
+              'Because they have no cell membrane',
+              'Because the nucleus masks the striations'
+            ],
+            correctIndex: 1,
+            explanation: 'Myofilaments in smooth muscle anchor to dense bodies in an oblique lattice instead of aligned sarcomeric Z-discs.'
+          },
+          {
+            id: 'q2',
+            question: 'What is the characteristic shape of a smooth muscle cell and its nucleus?',
+            options: [
+              'Branching cylinder with peripheral nuclei',
+              'Fusiform (spindle-shaped) cell with a single central elongated nucleus',
+              'Cubic cell with a round nucleus',
+              'Biconcave disc with no nucleus'
+            ],
+            correctIndex: 1,
+            explanation: 'Smooth muscle cells are fusiform (spindle-shaped) with a single central rod-shaped or corkscrew nucleus.'
+          }
+        ],
+        motivation: '✓ Excellent identification!'
       }
     ]
   }
@@ -2471,11 +3163,75 @@ export const HISTOLOGY_SLIDE_METADATA: Record<string, HistologySlideMetadata> = 
     license: 'CC BY 4.0 / Verified Educational'
   },
   lesson_yellow_elastic: {
-    sourceInstitution: 'OpenStax Anatomy and Physiology, Fig 4.12',
-    reference: "Junqueira's Basic Histology, Ch. 7: Cartilage, Fig 7-7 (Elastic Cartilage)",
-    tissueName: 'External Ear Pinna / Epiglottis Elastic Matrix',
-    stain: 'Verhoeff / Weigert Resorcin-Fuchsin',
-    magnification: '200x Medium Power',
+    sourceInstitution: 'OpenStax Anatomy and Physiology 2e, Fig 20.7',
+    reference: "Junqueira's Basic Histology, Ch. 11: Circulatory System, Fig 11-5 (Aorta)",
+    tissueName: 'Aorta Wall Tunica Media (Concentric Elastic Laminae)',
+    stain: 'Orcein Stain (Wavy Elastic Ribbons)',
+    magnification: '400x High Power',
+    license: 'CC BY 4.0 / Verified Educational'
+  },
+  lesson_hyaline_cartilage: {
+    sourceInstitution: 'OpenStax Anatomy and Physiology 2e, Fig 4.12',
+    reference: "Junqueira's Basic Histology, 16th Ed., Ch. 7: Cartilage, Fig 7-3 (Hyaline Cartilage)",
+    tissueName: 'Tracheal Hyaline Cartilage (Chondrocytes & Isogenous Groups)',
+    stain: 'H&E (Glassy Basophilic Matrix)',
+    magnification: '400x High Power',
+    license: 'CC BY 4.0 / Verified Educational'
+  },
+  lesson_elastic_cartilage: {
+    sourceInstitution: 'OpenStax Anatomy and Physiology 2e, Fig 4.12',
+    reference: "Junqueira's Basic Histology, 16th Ed., Ch. 7: Cartilage, Fig 7-7 (Elastic Cartilage)",
+    tissueName: 'Epiglottis / Auricle Elastic Cartilage (Branched Elastic Mesh)',
+    stain: 'Orcein / Resorcin-Fuchsin',
+    magnification: '400x High Power',
+    license: 'CC BY 4.0 / Verified Educational'
+  },
+  lesson_fibrocartilage: {
+    sourceInstitution: 'OpenStax Anatomy and Physiology 2e, Fig 4.12',
+    reference: "Junqueira's Basic Histology, 16th Ed., Ch. 7: Cartilage, Fig 7-8 (Fibrocartilage)",
+    tissueName: 'Intervertebral Disc Fibrocartilage (Type I Collagen Bundles & Chondrocytes in Rows)',
+    stain: 'H&E',
+    magnification: '400x High Power',
+    license: 'CC BY 4.0 / Verified Educational'
+  },
+  lesson_compact_bone: {
+    sourceInstitution: 'OpenStax Anatomy and Physiology 2e, Fig 6.13',
+    reference: "Junqueira's Basic Histology, 16th Ed., Ch. 8: Bone, Fig 8-8 (Osteon / Haversian System)",
+    tissueName: 'Ground Compact Bone (Haversian Canals, Concentric Lamellae & Canaliculi)',
+    stain: 'Ground Section (India Ink)',
+    magnification: '400x High Power',
+    license: 'CC BY 4.0 / Verified Educational'
+  },
+  lesson_blood_smear: {
+    sourceInstitution: 'OpenStax Anatomy and Physiology 2e, Fig 18.2',
+    reference: "Junqueira's Basic Histology, 16th Ed., Ch. 12: Blood, Fig 12-5 (Neutrophils & Erythrocytes)",
+    tissueName: 'Human Peripheral Blood Smear (Neutrophil Polymorphonuclear Granulocyte & RBCs)',
+    stain: 'Leishman / Wright-Giemsa',
+    magnification: '1000x Oil Immersion',
+    license: 'CC BY 4.0 / Verified Educational'
+  },
+  lesson_skeletal_muscle: {
+    sourceInstitution: 'OpenStax Anatomy and Physiology 2e, Fig 10.2',
+    reference: "Junqueira's Basic Histology, 16th Ed., Ch. 10: Muscle Tissue, Fig 10-3 (Skeletal Muscle)",
+    tissueName: 'Skeletal Muscle Longitudinal Section (Cross Striations & Peripheral Nuclei)',
+    stain: 'H&E',
+    magnification: '400x High Power',
+    license: 'CC BY 4.0 / Verified Educational'
+  },
+  lesson_cardiac_muscle: {
+    sourceInstitution: 'OpenStax Anatomy and Physiology 2e, Fig 10.2',
+    reference: "Junqueira's Basic Histology, 16th Ed., Ch. 10: Muscle Tissue, Fig 10-20 (Cardiac Muscle)",
+    tissueName: 'Heart Ventricle Myocardium (Branching Fibers, Central Nuclei & Intercalated Discs)',
+    stain: 'H&E / Iron Hematoxylin',
+    magnification: '400x High Power',
+    license: 'CC BY 4.0 / Verified Educational'
+  },
+  lesson_smooth_muscle: {
+    sourceInstitution: 'OpenStax Anatomy and Physiology 2e, Fig 10.2',
+    reference: "Junqueira's Basic Histology, 16th Ed., Ch. 10: Muscle Tissue, Fig 10-23 (Smooth Muscle)",
+    tissueName: 'Intestinal Muscularis Externa (Fusiform Cells & Central Rod Nuclei)',
+    stain: 'H&E',
+    magnification: '400x High Power',
     license: 'CC BY 4.0 / Verified Educational'
   }
 };
