@@ -135,8 +135,12 @@ async function startServer() {
     enrolledLabs: string[];
     createdAt: string;
     lastLoginAt: string;
+    lastLogoutAt?: string;
     lastActivityAt: string;
     sessionCount: number;
+    canPublishAnatomyExams?: boolean;
+    isOnline?: boolean;
+    currentSessionStatus?: 'online' | 'offline';
   }
 
   interface ServerActivity {
@@ -147,6 +151,9 @@ async function startServer() {
     activity: string;
     section: string;
     timestamp: string;
+    loginTime?: string;
+    logoutTime?: string;
+    sessionStatus?: 'online' | 'offline';
     metadata?: any;
   }
 
@@ -445,10 +452,55 @@ async function startServer() {
     }
   };
 
+  // Inactivity timeout: 5 minutes without activity/heartbeat marks user session as Offline
+  const INACTIVITY_TIMEOUT_MS = 5 * 60 * 1000;
+
+  const computeIsUserOnline = (u: ServerUser): boolean => {
+    if (u.currentSessionStatus === 'offline') return false;
+    if (!u.lastActivityAt) return false;
+    const elapsed = Date.now() - new Date(u.lastActivityAt).getTime();
+    return elapsed <= INACTIVITY_TIMEOUT_MS;
+  };
+
+  const expireInactiveSessions = () => {
+    let changed = false;
+    const now = Date.now();
+    serverUsers.forEach(u => {
+      if (u.currentSessionStatus === 'online') {
+        const lastAct = u.lastActivityAt ? new Date(u.lastActivityAt).getTime() : 0;
+        if (now - lastAct > INACTIVITY_TIMEOUT_MS) {
+          u.currentSessionStatus = 'offline';
+          u.isOnline = false;
+          u.lastLogoutAt = u.lastActivityAt || new Date().toISOString();
+          changed = true;
+
+          // Update active login record
+          const openLogin = serverActivities.find(a => a.userId === u.id && !a.logoutTime && (a.loginTime || a.metadata?.loginTime));
+          if (openLogin) {
+            openLogin.logoutTime = u.lastLogoutAt;
+            openLogin.sessionStatus = 'offline';
+          }
+        }
+      }
+    });
+    if (changed) {
+      saveDb();
+    }
+  };
+
+  // Run periodic session expiration check every 30 seconds
+  setInterval(expireInactiveSessions, 30000);
+
   // Safe user profile view (removes passwordHash)
   const toSafeUser = (u: ServerUser) => {
     const { passwordHash, ...safe } = u;
-    return safe;
+    const isOnline = computeIsUserOnline(u);
+    return {
+      ...safe,
+      isOnline,
+      currentSessionStatus: (isOnline ? 'online' : 'offline') as 'online' | 'offline',
+      canPublishAnatomyExams: Boolean(u.canPublishAnatomyExams)
+    };
   };
 
   // --- AUTH ROUTE: REGISTER ---
@@ -495,21 +547,36 @@ async function startServer() {
         createdAt: now,
         lastLoginAt: now,
         lastActivityAt: now,
-        sessionCount: 1
+        sessionCount: 1,
+        canPublishAnatomyExams: false,
+        isOnline: true,
+        currentSessionStatus: 'online'
       };
 
       serverUsers.push(newUser);
 
-      // Record activity
-      serverActivities.push({
+      // Record persistent registration and initial login activity
+      serverActivities.unshift({
         id: `act_${Date.now()}`,
         userId: id,
         userName: cleanName,
         userEmail: cleanEmail,
-        activity: 'Account Created & Registered',
-        section: 'Account',
-        timestamp: now
+        activity: 'إنشاء حساب طالب جديد وتسجيل الدخول',
+        section: 'Authentication',
+        timestamp: now,
+        loginTime: now,
+        sessionStatus: 'online',
+        metadata: {
+          type: 'register',
+          role: 'student',
+          loginTime: now,
+          sessionStatus: 'online'
+        }
       });
+
+      if (serverActivities.length > 1000) {
+        serverActivities.pop();
+      }
 
       saveDb();
 
@@ -549,8 +616,10 @@ async function startServer() {
       user.lastLoginAt = now;
       user.lastActivityAt = now;
       user.sessionCount = (user.sessionCount || 0) + 1;
+      user.isOnline = true;
+      user.currentSessionStatus = 'online';
 
-      // Record detailed login event (Unshift so latest is first)
+      // Record persistent login event
       serverActivities.unshift({
         id: `act_login_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
         userId: user.id,
@@ -559,11 +628,14 @@ async function startServer() {
         activity: `تسجيل الدخول إلى المنصة (جلسة رقم ${user.sessionCount})`,
         section: 'Authentication',
         timestamp: now,
+        loginTime: now,
+        sessionStatus: 'online',
         metadata: {
           type: 'login',
           role: user.role,
           sessionNumber: user.sessionCount,
-          loginTime: now
+          loginTime: now,
+          sessionStatus: 'online'
         }
       });
 
@@ -620,6 +692,8 @@ async function startServer() {
       let role = 'student';
       const { reason = 'Manual logout' } = req.body || {};
 
+      const now = new Date().toISOString();
+
       if (authHeader && authHeader.startsWith('Bearer ')) {
         const token = authHeader.split(' ')[1];
         const verified = verifySessionToken(token);
@@ -630,17 +704,26 @@ async function startServer() {
           if (u) {
             userName = u.name;
             userEmail = u.email;
-            u.lastActivityAt = new Date().toISOString();
+            u.lastActivityAt = now;
+            u.lastLogoutAt = now;
+            u.isOnline = false;
+            u.currentSessionStatus = 'offline';
           }
 
           if (role === 'admin') {
             const sess = activeAdminSessions.find(s => s.userId === userId && !s.revoked);
             if (sess) sess.revoked = true;
           }
+
+          // Close active login activity record
+          const openLogin = serverActivities.find(a => a.userId === userId && !a.logoutTime && (a.loginTime || a.metadata?.loginTime));
+          if (openLogin) {
+            openLogin.logoutTime = now;
+            openLogin.sessionStatus = 'offline';
+          }
         }
       }
 
-      const now = new Date().toISOString();
       serverActivities.unshift({
         id: `act_logout_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
         userId,
@@ -649,11 +732,14 @@ async function startServer() {
         activity: `تسجيل الخروج من المنصة (${reason === 'session_expired' ? 'انتهاء مهلة الجلسة' : 'تسجيل خروج يدوي'})`,
         section: 'Authentication',
         timestamp: now,
+        logoutTime: now,
+        sessionStatus: 'offline',
         metadata: {
           type: 'logout',
           role,
           reason,
-          logoutTime: now
+          logoutTime: now,
+          sessionStatus: 'offline'
         }
       });
 
@@ -666,6 +752,88 @@ async function startServer() {
     } catch (err: any) {
       return res.status(500).json({ error: 'Logout tracking failed: ' + err.message });
     }
+  });
+
+  // --- BEACON LOGOUT ROUTE (navigator.sendBeacon on window close) ---
+  app.post('/api/auth/beacon-logout', express.text({ type: '*/*' }), (req: Request, res: Response) => {
+    try {
+      let token = '';
+      if (typeof req.body === 'string') {
+        try {
+          const parsed = JSON.parse(req.body);
+          token = parsed.token || '';
+        } catch {
+          token = req.body;
+        }
+      } else if (req.body && req.body.token) {
+        token = req.body.token;
+      }
+
+      if (token) {
+        const verified = verifySessionToken(token);
+        if (verified) {
+          const now = new Date().toISOString();
+          const u = serverUsers.find(user => user.id === verified.userId);
+          if (u) {
+            u.lastActivityAt = now;
+            u.lastLogoutAt = now;
+            u.isOnline = false;
+            u.currentSessionStatus = 'offline';
+
+            const openLogin = serverActivities.find(a => a.userId === u.id && !a.logoutTime && (a.loginTime || a.metadata?.loginTime));
+            if (openLogin) {
+              openLogin.logoutTime = now;
+              openLogin.sessionStatus = 'offline';
+            }
+
+            serverActivities.unshift({
+              id: `act_beacon_${Date.now()}`,
+              userId: u.id,
+              userName: u.name,
+              userEmail: u.email,
+              activity: 'إغلاق المتصفح ومغادرة المنصة (Session Closed)',
+              section: 'Authentication',
+              timestamp: now,
+              logoutTime: now,
+              sessionStatus: 'offline',
+              metadata: {
+                type: 'logout',
+                reason: 'beacon_unload',
+                logoutTime: now,
+                sessionStatus: 'offline'
+              }
+            });
+
+            saveDb();
+          }
+        }
+      }
+      return res.status(200).send('ok');
+    } catch {
+      return res.status(200).send('ok');
+    }
+  });
+
+  // --- USER HEARTBEAT (Keep Session Online While Active) ---
+  app.post('/api/user/heartbeat', (req: Request, res: Response) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Unauthenticated' });
+    }
+    const token = authHeader.split(' ')[1];
+    const verified = verifySessionToken(token);
+    if (!verified) {
+      return res.status(401).json({ error: 'Session expired' });
+    }
+    const user = serverUsers.find(u => u.id === verified.userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    const now = new Date().toISOString();
+    user.lastActivityAt = now;
+    user.currentSessionStatus = 'online';
+    user.isOnline = true;
+    return res.json({ success: true, timestamp: now, isOnline: true });
   });
 
   // --- AUTH ROUTE: GET CURRENT USER (ME) ---
@@ -767,10 +935,15 @@ async function startServer() {
       return res.status(403).json({ error: 'Access Denied: Faculty Admin Privileges Required.' });
     }
 
-    // Return list of all users
+    // Refresh session timeouts before returning
+    expireInactiveSessions();
+
+    const safeUsers = serverUsers.map(toSafeUser);
+
     return res.json({
-      users: serverUsers.map(toSafeUser),
-      total: serverUsers.length
+      users: safeUsers,
+      total: safeUsers.length,
+      onlineCount: safeUsers.filter(u => u.isOnline).length
     });
   });
 
@@ -789,8 +962,8 @@ async function startServer() {
     const { userId } = req.params;
     const { role } = req.body;
 
-    if (!role || (role !== 'student' && role !== 'admin')) {
-      return res.status(400).json({ error: 'Invalid role specified. Permitted roles: student, admin.' });
+    if (!role || (role !== 'student' && role !== 'admin' && role !== 'instructor')) {
+      return res.status(400).json({ error: 'Invalid role specified. Permitted roles: student, instructor, admin.' });
     }
 
     const targetUser = serverUsers.find(u => u.id === userId || u.userId === userId);
@@ -804,7 +977,7 @@ async function startServer() {
     }
 
     const oldRole = targetUser.role;
-    targetUser.role = role;
+    targetUser.role = role as 'student' | 'instructor' | 'admin';
     targetUser.lastActivityAt = new Date().toISOString();
 
     serverActivities.unshift({
@@ -812,7 +985,7 @@ async function startServer() {
       userId: verified.userId,
       userName: 'Dean / Administrator',
       userEmail: 'admin@med.edu',
-      activity: `Changed role of user ${targetUser.name} (${targetUser.email}) from ${oldRole} to ${role}`,
+      activity: `تعديل دور المستخدم ${targetUser.name} (${targetUser.email}) من ${oldRole} إلى ${role}`,
       section: 'Administration',
       timestamp: new Date().toISOString()
     });
@@ -823,6 +996,59 @@ async function startServer() {
       success: true,
       user: toSafeUser(targetUser),
       message: `User role successfully updated to ${role}.`
+    });
+  });
+
+  // --- ADMIN ROUTE: UPDATE SPECIAL STUDENT PERMISSIONS (Strict Admin Permission) ---
+  app.put('/api/admin/users/:userId/permissions', (req: Request, res: Response) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Admin authentication required.' });
+    }
+    const token = authHeader.split(' ')[1];
+    const verified = verifySessionToken(token);
+    if (!verified || verified.role !== 'admin') {
+      return res.status(403).json({ error: 'Access Denied: Faculty Admin Privileges Required.' });
+    }
+
+    const { userId } = req.params;
+    const { canPublishAnatomyExams } = req.body;
+
+    const targetUser = serverUsers.find(u => u.id === userId || u.userId === userId);
+    if (!targetUser) {
+      return res.status(404).json({ error: 'User not found in system.' });
+    }
+
+    const newPermissionState = Boolean(canPublishAnatomyExams);
+    targetUser.canPublishAnatomyExams = newPermissionState;
+    targetUser.lastActivityAt = new Date().toISOString();
+
+    const actionText = newPermissionState
+      ? `منح صلاحية إنشاء ونشر امتحانات التشريح (Anatomy Exam Publisher) للطالب ${targetUser.name}`
+      : `إلغاء صلاحية إنشاء ونشر امتحانات التشريح للطالب ${targetUser.name}`;
+
+    serverActivities.unshift({
+      id: `act_${Date.now()}_perm`,
+      userId: verified.userId,
+      userName: 'Dean / Administrator',
+      userEmail: 'admin@med.edu',
+      activity: actionText,
+      section: 'Administration',
+      timestamp: new Date().toISOString(),
+      metadata: {
+        type: 'permission_change',
+        targetUserId: targetUser.id,
+        targetEmail: targetUser.email,
+        canPublishAnatomyExams: newPermissionState
+      }
+    });
+
+    saveDb();
+
+    return res.json({
+      success: true,
+      user: toSafeUser(targetUser),
+      message: `تم تحديث صلاحيات الطالب بنجاح: ${actionText}`
     });
   });
 
@@ -837,6 +1063,8 @@ async function startServer() {
     if (!verified || verified.role !== 'admin') {
       return res.status(403).json({ error: 'Access Denied: Faculty Admin Privileges Required.' });
     }
+
+    expireInactiveSessions();
 
     return res.json({
       activities: serverActivities,
@@ -873,16 +1101,17 @@ async function startServer() {
       return res.status(403).json({ error: 'Access Denied: Faculty Admin Privileges Required.' });
     }
 
+    expireInactiveSessions();
+
     const now = Date.now();
-    const fifteenMinutesAgo = now - 15 * 60 * 1000;
     const oneDayAgo = now - 24 * 60 * 60 * 1000;
     const sevenDaysAgo = now - 7 * 24 * 60 * 60 * 1000;
 
     const totalUsers = serverUsers.length;
-    const activeNow = serverUsers.filter(u => new Date(u.lastActivityAt).getTime() >= fifteenMinutesAgo).length;
+    const activeNow = serverUsers.filter(u => computeIsUserOnline(u)).length;
     const activeRecently = serverUsers.filter(u => new Date(u.lastActivityAt).getTime() >= oneDayAgo).length;
     const todaysLogins = serverActivities.filter(a => {
-      const isLogin = a.metadata?.type === 'login' || (a.section === 'Authentication' && !a.activity.includes('الخروج'));
+      const isLogin = a.metadata?.type === 'login' || a.metadata?.type === 'register' || (a.section === 'Authentication' && !a.activity.includes('الخروج'));
       return isLogin && new Date(a.timestamp).getTime() >= oneDayAgo;
     }).length || serverUsers.filter(u => new Date(u.lastLoginAt).getTime() >= oneDayAgo).length;
 
@@ -895,7 +1124,7 @@ async function startServer() {
 
     return res.json({
       totalUsers,
-      activeNow: Math.max(activeNow, 1),
+      activeNow,
       todaysLogins: Math.max(todaysLogins, 1),
       todaysLogouts,
       activeRecently: Math.max(activeRecently, 1),
@@ -904,7 +1133,7 @@ async function startServer() {
     });
   });
 
-  // --- ADMIN ROUTE: GET CURRENTLY ACTIVE USERS (Strict Admin Permission) ---
+  // --- ADMIN ROUTE: GET CURRENTLY ACTIVE USERS / ONLINE NOW (Strict Admin Permission) ---
   app.get('/api/admin/active-users', (req: Request, res: Response) => {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -916,13 +1145,14 @@ async function startServer() {
       return res.status(403).json({ error: 'Access Denied: Faculty Admin Privileges Required.' });
     }
 
+    expireInactiveSessions();
+
     const now = Date.now();
-    const fifteenMinutesAgo = now - 15 * 60 * 1000;
     const oneDayAgo = now - 24 * 60 * 60 * 1000;
 
     const activeList = serverUsers.map(user => {
+      const isOnline = computeIsUserOnline(user);
       const lastActTime = user.lastActivityAt ? new Date(user.lastActivityAt).getTime() : 0;
-      const isActiveNow = now - lastActTime <= 15 * 60 * 1000;
       const isActiveToday = now - lastActTime <= 24 * 60 * 60 * 1000;
 
       // Find last recorded activity
@@ -930,9 +1160,9 @@ async function startServer() {
 
       return {
         ...toSafeUser(user),
-        isActiveNow,
+        isActiveNow: isOnline,
         isActiveToday,
-        statusArabic: isActiveNow ? 'نشط الآن' : isActiveToday ? 'نشط اليوم' : 'غير نشط',
+        statusArabic: isOnline ? 'متصل الآن (Online)' : isActiveToday ? 'نشط اليوم' : 'غير متصل (Offline)',
         lastAction: lastAct ? lastAct.activity : 'تسجيل الدخول إلى المنصة',
         lastActionSection: lastAct ? lastAct.section : 'المنصة العامة',
         lastActionTimestamp: lastAct ? lastAct.timestamp : user.lastActivityAt
@@ -943,9 +1173,14 @@ async function startServer() {
       return new Date(b.lastActivityAt || 0).getTime() - new Date(a.lastActivityAt || 0).getTime();
     });
 
+    const onlineNowStudents = activeList.filter(u => u.isActiveNow && u.role === 'student');
+    const onlineNowAll = activeList.filter(u => u.isActiveNow);
+
     return res.json({
       activeUsers: activeList,
-      totalActiveNow: activeList.filter(u => u.isActiveNow).length,
+      onlineStudents: onlineNowStudents,
+      totalActiveNow: onlineNowAll.length,
+      totalActiveStudentsNow: onlineNowStudents.length,
       totalActiveToday: activeList.filter(u => u.isActiveToday).length
     });
   });
@@ -1335,6 +1570,44 @@ async function startServer() {
     res.json(serverCustomVideos);
   });
 
+  app.post('/api/videos', (req: Request, res: Response) => {
+    const video = req.body;
+    if (!video || !video.title) {
+      return res.status(400).json({ error: 'Video data is required' });
+    }
+    const id = video.id || `vid_${Date.now()}`;
+    const newVideo = {
+      ...video,
+      id,
+      updatedAt: new Date().toISOString()
+    };
+    const existingIndex = serverCustomVideos.findIndex(v => v.id === id || (v.lessonId && v.lessonId === video.lessonId));
+    if (existingIndex >= 0) {
+      serverCustomVideos[existingIndex] = newVideo;
+    } else {
+      serverCustomVideos.unshift(newVideo);
+    }
+    saveDb();
+    res.json({ success: true, video: newVideo });
+  });
+
+  app.post('/api/videos/batch', (req: Request, res: Response) => {
+    const { videos } = req.body;
+    if (Array.isArray(videos)) {
+      serverCustomVideos = videos;
+      saveDb();
+      return res.json({ success: true, count: videos.length });
+    }
+    return res.status(400).json({ error: 'Invalid videos payload' });
+  });
+
+  app.delete('/api/videos/:id', (req: Request, res: Response) => {
+    const { id } = req.params;
+    serverCustomVideos = serverCustomVideos.filter(v => v.id !== id && v.lessonId !== id);
+    saveDb();
+    res.json({ success: true });
+  });
+
   app.post('/api/videos/replace', (req: Request, res: Response) => {
     const { lessonId, videoUrl, originalUrl, title } = req.body;
     if (!lessonId || !videoUrl) {
@@ -1355,6 +1628,50 @@ async function startServer() {
     }
     saveDb();
     res.json({ success: true, record });
+  });
+
+  app.post('/api/videos/check-link', async (req: Request, res: Response) => {
+    const { youtubeId } = req.body;
+    if (!youtubeId || typeof youtubeId !== 'string') {
+      return res.status(400).json({ error: 'youtubeId required' });
+    }
+    const cleanId = youtubeId.trim();
+    if (cleanId.length !== 11) {
+      return res.json({ 
+        isValid: false, 
+        status: 'invalid_format', 
+        message: 'كود الفيديو غير صحيح (يجب أن يكون 11 خانة)' 
+      });
+    }
+
+    try {
+      const oEmbedUrl = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${cleanId}&format=json`;
+      const response = await fetch(oEmbedUrl, { 
+        headers: { 'User-Agent': 'Mozilla/5.0 (LAB-HUB Faculty Platform)' } 
+      });
+      if (response.ok) {
+        const data: any = await response.json();
+        return res.json({
+          isValid: true,
+          status: 'active',
+          title: data.title,
+          authorName: data.author_name,
+          thumbnailUrl: data.thumbnail_url
+        });
+      } else {
+        return res.json({
+          isValid: false,
+          status: response.status === 404 ? 'not_found' : 'restricted',
+          message: response.status === 404 ? 'الفيديو غير متاح أو محذوف على يوتيوب' : 'الفيديو محمي بقيود التضمين'
+        });
+      }
+    } catch (e: any) {
+      return res.json({
+        isValid: false,
+        status: 'network_error',
+        message: 'تعذر الاتصال بخوادم التحقق: ' + e.message
+      });
+    }
   });
 
   // ==================== AI MEDICAL TUTOR API ====================

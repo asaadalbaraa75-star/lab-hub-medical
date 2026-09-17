@@ -150,6 +150,69 @@ export async function apiCreateNotification(item: Omit<NotificationItem, 'id' | 
   return null;
 }
 
+// --- Video Manager API ---
+export async function apiFetchVideos(): Promise<any[]> {
+  try {
+    const res = await fetch('/api/videos');
+    if (res.ok) return await res.json();
+  } catch (e) {
+    console.warn('Could not fetch videos from API:', e);
+  }
+  return [];
+}
+
+export async function apiSaveVideo(video: any): Promise<boolean> {
+  try {
+    const res = await fetch('/api/videos', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(video)
+    });
+    return res.ok;
+  } catch (e) {
+    console.error('Failed to save video via API:', e);
+    return false;
+  }
+}
+
+export async function apiBatchSaveVideos(videos: any[]): Promise<boolean> {
+  try {
+    const res = await fetch('/api/videos/batch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ videos })
+    });
+    return res.ok;
+  } catch (e) {
+    console.error('Failed to batch save videos via API:', e);
+    return false;
+  }
+}
+
+export async function apiDeleteVideo(videoId: string): Promise<boolean> {
+  try {
+    const res = await fetch(`/api/videos/${videoId}`, { method: 'DELETE' });
+    return res.ok;
+  } catch (e) {
+    console.error('Failed to delete video via API:', e);
+    return false;
+  }
+}
+
+export async function apiCheckVideoLink(youtubeId: string): Promise<{ isValid: boolean; status: string; message?: string; title?: string }> {
+  try {
+    const res = await fetch('/api/videos/check-link', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ youtubeId })
+    });
+    if (res.ok) return await res.json();
+  } catch (e: any) {
+    console.error('Failed to check video link via API:', e);
+  }
+  return { isValid: false, status: 'error', message: 'Network check failed' };
+}
+
 export const apiService = {
   askAiTutor: askLabHubTutor,
   askLabHubTutor,
@@ -161,6 +224,11 @@ export const apiService = {
   deleteQuestion: apiDeleteQuestion,
   duplicateQuestion: apiDuplicateQuestion,
   fetchNotifications: apiFetchNotifications,
-  createNotification: apiCreateNotification
+  createNotification: apiCreateNotification,
+  fetchVideos: apiFetchVideos,
+  saveVideo: apiSaveVideo,
+  batchSaveVideos: apiBatchSaveVideos,
+  deleteVideo: apiDeleteVideo,
+  checkVideoLink: apiCheckVideoLink
 };
 

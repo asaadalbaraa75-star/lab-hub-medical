@@ -22,9 +22,41 @@ interface StoredUserRecord extends User {
 export class AuthService {
   private static instance: AuthService;
   private throttledActivities: Map<string, number> = new Map();
+  private heartbeatInterval: any = null;
 
   private constructor() {
     this.ensureInitialUsers();
+    if (typeof window !== 'undefined') {
+      this.startHeartbeat();
+    }
+  }
+
+  public startHeartbeat(): void {
+    if (this.heartbeatInterval) return;
+    this.sendHeartbeat();
+    this.heartbeatInterval = setInterval(() => this.sendHeartbeat(), 90000); // 90 seconds
+    
+    // Register unload beacon
+    if (typeof window !== 'undefined') {
+      window.addEventListener('beforeunload', () => {
+        const token = this.getSession()?.token;
+        if (token && navigator.sendBeacon) {
+          navigator.sendBeacon('/api/auth/beacon-logout', JSON.stringify({ token }));
+        }
+      });
+    }
+  }
+
+  public sendHeartbeat(): void {
+    const session = this.getSession();
+    if (!session?.token) return;
+    fetch('/api/user/heartbeat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.token}`
+      }
+    }).catch(() => {});
   }
 
   public static getInstance(): AuthService {
@@ -765,6 +797,58 @@ export class AuthService {
     const target = localUsers.find(u => u.id === userId || u.userId === userId);
     if (target) {
       target.role = newRole;
+      this.saveStoredUsers(localUsers);
+      return { success: true, user: target };
+    }
+
+    return { success: false, error: 'User not found.' };
+  }
+
+  /**
+   * Admin-Only: Update student special permission (e.g. Can Create & Publish Anatomy Exams)
+   */
+  public async updateUserPermissions(
+    userId: string,
+    permissions: { canPublishAnatomyExams?: boolean },
+    caller: User
+  ): Promise<{ success: boolean; user?: User; error?: string }> {
+    if (caller.role !== 'admin') {
+      return { success: false, error: 'Unauthorized: Admin role required to modify student permissions.' };
+    }
+
+    const session = this.getSession();
+    if (session && session.token) {
+      try {
+        const res = await fetch(`/api/admin/users/${userId}/permissions`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.token}`
+          },
+          body: JSON.stringify(permissions)
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          const localUsers = this.getStoredUsers();
+          const target = localUsers.find(u => u.id === userId || u.userId === userId);
+          if (target) {
+            target.canPublishAnatomyExams = permissions.canPublishAnatomyExams;
+            this.saveStoredUsers(localUsers);
+          }
+          return { success: true, user: data.user };
+        } else {
+          return { success: false, error: data.error || 'Failed to update student permissions.' };
+        }
+      } catch (err: any) {
+        return { success: false, error: err.message || 'Network error updating student permissions.' };
+      }
+    }
+
+    // Fallback local update
+    const localUsers = this.getStoredUsers();
+    const target = localUsers.find(u => u.id === userId || u.userId === userId);
+    if (target) {
+      target.canPublishAnatomyExams = permissions.canPublishAnatomyExams;
       this.saveStoredUsers(localUsers);
       return { success: true, user: target };
     }

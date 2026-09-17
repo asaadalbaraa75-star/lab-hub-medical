@@ -203,6 +203,30 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
     setIsExamModalOpen(false);
   };
 
+  const isFaculty = currentUser.role === 'admin' || currentUser.role === 'instructor';
+  const hasAnatomyPermission = Boolean(currentUser.canPublishAnatomyExams);
+  const canAccess = isFaculty || hasAnatomyPermission;
+
+  if (!canAccess) {
+    return (
+      <div className="max-w-xl mx-auto my-16 p-8 bg-white rounded-3xl border border-amber-200 shadow-xl text-center space-y-5 animate-in fade-in text-right">
+        <div className="w-16 h-16 rounded-3xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center mx-auto">
+          <GraduationCap className="w-8 h-8" />
+        </div>
+        <div className="space-y-2 text-center">
+          <h2 className="text-xl font-black text-slate-900">صلاحية خاصة مطلوبة</h2>
+          <p className="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">
+            حسابك الحالي مسجل بدور طالب. للتمكن من إعداد ونشر امتحانات التشريح، يجب على مسؤول النظام أو العمادة منحك صلاحية:
+            <br />
+            <span className="inline-block mt-2 font-bold px-3 py-1 bg-indigo-50 text-indigo-700 rounded-lg border border-indigo-200">
+              "صلاحية إنشاء ونشر امتحانات التشريح (Can Create & Publish Anatomy Exams)"
+            </span>
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   const filteredQuestions = questions.filter(q => {
     const matchesLab = selectedLabFilter === 'all' || q.labId === selectedLabFilter;
     const matchesSearch =
@@ -215,6 +239,23 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
 
   return (
     <div className="space-y-8 animate-in fade-in duration-300" id="teacher-dashboard">
+      {/* Student Creator Special Notice */}
+      {!isFaculty && hasAnatomyPermission && (
+        <div className="bg-emerald-50 border border-emerald-200 p-4 rounded-2xl flex items-center justify-between gap-4 text-right">
+          <div className="flex items-center gap-3">
+            <span className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+            <div>
+              <div className="text-xs font-bold text-emerald-900">
+                صلاحية خاصة مفعلة لحسابك: إنشاء ونشر امتحانات التشريح (Student Anatomy Exam Publisher)
+              </div>
+              <div className="text-[11px] text-emerald-700">
+                مُنحت هذه الصلاحية من لوحة إدارة الكلية لإعداد ونشر امتحانات محطات التشريح للزملاء.
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Top Banner */}
       <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-lg border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="space-y-2 text-center md:text-left">

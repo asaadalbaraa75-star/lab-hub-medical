@@ -65,6 +65,7 @@ export const AdminNotificationsTab: React.FC<Props> = ({ currentUser }) => {
         title: title.trim(),
         message: message.trim(),
         type,
+        isRead: false,
         link: link.trim() || undefined
       });
 

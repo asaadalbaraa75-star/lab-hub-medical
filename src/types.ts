@@ -28,8 +28,12 @@ export interface User {
   enrolledLabs: LabSubjectId[];
   createdAt?: string;
   lastLoginAt?: string;
+  lastLogoutAt?: string;
   lastActivityAt?: string;
   sessionCount?: number;
+  canPublishAnatomyExams?: boolean;
+  isOnline?: boolean;
+  currentSessionStatus?: 'online' | 'offline';
 }
 
 export interface UserActivityRecord {
@@ -40,6 +44,9 @@ export interface UserActivityRecord {
   activity: string;
   section: string;
   timestamp: string;
+  loginTime?: string;
+  logoutTime?: string;
+  sessionStatus?: 'online' | 'offline';
   metadata?: Record<string, any>;
 }
 
@@ -425,10 +432,12 @@ export interface BiochemistryTestDetail {
 export type ExamType = 
   | 'identification' 
   | 'mcq' 
+  | 'multiple_choice'
   | 'image_recognition' 
   | 'practical_interpretation' 
   | 'mixed'
   | 'write_answer'
+  | 'write_in'
   | 'label_structure'
   | 'true_false'
   | 'movement_id'

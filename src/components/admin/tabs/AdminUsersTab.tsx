@@ -12,7 +12,10 @@ import {
   Clock,
   ArrowUpDown,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  FileCheck2,
+  ToggleLeft,
+  ToggleRight
 } from 'lucide-react';
 import { User } from '../../../types';
 
@@ -21,6 +24,7 @@ interface Props {
   currentUser: User;
   onSelectUserForLogs: (user: User) => void;
   onUpdateRole: (userId: string, newRole: 'student' | 'admin') => Promise<void>;
+  onToggleAnatomyPermission?: (userId: string, canPublish: boolean) => Promise<void>;
 }
 
 export const AdminUsersTab: React.FC<Props> = ({
@@ -28,11 +32,13 @@ export const AdminUsersTab: React.FC<Props> = ({
   currentUser,
   onSelectUserForLogs,
   onUpdateRole,
+  onToggleAnatomyPermission
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState<'all' | 'student' | 'admin'>('all');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'recently_active'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'online' | 'offline'>('all');
   const [isUpdatingId, setIsUpdatingId] = useState<string | null>(null);
+  const [isTogglingPermId, setIsTogglingPermId] = useState<string | null>(null);
   const [roleChangeModalUser, setRoleChangeModalUser] = useState<User | null>(null);
   const [selectedRoleToApply, setSelectedRoleToApply] = useState<'student' | 'admin'>('student');
   const [actionMessage, setActionMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -51,14 +57,10 @@ export const AdminUsersTab: React.FC<Props> = ({
       roleFilter === 'all' ? true : user.role === roleFilter;
 
     let matchesStatus = true;
-    const lastActiveTime = user.lastActivityAt ? new Date(user.lastActivityAt).getTime() : 0;
-    const now = Date.now();
-    if (statusFilter === 'active') {
-      // Active in last 24h
-      matchesStatus = now - lastActiveTime < 24 * 3600000;
-    } else if (statusFilter === 'recently_active') {
-      // Active in last 7 days
-      matchesStatus = now - lastActiveTime < 7 * 24 * 3600000;
+    if (statusFilter === 'online') {
+      matchesStatus = Boolean(user.isOnline);
+    } else if (statusFilter === 'offline') {
+      matchesStatus = !user.isOnline;
     }
 
     return matchesSearch && matchesRole && matchesStatus;
@@ -87,6 +89,28 @@ export const AdminUsersTab: React.FC<Props> = ({
       });
     } finally {
       setIsUpdatingId(null);
+    }
+  };
+
+  const handleToggleAnatomyPerm = async (user: User) => {
+    if (!onToggleAnatomyPermission) return;
+    const targetState = !user.canPublishAnatomyExams;
+    setIsTogglingPermId(user.id);
+    try {
+      await onToggleAnatomyPermission(user.id, targetState);
+      setActionMessage({
+        type: 'success',
+        text: targetState
+          ? `تم منح الطالب ${user.name} صلاحية "إنشاء ونشر امتحانات التشريح" بنجاح.`
+          : `تم إلغاء صلاحية "إنشاء ونشر امتحانات التشريح" للطالب ${user.name}.`
+      });
+    } catch (err: any) {
+      setActionMessage({
+        type: 'error',
+        text: err.message || 'فشل تحديث صلاحيات الطالب.'
+      });
+    } finally {
+      setIsTogglingPermId(null);
     }
   };
 
@@ -169,8 +193,8 @@ export const AdminUsersTab: React.FC<Props> = ({
             className="px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 cursor-pointer"
           >
             <option value="all">كل الحالات (All Status)</option>
-            <option value="active">نشط خلال 24 ساعة (Active Today)</option>
-            <option value="recently_active">نشط هذا الأسبوع (Active This Week)</option>
+            <option value="online">متصل الآن فقط (Online Now)</option>
+            <option value="offline">غير متصل (Offline)</option>
           </select>
         </div>
       </div>
@@ -184,28 +208,31 @@ export const AdminUsersTab: React.FC<Props> = ({
                 <th className="px-4 py-3.5">الاسم الكامل (Full Name)</th>
                 <th className="px-4 py-3.5">البريد الإلكتروني (Email)</th>
                 <th className="px-4 py-3.5 text-center">الدور (Role)</th>
-                <th className="px-4 py-3.5">تاريخ التسجيل (Registered)</th>
+                <th className="px-4 py-3.5">تاريخ إنشاء الحساب</th>
                 <th className="px-4 py-3.5">آخر تسجيل دخول</th>
+                <th className="px-4 py-3.5 text-center">الحالة الحالية</th>
                 <th className="px-4 py-3.5">آخر نشاط</th>
-                <th className="px-4 py-3.5 text-center">الجلسات</th>
-                <th className="px-4 py-3.5 text-center">الحالة</th>
-                <th className="px-4 py-3.5 text-center">الإجراءات (Admin Actions)</th>
+                <th className="px-4 py-3.5 text-center">إجمالي الدخول</th>
+                <th className="px-4 py-3.5 text-center">صلاحية امتحانات التشريح</th>
+                <th className="px-4 py-3.5 text-center">الإجراءات</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#E2E8F0]">
               {filteredUsers.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="text-center py-12 text-slate-400">
+                  <td colSpan={10} className="text-center py-12 text-slate-400">
                     لا يوجد مستخدمون يطابقون خيارات البحث أو التصفية الحالية.
                   </td>
                 </tr>
               ) : (
                 filteredUsers.map(user => {
-                  const isOnline = user.lastActivityAt && (Date.now() - new Date(user.lastActivityAt).getTime() < 24 * 3600000);
+                  const isOnline = Boolean(user.isOnline);
                   const isPrimaryAdmin = user.id === 'usr_admin_1';
+                  const canPublishAnatomy = Boolean(user.canPublishAnatomyExams);
 
                   return (
                     <tr key={user.id} className="hover:bg-slate-50/80 transition-colors">
+                      {/* 1. Full name */}
                       <td className="px-4 py-3.5 whitespace-nowrap">
                         <div className="flex items-center gap-3">
                           <img
@@ -219,9 +246,13 @@ export const AdminUsersTab: React.FC<Props> = ({
                           </div>
                         </div>
                       </td>
+
+                      {/* 2. Email */}
                       <td className="px-4 py-3.5 whitespace-nowrap font-mono text-slate-600">
                         {user.email}
                       </td>
+
+                      {/* 3. Role */}
                       <td className="px-4 py-3.5 whitespace-nowrap text-center">
                         <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-bold ${
                           user.role === 'admin'
@@ -233,26 +264,73 @@ export const AdminUsersTab: React.FC<Props> = ({
                           {user.role === 'admin' ? '🛡️ Admin' : user.role === 'instructor' ? '👨‍🏫 Instructor' : '🎓 Student'}
                         </span>
                       </td>
+
+                      {/* 4. Account creation date */}
                       <td className="px-4 py-3.5 whitespace-nowrap text-slate-500">
                         {user.createdAt ? new Date(user.createdAt).toLocaleDateString('ar-EG', { dateStyle: 'medium' }) : '—'}
                       </td>
+
+                      {/* 5. Last login */}
                       <td className="px-4 py-3.5 whitespace-nowrap text-slate-600">
                         {user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleString('ar-EG', { dateStyle: 'short', timeStyle: 'short' }) : 'لم يسجل'}
                       </td>
+
+                      {/* 6. Current status: Online / Offline */}
+                      <td className="px-4 py-3.5 whitespace-nowrap text-center">
+                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold border ${
+                          isOnline
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                            : 'bg-slate-100 text-slate-600 border-slate-200'
+                        }`}>
+                          <span className={`w-2 h-2 rounded-full ${isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
+                          {isOnline ? 'Online (متصل)' : 'Offline (غير متصل)'}
+                        </span>
+                      </td>
+
+                      {/* 7. Last activity */}
                       <td className="px-4 py-3.5 whitespace-nowrap text-slate-600">
                         {user.lastActivityAt ? new Date(user.lastActivityAt).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }) : '—'}
                       </td>
+
+                      {/* 8. Total login count */}
                       <td className="px-4 py-3.5 whitespace-nowrap text-center font-bold text-slate-800">
                         {user.sessionCount || 1}
                       </td>
+
+                      {/* Special Student Permission Toggle: Can Create & Publish Anatomy Exams */}
                       <td className="px-4 py-3.5 whitespace-nowrap text-center">
-                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${
-                          isOnline ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600'
-                        }`}>
-                          <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-emerald-500' : 'bg-slate-400'}`} />
-                          {isOnline ? 'Active' : 'Offline'}
-                        </span>
+                        {user.role === 'admin' ? (
+                          <span className="text-[10px] text-purple-600 font-bold bg-purple-50 px-2 py-1 rounded-md border border-purple-200">
+                            متاحة تلقائياً (Admin)
+                          </span>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => handleToggleAnatomyPerm(user)}
+                            disabled={isTogglingPermId === user.id}
+                            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-bold border transition-all ${
+                              canPublishAnatomy
+                                ? 'bg-emerald-50 text-emerald-700 border-emerald-300 hover:bg-emerald-100 shadow-2xs'
+                                : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                            }`}
+                            title={canPublishAnatomy ? 'إلغاء صلاحية نشر الامتحانات' : 'منح صلاحية نشر امتحانات التشريح للطالب'}
+                          >
+                            {canPublishAnatomy ? (
+                              <>
+                                <ToggleRight className="w-4 h-4 text-emerald-600" />
+                                <span>مفعلة (مسموح)</span>
+                              </>
+                            ) : (
+                              <>
+                                <ToggleLeft className="w-4 h-4 text-slate-400" />
+                                <span>معطلة (غير مسموح)</span>
+                              </>
+                            )}
+                          </button>
+                        )}
                       </td>
+
+                      {/* 10. Actions */}
                       <td className="px-4 py-3.5 whitespace-nowrap text-center">
                         <div className="flex items-center justify-center gap-1.5">
                           {/* Role Change Action */}

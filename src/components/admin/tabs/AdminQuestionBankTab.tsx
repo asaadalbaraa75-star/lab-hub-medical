@@ -19,7 +19,7 @@ import {
   Award,
   ChevronDown
 } from 'lucide-react';
-import { ExamQuestion, LabSubjectId, User } from '../../../types';
+import { ExamQuestion, LabSubjectId, User, ExamType } from '../../../types';
 import { storageService } from '../../../services/storageService';
 import { apiService } from '../../../services/apiService';
 
@@ -48,7 +48,7 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
   const [formLabId, setFormLabId] = useState<LabSubjectId>('anatomy');
   const [formTopic, setFormTopic] = useState('Bones');
   const [formDifficulty, setFormDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium');
-  const [formQuestionType, setFormQuestionType] = useState<'multiple_choice' | 'identification' | 'spotter' | 'write_in'>('multiple_choice');
+  const [formQuestionType, setFormQuestionType] = useState<ExamType>('multiple_choice');
   const [formQuestionText, setFormQuestionText] = useState('');
   const [formQuestionTextArabic, setFormQuestionTextArabic] = useState('');
   const [formImageUrl, setFormImageUrl] = useState('');
@@ -193,6 +193,7 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
     const questionData: ExamQuestion = {
       id: editingQuestion?.id || `q_bank_${Date.now()}`,
       labId: formLabId,
+      type: formQuestionType,
       topic: formTopic.trim() || 'General',
       difficulty: formDifficulty,
       questionType: formQuestionType,

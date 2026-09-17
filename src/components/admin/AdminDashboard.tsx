@@ -164,6 +164,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     await loadData();
   };
 
+  const handleToggleAnatomyPermission = async (userId: string, canPublish: boolean) => {
+    const res = await authService.updateUserPermissions(userId, { canPublishAnatomyExams: canPublish }, currentUser);
+    if (!res.success) {
+      throw new Error(res.error || 'Failed to update permissions.');
+    }
+    await loadData();
+  };
+
   // If unauthorized student tries to access, block with 403 Forbidden screen
   if (!isAdmin) {
     return (
@@ -308,6 +316,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             currentUser={currentUser}
             onSelectUserForLogs={handleSelectUserForLogs}
             onUpdateRole={handleUpdateRole}
+            onToggleAnatomyPermission={handleToggleAnatomyPermission}
           />
         )}
 

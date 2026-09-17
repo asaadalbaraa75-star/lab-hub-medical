@@ -71,6 +71,7 @@ import { StudentPortalModal } from './components/share/StudentPortalModal';
 import { AboutPlatformModal } from './components/about/AboutPlatformModal';
 import { SecurityAuditModal } from './components/security/SecurityAuditModal';
 import { AuthModal } from './components/auth/AuthModal';
+import { WelcomeExperienceModal } from './components/common/WelcomeExperienceModal';
 
 // Interactive Study Companion ("لبيب" / Labeeb)
 import { LabHubCompanion } from './components/companion/LabHubCompanion';
@@ -165,6 +166,7 @@ export default function App() {
   const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
   const [isSecurityAuditOpen, setIsSecurityAuditOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isWelcomeModalOpen, setIsWelcomeModalOpen] = useState(false);
   const [globalSearchQuery, setGlobalSearchQuery] = useState('');
 
   // Handle browser back/forward and hash changes
@@ -734,6 +736,7 @@ export default function App() {
           storageService.setCurrentUser(user);
           setProgress(storageService.getStudentProgress(user.id));
           authService.trackActivity('تسجيل الدخول للمنصة', 'Authentication', 'تم تسجيل الدخول بنجاح');
+          setIsWelcomeModalOpen(true);
           if (currentTab && currentTab !== 'dashboard' && currentTab !== 'login' && (!currentTab.startsWith('admin') || user.role === 'admin')) {
             updateTabWithHash(currentTab);
           } else {
@@ -869,6 +872,15 @@ export default function App() {
         isOpen={isBiochemistryModalOpen}
         initialTestId={selectedBiochemistryTestId}
         onClose={() => setIsBiochemistryModalOpen(false)}
+      />
+
+      {/* Personalized Welcome Experience Modal Upon Login */}
+      <WelcomeExperienceModal
+        isOpen={isWelcomeModalOpen}
+        onClose={() => setIsWelcomeModalOpen(false)}
+        currentUser={currentUser}
+        progress={progress}
+        onNavigate={handleTabSelect}
       />
     </div>
   );
