@@ -675,7 +675,7 @@ if (caller.role !== 'owner' && caller.role !== 'admin') {
    * Admin-Only: Fetch all platform activity records
    */
   public async getAllActivities(caller: User): Promise<UserActivityRecord[]> {
-    if (caller.role !== 'admin') {
+    if (caller.role !== 'owner' && caller.role !== 'admin') {
       console.warn('[SECURITY] Unauthorized access to admin activity log.');
       return [];
     }
