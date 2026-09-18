@@ -18,9 +18,11 @@
       ],
       "avatarUrl": "https://images.unsplash.com/photo-1594824813680-79883506ecf5?w=150&auto=format&fit=crop&q=80",
       "createdAt": "2026-01-01T08:00:00.000Z",
-      "lastLoginAt": "2026-09-18T10:53:45.944Z",
-      "lastActivityAt": "2026-09-18T10:53:45.944Z",
-      "sessionCount": 50
+      "lastLoginAt": "2026-09-18T11:10:19.025Z",
+      "lastActivityAt": "2026-09-18T11:10:19.025Z",
+      "sessionCount": 51,
+      "isOnline": true,
+      "currentSessionStatus": "online"
     },
     {
       "id": "usr_admin_1",
@@ -40,11 +42,12 @@
       ],
       "avatarUrl": "https://images.unsplash.com/photo-1594824813680-79883506ecf5?w=150&auto=format&fit=crop&q=80",
       "createdAt": "2025-09-01T08:00:00.000Z",
-      "lastLoginAt": "2026-09-13T18:01:52.231Z",
-      "lastActivityAt": "2026-09-18T10:50:47.709Z",
-      "sessionCount": 42,
+      "lastLoginAt": "2026-09-18T11:08:12.602Z",
+      "lastActivityAt": "2026-09-18T11:09:36.979Z",
+      "sessionCount": 43,
       "currentSessionStatus": "online",
-      "isOnline": true
+      "isOnline": true,
+      "lastLogoutAt": "2026-09-18T11:08:01.503Z"
     },
     {
       "id": "usr_instructor_1",
@@ -89,8 +92,9 @@
       "lastLoginAt": "2026-09-18T10:53:46.728Z",
       "lastActivityAt": "2026-09-18T10:53:46.728Z",
       "sessionCount": 11,
-      "isOnline": true,
-      "currentSessionStatus": "online"
+      "isOnline": false,
+      "currentSessionStatus": "offline",
+      "lastLogoutAt": "2026-09-18T10:53:46.728Z"
     },
     {
       "id": "usr_assistant_2",
@@ -113,8 +117,9 @@
       "lastLoginAt": "2026-09-18T10:53:49.564Z",
       "lastActivityAt": "2026-09-18T10:53:49.564Z",
       "sessionCount": 6,
-      "isOnline": true,
-      "currentSessionStatus": "online"
+      "isOnline": false,
+      "currentSessionStatus": "offline",
+      "lastLogoutAt": "2026-09-18T10:53:49.564Z"
     },
     {
       "id": "usr_assistant_3",
@@ -137,11 +142,102 @@
       "lastLoginAt": "2026-09-18T10:53:49.579Z",
       "lastActivityAt": "2026-09-18T10:53:49.579Z",
       "sessionCount": 3,
-      "isOnline": true,
-      "currentSessionStatus": "online"
+      "isOnline": false,
+      "currentSessionStatus": "offline",
+      "lastLogoutAt": "2026-09-18T10:53:49.579Z"
     }
   ],
   "activities": [
+    {
+      "id": "act_login_1789729819025_ac08",
+      "userId": "usr_owner_soukaina",
+      "userName": "سكينة أسعد",
+      "userEmail": "owner@labhub.med",
+      "activity": "تسجيل الدخول إلى المنصة (جلسة رقم 51)",
+      "section": "Authentication",
+      "timestamp": "2026-09-18T11:10:19.025Z",
+      "loginTime": "2026-09-18T11:10:19.025Z",
+      "sessionStatus": "online",
+      "metadata": {
+        "type": "login",
+        "role": "owner",
+        "sessionNumber": 51,
+        "loginTime": "2026-09-18T11:10:19.025Z",
+        "sessionStatus": "online"
+      }
+    },
+    {
+      "id": "act_1789729697637_w2zk",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "تصفح قسم: admin",
+      "section": "admin",
+      "timestamp": "2026-09-18T11:08:17.637Z"
+    },
+    {
+      "id": "act_1789729692781_lipl",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "تسجيل الدخول إلى المنصة (Logged In)",
+      "section": "Authentication",
+      "timestamp": "2026-09-18T11:08:12.781Z",
+      "metadata": {
+        "type": "login",
+        "role": "admin"
+      }
+    },
+    {
+      "id": "act_login_1789729692602_vgsb",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "تسجيل الدخول إلى المنصة (جلسة رقم 43)",
+      "section": "Authentication",
+      "timestamp": "2026-09-18T11:08:12.602Z",
+      "loginTime": "2026-09-18T11:08:12.602Z",
+      "sessionStatus": "online",
+      "metadata": {
+        "type": "login",
+        "role": "admin",
+        "sessionNumber": 43,
+        "loginTime": "2026-09-18T11:08:12.602Z",
+        "sessionStatus": "online"
+      }
+    },
+    {
+      "id": "act_logout_1789729681503_x317",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "تسجيل الخروج من المنصة (تسجيل خروج يدوي)",
+      "section": "Authentication",
+      "timestamp": "2026-09-18T11:08:01.503Z",
+      "logoutTime": "2026-09-18T11:08:01.503Z",
+      "sessionStatus": "offline",
+      "metadata": {
+        "type": "logout",
+        "role": "admin",
+        "reason": "تسجيل خروج يدوي",
+        "logoutTime": "2026-09-18T11:08:01.503Z",
+        "sessionStatus": "offline"
+      }
+    },
+    {
+      "id": "act_1789729681500_o3dn",
+      "userId": "usr_admin_1",
+      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
+      "userEmail": "admin@med.edu",
+      "activity": "تسجيل الخروج من المنصة (تسجيل خروج يدوي)",
+      "section": "Authentication",
+      "timestamp": "2026-09-18T11:08:01.500Z",
+      "metadata": {
+        "type": "logout",
+        "reason": "تسجيل خروج يدوي",
+        "logoutTime": "2026-09-18T11:08:01.290Z"
+      }
+    },
     {
       "id": "act_1789728829579_contrib",
       "userId": "usr_assistant_3",
