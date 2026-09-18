@@ -86,7 +86,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [userSpecificLogs, setUserSpecificLogs] = useState<UserActivityRecord[]>([]);
 
   // Strict Authorization Check: Platform Owner and designated assistants only
-  const isOwner = currentUser.role === 'owner' || currentUser.role === 'admin';
+  const isOwner =
+  currentUser.role === 'owner' || currentUser.role === 'admin';
   const isAuthorizedStaff = isOwner || currentUser.role === 'content_exams' || currentUser.role === 'exams_only';
 
   // Read subpage from hash if present (e.g. #admin/users, #admin/activity)
