@@ -923,7 +923,7 @@ if (caller.role !== 'owner' && caller.role !== 'admin') {
    * Admin-Only: Fetch analytics metrics
    */
   public async getAdminMetrics(caller: User): Promise<AdminAnalyticsMetrics> {
-    if (caller.role !== 'admin') {
+if (caller.role !== 'owner' && caller.role !== 'admin') {
       return { totalUsers: 0, todaysLogins: 0, activeRecently: 0, newUsersThisWeek: 0 };
     }
 
