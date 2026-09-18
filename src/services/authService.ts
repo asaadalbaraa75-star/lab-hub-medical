@@ -134,7 +134,7 @@ export class AuthService {
         adminAcc.role = 'owner';
         adminAcc.name = 'سكينة أسعد (Owner)';
       }
-
+adminAcc.passwordHash = this.hashPassword('admin123');
       localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
     } catch {
       // localStorage may be restricted
