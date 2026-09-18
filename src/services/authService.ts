@@ -592,7 +592,7 @@ adminAcc.passwordHash = this.hashPassword('admin123');
    * Admin-Only: Fetch all registered users
    */
   public async getAllUsers(caller: User): Promise<User[]> {
-    if (caller.role !== 'admin') {
+if (caller.role !== 'owner' && caller.role !== 'admin') {
       console.warn('[SECURITY] Non-admin attempted to access users directory.');
       return [];
     }
