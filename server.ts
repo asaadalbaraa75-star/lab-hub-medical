@@ -126,7 +126,7 @@ async function startServer() {
     name: string;
     fullName: string;
     email: string;
-    role: 'student' | 'instructor' | 'admin';
+    role: 'student' | 'instructor' | 'admin' | 'owner' | 'content_exams' | 'exams_only';
     passwordHash: string;
     studentId: string;
     department: string;
@@ -161,138 +161,102 @@ async function startServer() {
     return crypto.createHash('sha256').update(`labhub_salt_2026_${pwd}`).digest('hex');
   };
 
-  // Pre-seed default platform accounts
+  // Pre-seed default platform staff accounts (Owner & 3 Assistants) — ZERO fake students
   const defaultUsers: ServerUser[] = [
     {
-      id: 'usr_student_1',
-      userId: 'usr_student_1',
-      name: 'Sarah Al-Mansoor',
-      fullName: 'Sarah Al-Mansoor',
-      email: 'student@med.edu',
-      role: 'student',
-      passwordHash: hashPassword('student123'),
-      studentId: 'MED-2026-4891',
-      department: 'Faculty of Medicine — 2nd Year MBBS',
-      year: 'Year 2 (Pre-Clinical)',
+      id: 'usr_owner_soukaina',
+      userId: 'usr_owner_soukaina',
+      name: 'سكينة أسعد',
+      fullName: 'سكينة أسعد (Soukaina Asaad)',
+      email: 'owner@labhub.med',
+      role: 'owner',
+      passwordHash: hashPassword('owner123'),
+      studentId: 'OWNER-2026-001',
+      department: 'Academic Directorate & Laboratory Board',
+      year: 'Platform Founder & Lead Anatomist',
       enrolledLabs: ['anatomy', 'histology', 'biochemistry'],
-      avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-      createdAt: '2026-01-10T08:00:00.000Z',
+      avatarUrl: 'https://images.unsplash.com/photo-1594824813680-79883506ecf5?w=150&auto=format&fit=crop&q=80',
+      createdAt: '2026-01-01T08:00:00.000Z',
       lastLoginAt: new Date().toISOString(),
       lastActivityAt: new Date().toISOString(),
-      sessionCount: 14
+      sessionCount: 50
     },
     {
       id: 'usr_admin_1',
       userId: 'usr_admin_1',
-      name: 'Prof. Eleanor Hayes, MD, FRCPath',
-      fullName: 'Prof. Eleanor Hayes, MD, FRCPath',
+      name: 'سكينة أسعد (Owner)',
+      fullName: 'سكينة أسعد (Soukaina Asaad)',
       email: 'admin@med.edu',
-      role: 'admin',
+      role: 'owner',
       passwordHash: hashPassword('admin123'),
       studentId: 'ADM-MED-001',
       department: 'Academic Directorate & Laboratory Board',
-      year: 'Dean of Medical Laboratory Curricula',
+      year: 'Platform Founder & Lead Anatomist',
       enrolledLabs: ['anatomy', 'histology', 'biochemistry'],
       avatarUrl: 'https://images.unsplash.com/photo-1594824813680-79883506ecf5?w=150&auto=format&fit=crop&q=80',
-      createdAt: '2025-09-01T08:00:00.000Z',
+      createdAt: '2026-01-01T08:00:00.000Z',
       lastLoginAt: new Date().toISOString(),
       lastActivityAt: new Date().toISOString(),
       sessionCount: 42
     },
     {
-      id: 'usr_instructor_1',
-      userId: 'usr_instructor_1',
-      name: 'Dr. Tariq Vance, MD, MSc',
-      fullName: 'Dr. Tariq Vance, MD, MSc',
-      email: 'instructor@med.edu',
-      role: 'instructor',
-      passwordHash: hashPassword('faculty123'),
-      studentId: 'FAC-MED-104',
-      department: 'Department of Anatomy & Histology',
-      year: 'Senior Teaching Faculty',
+      id: 'usr_assistant_1',
+      userId: 'usr_assistant_1',
+      name: 'مساعد 1 (Assistant 1)',
+      fullName: 'Assistant 1 — Content & Exams',
+      email: 'assistant1@labhub.med',
+      role: 'content_exams',
+      passwordHash: hashPassword('assistant123'),
+      studentId: 'AST-MED-001',
+      department: 'Faculty Assistant Team',
+      year: 'Assistant 1 (Content & Exams)',
       enrolledLabs: ['anatomy', 'histology', 'biochemistry'],
       avatarUrl: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150&auto=format&fit=crop&q=80',
-      createdAt: '2025-10-15T08:00:00.000Z',
+      createdAt: '2026-02-01T08:00:00.000Z',
       lastLoginAt: new Date().toISOString(),
       lastActivityAt: new Date().toISOString(),
-      sessionCount: 29
+      sessionCount: 10
     },
     {
-      id: 'usr_student_2',
-      userId: 'usr_student_2',
-      name: 'Omar Farooq',
-      fullName: 'Omar Farooq',
-      email: 'omar@med.edu',
-      role: 'student',
-      passwordHash: hashPassword('student123'),
-      studentId: 'MED-2026-5120',
-      department: 'Faculty of Medicine — 1st Year MBBS',
-      year: 'Year 1 (Pre-Clinical)',
+      id: 'usr_assistant_2',
+      userId: 'usr_assistant_2',
+      name: 'مساعد 2 (Assistant 2)',
+      fullName: 'Assistant 2 — Exams Only',
+      email: 'assistant2@labhub.med',
+      role: 'exams_only',
+      passwordHash: hashPassword('assistant123'),
+      studentId: 'AST-MED-002',
+      department: 'Faculty Assistant Team',
+      year: 'Assistant 2 (Exams Only)',
       enrolledLabs: ['anatomy', 'histology', 'biochemistry'],
       avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
-      createdAt: '2026-02-01T09:30:00.000Z',
-      lastLoginAt: new Date(Date.now() - 3600000 * 5).toISOString(),
-      lastActivityAt: new Date(Date.now() - 3600000 * 4).toISOString(),
-      sessionCount: 8
+      createdAt: '2026-02-01T08:00:00.000Z',
+      lastLoginAt: new Date().toISOString(),
+      lastActivityAt: new Date().toISOString(),
+      sessionCount: 5
+    },
+    {
+      id: 'usr_assistant_3',
+      userId: 'usr_assistant_3',
+      name: 'مساعد 3 (Assistant 3)',
+      fullName: 'Assistant 3 — Exams Only',
+      email: 'assistant3@labhub.med',
+      role: 'exams_only',
+      passwordHash: hashPassword('assistant123'),
+      studentId: 'AST-MED-003',
+      department: 'Faculty Assistant Team',
+      year: 'Assistant 3 (Exams Only)',
+      enrolledLabs: ['anatomy', 'histology', 'biochemistry'],
+      avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+      createdAt: '2026-02-01T08:00:00.000Z',
+      lastLoginAt: new Date().toISOString(),
+      lastActivityAt: new Date().toISOString(),
+      sessionCount: 2
     }
   ];
 
-  const defaultActivities: ServerActivity[] = [
-    {
-      id: 'act_seed_1',
-      userId: 'usr_student_1',
-      userName: 'Sarah Al-Mansoor',
-      userEmail: 'student@med.edu',
-      activity: 'Completed Gross Anatomy Quiz: Cranial Nerves',
-      section: 'Anatomy',
-      timestamp: new Date(Date.now() - 3600000 * 2).toISOString()
-    },
-    {
-      id: 'act_seed_2',
-      userId: 'usr_student_1',
-      userName: 'Sarah Al-Mansoor',
-      userEmail: 'student@med.edu',
-      activity: 'Opened Virtual Histology Microscope: Hyaline Cartilage',
-      section: 'Histology',
-      timestamp: new Date(Date.now() - 3600000 * 6).toISOString()
-    },
-    {
-      id: 'act_seed_3',
-      userId: 'usr_student_1',
-      userName: 'Sarah Al-Mansoor',
-      userEmail: 'student@med.edu',
-      activity: 'Explored Qualitative Carbohydrate Reactions: Molisch & Benedict',
-      section: 'Biochemistry',
-      timestamp: new Date(Date.now() - 3600000 * 12).toISOString()
-    },
-    {
-      id: 'act_seed_4',
-      userId: 'usr_student_1',
-      userName: 'Sarah Al-Mansoor',
-      userEmail: 'student@med.edu',
-      activity: 'Watched High-Yield Video: Benedict Qualitative Reaction',
-      section: 'Biochemistry',
-      timestamp: new Date(Date.now() - 3600000 * 18).toISOString()
-    },
-    {
-      id: 'act_seed_5',
-      userId: 'usr_student_2',
-      userName: 'Omar Farooq',
-      userEmail: 'omar@med.edu',
-      activity: 'Submitted OSPE Practical Simulation: Skeletal System',
-      section: 'Anatomy',
-      timestamp: new Date(Date.now() - 3600000 * 4).toISOString()
-    },
-    {
-      id: 'act_seed_6',
-      userId: 'usr_student_2',
-      userName: 'Omar Farooq',
-      userEmail: 'omar@med.edu',
-      activity: 'Started Quiz: Carbohydrate Identification Reactions',
-      section: 'Biochemistry',
-      timestamp: new Date(Date.now() - 3600000 * 24).toISOString()
-    }
-  ];
+  // REAL LIVE ACTIVITIES ONLY — ZERO demo activities
+  const defaultActivities: ServerActivity[] = [];
 
   // Persistent File DB Helpers
   const DB_FILE = path.join(process.cwd(), 'labhub_server_db.json');
@@ -301,7 +265,7 @@ async function startServer() {
     {
       id: 'notif_welcome',
       title: 'أهلًا بك في LAB HUB 🌟',
-      message: 'أنت تقوم بعمل رائع. كل درس تدرسه اليوم يقربك خطوة من الطبيب الذي تريد أن تصبحه.',
+      message: 'منصة المعامل الطبية المفتوحة للطلاب مباشرة بدون حسابات.',
       type: 'system',
       isRead: false,
       createdAt: new Date().toISOString(),
@@ -315,21 +279,13 @@ async function startServer() {
       isRead: false,
       createdAt: new Date(Date.now() - 3600000 * 2).toISOString(),
       link: '/exams'
-    },
-    {
-      id: 'notif_tutor_tip',
-      title: 'نصيحة المساعد الطبي الذكي 💡',
-      message: 'ركز على العلامات التشريحية الرئيسية (Landmarks) ونقاط الارتكاز والتعصيب العصبي للتحضير لامتحان OSPE.',
-      type: 'achievement',
-      isRead: false,
-      createdAt: new Date(Date.now() - 3600000 * 12).toISOString(),
-      link: '/tutor'
     }
   ];
 
   const loadDb = (): { 
     users: ServerUser[]; 
     activities: ServerActivity[];
+    invites: any[];
     exams: any[];
     questions: any[];
     notifications: any[];
@@ -340,9 +296,45 @@ async function startServer() {
         const raw = fs.readFileSync(DB_FILE, 'utf-8');
         const parsed = JSON.parse(raw);
         if (parsed && typeof parsed === 'object') {
+          // Strictly purge legacy demo accounts
+          const sanitizedUsers: ServerUser[] = (Array.isArray(parsed.users) ? parsed.users : [])
+            .filter((u: any) => 
+              u.id !== 'usr_student_1' &&
+              u.id !== 'usr_student_2' &&
+              u.email !== 'student@med.edu' &&
+              u.email !== 'omar@med.edu' &&
+              u.name !== 'Sarah Al-Mansoor' &&
+              u.name !== 'Omar Farooq'
+            );
+
+          // Guarantee Owner exists
+          if (!sanitizedUsers.some(u => u.email === 'owner@labhub.med' || u.id === 'usr_owner_soukaina')) {
+            sanitizedUsers.unshift(defaultUsers[0]);
+          }
+          if (!sanitizedUsers.some(u => u.email === 'admin@med.edu')) {
+            sanitizedUsers.push(defaultUsers[1]);
+          }
+          // Guarantee Assistants exist
+          for (let i = 2; i <= 4; i++) {
+            if (!sanitizedUsers.some(u => u.email === defaultUsers[i].email)) {
+              sanitizedUsers.push(defaultUsers[i]);
+            }
+          }
+
+          // Strictly purge legacy fake activities
+          const sanitizedActivities: ServerActivity[] = (Array.isArray(parsed.activities) ? parsed.activities : [])
+            .filter((a: any) => 
+              a.userEmail !== 'student@med.edu' &&
+              a.userEmail !== 'omar@med.edu' &&
+              a.userName !== 'Sarah Al-Mansoor' &&
+              a.userName !== 'Omar Farooq' &&
+              !a.userName?.includes('Prof. Eleanor Hayes')
+            );
+
           return {
-            users: Array.isArray(parsed.users) && parsed.users.length > 0 ? parsed.users : defaultUsers,
-            activities: Array.isArray(parsed.activities) ? parsed.activities : defaultActivities,
+            users: sanitizedUsers,
+            activities: sanitizedActivities,
+            invites: Array.isArray(parsed.invites) ? parsed.invites : [],
             exams: Array.isArray(parsed.exams) && parsed.exams.length > 0 ? parsed.exams : (MEDICAL_PRACTICAL_EXAMS as any[]),
             questions: Array.isArray(parsed.questions) && parsed.questions.length > 0 ? parsed.questions : (PRACTICAL_EXAM_QUESTIONS as any[]),
             notifications: Array.isArray(parsed.notifications) && parsed.notifications.length > 0 ? parsed.notifications : defaultNotifications,
@@ -356,6 +348,7 @@ async function startServer() {
     return { 
       users: defaultUsers, 
       activities: defaultActivities,
+      invites: [],
       exams: MEDICAL_PRACTICAL_EXAMS as any[],
       questions: PRACTICAL_EXAM_QUESTIONS as any[],
       notifications: defaultNotifications,
@@ -366,6 +359,7 @@ async function startServer() {
   const initialData = loadDb();
   const serverUsers: ServerUser[] = initialData.users;
   const serverActivities: ServerActivity[] = initialData.activities;
+  let serverInvites: any[] = initialData.invites;
   let serverExams: any[] = initialData.exams;
   let serverQuestions: any[] = initialData.questions;
   let serverNotifications: any[] = initialData.notifications;
@@ -376,6 +370,7 @@ async function startServer() {
       fs.writeFileSync(DB_FILE, JSON.stringify({
         users: serverUsers,
         activities: serverActivities,
+        invites: serverInvites,
         exams: serverExams,
         questions: serverQuestions,
         notifications: serverNotifications,
@@ -423,18 +418,18 @@ async function startServer() {
 
       const expectedSig = crypto.createHmac('sha256', 'labhub_session_secret_2026')
         .update(`${userId}:${role}:${timestampStr}`).digest('hex').substring(0, 16);
+      const hmacMatches = (sig === expectedSig);
 
-      // Verify either HMAC signature OR verify against registered admin in persistent DB
-      const hmacMatches = sig === expectedSig;
-      const adminInDb = serverUsers.find(u => (u.id === userId || u.userId === userId) && u.role === 'admin');
+      // Verify either HMAC signature OR verify against registered staff in persistent DB
+      const staffInDb = serverUsers.find(u => (u.id === userId || u.userId === userId) && (u.role === 'admin' || u.role === 'owner' || u.role === 'content_exams' || u.role === 'exams_only'));
 
-      if (!hmacMatches && !adminInDb) {
+      if (!hmacMatches && !staffInDb) {
         return null;
       }
 
       const tokenTime = Number(timestampStr) || Date.now();
-      // For Admin accounts: verify against explicit revocation list
-      if (role === 'admin') {
+      // For Admin/Owner accounts: verify against explicit revocation list
+      if (role === 'admin' || role === 'owner') {
         if (tokenTime < minAdminTokenTimestamp) {
           console.warn(`[SECURITY] Rejected expired or revoked Admin token (Token Timestamp: ${tokenTime}, Minimum Valid: ${minAdminTokenTimestamp})`);
           return null;
@@ -923,7 +918,383 @@ async function startServer() {
     return res.json({ success: true, activity: act });
   });
 
-  // --- ADMIN ROUTE: GET ALL USERS (Strict Admin Permission) ---
+  const isStaffRole = (role?: string) => ['owner', 'admin', 'content_exams', 'exams_only'].includes(role || '');
+  const isOwnerRole = (role?: string) => ['owner', 'admin'].includes(role || '');
+
+  // --- ADMIN ROUTE: GET ALL STAFF (Strict Staff / Owner Permission) ---
+  app.get('/api/admin/staff', (req: Request, res: Response) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Staff authentication required.' });
+    }
+    const token = authHeader.split(' ')[1];
+    const verified = verifySessionToken(token);
+    if (!verified || !isStaffRole(verified.role)) {
+      return res.status(403).json({ error: 'Access Denied: Staff Privileges Required.' });
+    }
+
+    expireInactiveSessions();
+
+    const staffMembers = serverUsers.filter(u => isStaffRole(u.role)).map(toSafeUser);
+    return res.json({
+      staff: staffMembers,
+      total: staffMembers.length,
+      onlineCount: staffMembers.filter(u => u.isOnline).length
+    });
+  });
+
+  // --- ADMIN ROUTE: UPDATE STAFF ROLE (Strict Owner Only) ---
+  app.put('/api/admin/staff/:userId/role', (req: Request, res: Response) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Owner authentication required.' });
+    }
+    const token = authHeader.split(' ')[1];
+    const verified = verifySessionToken(token);
+    if (!verified || !isOwnerRole(verified.role)) {
+      return res.status(403).json({ error: 'Access Denied: Owner Privileges Required.' });
+    }
+
+    const { userId } = req.params;
+    const { role } = req.body;
+    const validRoles = ['owner', 'admin', 'content_exams', 'exams_only'];
+    if (!role || !validRoles.includes(role)) {
+      return res.status(400).json({ error: 'Invalid role. Valid staff roles: owner, content_exams, exams_only.' });
+    }
+
+    const targetUser = serverUsers.find(u => u.id === userId || u.userId === userId);
+    if (!targetUser) {
+      return res.status(404).json({ error: 'User not found in system.' });
+    }
+
+    if (targetUser.id === 'usr_owner_soukaina' || targetUser.email === 'owner@labhub.med') {
+      return res.status(400).json({ error: 'Cannot demote the platform Owner (سكينة أسعد).' });
+    }
+
+    const oldRole = targetUser.role;
+    targetUser.role = role as any;
+    targetUser.lastActivityAt = new Date().toISOString();
+
+    serverActivities.unshift({
+      id: `act_${Date.now()}_role`,
+      userId: verified.userId,
+      userName: 'سكينة أسعد (Platform Owner)',
+      userEmail: 'owner@labhub.med',
+      activity: `تعديل صلاحية المساعد ${targetUser.name} (${targetUser.email}) من ${oldRole} إلى ${role}`,
+      section: 'Staff Management',
+      timestamp: new Date().toISOString()
+    });
+
+    saveDb();
+
+    return res.json({
+      success: true,
+      user: toSafeUser(targetUser),
+      message: `تم تحديث دور المساعد إلى ${role} بنجاح.`
+    });
+  });
+
+  // --- ADMIN ROUTE: REMOVE STAFF MEMBER (Strict Owner Only) ---
+  app.delete('/api/admin/staff/:userId', (req: Request, res: Response) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Owner authentication required.' });
+    }
+    const token = authHeader.split(' ')[1];
+    const verified = verifySessionToken(token);
+    if (!verified || !isOwnerRole(verified.role)) {
+      return res.status(403).json({ error: 'Access Denied: Owner Privileges Required.' });
+    }
+
+    const { userId } = req.params;
+    const targetUserIndex = serverUsers.findIndex(u => u.id === userId || u.userId === userId);
+    if (targetUserIndex < 0) {
+      return res.status(404).json({ error: 'Staff member not found.' });
+    }
+
+    const targetUser = serverUsers[targetUserIndex];
+    if (targetUser.id === 'usr_owner_soukaina' || targetUser.email === 'owner@labhub.med') {
+      return res.status(400).json({ error: 'Cannot delete the platform Owner (سكينة أسعد).' });
+    }
+
+    serverUsers.splice(targetUserIndex, 1);
+    saveDb();
+
+    return res.json({ success: true, message: `تم حذف حساب ${targetUser.name} بنجاح.` });
+  });
+
+  // ==================== INVITES MANAGEMENT API ====================
+  app.get('/api/admin/invites', (req: Request, res: Response) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Authentication required.' });
+    }
+    const token = authHeader.split(' ')[1];
+    const verified = verifySessionToken(token);
+    if (!verified || !isOwnerRole(verified.role)) {
+      return res.status(403).json({ error: 'Access Denied: Owner Privileges Required.' });
+    }
+
+    return res.json({ invites: serverInvites });
+  });
+
+  app.post('/api/admin/invites', (req: Request, res: Response) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Authentication required.' });
+    }
+    const token = authHeader.split(' ')[1];
+    const verified = verifySessionToken(token);
+    if (!verified || !isOwnerRole(verified.role)) {
+      return res.status(403).json({ error: 'Access Denied: Owner Privileges Required.' });
+    }
+
+    const { targetRole, label, expiresInDays = 7 } = req.body;
+    const validRoles = ['content_exams', 'exams_only', 'owner', 'admin'];
+    if (!targetRole || !validRoles.includes(targetRole)) {
+      return res.status(400).json({ error: 'Invalid targetRole. Allowed: content_exams, exams_only.' });
+    }
+
+    const tokenPart = crypto.randomBytes(16).toString('hex');
+    const inviteToken = `inv_${tokenPart}`;
+    const now = new Date();
+    const expiresAt = new Date(now.getTime() + (Number(expiresInDays) || 7) * 24 * 60 * 60 * 1000).toISOString();
+
+    const invite = {
+      id: `inv_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      token: inviteToken,
+      targetRole,
+      label: label || (targetRole === 'content_exams' ? 'مساعد محتوى وامتحانات' : 'مساعد امتحانات فقط'),
+      createdBy: verified.userId,
+      createdAt: now.toISOString(),
+      expiresAt,
+      used: false
+    };
+
+    serverInvites.unshift(invite);
+    saveDb();
+
+    return res.json({ success: true, invite });
+  });
+
+  app.post('/api/admin/invites/validate', (req: Request, res: Response) => {
+    const { token } = req.body;
+    if (!token) {
+      return res.status(400).json({ valid: false, message: 'رمز الدعوة مطلوب.' });
+    }
+
+    const invite = serverInvites.find(i => i.token === token);
+    if (!invite) {
+      return res.status(404).json({ valid: false, message: 'رمز الدعوة غير موجود أو غير صالح.' });
+    }
+
+    if (invite.used) {
+      return res.status(400).json({ valid: false, message: 'تم استخدام رابط الدعوة هذا مسبقًا.' });
+    }
+
+    if (new Date(invite.expiresAt).getTime() < Date.now()) {
+      return res.status(400).json({ valid: false, message: 'انتهت صلاحية رابط الدعوة هذا.' });
+    }
+
+    return res.json({
+      valid: true,
+      role: invite.targetRole,
+      label: invite.label,
+      expiresAt: invite.expiresAt
+    });
+  });
+
+  // Direct access for Question Contributors via private code only (No email/password/account needed)
+  app.post('/api/contributor/access', (req: Request, res: Response) => {
+    const { code } = req.body;
+    if (!code || typeof code !== 'string') {
+      return res.status(400).json({ error: 'رمز وصول المساعد مطلوب.' });
+    }
+
+    const trimmed = code.trim();
+    let targetUser: ServerUser | undefined;
+
+    // Check pre-configured private access codes for the 3 Contributors:
+    if (trimmed === 'CONTRIB-1' || trimmed === 'AST-001' || trimmed === 'inv_ast_alpha_701') {
+      targetUser = serverUsers.find(u => u.id === 'usr_assistant_1' || u.studentId === 'AST-001');
+    } else if (trimmed === 'CONTRIB-2' || trimmed === 'AST-002' || trimmed === 'inv_ast_beta_802') {
+      targetUser = serverUsers.find(u => u.id === 'usr_assistant_2' || u.studentId === 'AST-002');
+    } else if (trimmed === 'CONTRIB-3' || trimmed === 'AST-003' || trimmed === 'inv_ast_gamma_903') {
+      targetUser = serverUsers.find(u => u.id === 'usr_assistant_3' || u.studentId === 'AST-003');
+    } else {
+      // Check dynamic invites tokens
+      const invite = serverInvites.find(i => i.token === trimmed);
+      if (invite) {
+        targetUser = serverUsers.find(u => u.id === invite.usedBy) || serverUsers.find(u => u.role === invite.targetRole);
+      }
+    }
+
+    if (!targetUser) {
+      return res.status(401).json({ error: 'رمز الوصول غير صحيح. يرجى مراجعة إدارة المنصة (سكينة أسعد).' });
+    }
+
+    // Activate session
+    const now = new Date().toISOString();
+    targetUser.lastLoginAt = now;
+    targetUser.lastActivityAt = now;
+    targetUser.isOnline = true;
+    targetUser.currentSessionStatus = 'online';
+    targetUser.sessionCount = (targetUser.sessionCount || 0) + 1;
+
+    serverActivities.unshift({
+      id: `act_${Date.now()}_contrib`,
+      userId: targetUser.id,
+      userName: targetUser.name,
+      userEmail: targetUser.email,
+      activity: `تسجيل دخول مساعد الأسئلة (${targetUser.name}) برمز وصول خاص`,
+      section: 'Question Management',
+      timestamp: now
+    });
+
+    saveDb();
+
+    const sessionToken = createSessionToken(targetUser);
+    return res.json({
+      success: true,
+      user: toSafeUser(targetUser),
+      token: sessionToken
+    });
+  });
+
+  app.post('/api/admin/invites/accept', (req: Request, res: Response) => {
+    const { token, name, email, password } = req.body;
+    if (!token || !name || !email || !password) {
+      return res.status(400).json({ error: 'الاسم، البريد الإلكتروني وكلمة المرور مطلوبة.' });
+    }
+
+    const invite = serverInvites.find(i => i.token === token);
+    if (!invite || invite.used || new Date(invite.expiresAt).getTime() < Date.now()) {
+      return res.status(400).json({ error: 'رابط الدعوة غير صالح أو منتهي الصلاحية.' });
+    }
+
+    const cleanEmail = String(email).trim().toLowerCase();
+    const existing = serverUsers.find(u => u.email === cleanEmail);
+    if (existing) {
+      return res.status(400).json({ error: 'البريد الإلكتروني مسجل مسبقًا في النظام.' });
+    }
+
+    const newUserId = `usr_ast_${Date.now()}`;
+    const now = new Date().toISOString();
+    const newUser: ServerUser = {
+      id: newUserId,
+      userId: newUserId,
+      name: String(name).trim(),
+      fullName: String(name).trim(),
+      email: cleanEmail,
+      role: invite.targetRole as any,
+      passwordHash: hashPassword(password),
+      studentId: `AST-${Date.now().toString().slice(-4)}`,
+      department: 'Faculty Assistant Team',
+      year: invite.label || 'Assistant',
+      enrolledLabs: ['anatomy', 'histology', 'biochemistry'],
+      avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+      createdAt: now,
+      lastLoginAt: now,
+      lastActivityAt: now,
+      sessionCount: 1,
+      isOnline: true,
+      currentSessionStatus: 'online'
+    };
+
+    serverUsers.push(newUser);
+    invite.used = true;
+    invite.usedBy = newUser.id;
+    invite.usedAt = now;
+
+    serverActivities.unshift({
+      id: `act_${Date.now()}_invite`,
+      userId: newUser.id,
+      userName: newUser.name,
+      userEmail: newUser.email,
+      activity: `انضمام مساعد جديد عبر رابط دعوة: ${invite.label}`,
+      section: 'Staff Onboarding',
+      timestamp: now
+    });
+
+    saveDb();
+
+    const sessionToken = createSessionToken(newUser);
+    return res.status(201).json({
+      success: true,
+      user: toSafeUser(newUser),
+      token: sessionToken
+    });
+  });
+
+  app.delete('/api/admin/invites/:id', (req: Request, res: Response) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Authentication required.' });
+    }
+    const token = authHeader.split(' ')[1];
+    const verified = verifySessionToken(token);
+    if (!verified || !isOwnerRole(verified.role)) {
+      return res.status(403).json({ error: 'Access Denied: Owner Privileges Required.' });
+    }
+
+    const { id } = req.params;
+    serverInvites = serverInvites.filter(i => i.id !== id);
+    saveDb();
+
+    return res.json({ success: true });
+  });
+
+  // ==================== ACTIVITY LOGS API ====================
+  app.get('/api/admin/activity-logs', (req: Request, res: Response) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Staff authentication required.' });
+    }
+    const token = authHeader.split(' ')[1];
+    const verified = verifySessionToken(token);
+    if (!verified || !isStaffRole(verified.role)) {
+      return res.status(403).json({ error: 'Access Denied: Staff Privileges Required.' });
+    }
+
+    return res.json({ logs: serverActivities });
+  });
+
+  app.post('/api/admin/activity-logs', (req: Request, res: Response) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Staff authentication required.' });
+    }
+    const token = authHeader.split(' ')[1];
+    const verified = verifySessionToken(token);
+    if (!verified || !isStaffRole(verified.role)) {
+      return res.status(403).json({ error: 'Access Denied: Staff Privileges Required.' });
+    }
+
+    const { action, section, metadata } = req.body;
+    if (!action) {
+      return res.status(400).json({ error: 'Action is required.' });
+    }
+
+    const user = serverUsers.find(u => u.id === verified.userId);
+    const newLog: ServerActivity = {
+      id: `act_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      userId: verified.userId,
+      userName: user ? user.name : 'Authorized Staff',
+      userEmail: user ? user.email : '',
+      activity: String(action).substring(0, 250),
+      section: section || 'Administration',
+      timestamp: new Date().toISOString(),
+      metadata
+    };
+
+    serverActivities.unshift(newLog);
+    if (serverActivities.length > 1000) serverActivities.pop();
+    saveDb();
+
+    return res.json({ success: true, log: newLog });
+  });
+
+  // --- ADMIN ROUTE: GET ALL USERS (Strict Staff / Admin Permission) ---
   app.get('/api/admin/users', (req: Request, res: Response) => {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -931,8 +1302,8 @@ async function startServer() {
     }
     const token = authHeader.split(' ')[1];
     const verified = verifySessionToken(token);
-    if (!verified || verified.role !== 'admin') {
-      return res.status(403).json({ error: 'Access Denied: Faculty Admin Privileges Required.' });
+    if (!verified || !isStaffRole(verified.role)) {
+      return res.status(403).json({ error: 'Access Denied: Staff Privileges Required.' });
     }
 
     // Refresh session timeouts before returning
@@ -947,7 +1318,7 @@ async function startServer() {
     });
   });
 
-  // --- ADMIN ROUTE: UPDATE USER ROLE (Strict Admin Permission) ---
+  // --- ADMIN ROUTE: UPDATE USER ROLE (Strict Owner/Admin Permission) ---
   app.put('/api/admin/users/:userId/role', (req: Request, res: Response) => {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -955,15 +1326,16 @@ async function startServer() {
     }
     const token = authHeader.split(' ')[1];
     const verified = verifySessionToken(token);
-    if (!verified || verified.role !== 'admin') {
-      return res.status(403).json({ error: 'Access Denied: Faculty Admin Privileges Required.' });
+    if (!verified || !isOwnerRole(verified.role)) {
+      return res.status(403).json({ error: 'Access Denied: Owner Privileges Required.' });
     }
 
     const { userId } = req.params;
     const { role } = req.body;
 
-    if (!role || (role !== 'student' && role !== 'admin' && role !== 'instructor')) {
-      return res.status(400).json({ error: 'Invalid role specified. Permitted roles: student, instructor, admin.' });
+    const validRoles = ['owner', 'admin', 'content_exams', 'exams_only', 'student'];
+    if (!role || !validRoles.includes(role)) {
+      return res.status(400).json({ error: 'Invalid role specified.' });
     }
 
     const targetUser = serverUsers.find(u => u.id === userId || u.userId === userId);
@@ -971,20 +1343,20 @@ async function startServer() {
       return res.status(404).json({ error: 'User not found in system.' });
     }
 
-    // Protect root admin account from demotion
-    if (targetUser.id === 'usr_admin_1' && role !== 'admin') {
-      return res.status(400).json({ error: 'Cannot demote the primary Faculty Dean administrator account.' });
+    // Protect owner account from demotion
+    if ((targetUser.id === 'usr_owner_soukaina' || targetUser.email === 'owner@labhub.med') && role !== 'owner') {
+      return res.status(400).json({ error: 'Cannot demote the platform Owner account.' });
     }
 
     const oldRole = targetUser.role;
-    targetUser.role = role as 'student' | 'instructor' | 'admin';
+    targetUser.role = role as any;
     targetUser.lastActivityAt = new Date().toISOString();
 
     serverActivities.unshift({
       id: `act_${Date.now()}_role`,
       userId: verified.userId,
-      userName: 'Dean / Administrator',
-      userEmail: 'admin@med.edu',
+      userName: 'Platform Owner / Dean',
+      userEmail: 'owner@labhub.med',
       activity: `تعديل دور المستخدم ${targetUser.name} (${targetUser.email}) من ${oldRole} إلى ${role}`,
       section: 'Administration',
       timestamp: new Date().toISOString()
@@ -1052,7 +1424,7 @@ async function startServer() {
     });
   });
 
-  // --- ADMIN ROUTE: GET ALL ACTIVITIES (Strict Admin Permission) ---
+  // --- ADMIN ROUTE: GET ALL ACTIVITIES (Strict Staff Permission) ---
   app.get('/api/admin/activities', (req: Request, res: Response) => {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -1060,8 +1432,8 @@ async function startServer() {
     }
     const token = authHeader.split(' ')[1];
     const verified = verifySessionToken(token);
-    if (!verified || verified.role !== 'admin') {
-      return res.status(403).json({ error: 'Access Denied: Faculty Admin Privileges Required.' });
+    if (!verified || !isStaffRole(verified.role)) {
+      return res.status(403).json({ error: 'Access Denied: Staff Privileges Required.' });
     }
 
     expireInactiveSessions();
@@ -1072,7 +1444,7 @@ async function startServer() {
     });
   });
 
-  // --- ADMIN ROUTE: GET USER ACTIVITY (Strict Admin Permission) ---
+  // --- ADMIN ROUTE: GET USER ACTIVITY (Strict Staff Permission) ---
   app.get('/api/admin/users/:userId/activity', (req: Request, res: Response) => {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -1080,8 +1452,8 @@ async function startServer() {
     }
     const token = authHeader.split(' ')[1];
     const verified = verifySessionToken(token);
-    if (!verified || verified.role !== 'admin') {
-      return res.status(403).json({ error: 'Access Denied: Faculty Admin Privileges Required.' });
+    if (!verified || !isStaffRole(verified.role)) {
+      return res.status(403).json({ error: 'Access Denied: Staff Privileges Required.' });
     }
 
     const { userId } = req.params;
@@ -1089,7 +1461,7 @@ async function startServer() {
     return res.json({ activities: userActivities });
   });
 
-  // --- ADMIN ROUTE: GET ANALYTICS METRICS (Strict Admin Permission) ---
+  // --- ADMIN ROUTE: GET ANALYTICS METRICS (Strict Staff Permission) ---
   app.get('/api/admin/metrics', (req: Request, res: Response) => {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -1097,8 +1469,8 @@ async function startServer() {
     }
     const token = authHeader.split(' ')[1];
     const verified = verifySessionToken(token);
-    if (!verified || verified.role !== 'admin') {
-      return res.status(403).json({ error: 'Access Denied: Faculty Admin Privileges Required.' });
+    if (!verified || !isStaffRole(verified.role)) {
+      return res.status(403).json({ error: 'Access Denied: Staff Privileges Required.' });
     }
 
     expireInactiveSessions();
@@ -1133,7 +1505,7 @@ async function startServer() {
     });
   });
 
-  // --- ADMIN ROUTE: GET CURRENTLY ACTIVE USERS / ONLINE NOW (Strict Admin Permission) ---
+  // --- ADMIN ROUTE: GET CURRENTLY ACTIVE USERS / ONLINE NOW (Strict Staff Permission) ---
   app.get('/api/admin/active-users', (req: Request, res: Response) => {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -1141,8 +1513,8 @@ async function startServer() {
     }
     const token = authHeader.split(' ')[1];
     const verified = verifySessionToken(token);
-    if (!verified || verified.role !== 'admin') {
-      return res.status(403).json({ error: 'Access Denied: Faculty Admin Privileges Required.' });
+    if (!verified || !isStaffRole(verified.role)) {
+      return res.status(403).json({ error: 'Access Denied: Staff Privileges Required.' });
     }
 
     expireInactiveSessions();
@@ -1185,7 +1557,7 @@ async function startServer() {
     });
   });
 
-  // --- ADMIN ROUTE: GET DETAILED ANALYTICS BREAKDOWN (Strict Admin Permission) ---
+  // --- ADMIN ROUTE: GET DETAILED ANALYTICS BREAKDOWN (Strict Staff Permission) ---
   app.get('/api/admin/analytics/breakdown', (req: Request, res: Response) => {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -1193,8 +1565,8 @@ async function startServer() {
     }
     const token = authHeader.split(' ')[1];
     const verified = verifySessionToken(token);
-    if (!verified || verified.role !== 'admin') {
-      return res.status(403).json({ error: 'Access Denied: Faculty Admin Privileges Required.' });
+    if (!verified || !isStaffRole(verified.role)) {
+      return res.status(403).json({ error: 'Access Denied: Staff Privileges Required.' });
     }
 
     const now = Date.now();
@@ -1523,6 +1895,53 @@ async function startServer() {
     serverQuestions.push(duplicated);
     saveDb();
     res.json(duplicated);
+  });
+
+  // Question status update / approval workflow
+  app.put('/api/questions/:id/status', (req: Request, res: Response) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Staff authentication required.' });
+    }
+    const token = authHeader.split(' ')[1];
+    const verified = verifySessionToken(token);
+    if (!verified || !isStaffRole(verified.role)) {
+      return res.status(403).json({ error: 'Access Denied: Staff Privileges Required.' });
+    }
+
+    const { id } = req.params;
+    const { status, reviewNotes } = req.body;
+    const validStatuses = ['draft', 'pending_review', 'approved', 'published', 'rejected'];
+    if (!status || !validStatuses.includes(status)) {
+      return res.status(400).json({ error: 'Invalid status specified.' });
+    }
+
+    // Only owner/admin can approve or publish
+    if ((status === 'approved' || status === 'published') && !isOwnerRole(verified.role)) {
+      return res.status(403).json({ error: 'فقط مالكة المنصة (سكينة أسعد) يمكنها اعتماد ونشر الأسئلة.' });
+    }
+
+    const question = serverQuestions.find(q => q.id === id);
+    if (!question) {
+      return res.status(404).json({ error: 'Question not found' });
+    }
+
+    question.status = status;
+    if (reviewNotes) question.reviewNotes = reviewNotes;
+    question.reviewedBy = verified.userId;
+    question.reviewedAt = new Date().toISOString();
+
+    saveDb();
+    return res.json({ success: true, question });
+  });
+
+  // Image upload endpoint for question contributor diagrams
+  app.post('/api/upload/image', (req: Request, res: Response) => {
+    const { image } = req.body;
+    if (!image) {
+      return res.status(400).json({ error: 'Image payload is required.' });
+    }
+    return res.json({ success: true, url: image });
   });
 
   // ==================== NOTIFICATIONS API ====================

@@ -69,13 +69,12 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [showNotifications, setShowNotifications] = useState(false);
   const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(false);
 
-  const safeUser = currentUser || {
-    id: 'usr_student',
-    name: 'Sarah Al-Mansoor',
-    role: 'student',
-    email: 'sarah.mansoor@med.edu',
-    studentId: 'MBBS-2024-8842'
-  };
+  const isStaff = currentUser && (
+    currentUser.role === 'owner' ||
+    currentUser.role === 'admin' ||
+    currentUser.role === 'content_exams' ||
+    currentUser.role === 'exams_only'
+  );
 
   const safeNotifications = Array.isArray(notifications) ? notifications : [];
   const unreadCount = safeNotifications.filter(n => !n.isRead).length;
@@ -340,18 +339,33 @@ export const Navbar: React.FC<NavbarProps> = ({
               </div>
 
               {/* User Snapshot Card */}
-              <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-purple-600/30 border border-purple-500/40 flex items-center justify-center text-purple-300 font-bold">
-                  {safeUser.name?.charAt(0) || 'U'}
+              {isStaff && currentUser ? (
+                <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-amber-600/30 border border-amber-500/40 flex items-center justify-center text-amber-300 font-bold">
+                    {currentUser.name?.charAt(0) || 'A'}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-xs font-bold text-white truncate">{currentUser.name}</h4>
+                    <p className="text-[10px] text-slate-400 truncate">{currentUser.email}</p>
+                    <span className="inline-block text-[9px] font-mono font-bold text-amber-300 bg-amber-950/60 px-2 py-0.5 rounded mt-1 border border-amber-500/30">
+                      {currentUser.role === 'owner' ? 'Platform Owner' : currentUser.role === 'content_exams' ? 'Content & Exams' : 'Exams Only'}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="text-xs font-bold text-white truncate">{safeUser.name}</h4>
-                  <p className="text-[10px] text-slate-400 truncate">{safeUser.email}</p>
-                  <span className="inline-block text-[9px] font-mono font-bold text-cyan-300 bg-cyan-950/60 px-2 py-0.2 rounded mt-1 border border-cyan-500/30">
-                    {safeUser.role === 'admin' ? 'Faculty Admin' : 'MBBS Student'}
-                  </span>
+              ) : (
+                <div className="p-3.5 rounded-2xl bg-gradient-to-br from-purple-950/40 to-indigo-950/40 border border-purple-500/20 flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center text-cyan-300 font-bold">
+                    <GraduationCap className="w-5 h-5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-xs font-bold text-white">منصة الطلاب المفتوحة</h4>
+                    <p className="text-[10px] text-slate-400">وصول مجاني ومباشر بدون تسجيل</p>
+                    <span className="inline-block text-[9px] font-mono font-bold text-emerald-300 bg-emerald-950/60 px-2 py-0.5 rounded mt-1 border border-emerald-500/30">
+                      OPEN ACCESS • NO LOGIN
+                    </span>
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Main Navigation Links List (matching reference side screen) */}
               <div className="space-y-1 text-sm font-semibold">
@@ -451,15 +465,17 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <ChevronLeft className="w-4 h-4 text-slate-500" />
                 </button>
 
-                {safeUser.role === 'admin' && (
+                {isStaff && (
                   <button
                     type="button"
                     onClick={() => handleNavClick('admin')}
-                    className="w-full p-2.5 rounded-xl bg-amber-950/40 text-amber-300 border border-amber-500/30 flex items-center justify-between transition cursor-pointer"
+                    className="w-full p-2.5 rounded-xl bg-amber-950/40 text-amber-300 border border-amber-500/30 flex items-center justify-between transition cursor-pointer hover:bg-amber-950/60"
                   >
                     <div className="flex items-center gap-3">
                       <Shield className="w-4 h-4 text-amber-400" />
-                      <span>لوحة تحكم العمادة (Admin)</span>
+                      <span>
+                        {currentUser?.role === 'owner' ? 'لوحة تحكم المنصة (Owner Hub)' : 'بوابة مساعد الامتحانات (Admin)'}
+                      </span>
                     </div>
                     <ChevronLeft className="w-4 h-4 text-amber-400" />
                   </button>
@@ -469,18 +485,34 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             {/* Drawer Bottom Actions */}
             <div className="pt-4 border-t border-white/10 space-y-2">
-              {onLogout && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsSideDrawerOpen(false);
-                    onLogout();
-                  }}
-                  className="w-full py-2.5 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 border border-rose-500/30 text-rose-300 text-xs font-bold flex items-center justify-center gap-2 transition cursor-pointer"
-                >
-                  <LogOut className="w-3.5 h-3.5" />
-                  <span>تسجيل الخروج</span>
-                </button>
+              {isStaff ? (
+                onLogout && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsSideDrawerOpen(false);
+                      onLogout();
+                    }}
+                    className="w-full py-2.5 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 border border-rose-500/30 text-rose-300 text-xs font-bold flex items-center justify-center gap-2 transition cursor-pointer"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                    <span>تسجيل خروج المسؤول</span>
+                  </button>
+                )
+              ) : (
+                onOpenAuthModal && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsSideDrawerOpen(false);
+                      onOpenAuthModal();
+                    }}
+                    className="w-full py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-400 hover:text-slate-200 text-xs font-medium flex items-center justify-center gap-2 transition cursor-pointer"
+                  >
+                    <Shield className="w-3.5 h-3.5 text-amber-400/70" />
+                    <span>بوابة المسؤولين (Admin Access)</span>
+                  </button>
+                )
               )}
 
               <p className="text-[10px] text-center text-slate-400 font-mono" dir="ltr">

@@ -20,8 +20,8 @@ interface SidebarProps {
   activeTab: string;
   activeLabId?: LabSubjectId;
   onSelectTab: (tab: string, labId?: LabSubjectId, practicalId?: string) => void;
-  currentUser?: UserType;
-  userRole?: 'student' | 'instructor' | 'admin';
+  currentUser?: UserType | null;
+  userRole?: string;
   onOpenAiTutor?: () => void;
   onOpenAboutModal?: () => void;
   onLogout?: () => void;
@@ -37,14 +37,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onOpenAboutModal,
   onLogout
 }) => {
-  const safeUser = currentUser || {
-    id: 'usr_sarah',
-    name: 'Sarah Al-Mansoor',
-    role: userRole || 'student',
-    email: 'sarah.mansoor@med.edu',
-    studentId: 'MBBS-2024-8842',
-    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150'
-  };
+  const isStaff = currentUser && (
+    currentUser.role === 'owner' ||
+    currentUser.role === 'admin' ||
+    currentUser.role === 'content_exams' ||
+    currentUser.role === 'exams_only'
+  );
 
   const isSubjectsActive = [
     'laboratories',
@@ -258,32 +256,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
           )}
 
-          {/* Instructor Workspace (if role) */}
-          {(safeUser.role === 'instructor' || safeUser.role === 'admin') && (
-            <div className="pt-1.5">
-              <button
-                type="button"
-                id="sidebar-link-teacher-dashboard"
-                onClick={() => onSelectTab('teacher_dashboard')}
-                className={`w-full flex items-center gap-2.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all ${
-                  activeTab === 'teacher_dashboard'
-                    ? 'bg-teal-950 text-teal-300 border border-teal-500/40'
-                    : 'text-slate-400 hover:bg-white/5 hover:text-teal-300'
-                }`}
-              >
-                <GraduationCap className="w-4 h-4 text-teal-400" />
-                <span>Instructor Hub</span>
-              </button>
-            </div>
-          )}
-
-          {/* Admin Faculty Directorate (Strictly for role === 'admin') */}
-          {safeUser.role === 'admin' && (
+          {/* Admin Directorate (Strictly for staff: owner, content_exams, exams_only) */}
+          {isStaff && (
             <div className="pt-1">
               <button
                 type="button"
                 id="sidebar-link-admin-dashboard"
-                onClick={() => onSelectTab('admin_dashboard')}
+                onClick={() => onSelectTab('admin')}
                 className={`w-full flex items-center gap-2.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                   activeTab === 'admin' || activeTab === 'admin_dashboard'
                     ? 'bg-amber-950/80 text-amber-300 border border-amber-500/50'
@@ -291,7 +270,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 }`}
               >
                 <ShieldAlert className="w-4 h-4 text-amber-400" />
-                <span>Faculty Directorate (Admin)</span>
+                <span>
+                  {currentUser?.role === 'owner' ? 'لوحة تحكم المنصة (Owner)' : 'بوابة مساعد الامتحانات'}
+                </span>
               </button>
             </div>
           )}
@@ -333,33 +314,43 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Profile Summary Card & Logout */}
         <div className="flex items-center gap-1.5">
-          <div
-            onClick={() => onSelectTab('profile')}
-            className="flex items-center gap-2 p-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 cursor-pointer transition-all group flex-1 min-w-0"
-          >
-            <img
-              src={safeUser.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150'}
-              alt={safeUser.name}
-              className="w-7 h-7 rounded-lg object-cover border border-purple-500/30 shrink-0"
-            />
-            <div className="flex flex-col min-w-0 flex-1">
-              <span className="text-xs font-bold text-slate-200 truncate group-hover:text-purple-300 transition-colors">
-                {safeUser.name}
-              </span>
-              <span className="text-[10px] text-slate-400 truncate flex items-center gap-1">
-                <GraduationCap className="w-3 h-3 text-cyan-400 shrink-0" />
-                <span className="truncate">{safeUser.studentId}</span>
-              </span>
+          {isStaff && currentUser ? (
+            <div className="flex items-center gap-2 p-1.5 rounded-xl bg-amber-950/20 border border-amber-500/30 flex-1 min-w-0">
+              <div className="w-7 h-7 rounded-lg bg-amber-600/30 border border-amber-500/40 text-amber-300 font-bold flex items-center justify-center text-xs shrink-0">
+                {currentUser.name?.charAt(0) || 'A'}
+              </div>
+              <div className="flex flex-col min-w-0 flex-1">
+                <span className="text-xs font-bold text-amber-200 truncate">
+                  {currentUser.name}
+                </span>
+                <span className="text-[10px] text-amber-400/80 truncate">
+                  {currentUser.role === 'owner' ? 'Platform Owner' : 'Faculty Assistant'}
+                </span>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="flex items-center gap-2 p-1.5 rounded-xl bg-white/5 border border-white/10 flex-1 min-w-0">
+              <div className="w-7 h-7 rounded-lg bg-purple-600/30 border border-purple-500/40 text-purple-300 flex items-center justify-center shrink-0">
+                <GraduationCap className="w-4 h-4" />
+              </div>
+              <div className="flex flex-col min-w-0 flex-1">
+                <span className="text-xs font-bold text-slate-200 truncate">
+                  منصة الطلاب المفتوحة
+                </span>
+                <span className="text-[10px] text-emerald-400 truncate">
+                  Open Access • No Account
+                </span>
+              </div>
+            </div>
+          )}
 
-          {onLogout && (
+          {isStaff && onLogout && (
             <button
               type="button"
               id="sidebar-logout-btn"
               onClick={onLogout}
               title="Sign Out"
-              className="p-2 rounded-xl border border-rose-900/60 bg-rose-950/40 text-rose-400 hover:bg-rose-900/50 hover:text-rose-300 transition-colors shrink-0"
+              className="p-2 rounded-xl border border-rose-900/60 bg-rose-950/40 text-rose-400 hover:bg-rose-900/50 hover:text-rose-300 transition-colors shrink-0 cursor-pointer"
             >
               <LogOut className="w-3.5 h-3.5" />
             </button>

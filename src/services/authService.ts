@@ -6,14 +6,15 @@
  * Authentication & Session Management Service
  */
 
-import { User, UserRole, UserActivityRecord, AdminAnalyticsMetrics, AdminAnalyticsBreakdown, AuthSession, AdminSecurityStatus } from '../types';
-import { DEMO_USERS } from '../data/mockData';
+import { User, UserRole, UserActivityRecord, AdminAnalyticsMetrics, AdminAnalyticsBreakdown, AuthSession, AdminSecurityStatus, AdminInvite, ActivityLogRecord } from '../types';
 import { securityService } from './securityService';
 
 const AUTH_STORAGE_KEY = 'labhub_auth_session';
 const USERS_STORAGE_KEY = 'labhub_registered_users';
 const ACTIVITIES_STORAGE_KEY = 'labhub_user_activities';
-const SECURITY_UPDATE_VERSION = '2026.09.03_SEC_FINAL';
+const INVITES_STORAGE_KEY = 'labhub_admin_invites';
+const ADMIN_ACTIVITY_LOG_KEY = 'labhub_admin_activity_log';
+const SECURITY_UPDATE_VERSION = '2026.09.04_STAFF_FINAL';
 
 interface StoredUserRecord extends User {
   passwordHash: string;
@@ -67,70 +68,74 @@ export class AuthService {
   }
 
   /**
-   * Initialize local user directory with default accounts if not yet created
+   * Initialize local user directory with authentic Owner account and zero demo students
    */
   private ensureInitialUsers(): void {
     try {
       const stored = localStorage.getItem(USERS_STORAGE_KEY);
-      if (!stored) {
-        const initialUsers: StoredUserRecord[] = [
-          {
-            id: 'usr_student_1',
-            userId: 'usr_student_1',
-            name: 'Sarah Al-Mansoor',
-            fullName: 'Sarah Al-Mansoor',
-            email: 'student@med.edu',
-            role: 'student',
-            passwordHash: this.hashPassword('student123'),
-            studentId: 'MED-2026-4891',
-            department: 'Faculty of Medicine — 2nd Year MBBS',
-            year: 'Year 2 (Pre-Clinical)',
-            enrolledLabs: ['anatomy', 'histology', 'biochemistry'],
-            avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-            createdAt: '2026-01-10T08:00:00.000Z',
-            lastLoginAt: new Date().toISOString(),
-            lastActivityAt: new Date().toISOString(),
-            sessionCount: 14
-          },
-          {
-            id: 'usr_admin_1',
-            userId: 'usr_admin_1',
-            name: 'Prof. Eleanor Hayes, MD, FRCPath',
-            fullName: 'Prof. Eleanor Hayes, MD, FRCPath',
-            email: 'admin@med.edu',
-            role: 'admin',
-            passwordHash: this.hashPassword('admin123'),
-            studentId: 'ADM-MED-001',
-            department: 'Academic Directorate & Laboratory Board',
-            year: 'Dean of Medical Laboratory Curricula',
-            enrolledLabs: ['anatomy', 'histology', 'biochemistry'],
-            avatarUrl: 'https://images.unsplash.com/photo-1594824813680-79883506ecf5?w=150&auto=format&fit=crop&q=80',
-            createdAt: '2025-09-01T08:00:00.000Z',
-            lastLoginAt: new Date().toISOString(),
-            lastActivityAt: new Date().toISOString(),
-            sessionCount: 42
-          },
-          {
-            id: 'usr_instructor_1',
-            userId: 'usr_instructor_1',
-            name: 'Dr. Tariq Vance, MD, MSc',
-            fullName: 'Dr. Tariq Vance, MD, MSc',
-            email: 'instructor@med.edu',
-            role: 'instructor',
-            passwordHash: this.hashPassword('faculty123'),
-            studentId: 'FAC-MED-104',
-            department: 'Department of Anatomy & Histology',
-            year: 'Senior Teaching Faculty',
-            enrolledLabs: ['anatomy', 'histology', 'biochemistry'],
-            avatarUrl: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150&auto=format&fit=crop&q=80',
-            createdAt: '2025-10-15T08:00:00.000Z',
-            lastLoginAt: new Date().toISOString(),
-            lastActivityAt: new Date().toISOString(),
-            sessionCount: 29
-          }
-        ];
-        localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(initialUsers));
+      let users: StoredUserRecord[] = stored ? JSON.parse(stored) : [];
+
+      // Purge any legacy demo students (Sarah, Omar, etc.)
+      users = users.filter(u => 
+        u.role !== 'student' && 
+        u.email !== 'student@med.edu' && 
+        u.email !== 'omar@med.edu' &&
+        !u.name.toLowerCase().includes('sarah') &&
+        !u.name.toLowerCase().includes('omar')
+      );
+
+      // Ensure Platform Owner account exists
+      const hasOwner = users.some(u => u.email === 'owner@labhub.med' || u.role === 'owner');
+      if (!hasOwner) {
+        users.unshift({
+          id: 'usr_owner_soukaina',
+          userId: 'usr_owner_soukaina',
+          name: 'سكينة أسعد',
+          fullName: 'سكينة أسعد (Soukaina Asaad)',
+          email: 'owner@labhub.med',
+          role: 'owner',
+          passwordHash: this.hashPassword('owner123'),
+          studentId: 'OWNER-2026-001',
+          department: 'Academic Directorate & Laboratory Board',
+          year: 'Platform Founder & Lead Anatomist',
+          enrolledLabs: ['anatomy', 'histology', 'biochemistry'],
+          avatarUrl: 'https://images.unsplash.com/photo-1594824813680-79883506ecf5?w=150',
+          createdAt: '2026-01-01T08:00:00.000Z',
+          lastLoginAt: new Date().toISOString(),
+          lastActivityAt: new Date().toISOString(),
+          sessionCount: 50,
+          canPublishAnatomyExams: true
+        });
       }
+
+      // Ensure admin@med.edu is mapped to Owner role for smooth login
+      const adminAcc = users.find(u => u.email === 'admin@med.edu');
+      if (!adminAcc) {
+        users.push({
+          id: 'usr_admin_1',
+          userId: 'usr_admin_1',
+          name: 'سكينة أسعد (Owner)',
+          fullName: 'سكينة أسعد (Soukaina Asaad)',
+          email: 'admin@med.edu',
+          role: 'owner',
+          passwordHash: this.hashPassword('admin123'),
+          studentId: 'ADM-MED-001',
+          department: 'Academic Directorate & Laboratory Board',
+          year: 'Platform Founder & Lead Anatomist',
+          enrolledLabs: ['anatomy', 'histology', 'biochemistry'],
+          avatarUrl: 'https://images.unsplash.com/photo-1594824813680-79883506ecf5?w=150',
+          createdAt: '2026-01-01T08:00:00.000Z',
+          lastLoginAt: new Date().toISOString(),
+          lastActivityAt: new Date().toISOString(),
+          sessionCount: 42,
+          canPublishAnatomyExams: true
+        });
+      } else {
+        adminAcc.role = 'owner';
+        adminAcc.name = 'سكينة أسعد (Owner)';
+      }
+
+      localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
     } catch {
       // localStorage may be restricted
     }
@@ -1028,15 +1033,24 @@ export class AuthService {
     }
 
     // Local fallback
-    const currentUser = caller || session?.user || DEMO_USERS[2];
+    const currentUser: any = caller || session?.user || {
+      id: 'usr_owner_soukaina',
+      name: 'سكينة أسعد',
+      email: 'owner@labhub.med',
+      role: 'owner' as const,
+      studentId: 'OWN-001',
+      department: 'إدارة منصة LAB HUB',
+      lastLoginAt: new Date().toISOString(),
+      sessionCount: 42
+    };
     return {
       adminAccount: {
-        name: currentUser.name || 'Prof. Eleanor Hayes, MD, FRCPath',
-        email: currentUser.email || 'admin@med.edu',
-        studentId: currentUser.studentId || 'ADM-MED-001',
-        role: 'admin',
-        department: currentUser.department || 'Faculty of Medicine',
-        accountStatus: 'Active & Verified (Role = admin)',
+        name: currentUser.name || 'سكينة أسعد',
+        email: currentUser.email || 'owner@labhub.med',
+        studentId: currentUser.studentId || 'OWN-001',
+        role: currentUser.role || 'owner',
+        department: currentUser.department || 'إدارة منصة LAB HUB',
+        accountStatus: 'Active & Verified',
         lastLoginAt: currentUser.lastLoginAt || new Date().toISOString(),
         sessionCount: currentUser.sessionCount || 42,
         securityUpdateVersion: SECURITY_UPDATE_VERSION
@@ -1133,15 +1147,452 @@ export class AuthService {
     return { success: true, session, message: `Successfully authenticated as ${user.name} (${user.role.toUpperCase()})` };
   }
 
-  public switchRole(role: UserRole): User {
-    if (role === 'admin') {
-      console.warn('[SECURITY] Direct client-side elevation to Admin is strictly prohibited.');
-      return this.getCurrentUser() || DEMO_USERS[0];
+  // ==========================================
+  // --- ADMIN INVITES & STAFF ONBOARDING ---
+  // ==========================================
+
+  public async getAdminInvites(caller: User): Promise<AdminInvite[]> {
+    if (caller.role !== 'owner' && caller.role !== 'admin') {
+      throw new Error('Access denied: Invites management is restricted to OWNER.');
     }
+
+    try {
+      const session = this.getSession();
+      const res = await fetch('/api/admin/invites', {
+        headers: {
+          'Authorization': `Bearer ${session?.token || ''}`
+        }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          this.setStoredInvites(data);
+          return data;
+        }
+      }
+    } catch {
+      // fallback to storage
+    }
+    return this.getStoredInvites();
+  }
+
+  private getStoredInvites(): AdminInvite[] {
+    try {
+      const raw = localStorage.getItem(INVITES_STORAGE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  private setStoredInvites(invites: AdminInvite[]): void {
+    try {
+      localStorage.setItem(INVITES_STORAGE_KEY, JSON.stringify(invites));
+    } catch (e) {
+      console.error('Failed to cache invites:', e);
+    }
+  }
+
+  public async createAdminInvite(
+    params: { role: 'content_exams' | 'exams_only'; note?: string; expiresInDays?: number },
+    caller: User
+  ): Promise<AdminInvite> {
+    if (caller.role !== 'owner' && caller.role !== 'admin') {
+      throw new Error('Unauthorized: Only OWNER can generate admin invites.');
+    }
+
+    try {
+      const session = this.getSession();
+      const res = await fetch('/api/admin/invites', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.token || ''}`
+        },
+        body: JSON.stringify(params)
+      });
+      if (res.ok) {
+        const invite = await res.json();
+        const local = this.getStoredInvites();
+        local.unshift(invite);
+        this.setStoredInvites(local);
+        return invite;
+      }
+    } catch (e) {
+      console.warn('Server invite creation fallback:', e);
+    }
+
+    // Local fallback generator with cryptographically secure random token
+    const token = 'inv_' + Array.from(crypto.getRandomValues(new Uint8Array(18)))
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
+    
+    const days = params.expiresInDays || 7;
+    const now = new Date();
+    const expiresAt = new Date(now.getTime() + days * 24 * 60 * 60 * 1000).toISOString();
+
+    const invite: AdminInvite = {
+      id: `inv_${Date.now()}`,
+      token,
+      role: params.role,
+      roleTitle: params.role === 'content_exams' ? 'CONTENT + EXAMS ADMIN' : 'EXAMS ADMIN',
+      createdBy: caller.name,
+      createdAt: now.toISOString(),
+      expiresAt,
+      isUsed: false,
+      isRevoked: false,
+      note: params.note || ''
+    };
+
+    const local = this.getStoredInvites();
+    local.unshift(invite);
+    this.setStoredInvites(local);
+
+    this.logAdminActivity({
+      adminId: caller.id,
+      adminName: caller.name,
+      adminEmail: caller.email,
+      adminRole: caller.role,
+      action: 'create_invite',
+      actionTitleArabic: `إنشاء رابط دعوة مسؤول جديد (${invite.roleTitle})`,
+      section: 'Admin Invites',
+      targetTitle: invite.roleTitle,
+      details: { note: params.note, role: params.role }
+    });
+
+    return invite;
+  }
+
+  public async validateInviteToken(token: string): Promise<AdminInvite | null> {
+    if (!token) return null;
+
+    try {
+      const res = await fetch(`/api/admin/invites/${token}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.invite) return data.invite;
+      }
+    } catch {
+      // fallback to local
+    }
+
+    const localInvites = this.getStoredInvites();
+    const found = localInvites.find(i => i.token === token);
+    return found || null;
+  }
+
+  public async acceptAdminInvite(params: {
+    token: string;
+    fullName: string;
+    email: string;
+    password: string;
+  }): Promise<User> {
+    try {
+      const res = await fetch('/api/admin/invites/accept', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(params)
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.token && data.user) {
+          const session: AuthSession = {
+            token: data.token,
+            user: data.user,
+            expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000
+          };
+          this.saveSession(session);
+          return data.user;
+        }
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || 'فشل قبول الدعوة وتسجيل الحساب.');
+      }
+    } catch (e: any) {
+      if (e.message && !e.message.includes('fetch')) {
+        throw e;
+      }
+    }
+
+    // Local fallback
+    const invites = this.getStoredInvites();
+    const inv = invites.find(i => i.token === params.token);
+    if (!inv) {
+      throw new Error('رابط الدعوة غير موجود.');
+    }
+    if (inv.isRevoked) {
+      throw new Error('تم إلغاء رابط الدعوة من قبل مالكة المنصة.');
+    }
+    if (inv.isUsed) {
+      throw new Error('تم استخدام رابط الدعوة مسبقاً.');
+    }
+    if (new Date(inv.expiresAt).getTime() < Date.now()) {
+      throw new Error('انتهت صلاحية رابط الدعوة.');
+    }
+
+    const now = new Date().toISOString();
+    const newAdminId = `usr_adm_${Date.now()}`;
+    const newAdminUser: StoredUserRecord = {
+      id: newAdminId,
+      userId: newAdminId,
+      name: params.fullName,
+      fullName: params.fullName,
+      email: params.email,
+      role: inv.role,
+      passwordHash: this.hashPassword(params.password),
+      studentId: `ADM-2026-${Math.floor(100 + Math.random() * 900)}`,
+      department: inv.role === 'content_exams' ? 'Content & Examination Directorate' : 'Examination Board',
+      year: 'Appointed Platform Administrator',
+      enrolledLabs: ['anatomy', 'histology', 'biochemistry'],
+      avatarUrl: `https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150`,
+      createdAt: now,
+      lastLoginAt: now,
+      lastActivityAt: now,
+      sessionCount: 1,
+      canPublishAnatomyExams: true
+    };
+
+    // Mark invite used
+    inv.isUsed = true;
+    inv.usedAt = now;
+    inv.usedByAdminId = newAdminId;
+    inv.usedByAdminName = params.fullName;
+    inv.usedByAdminEmail = params.email;
+    this.setStoredInvites(invites);
+
+    // Save user
     const users = this.getStoredUsers();
-    const targetUser = users.find(u => u.role === role) || DEMO_USERS.find(u => u.role === role) || DEMO_USERS[0];
-    this.loginAsUser(targetUser);
-    return targetUser;
+    users.push(newAdminUser);
+    this.saveStoredUsers(users);
+
+    const safeUser: User = { ...newAdminUser };
+    const session: AuthSession = {
+      user: safeUser,
+      token: this.generateSessionToken(safeUser),
+      expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000
+    };
+    this.saveSession(session);
+
+    this.logAdminActivity({
+      adminId: newAdminId,
+      adminName: params.fullName,
+      adminEmail: params.email,
+      adminRole: inv.role,
+      action: 'admin_registered',
+      actionTitleArabic: `تسجيل وقبول دعوة مسؤول جديد بدور (${inv.roleTitle})`,
+      section: 'Staff Onboarding',
+      targetTitle: params.fullName
+    });
+
+    return safeUser;
+  }
+
+  public async revokeAdminInvite(inviteId: string, caller: User): Promise<void> {
+    if (caller.role !== 'owner' && caller.role !== 'admin') {
+      throw new Error('Access denied.');
+    }
+
+    try {
+      const session = this.getSession();
+      await fetch(`/api/admin/invites/${inviteId}/revoke`, {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${session?.token || ''}` }
+      });
+    } catch {}
+
+    const invites = this.getStoredInvites();
+    const inv = invites.find(i => i.id === inviteId);
+    if (inv) {
+      inv.isRevoked = true;
+      inv.revokedAt = new Date().toISOString();
+      this.setStoredInvites(invites);
+
+      this.logAdminActivity({
+        adminId: caller.id,
+        adminName: caller.name,
+        adminEmail: caller.email,
+        adminRole: caller.role,
+        action: 'revoke_invite',
+        actionTitleArabic: `إلغاء رابط دعوة مسؤول (${inv.roleTitle})`,
+        section: 'Admin Invites',
+        targetTitle: inv.roleTitle
+      });
+    }
+  }
+
+  // ==========================================
+  // --- ADMIN STAFF MANAGEMENT ---
+  // ==========================================
+
+  public async getStaffMembers(caller: User): Promise<User[]> {
+    if (caller.role !== 'owner' && caller.role !== 'admin') {
+      throw new Error('Access denied: Staff list is exclusive to OWNER.');
+    }
+
+    try {
+      const session = this.getSession();
+      const res = await fetch('/api/admin/staff', {
+        headers: { 'Authorization': `Bearer ${session?.token || ''}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) {
+          return data;
+        }
+      }
+    } catch {}
+
+    // Local fallback: Return only staff users (owner, content_exams, exams_only)
+    const allUsers = this.getStoredUsers();
+    return allUsers
+      .filter(u => u.role === 'owner' || u.role === 'admin' || u.role === 'content_exams' || u.role === 'exams_only')
+      .map(u => {
+        const { passwordHash, ...safe } = u;
+        return safe;
+      });
+  }
+
+  public async updateStaffRole(userId: string, newRole: 'content_exams' | 'exams_only', caller: User): Promise<void> {
+    if (caller.role !== 'owner' && caller.role !== 'admin') {
+      throw new Error('Access denied.');
+    }
+
+    try {
+      const session = this.getSession();
+      await fetch(`/api/admin/staff/${userId}/role`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.token || ''}`
+        },
+        body: JSON.stringify({ role: newRole })
+      });
+    } catch {}
+
+    const all = this.getStoredUsers();
+    const target = all.find(u => u.id === userId);
+    if (target) {
+      if (target.role === 'owner') {
+        throw new Error('Cannot change the role of the platform OWNER.');
+      }
+      target.role = newRole;
+      this.saveStoredUsers(all);
+
+      this.logAdminActivity({
+        adminId: caller.id,
+        adminName: caller.name,
+        adminEmail: caller.email,
+        adminRole: caller.role,
+        action: 'role_changed',
+        actionTitleArabic: `تعديل دور المسؤول ${target.name} إلى (${newRole === 'content_exams' ? 'CONTENT + EXAMS' : 'EXAMS ONLY'})`,
+        section: 'Staff Management',
+        targetTitle: target.name
+      });
+    }
+  }
+
+  public async removeStaffMember(userId: string, caller: User): Promise<void> {
+    if (caller.role !== 'owner' && caller.role !== 'admin') {
+      throw new Error('Access denied.');
+    }
+
+    try {
+      const session = this.getSession();
+      await fetch(`/api/admin/staff/${userId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${session?.token || ''}` }
+      });
+    } catch {}
+
+    let all = this.getStoredUsers();
+    const target = all.find(u => u.id === userId);
+    if (target) {
+      if (target.role === 'owner') {
+        throw new Error('Cannot remove the platform OWNER.');
+      }
+      all = all.filter(u => u.id !== userId);
+      this.saveStoredUsers(all);
+
+      this.logAdminActivity({
+        adminId: caller.id,
+        adminName: caller.name,
+        adminEmail: caller.email,
+        adminRole: caller.role,
+        action: 'admin_removed',
+        actionTitleArabic: `حذف حساب المسؤول: ${target.name}`,
+        section: 'Staff Management',
+        targetTitle: target.name
+      });
+    }
+  }
+
+  // ==========================================
+  // --- ACTIVITY LOGGING (OWNER ONLY VIEW) ---
+  // ==========================================
+
+  public async getActivityLogs(caller: User): Promise<ActivityLogRecord[]> {
+    if (caller.role !== 'owner' && caller.role !== 'admin') {
+      throw new Error('Access denied: Activity log is exclusive to OWNER.');
+    }
+
+    try {
+      const session = this.getSession();
+      const res = await fetch('/api/admin/activity-log', {
+        headers: { 'Authorization': `Bearer ${session?.token || ''}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          this.setStoredActivityLogs(data);
+          return data;
+        }
+      }
+    } catch {}
+
+    return this.getStoredActivityLogs();
+  }
+
+  public async logAdminActivity(record: Omit<ActivityLogRecord, 'id' | 'timestamp'>): Promise<void> {
+    const fullRecord: ActivityLogRecord = {
+      ...record,
+      id: `act_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+      timestamp: new Date().toISOString()
+    };
+
+    // Save locally
+    const list = this.getStoredActivityLogs();
+    list.unshift(fullRecord);
+    this.setStoredActivityLogs(list.slice(0, 500));
+
+    // Send to server
+    try {
+      const session = this.getSession();
+      fetch('/api/admin/activity-log', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.token || ''}`
+        },
+        body: JSON.stringify(fullRecord)
+      }).catch(() => {});
+    } catch {}
+  }
+
+  private getStoredActivityLogs(): ActivityLogRecord[] {
+    try {
+      const raw = localStorage.getItem(ADMIN_ACTIVITY_LOG_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  private setStoredActivityLogs(logs: ActivityLogRecord[]): void {
+    try {
+      localStorage.setItem(ADMIN_ACTIVITY_LOG_KEY, JSON.stringify(logs));
+    } catch (e) {
+      console.error('Failed to cache activity logs:', e);
+    }
   }
 }
 

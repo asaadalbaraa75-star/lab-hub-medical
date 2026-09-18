@@ -44,7 +44,11 @@ import { AdminExamsTab } from './tabs/AdminExamsTab';
 import { AdminQuestionBankTab } from './tabs/AdminQuestionBankTab';
 import { AdminNotificationsTab } from './tabs/AdminNotificationsTab';
 import { AdminAiSettingsTab } from './tabs/AdminAiSettingsTab';
-import { Radio, HelpCircle, Award, Bell, Bot } from 'lucide-react';
+import { AdminInvitesTab } from './tabs/AdminInvitesTab';
+import { AdminStaffTab } from './tabs/AdminStaffTab';
+import { AdminActivityLogTab } from './tabs/AdminActivityLogTab';
+import { securityService } from '../../services/securityService';
+import { Radio, HelpCircle, Award, Bell, Bot, UserPlus, ShieldAlert } from 'lucide-react';
 import { OwnershipWatermark } from '../common/OwnershipWatermark';
 
 interface AdminDashboardProps {
@@ -81,33 +85,51 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [selectedUserForLogs, setSelectedUserForLogs] = useState<User | null>(null);
   const [userSpecificLogs, setUserSpecificLogs] = useState<UserActivityRecord[]>([]);
 
-  // Strict Authorization Check
-  const isAdmin = currentUser.role === 'admin';
+  // Strict Authorization Check: Platform Owner and designated assistants only
+  const isOwner = currentUser.role === 'owner' || currentUser.role === 'admin';
+  const isAuthorizedStaff = isOwner || currentUser.role === 'content_exams' || currentUser.role === 'exams_only';
 
   // Read subpage from hash if present (e.g. #admin/users, #admin/activity)
   useEffect(() => {
     const parseHash = () => {
       const hash = window.location.hash.toLowerCase();
-      if (hash.includes('admin/users')) setActiveSubPage('users');
-      else if (hash.includes('admin/active_users') || hash.includes('admin/active-users')) setActiveSubPage('active_users');
-      else if (hash.includes('admin/activity')) setActiveSubPage('activity');
-      else if (hash.includes('admin/analytics')) setActiveSubPage('analytics');
-      else if (hash.includes('admin/exams')) setActiveSubPage('exams');
-      else if (hash.includes('admin/question_bank') || hash.includes('admin/questions')) setActiveSubPage('question_bank');
-      else if (hash.includes('admin/notifications')) setActiveSubPage('notifications');
-      else if (hash.includes('admin/ai_settings') || hash.includes('admin/ai')) setActiveSubPage('ai_settings');
-      else if (hash.includes('admin/content')) setActiveSubPage('content');
-      else if (hash.includes('admin/videos')) setActiveSubPage('videos');
-      else if (hash.includes('admin/security')) setActiveSubPage('security');
-      else if (hash === '#admin') setActiveSubPage('overview');
+      let target: AdminSubPage = 'overview';
+
+      if (hash.includes('admin/invites')) target = 'invites';
+      else if (hash.includes('admin/admins') || hash.includes('admin/staff')) target = 'admins';
+      else if (hash.includes('admin/users')) target = 'users';
+      else if (hash.includes('admin/active_users') || hash.includes('admin/active-users')) target = 'active_users';
+      else if (hash.includes('admin/activity')) target = 'activity';
+      else if (hash.includes('admin/analytics')) target = 'analytics';
+      else if (hash.includes('admin/exams')) target = 'exams';
+      else if (hash.includes('admin/question_bank') || hash.includes('admin/questions')) target = 'question_bank';
+      else if (hash.includes('admin/notifications')) target = 'notifications';
+      else if (hash.includes('admin/ai_settings') || hash.includes('admin/ai')) target = 'ai_settings';
+      else if (hash.includes('admin/content')) target = 'content';
+      else if (hash.includes('admin/videos')) target = 'videos';
+      else if (hash.includes('admin/security')) target = 'security';
+      else if (hash === '#admin') target = 'overview';
+
+      // Enforce RBAC on the requested subpage
+      if (securityService.canAccessAdminSubPage(currentUser.role, target)) {
+        setActiveSubPage(target);
+      } else {
+        const fallback: AdminSubPage = securityService.canAccessAdminSubPage(currentUser.role, 'overview')
+          ? 'overview'
+          : 'question_bank';
+        setActiveSubPage(fallback);
+      }
     };
 
     parseHash();
     window.addEventListener('hashchange', parseHash);
     return () => window.removeEventListener('hashchange', parseHash);
-  }, []);
+  }, [currentUser.role]);
 
   const changeSubPage = (page: AdminSubPage) => {
+    if (!securityService.canAccessAdminSubPage(currentUser.role, page)) {
+      return;
+    }
     setActiveSubPage(page);
     window.location.hash = page === 'overview' ? '#admin' : `#admin/${page}`;
     if (onNavigateSubPage) {
@@ -116,14 +138,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   };
 
   const loadData = async () => {
-    if (!isAdmin) return;
+    if (!isAuthorizedStaff) return;
     setIsLoading(true);
     try {
       const [fetchedUsers, fetchedActivities, fetchedMetrics, fetchedBreakdown] = await Promise.all([
-        authService.getAllUsers(currentUser),
-        authService.getAllActivities(currentUser),
-        authService.getAdminMetrics(currentUser),
-        authService.getAnalyticsBreakdown(currentUser)
+        isOwner ? authService.getAllUsers(currentUser) : Promise.resolve([]),
+        isOwner ? authService.getAllActivities(currentUser) : Promise.resolve([]),
+        isOwner ? authService.getAdminMetrics(currentUser) : Promise.resolve({ totalUsers: 0, todaysLogins: 0, activeRecently: 0, newUsersThisWeek: 0 }),
+        isOwner ? authService.getAnalyticsBreakdown(currentUser) : Promise.resolve(null)
       ]);
 
       setUsers(fetchedUsers);
@@ -139,7 +161,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   };
 
   useEffect(() => {
-    if (isAdmin) {
+    if (isAuthorizedStaff) {
       loadData();
     }
   }, [currentUser]);
@@ -160,7 +182,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     if (!res.success) {
       throw new Error(res.error || 'Failed to update user role.');
     }
-    // Reload data to reflect change
     await loadData();
   };
 
@@ -172,24 +193,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     await loadData();
   };
 
-  // If unauthorized student tries to access, block with 403 Forbidden screen
-  if (!isAdmin) {
+  // If unauthorized visitor/student tries to access, block with 403 Forbidden screen
+  if (!isAuthorizedStaff) {
     return (
-      <div className="max-w-xl mx-auto my-16 p-8 bg-white rounded-3xl border border-rose-200 shadow-xl text-center space-y-5 animate-in fade-in">
+      <div className="max-w-xl mx-auto my-16 p-8 bg-white rounded-3xl border border-rose-200 shadow-xl text-center space-y-5 animate-in fade-in" dir="rtl">
         <div className="w-16 h-16 rounded-3xl bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center mx-auto">
           <AlertTriangle className="w-8 h-8" />
         </div>
         <div className="space-y-1">
           <h2 className="text-xl font-black text-slate-900">403 — غير مصرح بالدخول (Access Denied)</h2>
           <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
-            لوحة الإدارة والحوكمة محصورة بعمادة كلية الطب والمسؤولين المعتمدين فقط. حسابك الحالي مسجل بدور طالب (<span className="font-mono text-indigo-600 font-bold">student</span>) ولا يملك الصلاحيات الإدارية المطلوبة.
-          </p>
-        </div>
-
-        <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-600 text-right space-y-1">
-          <div className="font-bold text-slate-800">حماية الصلاحيات الصارمة (Role-Based Access Control):</div>
-          <p className="text-[11px] text-slate-500">
-            يتم التحقق من الصلاحيات وتوثيق التوكن على الخادم (Server-Side). لا يمكن للطلاب تصعيد صلاحياتهم من المتصفح.
+            منطقة الإدارة مخصصة حصرياً لمالكة المنصة وفريق المساعدين المعتمدين عبر روابط الدعوة الرسمية. الطلاب يستفيدون من المنصة والاختبارات مباشرة وبدون حسابات.
           </p>
         </div>
 
@@ -200,28 +214,30 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition-colors shadow-sm inline-flex items-center gap-2"
           >
             <ArrowRight className="w-4 h-4" />
-            <span>العودة إلى المعامل والمحتوى الطلابي</span>
+            <span>العودة إلى المعامل والمحتوى المفتوح</span>
           </button>
         )}
       </div>
     );
   }
 
-  // Navigation Tabs Configuration (Fully in Professional Administrative Arabic)
-  const navTabs: { id: AdminSubPage; label: string; icon: React.ReactNode; badge?: number }[] = [
+  // Navigation Tabs Configuration (RBAC filtered)
+  const allTabs: { id: AdminSubPage; label: string; icon: React.ReactNode; badge?: number }[] = [
     { id: 'overview', label: 'الرئيسية والإحصائيات', icon: <Home className="w-4 h-4" /> },
     { id: 'exams', label: 'إدارة الامتحانات (Exams)', icon: <Award className="w-4 h-4 text-purple-600" /> },
     { id: 'question_bank', label: 'بنك الأسئلة (OSPE Bank)', icon: <HelpCircle className="w-4 h-4 text-indigo-600" /> },
-    { id: 'users', label: 'إدارة الطلاب والمستخدمين', icon: <Users className="w-4 h-4" />, badge: users.length },
-    { id: 'active_users', label: 'النشطون حالياً', icon: <Radio className="w-4 h-4 text-emerald-500" /> },
-    { id: 'activity', label: 'سجل الدخول والأنشطة', icon: <Activity className="w-4 h-4" />, badge: activities.length },
+    { id: 'content', label: 'إدارة المحتوى المعملي', icon: <BookOpen className="w-4 h-4 text-emerald-600" /> },
+    { id: 'videos', label: 'إدارة الفيديوهات', icon: <Video className="w-4 h-4 text-cyan-600" /> },
+    { id: 'invites', label: 'دعوات المسؤولين (ADMIN INVITES)', icon: <UserPlus className="w-4 h-4 text-indigo-600" /> },
+    { id: 'admins', label: 'إدارة المسؤولين (STAFF)', icon: <Users className="w-4 h-4 text-purple-600" /> },
+    { id: 'activity', label: 'سجل النشاط (ACTIVITY LOG)', icon: <Activity className="w-4 h-4 text-emerald-600" />, badge: activities.length },
     { id: 'analytics', label: 'التحليلات المتقدمة', icon: <TrendingUp className="w-4 h-4" /> },
-    { id: 'content', label: 'إدارة المحتوى المعملي', icon: <BookOpen className="w-4 h-4" /> },
-    { id: 'videos', label: 'إدارة الفيديوهات', icon: <Video className="w-4 h-4" /> },
     { id: 'notifications', label: 'مركز الإشعارات', icon: <Bell className="w-4 h-4 text-amber-500" /> },
     { id: 'ai_settings', label: 'المساعد الذكي (AI Tutor)', icon: <Bot className="w-4 h-4 text-cyan-600" /> },
     { id: 'security', label: 'الأمان والامتيازات', icon: <Lock className="w-4 h-4" /> }
   ];
+
+  const navTabs = allTabs.filter(tab => securityService.canAccessAdminSubPage(currentUser.role, tab.id));
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-16">
@@ -229,8 +245,18 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       <div className="bg-white rounded-3xl border border-[#E2E8F0] shadow-xs p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-1 text-right">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="px-2.5 py-0.5 rounded-md bg-purple-50 text-purple-700 border border-purple-200 text-[11px] font-black uppercase tracking-wider">
-              Faculty Administration Workspace
+            <span className={`px-2.5 py-0.5 rounded-md text-[11px] font-black uppercase tracking-wider border ${
+              isOwner
+                ? 'bg-amber-50 text-amber-800 border-amber-300'
+                : currentUser.role === 'content_exams'
+                ? 'bg-indigo-50 text-indigo-700 border-indigo-200'
+                : 'bg-purple-50 text-purple-700 border-purple-200'
+            }`}>
+              {isOwner
+                ? 'PLATFORM OWNER • مالكة المنصة (سكينة أسعد)'
+                : currentUser.role === 'content_exams'
+                ? 'CONTENT + EXAMS ASSISTANT • إدارة المحتوى والامتحانات'
+                : 'EXAMS ONLY ASSISTANT • بنك الأسئلة والامتحانات فقط'}
             </span>
             <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -240,11 +266,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
 
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-            LAB HUB <span className="text-indigo-600 font-extrabold text-xl sm:text-2xl block sm:inline sm:mr-2">Admin Dashboard</span>
+            LAB HUB <span className="text-indigo-600 font-extrabold text-xl sm:text-2xl block sm:inline sm:mr-2">
+              {isOwner ? 'لوحة التحكم والإدارة المركزية' : 'بوابة مساعد المحتوى والامتحانات'}
+            </span>
           </h1>
 
           <p className="text-xs text-slate-500">
-            لوحة الإدارة والتحكم الشاملة بكلية الطب — إدارة الحسابات، متابعة سجل النشاط الطلابي، وإدارة المحتوى والتحليلات
+            {isOwner
+              ? 'لوحة الإدارة والتحكم الشاملة بكلية الطب — إدارة بنك الأسئلة، المحتوى المعملي، روابط دعوات المساعدين، وسجل النشاط'
+              : 'منظومة إدارة بنك الأسئلة ورفع الصور والاختبارات المصرح بها حسب الدور المعتمد'}
           </p>
         </div>
 
@@ -328,13 +358,20 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         )}
 
         {activeSubPage === 'activity' && (
-          <AdminActivityTab
-            users={users}
-            activities={activities}
-            selectedUserForLogs={selectedUserForLogs}
-            userSpecificLogs={userSpecificLogs}
-            onSelectUserForLogs={handleSelectUserForLogs}
-            onCloseUserLogsModal={handleCloseUserLogsModal}
+          <AdminActivityLogTab
+            currentUser={currentUser}
+          />
+        )}
+
+        {activeSubPage === 'invites' && (
+          <AdminInvitesTab
+            currentUser={currentUser}
+          />
+        )}
+
+        {activeSubPage === 'admins' && (
+          <AdminStaffTab
+            currentUser={currentUser}
           />
         )}
 

@@ -1,6 +1,61 @@
-export type UserRole = 'student' | 'instructor' | 'admin';
+export type UserRole = 
+  | 'owner'            // Platform Owner (سكينة أسعد) - Full system control
+  | 'content_exams'    // Assistant 1 (Content + Exams) - Lessons, images, questions, exams
+  | 'exams_only'       // Assistant 2 & 3 (Exams Only) - Questions, exams, exam images
+  | 'student'          // Open public visitor / student (no login required)
+  | 'instructor'       // Legacy faculty tier
+  | 'admin';           // Legacy admin tier alias for owner
 
 export type LabSubjectId = 'anatomy' | 'histology' | 'biochemistry';
+
+export interface AdminInvite {
+  id: string;
+  token: string;
+  role: 'content_exams' | 'exams_only';
+  roleTitle: string;
+  createdBy: string;
+  createdAt: string;
+  expiresAt: string;
+  isUsed: boolean;
+  usedAt?: string;
+  usedByAdminId?: string;
+  usedByAdminName?: string;
+  usedByAdminEmail?: string;
+  isRevoked: boolean;
+  revokedAt?: string;
+  note?: string;
+}
+
+export interface ActivityLogRecord {
+  id: string;
+  adminId: string;
+  adminName: string;
+  adminEmail: string;
+  adminRole: UserRole;
+  action: 
+    | 'create_question' 
+    | 'edit_question' 
+    | 'delete_question' 
+    | 'upload_image' 
+    | 'replace_image' 
+    | 'delete_image' 
+    | 'create_exam' 
+    | 'edit_exam' 
+    | 'publish_exam' 
+    | 'delete_exam' 
+    | 'edit_lesson' 
+    | 'create_invite' 
+    | 'revoke_invite' 
+    | 'admin_registered' 
+    | 'admin_login'
+    | 'role_changed'
+    | 'admin_removed';
+  actionTitleArabic: string;
+  section: string;
+  targetTitle?: string;
+  timestamp: string;
+  details?: Record<string, any>;
+}
 
 export type PracticalStatus = 
   | 'draft' 
@@ -58,6 +113,8 @@ export interface AuthSession {
 
 export type AdminSubPage = 
   | 'overview' 
+  | 'invites'
+  | 'admins'
   | 'users' 
   | 'active_users'
   | 'activity' 
@@ -446,6 +503,8 @@ export type ExamType =
   | 'joint_id'
   | 'spotter';
 
+export type QuestionStatus = 'draft' | 'pending_review' | 'approved' | 'published' | 'rejected';
+
 export interface ExamQuestion {
   id: string;
   labId: LabSubjectId;
@@ -469,6 +528,14 @@ export interface ExamQuestion {
   language?: 'en' | 'ar' | 'bilingual';
   timeSeconds: number; // e.g. 30, 45, 60
   marks: number; // e.g. 1, 2
+  status?: QuestionStatus; // Contributor workflow: draft -> pending_review -> approved -> published
+  authorId?: string;
+  authorName?: string;
+  authorRole?: string;
+  submittedAt?: string;
+  reviewedBy?: string;
+  reviewedAt?: string;
+  reviewNotes?: string;
 }
 
 export interface MedicalExam {

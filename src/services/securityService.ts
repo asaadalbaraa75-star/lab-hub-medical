@@ -6,6 +6,8 @@
  * Security Architecture & Data Integrity Service
  */
 
+import { UserRole, AdminSubPage } from '../types';
+
 export interface SecurityAuditResult {
   passed: boolean;
   score: number;
@@ -83,41 +85,81 @@ export class SecurityService {
    * Role-based access control (RBAC) permission validator
    */
   public hasPermission(
-    userRole: 'student' | 'instructor' | 'admin',
+    userRole: UserRole,
     action: 
       | 'view_content' 
       | 'take_exam' 
       | 'save_own_progress' 
+      | 'edit_content'
+      | 'upload_lesson_image'
       | 'edit_questions' 
       | 'delete_questions' 
       | 'create_exams' 
       | 'delete_exams' 
+      | 'publish_exams'
+      | 'upload_question_image'
       | 'review_approvals' 
       | 'manage_users' 
+      | 'manage_invites'
+      | 'view_activity_log'
       | 'system_admin'
   ): boolean {
+    const isOwner = userRole === 'owner' || userRole === 'admin';
+    const isContentAdmin = userRole === 'content_exams';
+    const isExamsAdmin = userRole === 'exams_only';
+
     switch (action) {
       case 'view_content':
       case 'take_exam':
       case 'save_own_progress':
-        return true; // All authenticated roles can study and take exams
+        return true; // Open access for all visitors and staff
+
+      case 'edit_content':
+      case 'upload_lesson_image':
+        return isOwner || isContentAdmin; // Exams-only assistants CANNOT edit lesson content
 
       case 'edit_questions':
       case 'create_exams':
-        return userRole === 'instructor' || userRole === 'admin';
+      case 'upload_question_image':
+        return isOwner || isContentAdmin || isExamsAdmin || userRole === 'instructor';
 
+      case 'publish_exams':
       case 'delete_questions':
       case 'delete_exams':
       case 'review_approvals':
-        return userRole === 'instructor' || userRole === 'admin';
-
       case 'manage_users':
+      case 'manage_invites':
+      case 'view_activity_log':
       case 'system_admin':
-        return userRole === 'admin';
+        return isOwner; // OWNER exclusive privilege
 
       default:
         return false;
     }
+  }
+
+  /**
+   * Admin dashboard sub-page access control based on user role
+   */
+  public canAccessAdminSubPage(userRole: UserRole, page: AdminSubPage): boolean {
+    const isOwner = userRole === 'owner' || userRole === 'admin';
+    const isContentAdmin = userRole === 'content_exams';
+    const isExamsAdmin = userRole === 'exams_only';
+
+    // Owner has unrestricted access to every sub-page
+    if (isOwner) return true;
+
+    if (isContentAdmin) {
+      // CONTENT + EXAMS assistant role: Question Bank, Content, Videos
+      return ['question_bank', 'content', 'videos'].includes(page);
+    }
+
+    if (isExamsAdmin) {
+      // EXAMS ONLY assistant role: Question Bank only
+      return ['question_bank'].includes(page);
+    }
+
+    return false;
   }
 
   /**

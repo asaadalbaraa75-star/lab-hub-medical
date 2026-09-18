@@ -23,12 +23,14 @@ interface PlatformFooterProps {
   onOpenAbout?: () => void;
   onOpenSecurityAudit?: () => void;
   onSelectTab?: (tab: string, labId?: any) => void;
+  onOpenAdminLogin?: () => void;
 }
 
 export const PlatformFooter: React.FC<PlatformFooterProps> = ({
   onOpenAbout,
   onOpenSecurityAudit,
-  onSelectTab
+  onSelectTab,
+  onOpenAdminLogin
 }) => {
   return (
     <footer
@@ -156,8 +158,23 @@ export const PlatformFooter: React.FC<PlatformFooterProps> = ({
             <span className="text-purple-300 font-medium" dir="rtl">تطوير: سكينة أسعد</span>
           </div>
 
-          <div className="text-slate-400 text-center sm:text-right text-[11px]">
-            جميع الحقوق محفوظة للمنصة • منصة المعامل الطبية والامتحانات العملية
+          <div className="flex items-center gap-4">
+            <div className="text-slate-400 text-center sm:text-right text-[11px]">
+              جميع الحقوق محفوظة للمنصة • منصة المعامل والامتحانات الطبية المفتوحة
+            </div>
+
+            {onOpenAdminLogin && (
+              <button
+                type="button"
+                id="footer-admin-access-btn"
+                onClick={onOpenAdminLogin}
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold text-slate-400 hover:text-amber-300 bg-white/5 hover:bg-amber-950/40 border border-white/10 hover:border-amber-500/40 transition-all cursor-pointer font-mono"
+                title="Admin & Faculty Assistants Portal"
+              >
+                <Lock className="w-3 h-3 text-amber-400" />
+                <span>ADMIN ACCESS / بوابة المسؤولين</span>
+              </button>
+            )}
           </div>
         </div>
       </div>

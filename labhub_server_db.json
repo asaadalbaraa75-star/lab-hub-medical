@@ -1,26 +1,26 @@
 {
   "users": [
     {
-      "id": "usr_student_1",
-      "userId": "usr_student_1",
-      "name": "Sarah Al-Mansoor",
-      "fullName": "Sarah Al-Mansoor",
-      "email": "student@med.edu",
-      "role": "student",
-      "passwordHash": "36573902530099b13f14c2cdd32aa7c3c0b5add337fe7d5f8368c5215e4ac1c4",
-      "studentId": "MED-2026-4891",
-      "department": "Faculty of Medicine — 2nd Year MBBS",
-      "year": "Year 2 (Pre-Clinical)",
+      "id": "usr_owner_soukaina",
+      "userId": "usr_owner_soukaina",
+      "name": "سكينة أسعد",
+      "fullName": "سكينة أسعد (Soukaina Asaad)",
+      "email": "owner@labhub.med",
+      "role": "owner",
+      "passwordHash": "6d7e39958492188b09d24293534cfc6dee75c1f284c72624299ae75c82c46dd1",
+      "studentId": "OWNER-2026-001",
+      "department": "Academic Directorate & Laboratory Board",
+      "year": "Platform Founder & Lead Anatomist",
       "enrolledLabs": [
         "anatomy",
         "histology",
         "biochemistry"
       ],
-      "avatarUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
-      "createdAt": "2026-01-10T08:00:00.000Z",
-      "lastLoginAt": "2026-09-13T18:01:52.231Z",
-      "lastActivityAt": "2026-09-13T18:01:52.231Z",
-      "sessionCount": 14
+      "avatarUrl": "https://images.unsplash.com/photo-1594824813680-79883506ecf5?w=150&auto=format&fit=crop&q=80",
+      "createdAt": "2026-01-01T08:00:00.000Z",
+      "lastLoginAt": "2026-09-18T10:53:45.944Z",
+      "lastActivityAt": "2026-09-18T10:53:45.944Z",
+      "sessionCount": 50
     },
     {
       "id": "usr_admin_1",
@@ -41,8 +41,10 @@
       "avatarUrl": "https://images.unsplash.com/photo-1594824813680-79883506ecf5?w=150&auto=format&fit=crop&q=80",
       "createdAt": "2025-09-01T08:00:00.000Z",
       "lastLoginAt": "2026-09-13T18:01:52.231Z",
-      "lastActivityAt": "2026-09-13T19:33:43.081Z",
-      "sessionCount": 42
+      "lastActivityAt": "2026-09-18T10:50:47.709Z",
+      "sessionCount": 42,
+      "currentSessionStatus": "online",
+      "isOnline": true
     },
     {
       "id": "usr_instructor_1",
@@ -67,545 +69,1277 @@
       "sessionCount": 29
     },
     {
-      "id": "usr_student_2",
-      "userId": "usr_student_2",
-      "name": "Omar Farooq",
-      "fullName": "Omar Farooq",
-      "email": "omar@med.edu",
-      "role": "student",
-      "passwordHash": "36573902530099b13f14c2cdd32aa7c3c0b5add337fe7d5f8368c5215e4ac1c4",
-      "studentId": "MED-2026-5120",
-      "department": "Faculty of Medicine — 1st Year MBBS",
-      "year": "Year 1 (Pre-Clinical)",
+      "id": "usr_assistant_1",
+      "userId": "usr_assistant_1",
+      "name": "مساعد 1 (Assistant 1)",
+      "fullName": "Assistant 1 — Content & Exams",
+      "email": "assistant1@labhub.med",
+      "role": "content_exams",
+      "passwordHash": "ab8d8f3b8649d8553d642577476693d22175c262d883dc34fb6c883c06cc3d77",
+      "studentId": "AST-MED-001",
+      "department": "Faculty Assistant Team",
+      "year": "Assistant 1 (Content & Exams)",
+      "enrolledLabs": [
+        "anatomy",
+        "histology",
+        "biochemistry"
+      ],
+      "avatarUrl": "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150&auto=format&fit=crop&q=80",
+      "createdAt": "2026-02-01T08:00:00.000Z",
+      "lastLoginAt": "2026-09-18T10:53:46.728Z",
+      "lastActivityAt": "2026-09-18T10:53:46.728Z",
+      "sessionCount": 11,
+      "isOnline": true,
+      "currentSessionStatus": "online"
+    },
+    {
+      "id": "usr_assistant_2",
+      "userId": "usr_assistant_2",
+      "name": "مساعد 2 (Assistant 2)",
+      "fullName": "Assistant 2 — Exams Only",
+      "email": "assistant2@labhub.med",
+      "role": "exams_only",
+      "passwordHash": "ab8d8f3b8649d8553d642577476693d22175c262d883dc34fb6c883c06cc3d77",
+      "studentId": "AST-MED-002",
+      "department": "Faculty Assistant Team",
+      "year": "Assistant 2 (Exams Only)",
       "enrolledLabs": [
         "anatomy",
         "histology",
         "biochemistry"
       ],
       "avatarUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
-      "createdAt": "2026-02-01T09:30:00.000Z",
-      "lastLoginAt": "2026-09-13T13:01:52.231Z",
-      "lastActivityAt": "2026-09-13T14:01:52.231Z",
-      "sessionCount": 8
+      "createdAt": "2026-02-01T08:00:00.000Z",
+      "lastLoginAt": "2026-09-18T10:53:49.564Z",
+      "lastActivityAt": "2026-09-18T10:53:49.564Z",
+      "sessionCount": 6,
+      "isOnline": true,
+      "currentSessionStatus": "online"
+    },
+    {
+      "id": "usr_assistant_3",
+      "userId": "usr_assistant_3",
+      "name": "مساعد 3 (Assistant 3)",
+      "fullName": "Assistant 3 — Exams Only",
+      "email": "assistant3@labhub.med",
+      "role": "exams_only",
+      "passwordHash": "ab8d8f3b8649d8553d642577476693d22175c262d883dc34fb6c883c06cc3d77",
+      "studentId": "AST-MED-003",
+      "department": "Faculty Assistant Team",
+      "year": "Assistant 3 (Exams Only)",
+      "enrolledLabs": [
+        "anatomy",
+        "histology",
+        "biochemistry"
+      ],
+      "avatarUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+      "createdAt": "2026-02-01T08:00:00.000Z",
+      "lastLoginAt": "2026-09-18T10:53:49.579Z",
+      "lastActivityAt": "2026-09-18T10:53:49.579Z",
+      "sessionCount": 3,
+      "isOnline": true,
+      "currentSessionStatus": "online"
     }
   ],
   "activities": [
     {
-      "id": "act_1789328023081_yjsf",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "بدء امتحان OSPE عملي: Anatomy Lab Practical Identification Exam",
-      "section": "OSPE",
-      "timestamp": "2026-09-13T19:33:43.081Z",
-      "metadata": "Exam: exam_anat_ospe"
+      "id": "act_1789728829579_contrib",
+      "userId": "usr_assistant_3",
+      "userName": "مساعد 3 (Assistant 3)",
+      "userEmail": "assistant3@labhub.med",
+      "activity": "تسجيل دخول مساعد الأسئلة (مساعد 3 (Assistant 3)) برمز وصول خاص",
+      "section": "Question Management",
+      "timestamp": "2026-09-18T10:53:49.579Z"
     },
     {
-      "id": "act_1789328019232_4pls",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "تصفح قسم: medical_exams",
-      "section": "medical_exams",
-      "timestamp": "2026-09-13T19:33:39.232Z"
+      "id": "act_1789728829564_contrib",
+      "userId": "usr_assistant_2",
+      "userName": "مساعد 2 (Assistant 2)",
+      "userEmail": "assistant2@labhub.med",
+      "activity": "تسجيل دخول مساعد الأسئلة (مساعد 2 (Assistant 2)) برمز وصول خاص",
+      "section": "Question Management",
+      "timestamp": "2026-09-18T10:53:49.564Z"
     },
     {
-      "id": "act_1789328013819_7lz9",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "تصفح قسم: dashboard",
-      "section": "dashboard",
-      "timestamp": "2026-09-13T19:33:33.819Z"
-    },
-    {
-      "id": "act_1789327998869_z5kv",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "تصفح قسم: visual_map",
-      "section": "visual_map",
-      "timestamp": "2026-09-13T19:33:18.869Z"
-    },
-    {
-      "id": "act_1789327995330_rj7k",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "تصفح قسم: dashboard",
-      "section": "dashboard",
-      "timestamp": "2026-09-13T19:33:15.330Z"
-    },
-    {
-      "id": "act_1789327910699_ju2v",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "فتح مختبر: HISTOLOGY",
-      "section": "histology",
-      "timestamp": "2026-09-13T19:31:50.699Z"
-    },
-    {
-      "id": "act_1789327904860_srs4",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "تصفح قسم: dashboard",
-      "section": "dashboard",
-      "timestamp": "2026-09-13T19:31:44.860Z"
-    },
-    {
-      "id": "act_1789327608234_zfxs",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "فتح مختبر: HISTOLOGY",
-      "section": "histology",
-      "timestamp": "2026-09-13T19:26:48.234Z"
-    },
-    {
-      "id": "act_1789327600916_8ly3",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "تصفح قسم: dashboard",
-      "section": "dashboard",
-      "timestamp": "2026-09-13T19:26:40.916Z"
-    },
-    {
-      "id": "act_1789327588115_h10f",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "فتح مختبر: HISTOLOGY",
-      "section": "histology",
-      "timestamp": "2026-09-13T19:26:28.115Z"
-    },
-    {
-      "id": "act_1789327580626_jwga",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "تصفح قسم: dashboard",
-      "section": "dashboard",
-      "timestamp": "2026-09-13T19:26:20.626Z"
-    },
-    {
-      "id": "act_1789327530995_uid1",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "فتح مختبر: HISTOLOGY",
-      "section": "histology",
-      "timestamp": "2026-09-13T19:25:30.995Z"
-    },
-    {
-      "id": "act_1789327498213_q4fi",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "تصفح قسم: dashboard",
-      "section": "dashboard",
-      "timestamp": "2026-09-13T19:24:58.213Z"
-    },
-    {
-      "id": "act_1789327411302_rh99",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "فتح مختبر: HISTOLOGY",
-      "section": "histology",
-      "timestamp": "2026-09-13T19:23:31.302Z"
-    },
-    {
-      "id": "act_1789327408249_f9dg",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "تصفح قسم: dashboard",
-      "section": "dashboard",
-      "timestamp": "2026-09-13T19:23:28.249Z"
-    },
-    {
-      "id": "act_1789327371561_n7qm",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "فتح مختبر: HISTOLOGY",
-      "section": "histology",
-      "timestamp": "2026-09-13T19:22:51.561Z"
-    },
-    {
-      "id": "act_1789327371559_7azr",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "تصفح قسم: dashboard",
-      "section": "dashboard",
-      "timestamp": "2026-09-13T19:22:51.559Z"
-    },
-    {
-      "id": "act_1789327245329_mknm",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "فتح مختبر: HISTOLOGY",
-      "section": "histology",
-      "timestamp": "2026-09-13T19:20:45.329Z"
-    },
-    {
-      "id": "act_1789327143297_94mu",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "تصفح قسم: dashboard",
-      "section": "dashboard",
-      "timestamp": "2026-09-13T19:19:03.297Z"
-    },
-    {
-      "id": "act_1789327117418_o7bn",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "فتح مختبر: HISTOLOGY",
-      "section": "histology",
-      "timestamp": "2026-09-13T19:18:37.418Z"
-    },
-    {
-      "id": "act_1789327011635_aqa4",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "فتح مختبر: ANATOMY",
-      "section": "anatomy",
-      "timestamp": "2026-09-13T19:16:51.635Z"
-    },
-    {
-      "id": "act_1789327009560_qx6j",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "تصفح قسم: dashboard",
-      "section": "dashboard",
-      "timestamp": "2026-09-13T19:16:49.560Z"
-    },
-    {
-      "id": "act_1789326227137_12em",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "فتح مختبر: HISTOLOGY",
-      "section": "histology",
-      "timestamp": "2026-09-13T19:03:47.137Z"
-    },
-    {
-      "id": "act_1789326218614_czik",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "تصفح قسم: dashboard",
-      "section": "dashboard",
-      "timestamp": "2026-09-13T19:03:38.614Z"
-    },
-    {
-      "id": "act_1789326191689_elaz",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "فتح مختبر: HISTOLOGY",
-      "section": "histology",
-      "timestamp": "2026-09-13T19:03:11.689Z"
-    },
-    {
-      "id": "act_1789326185873_5b3m",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "تصفح قسم: dashboard",
-      "section": "dashboard",
-      "timestamp": "2026-09-13T19:03:05.873Z"
-    },
-    {
-      "id": "act_1789326149193_mx1n",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "فتح مختبر: HISTOLOGY",
-      "section": "histology",
-      "timestamp": "2026-09-13T19:02:29.193Z"
-    },
-    {
-      "id": "act_1789326135668_gp4q",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "فتح مختبر: HISTOLOGY",
-      "section": "histology",
-      "timestamp": "2026-09-13T19:02:15.668Z"
-    },
-    {
-      "id": "act_1789326135662_ivoq",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "تصفح قسم: dashboard",
-      "section": "dashboard",
-      "timestamp": "2026-09-13T19:02:15.662Z"
-    },
-    {
-      "id": "act_1789325911957_u9z2",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "فتح مختبر: ANATOMY",
-      "section": "anatomy",
-      "timestamp": "2026-09-13T18:58:31.957Z"
-    },
-    {
-      "id": "act_1789325909600_tkgf",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "تصفح قسم: dashboard",
-      "section": "dashboard",
-      "timestamp": "2026-09-13T18:58:29.600Z"
-    },
-    {
-      "id": "act_1789325884275_4fx8",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "فتح مختبر: ANATOMY",
-      "section": "anatomy",
-      "timestamp": "2026-09-13T18:58:04.275Z"
-    },
-    {
-      "id": "act_1789325752295_yop0",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "تصفح قسم: dashboard",
-      "section": "dashboard",
-      "timestamp": "2026-09-13T18:55:52.295Z"
-    },
-    {
-      "id": "act_1789325383954_8a71",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "فتح مختبر: HISTOLOGY",
-      "section": "histology",
-      "timestamp": "2026-09-13T18:49:43.954Z"
-    },
-    {
-      "id": "act_1789325374265_tfyy",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "تصفح قسم: dashboard",
-      "section": "dashboard",
-      "timestamp": "2026-09-13T18:49:34.265Z"
-    },
-    {
-      "id": "act_1789325343129_fafo",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "بدء امتحان OSPE عملي: Histology Microscopic Slide Identification Exam",
-      "section": "OSPE",
-      "timestamp": "2026-09-13T18:49:03.129Z",
-      "metadata": "Exam: exam_hist_ospe"
-    },
-    {
-      "id": "act_1789325334555_y0uu",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "تصفح قسم: medical_exams",
-      "section": "medical_exams",
-      "timestamp": "2026-09-13T18:48:54.555Z"
-    },
-    {
-      "id": "act_1789325331137_ghev",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "تصفح قسم: dashboard",
-      "section": "dashboard",
-      "timestamp": "2026-09-13T18:48:51.137Z"
-    },
-    {
-      "id": "act_1789325317885_qhwu",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "فتح مختبر: ANATOMY",
-      "section": "anatomy",
-      "timestamp": "2026-09-13T18:48:37.885Z"
-    },
-    {
-      "id": "act_1789325315805_ipo5",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "تصفح قسم: dashboard",
-      "section": "dashboard",
-      "timestamp": "2026-09-13T18:48:35.806Z"
-    },
-    {
-      "id": "act_1789325200556_azth",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "فتح مختبر: HISTOLOGY",
-      "section": "histology",
-      "timestamp": "2026-09-13T18:46:40.556Z"
-    },
-    {
-      "id": "act_1789325195950_q51i",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "تصفح قسم: dashboard",
-      "section": "dashboard",
-      "timestamp": "2026-09-13T18:46:35.950Z"
-    },
-    {
-      "id": "act_1789325139571_yzvc",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "فتح مختبر: BIOCHEMISTRY",
-      "section": "biochemistry",
-      "timestamp": "2026-09-13T18:45:39.571Z"
-    },
-    {
-      "id": "act_1789324944465_5yrn",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "تصفح قسم: dashboard",
-      "section": "dashboard",
-      "timestamp": "2026-09-13T18:42:24.465Z"
-    },
-    {
-      "id": "act_1789324132007_2xed",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "تسليم امتحان OSPE: Anatomy Lab Practical Identification Exam",
-      "section": "OSPE",
-      "timestamp": "2026-09-13T18:28:52.007Z",
-      "metadata": "النتيجة: 0% (راسب)"
-    },
-    {
-      "id": "act_1789323774196_8xs1",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "بدء امتحان OSPE عملي: Anatomy Lab Practical Identification Exam",
-      "section": "OSPE",
-      "timestamp": "2026-09-13T18:22:54.196Z",
-      "metadata": "Exam: exam_anat_ospe"
-    },
-    {
-      "id": "act_1789323770959_xcgq",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "تصفح قسم: medical_exams",
-      "section": "medical_exams",
-      "timestamp": "2026-09-13T18:22:50.959Z"
-    },
-    {
-      "id": "act_1789323712688_9dtg",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "تصفح قسم: dashboard",
-      "section": "dashboard",
-      "timestamp": "2026-09-13T18:21:52.688Z"
-    },
-    {
-      "id": "act_1789323698406_fnu4",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "فتح مختبر: BIOCHEMISTRY",
-      "section": "biochemistry",
-      "timestamp": "2026-09-13T18:21:38.406Z"
-    },
-    {
-      "id": "act_1789323695237_j9hf",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "تصفح قسم: dashboard",
-      "section": "dashboard",
-      "timestamp": "2026-09-13T18:21:35.237Z"
-    },
-    {
-      "id": "act_1789323224752_9gp4",
-      "userId": "usr_admin_1",
-      "userName": "Prof. Eleanor Hayes, MD, FRCPath",
-      "userEmail": "admin@med.edu",
-      "activity": "فتح مختبر: BIOCHEMISTRY",
-      "section": "biochemistry",
-      "timestamp": "2026-09-13T18:13:44.752Z"
-    },
-    {
-      "id": "act_seed_1",
-      "userId": "usr_student_1",
-      "userName": "Sarah Al-Mansoor",
-      "userEmail": "student@med.edu",
-      "activity": "Completed Gross Anatomy Quiz: Cranial Nerves",
-      "section": "Anatomy",
-      "timestamp": "2026-09-13T16:01:52.231Z"
-    },
-    {
-      "id": "act_seed_2",
-      "userId": "usr_student_1",
-      "userName": "Sarah Al-Mansoor",
-      "userEmail": "student@med.edu",
-      "activity": "Opened Virtual Histology Microscope: Hyaline Cartilage",
-      "section": "Histology",
-      "timestamp": "2026-09-13T12:01:52.231Z"
-    },
-    {
-      "id": "act_seed_3",
-      "userId": "usr_student_1",
-      "userName": "Sarah Al-Mansoor",
-      "userEmail": "student@med.edu",
-      "activity": "Explored Qualitative Carbohydrate Reactions: Molisch & Benedict",
-      "section": "Biochemistry",
-      "timestamp": "2026-09-13T06:01:52.231Z"
-    },
-    {
-      "id": "act_seed_4",
-      "userId": "usr_student_1",
-      "userName": "Sarah Al-Mansoor",
-      "userEmail": "student@med.edu",
-      "activity": "Watched High-Yield Video: Benedict Qualitative Reaction",
-      "section": "Biochemistry",
-      "timestamp": "2026-09-13T00:01:52.231Z"
-    },
-    {
-      "id": "act_seed_5",
-      "userId": "usr_student_2",
-      "userName": "Omar Farooq",
-      "userEmail": "omar@med.edu",
-      "activity": "Submitted OSPE Practical Simulation: Skeletal System",
-      "section": "Anatomy",
-      "timestamp": "2026-09-13T14:01:52.231Z"
-    },
-    {
-      "id": "act_seed_6",
-      "userId": "usr_student_2",
-      "userName": "Omar Farooq",
-      "userEmail": "omar@med.edu",
-      "activity": "Started Quiz: Carbohydrate Identification Reactions",
-      "section": "Biochemistry",
-      "timestamp": "2026-09-12T18:01:52.231Z"
+      "id": "act_1789728826728_contrib",
+      "userId": "usr_assistant_1",
+      "userName": "مساعد 1 (Assistant 1)",
+      "userEmail": "assistant1@labhub.med",
+      "activity": "تسجيل دخول مساعد الأسئلة (مساعد 1 (Assistant 1)) برمز وصول خاص",
+      "section": "Question Management",
+      "timestamp": "2026-09-18T10:53:46.728Z"
     }
-  ]
+  ],
+  "invites": [],
+  "exams": [
+    {
+      "id": "exam_anat_ospe",
+      "title": "Anatomy Comprehensive Practical Exam",
+      "titleArabic": "الامتحان العملي الشامل للتشريح (Anatomy Comprehensive Exam)",
+      "labId": "anatomy",
+      "examType": "mixed",
+      "description": "Comprehensive timed medical OSPE practical exam covering major osteology bones (Femur, Tibia, Humerus, Scapula), muscle dissections, and joint kinesiology.",
+      "timeLimitMinutes": 10,
+      "passingScorePercent": 75,
+      "totalMarks": 14,
+      "difficulty": "university_ospe",
+      "isPublished": true,
+      "questionIds": [
+        "anat_q1",
+        "anat_q2",
+        "anat_q3",
+        "anat_q4",
+        "anat_q5",
+        "anat_q6",
+        "anat_q7",
+        "anat_q8",
+        "anat_q9",
+        "anat_q10",
+        "anat_q11",
+        "anat_q12",
+        "anat_q13",
+        "anat_q14"
+      ],
+      "createdAt": "2026-08-28",
+      "authorName": "Department of Anatomy"
+    },
+    {
+      "id": "exam_anat_bones",
+      "title": "Bones Practical Exam",
+      "titleArabic": "امتحان العظام والهيكل العظمي (Bones Exam)",
+      "labId": "anatomy",
+      "examType": "bone_id",
+      "description": "Focused OSPE station exam on identification of dry bones, bony landmarks, axes, and osteological features (Femur, Tibia, Humerus, Scapula, Mandible, Axial skeleton).",
+      "timeLimitMinutes": 6,
+      "passingScorePercent": 70,
+      "totalMarks": 6,
+      "difficulty": "intermediate",
+      "isPublished": true,
+      "questionIds": [
+        "anat_q1",
+        "anat_q2",
+        "anat_q3",
+        "anat_q4",
+        "anat_q8",
+        "anat_q14"
+      ],
+      "createdAt": "2026-09-01",
+      "authorName": "Department of Anatomy"
+    },
+    {
+      "id": "exam_anat_muscles",
+      "title": "Muscles Practical Exam",
+      "titleArabic": "امتحان العضلات والتشريح العضلي (Muscles Exam)",
+      "labId": "anatomy",
+      "examType": "muscle_id",
+      "description": "Practical station exam on gross muscle dissections, origin/insertion landmarks, actions, and motor nerve supply (Biceps, Triceps, Deltoid, Pectoralis Major, Gastrocnemius).",
+      "timeLimitMinutes": 6,
+      "passingScorePercent": 75,
+      "totalMarks": 5,
+      "difficulty": "intermediate",
+      "isPublished": true,
+      "questionIds": [
+        "anat_q5",
+        "anat_q6",
+        "anat_q9",
+        "anat_q10",
+        "anat_q13"
+      ],
+      "createdAt": "2026-09-01",
+      "authorName": "Department of Anatomy"
+    },
+    {
+      "id": "exam_anat_movements",
+      "title": "Movements & Joints Exam",
+      "titleArabic": "امتحان الحركات والمفاصل (Movements Exam)",
+      "labId": "anatomy",
+      "examType": "movement_id",
+      "description": "Practical kinesiology and arthrology exam evaluating anatomical plane movements (Flexion, Extension, Abduction) and knee joint stabilizing ligaments.",
+      "timeLimitMinutes": 5,
+      "passingScorePercent": 70,
+      "totalMarks": 3,
+      "difficulty": "basic",
+      "isPublished": true,
+      "questionIds": [
+        "anat_q7",
+        "anat_q11",
+        "anat_q12"
+      ],
+      "createdAt": "2026-09-01",
+      "authorName": "Department of Anatomy"
+    },
+    {
+      "id": "exam_hist_ospe",
+      "title": "Histology Microscopic Slide Identification Exam",
+      "titleArabic": "اختبار الشرائح المجهرية — معمل الأنسجة (Histology Lab)",
+      "labId": "histology",
+      "examType": "image_recognition",
+      "description": "High-power photomicrograph identification of basic epithelia, cartilage, compact bone, muscle types, and blood cytology.",
+      "timeLimitMinutes": 8,
+      "passingScorePercent": 70,
+      "totalMarks": 9,
+      "difficulty": "intermediate",
+      "isPublished": true,
+      "questionIds": [
+        "hist_q1",
+        "hist_q2",
+        "hist_q3",
+        "hist_q4",
+        "hist_q5",
+        "hist_q6",
+        "hist_q7",
+        "hist_q8",
+        "hist_q9"
+      ],
+      "createdAt": "2026-08-28",
+      "authorName": "Department of Histology"
+    },
+    {
+      "id": "exam_biochem_ospe",
+      "title": "Biochemistry Practical Laboratory Tests & Interpretation",
+      "titleArabic": "اختبار التفاعلات والتفسير البيوكيميائي — معمل الكيمياء الحيوية",
+      "labId": "biochemistry",
+      "examType": "practical_interpretation",
+      "description": "Identification of biochemical test tubes, reaction mechanisms (Benedict, Iodine, Biuret, Ninhydrin, Molisch, Barfoed, Seliwanoff, Sudan), and clinical interpretations.",
+      "timeLimitMinutes": 8,
+      "passingScorePercent": 75,
+      "totalMarks": 8,
+      "difficulty": "intermediate",
+      "isPublished": true,
+      "questionIds": [
+        "biochem_q1",
+        "biochem_q2",
+        "biochem_q3",
+        "biochem_q4",
+        "biochem_q5",
+        "biochem_q6",
+        "biochem_q7",
+        "biochem_q8"
+      ],
+      "createdAt": "2026-08-29",
+      "authorName": "Department of Medical Biochemistry"
+    },
+    {
+      "id": "exam_ospe_comprehensive",
+      "title": "University Integrated Medical OSPE — Practical Examination",
+      "titleArabic": "الامتحان العملي الطبي الشامل المتكامل (OSPE)",
+      "labId": "mixed",
+      "examType": "mixed",
+      "description": "Comprehensive timed medical OSCE/OSPE practical examination covering Anatomy osteology & myology, Histology epithelia & tissues, and Biochemistry diagnostic laboratory tests.",
+      "timeLimitMinutes": 15,
+      "passingScorePercent": 70,
+      "totalMarks": 25,
+      "difficulty": "university_ospe",
+      "isPublished": true,
+      "questionIds": [
+        "anat_q1",
+        "anat_q2",
+        "anat_q3",
+        "anat_q4",
+        "anat_q5",
+        "anat_q6",
+        "anat_q7",
+        "hist_q1",
+        "hist_q2",
+        "hist_q3",
+        "hist_q4",
+        "hist_q5",
+        "hist_q6",
+        "hist_q7",
+        "hist_q9",
+        "biochem_q1",
+        "biochem_q2",
+        "biochem_q3",
+        "biochem_q4",
+        "biochem_q5",
+        "biochem_q6",
+        "biochem_q7",
+        "biochem_q8"
+      ],
+      "createdAt": "2026-08-30",
+      "authorName": "Medical Academic Examination Board"
+    }
+  ],
+  "questions": [
+    {
+      "id": "anat_q1",
+      "labId": "anatomy",
+      "type": "write_answer",
+      "topic": "Bones",
+      "difficulty": "easy",
+      "language": "bilingual",
+      "questionText": "Identify the bone shown in the anatomical specimen.",
+      "questionTextArabic": "تعرّف على العظمة الموضحة في الصورة التشريحية.",
+      "specimenCategory": "Osteology (Lower Limb)",
+      "imageUrl": "/images/anatomy/femur_anterior_osteology.png",
+      "magnificationOrView": "Anterior View / Dry Human Specimen",
+      "markerPosition": {
+        "x": 50,
+        "y": 35
+      },
+      "markerLabel": "①",
+      "options": [
+        "Femur",
+        "Tibia",
+        "Fibula",
+        "Humerus"
+      ],
+      "correctAnswer": "Femur",
+      "alternativeAnswers": [
+        "Femur",
+        "Os femoris",
+        "Thigh bone",
+        "عظم الفخذ",
+        "فخذ"
+      ],
+      "correctIndex": 0,
+      "explanation": "The Femur (thigh bone) is the longest, heaviest, and strongest bone in the human body. Characterized by a spherical head, anatomical neck, greater and lesser trochanters, and distal condyles.",
+      "clinicalNote": "Femoral neck fractures are common in elderly osteoporotic patients and carry a high risk of avascular necrosis of the femoral head due to disruption of retinacular vessels.",
+      "timeSeconds": 30,
+      "marks": 1
+    },
+    {
+      "id": "anat_q2",
+      "labId": "anatomy",
+      "type": "bone_id",
+      "topic": "Bones",
+      "difficulty": "medium",
+      "language": "bilingual",
+      "questionText": "Identify the bone shown in the image.",
+      "questionTextArabic": "تعرّف على العظمة الموضحة في الصورة.",
+      "specimenCategory": "Osteology (Lower Limb)",
+      "imageUrl": "/images/anatomy/knee_tibia_menisci_cruciate.png",
+      "magnificationOrView": "Anterior Knee & Proximal Leg Specimen",
+      "markerPosition": {
+        "x": 50,
+        "y": 65
+      },
+      "markerLabel": "①",
+      "options": [
+        "Tibia",
+        "Fibula",
+        "Femur",
+        "Radius"
+      ],
+      "correctAnswer": "Tibia",
+      "alternativeAnswers": [
+        "Tibia",
+        "Shin bone",
+        "Os tibiale",
+        "عظم الظنبوب",
+        "الظنبوب",
+        "قصبة الساق"
+      ],
+      "correctIndex": 0,
+      "explanation": "The Tibia (shin bone) is the large, weight-bearing medial bone of the leg. Key features include the tibial tuberosity, anterior border (shin), and medial malleolus.",
+      "clinicalNote": "The subcutaneous anteromedial surface of the tibia is vulnerable to direct trauma and open (compound) fractures.",
+      "timeSeconds": 30,
+      "marks": 1
+    },
+    {
+      "id": "anat_q3",
+      "labId": "anatomy",
+      "type": "write_answer",
+      "topic": "Bones",
+      "difficulty": "easy",
+      "language": "bilingual",
+      "questionText": "Identify the upper limb bone shown in the osteology specimen.",
+      "questionTextArabic": "تعرّف على عظمة الطرف العلوي الموضحة في العينة العظمية.",
+      "specimenCategory": "Osteology (Upper Limb)",
+      "imageUrl": "/images/anatomy/humerus_anterior_osteology.png",
+      "magnificationOrView": "Anterior View / Osteology Specimen",
+      "markerPosition": {
+        "x": 50,
+        "y": 40
+      },
+      "markerLabel": "①",
+      "options": [
+        "Humerus",
+        "Radius",
+        "Ulna",
+        "Clavicle"
+      ],
+      "correctAnswer": "Humerus",
+      "alternativeAnswers": [
+        "Humerus",
+        "Os humeri",
+        "Arm bone",
+        "عظم العضد",
+        "العضد"
+      ],
+      "correctIndex": 0,
+      "explanation": "The Humerus is the single bone of the arm (brachium). Features include head, anatomical neck, surgical neck, greater & lesser tubercles, intertubercular sulcus, and distal capitulum & trochlea.",
+      "clinicalNote": "Fracture of the surgical neck can injure the axillary nerve; mid-shaft fractures risk injuring the radial nerve in the spiral groove.",
+      "timeSeconds": 30,
+      "marks": 1
+    },
+    {
+      "id": "anat_q4",
+      "labId": "anatomy",
+      "type": "bone_id",
+      "topic": "Bones",
+      "difficulty": "medium",
+      "language": "bilingual",
+      "questionText": "Identify the triangular flat bone of the shoulder girdle shown.",
+      "questionTextArabic": "تعرّف على العظمة المسطحة الموضحة في حزام الكتف.",
+      "specimenCategory": "Osteology (Pectoral Girdle)",
+      "imageUrl": "/images/anatomy/scapula_posterior_osteology.svg",
+      "magnificationOrView": "Posterior View / Osteology Specimen",
+      "markerPosition": {
+        "x": 51,
+        "y": 55
+      },
+      "markerLabel": "①",
+      "options": [
+        "Scapula",
+        "Clavicle",
+        "Sternum",
+        "Rib"
+      ],
+      "correctAnswer": "Scapula",
+      "alternativeAnswers": [
+        "Scapula",
+        "Shoulder blade",
+        "عظم لوح الكتف",
+        "لوح الكتف"
+      ],
+      "correctIndex": 0,
+      "explanation": "The Scapula (shoulder blade) is a triangular flat bone located posterolaterally on the thoracic cage over ribs 2 to 7. Prominent landmarks include the spine, acromion, coracoid process, and glenoid cavity.",
+      "clinicalNote": "The shallow glenoid cavity provides high shoulder joint mobility at the expense of intrinsic bony stability, predisposing to anterior shoulder dislocation.",
+      "timeSeconds": 30,
+      "marks": 1
+    },
+    {
+      "id": "anat_q5",
+      "labId": "anatomy",
+      "type": "muscle_id",
+      "topic": "Muscles",
+      "difficulty": "medium",
+      "language": "bilingual",
+      "questionText": "Identify the prominent anterior arm muscle shown in the dissection specimen.",
+      "questionTextArabic": "ما هي العضلة البارزة في الجزء الأمامي للذراع الموضحة في العينة؟",
+      "specimenCategory": "Myology (Arm Dissection)",
+      "imageUrl": "/images/anatomy/biceps_brachii_anterior_arm.png",
+      "magnificationOrView": "Gross Dissection Model",
+      "markerPosition": {
+        "x": 52,
+        "y": 48
+      },
+      "markerLabel": "①",
+      "options": [
+        "Biceps brachii",
+        "Triceps brachii",
+        "Brachioradialis",
+        "Coracobrachialis"
+      ],
+      "correctAnswer": "Biceps brachii",
+      "alternativeAnswers": [
+        "Biceps brachii",
+        "Biceps",
+        "العضلة ذات الرأسين العضدية",
+        "ذات الرأسين"
+      ],
+      "correctIndex": 0,
+      "explanation": "Biceps brachii has two heads (long head from supraglenoid tubercle, short head from coracoid process) inserting into the radial tuberosity. Primary actions: powerful forearm supinator and elbow flexor.",
+      "clinicalNote": "Innervated by the musculocutaneous nerve (C5, C6). Testing the biceps tendon reflex evaluates the C5-C6 spinal cord segments.",
+      "timeSeconds": 30,
+      "marks": 1
+    },
+    {
+      "id": "anat_q6",
+      "labId": "anatomy",
+      "type": "muscle_id",
+      "topic": "Muscles",
+      "difficulty": "medium",
+      "language": "bilingual",
+      "questionText": "Identify the shoulder muscle responsible for arm abduction from 15° to 90°.",
+      "questionTextArabic": "تعرّف على عضلة الكتف المسؤولة عن تبعيد الذراع من 15 إلى 90 درجة.",
+      "specimenCategory": "Myology (Shoulder)",
+      "imageUrl": "/images/anatomy/deltoid_shoulder_trapezius.png",
+      "magnificationOrView": "Lateral Shoulder Specimen",
+      "markerPosition": {
+        "x": 45,
+        "y": 35
+      },
+      "markerLabel": "①",
+      "options": [
+        "Deltoid",
+        "Supraspinatus",
+        "Infraspinatus",
+        "Teres major"
+      ],
+      "correctAnswer": "Deltoid",
+      "alternativeAnswers": [
+        "Deltoid",
+        "Deltoideus",
+        "العضلة الدالية",
+        "الدالية"
+      ],
+      "correctIndex": 0,
+      "explanation": "The Deltoid muscle (multipennate middle fibers) abducts the arm from 15° up to 90°. Supraspinatus initiates abduction (0°-15°), and serratus anterior + trapezius assist beyond 90°.",
+      "clinicalNote": "Deltoid is supplied by the Axillary nerve (C5, C6), which circles the surgical neck of the humerus.",
+      "timeSeconds": 30,
+      "marks": 1
+    },
+    {
+      "id": "anat_q7",
+      "labId": "anatomy",
+      "type": "movement_id",
+      "topic": "Movements",
+      "difficulty": "easy",
+      "language": "bilingual",
+      "questionText": "Identify the joint movement demonstrated in the anatomical illustration.",
+      "questionTextArabic": "حدّد الحركة المفصلية الموضحة في الرسم التوضيحي.",
+      "specimenCategory": "Arthrology & Kinesiology",
+      "imageUrl": "/images/anatomy/body_movements_diagram.svg",
+      "magnificationOrView": "Sagittal Plane Movement",
+      "options": [
+        "Flexion",
+        "Extension",
+        "Abduction",
+        "Adduction"
+      ],
+      "correctAnswer": "Flexion",
+      "alternativeAnswers": [
+        "Flexion",
+        "ثني",
+        "الانثناء"
+      ],
+      "correctIndex": 0,
+      "explanation": "Flexion decreases the angle between articulating bones, typically moving a body part anteriorly in the sagittal plane (except at the knee joint, which moves posteriorly).",
+      "clinicalNote": "Assessing range of motion (ROM) in flexion/extension is a cornerstone of neurological and orthopedic physical examination.",
+      "timeSeconds": 30,
+      "marks": 1
+    },
+    {
+      "id": "anat_q8",
+      "labId": "anatomy",
+      "type": "write_answer",
+      "topic": "Bones",
+      "difficulty": "easy",
+      "language": "bilingual",
+      "questionText": "Identify the facial bone that forms the lower jaw and houses the lower teeth.",
+      "questionTextArabic": "تعرّف على عظمة الوجه التي تشكل الفك السفلي وتحتوي الأسنان السفلية.",
+      "specimenCategory": "Osteology (Skull)",
+      "imageUrl": "/images/anatomy/skull_anterior_osteology.png",
+      "magnificationOrView": "Anterior-Inferior Skull View",
+      "markerPosition": {
+        "x": 50,
+        "y": 78
+      },
+      "markerLabel": "①",
+      "options": [
+        "Mandible",
+        "Maxilla",
+        "Zygomatic",
+        "Sphenoid"
+      ],
+      "correctAnswer": "Mandible",
+      "alternativeAnswers": [
+        "Mandible",
+        "Lower jaw",
+        "عظم الفك السفلي",
+        "الفك السفلي"
+      ],
+      "correctIndex": 0,
+      "explanation": "The Mandible is the largest and strongest bone of the face, consisting of a horizontal body and two vertical rami. It articulates with the temporal bone at the TMJ.",
+      "clinicalNote": "The mental foramen transmits the mental nerve and vessels, a key landmark for local dental anesthesia.",
+      "timeSeconds": 30,
+      "marks": 1
+    },
+    {
+      "id": "anat_q9",
+      "labId": "anatomy",
+      "type": "muscle_id",
+      "topic": "Muscles",
+      "difficulty": "medium",
+      "language": "bilingual",
+      "questionText": "Identify the prominent posterior arm muscle responsible for forearm extension.",
+      "questionTextArabic": "تعرّف على عضلة الجزء الخلفي للذراع المسؤولة عن بسط الساعد.",
+      "specimenCategory": "Myology (Arm Dissection)",
+      "imageUrl": "/images/anatomy/triceps_brachii_posterior_arm.png",
+      "magnificationOrView": "Posterior Arm Dissection Specimen",
+      "markerPosition": {
+        "x": 50,
+        "y": 45
+      },
+      "markerLabel": "①",
+      "options": [
+        "Triceps brachii",
+        "Biceps brachii",
+        "Anconeus",
+        "Brachialis"
+      ],
+      "correctAnswer": "Triceps brachii",
+      "alternativeAnswers": [
+        "Triceps brachii",
+        "Triceps",
+        "العضلة ثلاثية الرؤوس العضدية",
+        "ثلاثية الرؤوس"
+      ],
+      "correctIndex": 0,
+      "explanation": "Triceps brachii has three heads (long, lateral, and medial) that converge into a tendon inserting into the olecranon process of the ulna. Main action is extension of the elbow.",
+      "clinicalNote": "Innervated by the radial nerve (C6, C7, C8). Triceps reflex tests the C7 root.",
+      "timeSeconds": 30,
+      "marks": 1
+    },
+    {
+      "id": "anat_q10",
+      "labId": "anatomy",
+      "type": "muscle_id",
+      "topic": "Muscles",
+      "difficulty": "medium",
+      "language": "bilingual",
+      "questionText": "Identify the anterior chest wall muscle responsible for arm adduction and medial rotation.",
+      "questionTextArabic": "تعرّف على عضلة الجدار الأمامي للصدر المسؤولة عن تقريب وتدوير الذراع للداخل.",
+      "specimenCategory": "Myology (Thorax & Chest)",
+      "imageUrl": "/images/anatomy/pectoralis_major_anterior_chest.png",
+      "magnificationOrView": "Anterior Chest Wall Specimen",
+      "markerPosition": {
+        "x": 45,
+        "y": 40
+      },
+      "markerLabel": "①",
+      "options": [
+        "Pectoralis major",
+        "Pectoralis minor",
+        "Serratus anterior",
+        "Subclavius"
+      ],
+      "correctAnswer": "Pectoralis major",
+      "alternativeAnswers": [
+        "Pectoralis major",
+        "Pec major",
+        "العضلة الصدرية الكبرى",
+        "الصدرية الكبرى"
+      ],
+      "correctIndex": 0,
+      "explanation": "Pectoralis major has clavicular and sternocostal heads inserting into the lateral lip of the bicipital groove of the humerus. Adducts and medially rotates the humerus.",
+      "clinicalNote": "Innervated by medial and lateral pectoral nerves (C5-T1).",
+      "timeSeconds": 30,
+      "marks": 1
+    },
+    {
+      "id": "anat_q11",
+      "labId": "anatomy",
+      "type": "movement_id",
+      "topic": "Movements",
+      "difficulty": "medium",
+      "language": "bilingual",
+      "questionText": "Identify the synovial joint movement that moves a limb away from the median plane of the body.",
+      "questionTextArabic": "ما هي حركة المفصل الزلالي التي تبعد الطرف عن المستوى المتوسط للجسم؟",
+      "specimenCategory": "Arthrology & Kinesiology",
+      "imageUrl": "/images/anatomy/body_movements_diagram.svg",
+      "magnificationOrView": "Frontal (Coronal) Plane Movement",
+      "options": [
+        "Abduction",
+        "Adduction",
+        "Circumduction",
+        "Pronation"
+      ],
+      "correctAnswer": "Abduction",
+      "alternativeAnswers": [
+        "Abduction",
+        "ابعاد",
+        "التبعيد"
+      ],
+      "correctIndex": 0,
+      "explanation": "Abduction moves a limb or structure away from the anatomical midline in the coronal (frontal) plane (e.g., raising the arm laterally away from the torso).",
+      "clinicalNote": "Assessing shoulder abduction initiates with supraspinatus (0-15°), followed by deltoid (15-90°), and trapezius/serratus anterior (>90°).",
+      "timeSeconds": 30,
+      "marks": 1
+    },
+    {
+      "id": "anat_q12",
+      "labId": "anatomy",
+      "type": "joint_id",
+      "topic": "Joints",
+      "difficulty": "hard",
+      "language": "bilingual",
+      "questionText": "Identify the major intracapsular ligament of the knee that prevents anterior displacement of the tibia.",
+      "questionTextArabic": "تعرّف على الرباط داخل محفظة الركبة الذي يمنع انزلاق عظمة الظنبوب للأمام.",
+      "specimenCategory": "Arthrology (Knee Joint)",
+      "imageUrl": "/images/anatomy/knee_joint_interior_ligaments.png",
+      "magnificationOrView": "Knee Joint Deep Dissection View",
+      "markerPosition": {
+        "x": 50,
+        "y": 48
+      },
+      "markerLabel": "①",
+      "options": [
+        "Anterior Cruciate Ligament (ACL)",
+        "Posterior Cruciate Ligament (PCL)",
+        "Medial Collateral Ligament (MCL)",
+        "Lateral Collateral Ligament (LCL)"
+      ],
+      "correctAnswer": "Anterior Cruciate Ligament (ACL)",
+      "alternativeAnswers": [
+        "Anterior Cruciate Ligament",
+        "ACL",
+        "الرباط الصليبي الأمامي",
+        "الرباط المتصالب الأمامي"
+      ],
+      "correctIndex": 0,
+      "explanation": "The Anterior Cruciate Ligament (ACL) passes posterolaterally from the anterior intercondylar area of the tibia to the medial side of the lateral femoral condyle, checking anterior tibial translation.",
+      "clinicalNote": "Evaluated clinically using the Lachman test and Anterior Drawer test. Commonly torn during sudden deceleration or twisting athletic movements.",
+      "timeSeconds": 30,
+      "marks": 1
+    },
+    {
+      "id": "anat_q13",
+      "labId": "anatomy",
+      "type": "muscle_id",
+      "topic": "Muscles",
+      "difficulty": "medium",
+      "language": "bilingual",
+      "questionText": "Identify the prominent calf muscle that inserts into the calcaneus via the Achilles tendon.",
+      "questionTextArabic": "تعرّف على العضلة الخلفية البارزة للساق التي تنغرز في عظم العقب عبر وتر أخيل.",
+      "specimenCategory": "Myology (Posterior Leg)",
+      "imageUrl": "/images/anatomy/gastrocnemius_calf_achilles.png",
+      "magnificationOrView": "Posterior Leg Dissection Specimen",
+      "markerPosition": {
+        "x": 50,
+        "y": 40
+      },
+      "markerLabel": "①",
+      "options": [
+        "Gastrocnemius",
+        "Soleus",
+        "Tibialis posterior",
+        "Plantaris"
+      ],
+      "correctAnswer": "Gastrocnemius",
+      "alternativeAnswers": [
+        "Gastrocnemius",
+        "Gastrocs",
+        "العضلة التوأمية الساقية",
+        "التوأمية الساقية"
+      ],
+      "correctIndex": 0,
+      "explanation": "Gastrocnemius has medial and lateral heads arising from the femoral condyles, uniting with the soleus to form the triceps surae and calcaneal (Achilles) tendon. Powerful plantarflexor of the ankle.",
+      "clinicalNote": "Innervated by the Tibial nerve (S1, S2). The ankle jerk reflex tests the S1 root.",
+      "timeSeconds": 30,
+      "marks": 1
+    },
+    {
+      "id": "anat_q14",
+      "labId": "anatomy",
+      "type": "bone_id",
+      "topic": "Skeletal System",
+      "difficulty": "easy",
+      "language": "bilingual",
+      "questionText": "Which division of the skeleton includes the skull, vertebral column, and thoracic cage?",
+      "questionTextArabic": "أي قسم من أقسام الهيكل العظمي يضم الجمجمة والعمود الفقري والقفص الصدري؟",
+      "specimenCategory": "Osteology (Skeletal Classification)",
+      "imageUrl": "/images/anatomy/axial_skeleton_openstax.jpg",
+      "magnificationOrView": "Whole Body Skeletal Diagram",
+      "options": [
+        "Axial Skeleton",
+        "Appendicular Skeleton",
+        "Visceral Skeleton",
+        "Cartilaginous Skeleton"
+      ],
+      "correctAnswer": "Axial Skeleton",
+      "alternativeAnswers": [
+        "Axial Skeleton",
+        "Axial",
+        "الهيكل العظمي المحوري",
+        "الهيكل المحوري"
+      ],
+      "correctIndex": 0,
+      "explanation": "The Axial Skeleton forms the central axis of the human body and comprises 80 bones: skull (22), ossicles (6), hyoid (1), vertebral column (26), and thoracic cage (25).",
+      "clinicalNote": "Protects critical central organs: brain in the cranium, spinal cord in the vertebral canal, and heart/lungs in the thoracic cavity.",
+      "timeSeconds": 30,
+      "marks": 1
+    },
+    {
+      "id": "hist_q1",
+      "labId": "histology",
+      "type": "identification",
+      "questionText": "Identify the epithelial tissue lining shown in this high-power photomicrograph.",
+      "questionTextArabic": "تعرّف على نوع النسيج الطلائي الموضح في هذه الشريحة المجهرية.",
+      "specimenCategory": "Epithelial Tissue",
+      "imageUrl": "/images/histology/histology_kidney_tubules.jpg",
+      "magnificationOrView": "400x H&E Stain / Renal Corpuscle Bowman's Capsule",
+      "markerPosition": {
+        "x": 65,
+        "y": 35
+      },
+      "markerLabel": "①",
+      "options": [
+        "Simple squamous epithelium",
+        "Simple cuboidal epithelium",
+        "Simple columnar epithelium",
+        "Stratified squamous epithelium"
+      ],
+      "correctAnswer": "Simple squamous epithelium",
+      "correctIndex": 0,
+      "explanation": "Simple squamous epithelium consists of a single layer of flattened, scale-like cells with flat disc-shaped central nuclei. Adapted for passive diffusion, filtration, and minimal friction.",
+      "clinicalNote": "Found in the parietal layer of Bowman's capsule in the kidney, lung alveoli (type I pneumocytes), and lining of blood vessels (endothelium).",
+      "timeSeconds": 30,
+      "marks": 1
+    },
+    {
+      "id": "hist_q2",
+      "labId": "histology",
+      "type": "identification",
+      "questionText": "Identify the epithelial tissue lining the renal collecting tubules and thyroid follicles.",
+      "questionTextArabic": "تعرّف على النسيج الطلائي الذي يبطن الأنابيب الكلوية وجريبات الغدة الدرقية.",
+      "specimenCategory": "Epithelial Tissue",
+      "imageUrl": "/images/histology/histology_kidney_tubules.jpg",
+      "magnificationOrView": "400x H&E Stain / Renal Cortex Tubules",
+      "markerPosition": {
+        "x": 30,
+        "y": 68
+      },
+      "markerLabel": "①",
+      "options": [
+        "Simple cuboidal epithelium",
+        "Simple squamous epithelium",
+        "Stratified columnar epithelium",
+        "Pseudostratified ciliated epithelium"
+      ],
+      "correctAnswer": "Simple cuboidal epithelium",
+      "correctIndex": 0,
+      "explanation": "Simple cuboidal epithelium consists of a single layer of cube-shaped cells with round, centrally positioned spherical nuclei. Functionally specialized for secretion and absorption.",
+      "clinicalNote": "Forms the lining of kidney proximal/distal convoluted tubules, thyroid follicular epithelium, and germinal epithelium of the ovary.",
+      "timeSeconds": 30,
+      "marks": 1
+    },
+    {
+      "id": "hist_q3",
+      "labId": "histology",
+      "type": "identification",
+      "questionText": "Identify the single-layered tall epithelium lining the gastric and intestinal mucosa.",
+      "questionTextArabic": "تعرّف على النسيج الطلائي أحادي الطبقة المبطن للغشاء المخاطي للمعدة والأمعاء.",
+      "specimenCategory": "Epithelial Tissue",
+      "imageUrl": "/images/histology/real_histology_slide_required.svg",
+      "magnificationOrView": "400x H&E / Intestinal Villi with Goblet Cells",
+      "markerPosition": {
+        "x": 50,
+        "y": 45
+      },
+      "markerLabel": "①",
+      "options": [
+        "Simple columnar epithelium",
+        "Simple cuboidal epithelium",
+        "Transitional epithelium",
+        "Stratified squamous epithelium"
+      ],
+      "correctAnswer": "Simple columnar epithelium",
+      "correctIndex": 0,
+      "explanation": "Simple columnar epithelium comprises tall rectangular cells with oval nuclei located near the basal membrane. Often features apical microvilli (brush border) and interspersed mucus-secreting goblet cells.",
+      "clinicalNote": "Lines the stomach, small intestine, and large intestine, playing a critical role in nutrient absorption and enzyme secretion.",
+      "timeSeconds": 30,
+      "marks": 1
+    },
+    {
+      "id": "hist_q4",
+      "labId": "histology",
+      "type": "mcq",
+      "questionText": "Identify the multi-layered protective epithelium lining the esophagus and oral cavity.",
+      "questionTextArabic": "ما هو النسيج الطلائي متعدد الطبقات الحامي المبطن للمريء والتجويف الفموي؟",
+      "specimenCategory": "Epithelial Tissue",
+      "imageUrl": "/images/histology/real_histology_slide_required.svg",
+      "magnificationOrView": "200x H&E / Esophageal Mucosa",
+      "markerPosition": {
+        "x": 50,
+        "y": 45
+      },
+      "markerLabel": "①",
+      "options": [
+        "Stratified squamous non-keratinized epithelium",
+        "Stratified squamous keratinized epithelium",
+        "Simple columnar epithelium",
+        "Transitional epithelium (Urothelium)"
+      ],
+      "correctAnswer": "Stratified squamous non-keratinized epithelium",
+      "correctIndex": 0,
+      "explanation": "Stratified squamous non-keratinized epithelium has multiple cellular layers where surface cells remain nucleated and viable. Provides robust protection against mechanical abrasion in moist cavities.",
+      "clinicalNote": "In Gastroesophageal Reflux Disease (GERD), chronic acid exposure can trigger metaplasia to simple columnar epithelium (Barrett's Esophagus), a pre-malignant condition.",
+      "timeSeconds": 30,
+      "marks": 1
+    },
+    {
+      "id": "hist_q5",
+      "labId": "histology",
+      "type": "identification",
+      "questionText": "Identify the specialized connective tissue shown featuring chondrocytes in isogenous nests.",
+      "questionTextArabic": "تعرّف على النسيج الضام الموضح والذي يحتوي على خلايا غضروفية في أعشاش متجانسة.",
+      "specimenCategory": "Connective Tissue",
+      "imageUrl": "/images/histology/real_histology_slide_required.svg",
+      "magnificationOrView": "400x H&E / Tracheal Cartilage Ring",
+      "markerPosition": {
+        "x": 50,
+        "y": 45
+      },
+      "markerLabel": "①",
+      "options": [
+        "Hyaline cartilage",
+        "Elastic cartilage",
+        "Fibrocartilage",
+        "Compact bone"
+      ],
+      "correctAnswer": "Hyaline cartilage",
+      "correctIndex": 0,
+      "explanation": "Hyaline cartilage is characterized by a glassy, homogenous basophilic extracellular matrix rich in type II collagen and aggrecan, containing chondrocytes housed in lacunae (often in isogenous groups).",
+      "clinicalNote": "Covers articular surfaces of synovial joints; lacks intrinsic blood supply, leading to poor regenerative capacity following trauma or osteoarthritis.",
+      "timeSeconds": 30,
+      "marks": 1
+    },
+    {
+      "id": "hist_q6",
+      "labId": "histology",
+      "type": "identification",
+      "questionText": "Identify the structural and functional unit of compact bone shown.",
+      "questionTextArabic": "تعرّف على الوحدة التركيبية والوظيفية للعظم المصمت الموضحة في الشريحة.",
+      "specimenCategory": "Specialized Connective Tissue",
+      "imageUrl": "/images/histology/real_histology_slide_required.svg",
+      "magnificationOrView": "100x Ground Bone / Haversian System",
+      "markerPosition": {
+        "x": 50,
+        "y": 45
+      },
+      "markerLabel": "①",
+      "options": [
+        "Osteon (Haversian system)",
+        "Trabecula",
+        "Chondron",
+        "Sarcomere"
+      ],
+      "correctAnswer": "Osteon (Haversian system)",
+      "correctIndex": 0,
+      "explanation": "An Osteon consists of a central Haversian canal containing neurovascular bundles surrounded by concentric lamellae of mineralized bone matrix and osteocytes within lacunae connected by canaliculi.",
+      "clinicalNote": "Volkmann's canals run perpendicular to Haversian canals, interconnecting neurovascular supplies throughout the cortex.",
+      "timeSeconds": 30,
+      "marks": 1
+    },
+    {
+      "id": "hist_q7",
+      "labId": "histology",
+      "type": "identification",
+      "questionText": "Identify the muscle tissue type exhibiting transverse striations, peripheral multinucleation, and voluntary control.",
+      "questionTextArabic": "تعرّف على نوع النسيج العضلي ذو التخطيط العرضي والأنوية الطرفية المتعددة.",
+      "specimenCategory": "Muscular Tissue",
+      "imageUrl": "/images/histology/real_histology_slide_required.svg",
+      "magnificationOrView": "400x H&E Longitudinal Section",
+      "markerPosition": {
+        "x": 50,
+        "y": 45
+      },
+      "markerLabel": "①",
+      "options": [
+        "Skeletal muscle",
+        "Cardiac muscle",
+        "Smooth muscle",
+        "Dense regular collagenous"
+      ],
+      "correctAnswer": "Skeletal muscle",
+      "correctIndex": 0,
+      "explanation": "Skeletal muscle fibers are long, cylindrical, non-branching multinucleated cells with nuclei located peripherally beneath the sarcolemma. Regular A-bands and I-bands create prominent cross-striations.",
+      "clinicalNote": "Duchenne Muscular Dystrophy (DMD) results from an X-linked mutation in the dystrophin gene, causing sarcolemmal fragility and progressive muscle necrosis.",
+      "timeSeconds": 30,
+      "marks": 1
+    },
+    {
+      "id": "hist_q8",
+      "labId": "histology",
+      "type": "mcq",
+      "questionText": "Identify the histological feature unique to cardiac muscle indicated by stepped junctional complexes.",
+      "questionTextArabic": "ما هي الخاصية النسيجية الفريدة لعضلة القلب الموضحة بأقراص الاتصال البينية؟",
+      "specimenCategory": "Muscular Tissue",
+      "imageUrl": "/images/histology/real_histology_slide_required.svg",
+      "magnificationOrView": "400x H&E / Myocardium",
+      "markerPosition": {
+        "x": 50,
+        "y": 45
+      },
+      "markerLabel": "①",
+      "options": [
+        "Intercalated discs",
+        "Neuromuscular junctions",
+        "Dense bodies",
+        "Perineurium"
+      ],
+      "correctAnswer": "Intercalated discs",
+      "correctIndex": 0,
+      "explanation": "Intercalated discs are specialized junctional complexes between adjacent cardiac myocytes containing desmosomes and fascia adherens for mechanical adhesion, and gap junctions for ionic/electrical coupling.",
+      "clinicalNote": "Gap junctions in intercalated discs allow rapid syncytial propagation of cardiac action potentials, ensuring synchronized ventricular contraction.",
+      "timeSeconds": 30,
+      "marks": 1
+    },
+    {
+      "id": "hist_q9",
+      "labId": "histology",
+      "type": "identification",
+      "questionText": "Identify the prominent multi-lobed leukocyte shown in this peripheral blood smear.",
+      "questionTextArabic": "تعرّف على خلية الدم البيضاء مفصصة النواة البارزة في مسحة الدم المجهرية.",
+      "specimenCategory": "Blood Smear Cytology",
+      "imageUrl": "/images/histology/real_histology_slide_required.svg",
+      "magnificationOrView": "1000x Oil Immersion / Leishman-Giemsa Stain",
+      "markerPosition": {
+        "x": 50,
+        "y": 45
+      },
+      "markerLabel": "①",
+      "options": [
+        "Neutrophil",
+        "Eosinophil",
+        "Basophil",
+        "Monocyte"
+      ],
+      "correctAnswer": "Neutrophil",
+      "correctIndex": 0,
+      "explanation": "Neutrophils are the most abundant granulocytes (50-70% of circulating WBCs), characterized by a 3 to 5 lobed segmented nucleus connected by thin chromatin threads and fine pale pink/lilac cytoplasmic granules.",
+      "clinicalNote": "Neutrophilia with a \"left shift\" (increase in immature band forms) is a classic hematological hallmark of acute bacterial infection.",
+      "timeSeconds": 30,
+      "marks": 1
+    },
+    {
+      "id": "biochem_q1",
+      "labId": "biochemistry",
+      "type": "practical_interpretation",
+      "questionText": "A medical student added Benedict's reagent to a urine sample and boiled it for 3 minutes, obtaining a brick-red precipitate. Interpret the result.",
+      "questionTextArabic": "قام طالب طب بإضافة كاشف بندكت إلى عينة بول وغلاها لمدة 3 دقائق فتكون راسب أحمر طوبي. فسّر النتيجة.",
+      "specimenCategory": "Carbohydrate Identification",
+      "imageUrl": "/images/biochemistry/benedict_test_result.svg",
+      "magnificationOrView": "Boiling Test Tube Reaction",
+      "markerPosition": {
+        "x": 67,
+        "y": 45
+      },
+      "markerLabel": "①",
+      "options": [
+        "Positive for reducing sugars (e.g. Glucose > 2%)",
+        "Negative test indicating normal sucrose",
+        "Positive for peptide bonds and proteins",
+        "Positive for starch and polysaccharides"
+      ],
+      "correctAnswer": "Positive for reducing sugars (e.g. Glucose > 2%)",
+      "correctIndex": 0,
+      "explanation": "A brick-red precipitate confirms a strongly positive Benedict's test, indicating the presence of reducing sugars (such as Glucose, Fructose, or Lactose) at a concentration ≥ 2 g/dL due to the formation of cuprous oxide (Cu₂O).",
+      "clinicalNote": "In urine, this indicates Glycosuria, commonly seen when blood glucose exceeds the renal threshold (~180 mg/dL) in Diabetes Mellitus.",
+      "timeSeconds": 30,
+      "marks": 1
+    },
+    {
+      "id": "biochem_q2",
+      "labId": "biochemistry",
+      "type": "identification",
+      "questionText": "Identify the biochemical test that yields a deep blue-black color with starch but a yellow-brown color with monosaccharides.",
+      "questionTextArabic": "تعرّف على الاختبار البيوكيميائي الذي يعطي لوناً أزرق داكناً مع النشا ولوناً أصفر بنياً مع السكريات الأحادية.",
+      "specimenCategory": "Polysaccharide Analysis",
+      "imageUrl": "/images/biochemistry/iodine_test_result.svg",
+      "magnificationOrView": "Colorimetric Tube Assay",
+      "markerPosition": {
+        "x": 36,
+        "y": 45
+      },
+      "markerLabel": "①",
+      "options": [
+        "Iodine Test",
+        "Benedict's Test",
+        "Biuret Test",
+        "Barfoed's Test"
+      ],
+      "correctAnswer": "Iodine Test",
+      "correctIndex": 0,
+      "explanation": "The Iodine test (using Lugol's iodine) specifically interacts with helical polyamylose chains in starch to form an intense blue-black inclusion complex. Disaccharides and monosaccharides cannot form this helix and remain yellow-brown.",
+      "clinicalNote": "Used in physiology and biochemistry to monitor the kinetics of starch hydrolysis by salivary and pancreatic alpha-amylase.",
+      "timeSeconds": 30,
+      "marks": 1
+    },
+    {
+      "id": "biochem_q3",
+      "labId": "biochemistry",
+      "type": "identification",
+      "questionText": "Identify the biochemical test that detects peptide bonds by forming a coordination complex with Cu²⁺ ions resulting in a violet/purple color.",
+      "questionTextArabic": "تعرّف على الاختبار البيوكيميائي الذي يكشف عن الروابط الببتيدية بتكوين معقد أرجواني/بنفسجي مع أيونات النحاس.",
+      "specimenCategory": "Protein & Peptide Assays",
+      "imageUrl": "/images/biochemistry/biuret_test_result.svg",
+      "magnificationOrView": "Alkaline Color Reaction",
+      "markerPosition": {
+        "x": 64,
+        "y": 45
+      },
+      "markerLabel": "①",
+      "options": [
+        "Biuret Test",
+        "Ninhydrin Test",
+        "Molisch Test",
+        "Sudan IV Test"
+      ],
+      "correctAnswer": "Biuret Test",
+      "correctIndex": 0,
+      "explanation": "The Biuret reaction requires at least two peptide bonds (-CO-NH-). In alkaline medium, cupric ions (Cu²⁺) coordinate with peptide nitrogens to produce a characteristic violet-purple coordination complex.",
+      "clinicalNote": "Total serum protein measurement via the Biuret method is standard in liver function panels and nephrology assessments.",
+      "timeSeconds": 30,
+      "marks": 1
+    },
+    {
+      "id": "biochem_q4",
+      "labId": "biochemistry",
+      "type": "mcq",
+      "questionText": "Which amino acid produces a distinctive yellow color rather than Ruhemann's purple in the Ninhydrin test?",
+      "questionTextArabic": "أي حمض أميني ينتج لوناً أصفر مميزاً بدلاً من لون رومان الأرجواني في اختبار النينهيدرين؟",
+      "specimenCategory": "Amino Acid Chemistry",
+      "imageUrl": "/images/biochemistry/ninhydrin_test_result.svg",
+      "magnificationOrView": "Spectrophotometric Tube Evaluation",
+      "markerPosition": {
+        "x": 64,
+        "y": 45
+      },
+      "markerLabel": "①",
+      "options": [
+        "Proline",
+        "Glycine",
+        "Alanine",
+        "Glutamic acid"
+      ],
+      "correctAnswer": "Proline",
+      "correctIndex": 0,
+      "explanation": "Proline (and Hydroxyproline) possesses a secondary amino (imino) group within a pyrrolidine ring, reacting with ninhydrin to form a yellow adduct instead of the purple Ruhemann complex produced by primary α-amino acids.",
+      "clinicalNote": "Hydroxyproline urinary excretion is an indicator of collagen turnover and bone resorption in metabolic bone disorders (e.g. Paget's disease).",
+      "timeSeconds": 30,
+      "marks": 1
+    },
+    {
+      "id": "biochem_q5",
+      "labId": "biochemistry",
+      "type": "identification",
+      "questionText": "Identify the general carbohydrate screening test that produces a characteristic purple/violet ring at the liquid interface upon adding conc. H₂SO₄.",
+      "questionTextArabic": "تعرّف على الاختبار العام للكشف عن الكربوهيدرات الذي يعطي حلقة بنفسجية عند الحد الفاصل بإضافة حمض الكبريتيك المركز.",
+      "specimenCategory": "Carbohydrate Chemistry",
+      "imageUrl": "/images/biochemistry/molisch_test_result.svg",
+      "magnificationOrView": "Two-Phase Acid Interface Ring",
+      "markerPosition": {
+        "x": 51,
+        "y": 46
+      },
+      "markerLabel": "①",
+      "options": [
+        "Molisch's Test",
+        "Benedict's Test",
+        "Seliwanoff's Test",
+        "Biuret Test"
+      ],
+      "correctAnswer": "Molisch's Test",
+      "correctIndex": 0,
+      "explanation": "Molisch's test utilizes 5% α-naphthol and concentrated sulfuric acid. Dehydration of carbohydrates produces furfural derivatives that condense with α-naphthol at the interface, generating a vibrant purple ring.",
+      "clinicalNote": "A negative Molisch test unequivocally rules out the presence of all carbohydrates (monosaccharides, disaccharides, and polysaccharides).",
+      "timeSeconds": 30,
+      "marks": 1
+    },
+    {
+      "id": "biochem_q6",
+      "labId": "biochemistry",
+      "type": "practical_interpretation",
+      "questionText": "During Barfoed's test, Tube A forms a red precipitate at the bottom in 2.5 minutes, while Tube B remains blue. What is the interpretation?",
+      "questionTextArabic": "أثناء اختبار بارفود، كوّنت الأنبوبة A راسباً أحمر في القاع خلال دقيقتين ونصف، بينما بقيت الأنبوبة B زرقاء. ما هو التفسير؟",
+      "specimenCategory": "Monosaccharide vs Disaccharide Differentiation",
+      "imageUrl": "/images/biochemistry/barfoed_test_result.svg",
+      "magnificationOrView": "Weak Acid Reduction Assay",
+      "markerPosition": {
+        "x": 36,
+        "y": 45
+      },
+      "markerLabel": "①",
+      "options": [
+        "Tube A contains a reducing Monosaccharide (e.g. Glucose); Tube B contains a Disaccharide or non-sugar",
+        "Tube A contains Starch; Tube B contains Protein",
+        "Tube A contains Lipids; Tube B contains Amino acids",
+        "Both tubes are contaminated and invalid"
+      ],
+      "correctAnswer": "Tube A contains a reducing Monosaccharide (e.g. Glucose); Tube B contains a Disaccharide or non-sugar",
+      "correctIndex": 0,
+      "explanation": "Barfoed's test differentiates reducing monosaccharides from disaccharides. In a weakly acidic cupric acetate medium, monosaccharides reduce Cu²⁺ rapidly (< 3 minutes), while disaccharides reduce very slowly only after prolonged acid hydrolysis.",
+      "clinicalNote": "Crucial for differential diagnosis in pediatric carbohydrate malabsorption and metabolic fructosuria/galactosuria screenings.",
+      "timeSeconds": 30,
+      "marks": 1
+    },
+    {
+      "id": "biochem_q7",
+      "labId": "biochemistry",
+      "type": "identification",
+      "questionText": "Identify the biochemical test used to rapidly detect ketohexoses (like Fructose) by developing a cherry-red color within 1 minute with resorcinol and HCl.",
+      "questionTextArabic": "تعرّف على الاختبار البيوكيميائي المستخدم للكشف السريع عن السكريات الكيتونية (كالفركتوز) بلون أحمر كرزي خلال دقيقة.",
+      "specimenCategory": "Ketose vs Aldose Differentiation",
+      "imageUrl": "/images/biochemistry/seliwanoff_test_result.svg",
+      "magnificationOrView": "Acidic Resorcinol Colorimetry",
+      "markerPosition": {
+        "x": 36,
+        "y": 45
+      },
+      "markerLabel": "①",
+      "options": [
+        "Seliwanoff's Test",
+        "Bial's Test",
+        "Iodine Test",
+        "Sudan IV Test"
+      ],
+      "correctAnswer": "Seliwanoff's Test",
+      "correctIndex": 0,
+      "explanation": "Seliwanoff's test uses resorcinol in dilute HCl. Ketoses dehydrate much more rapidly than aldoses to form 5-hydroxymethylfurfural, condensing into an intense cherry-red pigment in under 60 seconds.",
+      "clinicalNote": "Used to confirm presence of fructose in semen (fructose is secreted by seminal vesicles to nourish spermatozoa) in evaluation of male infertility and obstructive azoospermia.",
+      "timeSeconds": 30,
+      "marks": 1
+    },
+    {
+      "id": "biochem_q8",
+      "labId": "biochemistry",
+      "type": "identification",
+      "questionText": "Identify the test that produces a bright red floating oily layer when mixed with lipids and triglycerides.",
+      "questionTextArabic": "تعرّف على الاختبار الذي ينتج طبقة زيتية حمراء طافية عند خلطه مع الدهون والدهون الثلاثية.",
+      "specimenCategory": "Lipid Identification",
+      "imageUrl": "/images/biochemistry/sudan_iv_test_result.svg",
+      "magnificationOrView": "Phase Separation Lipid Assay",
+      "markerPosition": {
+        "x": 50,
+        "y": 35
+      },
+      "markerLabel": "①",
+      "options": [
+        "Sudan IV Test",
+        "Biuret Test",
+        "Benedict Test",
+        "Ninhydrin Test"
+      ],
+      "correctAnswer": "Sudan IV Test",
+      "correctIndex": 0,
+      "explanation": "Sudan IV is a lysochrome diazo dye soluble in non-polar hydrophobic lipids. When added to an emulsion, it selectively partitions into the upper lipid layer, staining it bright scarlet red.",
+      "clinicalNote": "Fecal fat staining with Sudan IV is a rapid primary screen for Steatorrhea caused by Celiac disease, Cystic Fibrosis, or Chronic Pancreatitis.",
+      "timeSeconds": 30,
+      "marks": 1
+    }
+  ],
+  "notifications": [
+    {
+      "id": "notif_welcome",
+      "title": "أهلًا بك في LAB HUB 🌟",
+      "message": "أنت تقوم بعمل رائع. كل درس تدرسه اليوم يقربك خطوة من الطبيب الذي تريد أن تصبحه.",
+      "type": "system",
+      "isRead": false,
+      "createdAt": "2026-09-18T10:33:59.881Z",
+      "link": "/dashboard"
+    },
+    {
+      "id": "notif_anatomy_exam",
+      "title": "امتحانات التشريح العملية جاهزة 🦴",
+      "message": "ابدأ باختبار العظام (Bones Exam) أو العضلات (Muscles Exam) لاختبار مهاراتك العملية.",
+      "type": "exam",
+      "isRead": false,
+      "createdAt": "2026-09-18T08:33:59.881Z",
+      "link": "/exams"
+    },
+    {
+      "id": "notif_tutor_tip",
+      "title": "نصيحة المساعد الطبي الذكي 💡",
+      "message": "ركز على العلامات التشريحية الرئيسية (Landmarks) ونقاط الارتكاز والتعصيب العصبي للتحضير لامتحان OSPE.",
+      "type": "achievement",
+      "isRead": false,
+      "createdAt": "2026-09-17T22:33:59.881Z",
+      "link": "/tutor"
+    }
+  ],
+  "customVideos": []
 }

@@ -14,37 +14,16 @@ import {
 
 export const DEMO_USERS: User[] = [
   {
-    id: 'usr_student_1',
-    name: 'Sarah Al-Mansoor',
-    email: 'student@med.edu',
-    studentId: 'MED-2026-4891',
-    role: 'student',
-    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-    department: 'Faculty of Medicine — 2nd Year MBBS',
-    year: 'Year 2 (Pre-Clinical)',
-    enrolledLabs: ['anatomy', 'histology', 'biochemistry']
-  },
-  {
-    id: 'usr_instructor_1',
-    name: 'Dr. Tariq Vance, MD, MSc',
-    email: 'instructor@med.edu',
-    studentId: 'FAC-MED-104',
-    role: 'instructor',
-    avatarUrl: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150&auto=format&fit=crop&q=80',
-    department: 'Department of Anatomy & Histology',
-    year: 'Senior Teaching Faculty',
-    enrolledLabs: ['anatomy', 'histology', 'biochemistry']
-  },
-  {
-    id: 'usr_admin_1',
-    name: 'Prof. Eleanor Hayes, MD, FRCPath',
-    email: 'admin@med.edu',
-    studentId: 'ADM-MED-001',
-    role: 'admin',
+    id: 'usr_owner_soukaina',
+    name: 'سكينة أسعد',
+    email: 'owner@labhub.med',
+    studentId: 'OWNER-2026-001',
+    role: 'owner',
     avatarUrl: 'https://images.unsplash.com/photo-1594824813680-79883506ecf5?w=150&auto=format&fit=crop&q=80',
     department: 'Academic Directorate & Laboratory Board',
-    year: 'Dean of Medical Laboratory Curricula',
-    enrolledLabs: ['anatomy', 'histology', 'biochemistry']
+    year: 'Platform Founder & Lead Anatomist',
+    enrolledLabs: ['anatomy', 'histology', 'biochemistry'],
+    canPublishAnatomyExams: true
   }
 ];
 

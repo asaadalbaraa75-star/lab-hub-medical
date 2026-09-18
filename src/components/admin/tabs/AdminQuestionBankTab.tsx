@@ -1,4 +1,15 @@
-import React, { useState, useEffect } from 'react';
+/*
+ * Copyright © 2026 سكينة أسعد
+ * LAB HUB — Original Educational Platform
+ * All Rights Reserved.
+ *
+ * OSPE Question Bank & Contributor Review Workflow Tab
+ * Roles:
+ * - Owner (سكينة أسعد) & Admins: Full control, Review, Approve, Reject, Publish
+ * - Assistants (1, 2, 3): Add, Upload Images, Edit Own, Save Draft, Submit for Review
+ */
+
+import React, { useState, useEffect, useRef } from 'react';
 import {
   HelpCircle,
   Plus,
@@ -11,20 +22,26 @@ import {
   CheckCircle2,
   AlertTriangle,
   Image as ImageIcon,
-  Sparkles,
   RefreshCw,
   X,
-  Layers,
   Clock,
-  Award,
-  ChevronDown
+  ChevronDown,
+  Upload,
+  Send,
+  Check,
+  FileText,
+  MessageSquare,
+  User,
+  ShieldCheck,
+  Sparkles
 } from 'lucide-react';
-import { ExamQuestion, LabSubjectId, User, ExamType } from '../../../types';
+import { ExamQuestion, LabSubjectId, User as UserType, ExamType, QuestionStatus } from '../../../types';
 import { storageService } from '../../../services/storageService';
 import { apiService } from '../../../services/apiService';
+import { authService } from '../../../services/authService';
 
 interface Props {
-  currentUser: User;
+  currentUser: UserType;
 }
 
 export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
@@ -32,17 +49,27 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
   const [filteredQuestions, setFilteredQuestions] = useState<ExamQuestion[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Role Checks
+  const isOwner = currentUser.role === 'owner' || currentUser.role === 'admin';
+  const isAssistant = currentUser.role === 'content_exams' || currentUser.role === 'exams_only' || currentUser.id.startsWith('usr_assistant');
+
   // Filters
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLab, setSelectedLab] = useState<string>('all');
   const [selectedTopic, setSelectedTopic] = useState<string>('all');
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>('all');
+  const [selectedStatus, setSelectedStatus] = useState<string>('all');
 
   // Modals
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState<ExamQuestion | null>(null);
   const [previewQuestion, setPreviewQuestion] = useState<ExamQuestion | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+
+  // Review Modal State (For Owner / Admin)
+  const [reviewModalQuestion, setReviewModalQuestion] = useState<ExamQuestion | null>(null);
+  const [reviewNotes, setReviewNotes] = useState('');
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 
   // Form State
   const [formLabId, setFormLabId] = useState<LabSubjectId>('anatomy');
@@ -64,20 +91,21 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
   const [formMarkerX, setFormMarkerX] = useState<number>(50);
   const [formMarkerY, setFormMarkerY] = useState<number>(50);
   const [formMarkerLabel, setFormMarkerLabel] = useState('①');
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const loadQuestions = async () => {
     setIsLoading(true);
     try {
-      // First attempt server fetch
       const serverData = await apiService.fetchQuestions();
       if (serverData && serverData.length > 0) {
         setQuestions(serverData);
       } else {
-        // Fallback to storageService local cache
         const localData = storageService.getExamQuestions();
         setQuestions(localData);
       }
-    } catch (e) {
+    } catch {
       const localData = storageService.getExamQuestions();
       setQuestions(localData);
     } finally {
@@ -105,6 +133,14 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
       result = result.filter(q => q.difficulty === selectedDifficulty);
     }
 
+    if (selectedStatus !== 'all') {
+      if (selectedStatus === 'my_submissions') {
+        result = result.filter(q => q.authorId === currentUser.id);
+      } else {
+        result = result.filter(q => (q.status || 'published') === selectedStatus);
+      }
+    }
+
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase().trim();
       result = result.filter(item =>
@@ -112,14 +148,21 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
         item.questionTextArabic?.includes(q) ||
         item.correctAnswer?.toLowerCase().includes(q) ||
         item.specimenCategory?.toLowerCase().includes(q) ||
-        item.topic?.toLowerCase().includes(q)
+        item.topic?.toLowerCase().includes(q) ||
+        item.authorName?.toLowerCase().includes(q)
       );
     }
 
     setFilteredQuestions(result);
-  }, [questions, selectedLab, selectedTopic, selectedDifficulty, searchQuery]);
+  }, [questions, selectedLab, selectedTopic, selectedDifficulty, selectedStatus, searchQuery, currentUser.id]);
 
-  // Unique topics extracted from questions
+  // Counts for workflow metrics
+  const pendingCount = questions.filter(q => q.status === 'pending_review').length;
+  const approvedCount = questions.filter(q => q.status === 'approved').length;
+  const publishedCount = questions.filter(q => !q.status || q.status === 'published').length;
+  const draftCount = questions.filter(q => q.status === 'draft').length;
+  const mySubmissionsCount = questions.filter(q => q.authorId === currentUser.id).length;
+
   const availableTopics = Array.from(new Set(questions.map(q => q.topic).filter(Boolean))) as string[];
 
   const resetForm = () => {
@@ -151,6 +194,13 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
   };
 
   const handleOpenEditModal = (q: ExamQuestion) => {
+    // Check permission to edit:
+    // Owner can edit any question. Assistant can only edit their own questions or drafts.
+    if (!isOwner && q.authorId && q.authorId !== currentUser.id) {
+      alert('يمكنك فقط تعديل الأسئلة التي قمت بإضافتها بنفسك.');
+      return;
+    }
+
     setEditingQuestion(q);
     setFormLabId(q.labId);
     setFormTopic(q.topic || 'General');
@@ -174,10 +224,39 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
     setIsEditorOpen(true);
   };
 
-  const handleSaveQuestion = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Image Upload Handling
+  const handleImageFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      alert('يرجى اختيار ملف صورة صالح (JPEG, PNG, WebP).');
+      return;
+    }
+
+    setIsUploadingImage(true);
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const base64Data = reader.result as string;
+      const uploadedUrl = await apiService.uploadQuestionImage(base64Data);
+      if (uploadedUrl) {
+        setFormImageUrl(uploadedUrl);
+      } else {
+        setFormImageUrl(base64Data);
+      }
+      setIsUploadingImage(false);
+    };
+    reader.onerror = () => {
+      alert('تعذر قراءة ملف الصورة.');
+      setIsUploadingImage(false);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Save Question Handler with Target Status
+  const handleSaveQuestionWithStatus = async (targetStatus: QuestionStatus) => {
     if (!formQuestionText.trim() || !formCorrectAnswer.trim() || !formImageUrl.trim()) {
-      alert('يرجى كتابة نص السؤال، الإجابة الصحيحة، ورابط صورة العينة.');
+      alert('يرجى كتابة نص السؤال، الإجابة الصحيحة، وصورة العينة.');
       return;
     }
 
@@ -189,6 +268,13 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
     const altAnswersList = formAlternativeAnswers
       ? formAlternativeAnswers.split(',').map(s => s.trim()).filter(Boolean)
       : undefined;
+
+    const existingStatus = editingQuestion?.status;
+    const resolvedStatus: QuestionStatus = isOwner
+      ? targetStatus
+      : (targetStatus === 'published' || targetStatus === 'approved')
+      ? 'pending_review'
+      : targetStatus;
 
     const questionData: ExamQuestion = {
       id: editingQuestion?.id || `q_bank_${Date.now()}`,
@@ -210,7 +296,12 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
       timeSeconds: Number(formTimeSeconds) || 30,
       marks: Number(formMarks) || 1,
       markerPosition: { x: Number(formMarkerX), y: Number(formMarkerY) },
-      markerLabel: formMarkerLabel.trim() || '①'
+      markerLabel: formMarkerLabel.trim() || '①',
+      status: resolvedStatus,
+      authorId: editingQuestion?.authorId || currentUser.id,
+      authorName: editingQuestion?.authorName || currentUser.name,
+      authorRole: editingQuestion?.authorRole || currentUser.role,
+      submittedAt: editingQuestion?.submittedAt || new Date().toISOString()
     };
 
     // Save locally
@@ -224,6 +315,12 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
   };
 
   const handleDeleteQuestion = async (id: string) => {
+    const q = questions.find(item => item.id === id);
+    if (!isOwner && q?.authorId && q.authorId !== currentUser.id) {
+      alert('فقط مالكة المنصة أو مؤلف السؤال يمكنه الحذف.');
+      return;
+    }
+
     storageService.deleteExamQuestion(id, currentUser);
     await apiService.deleteQuestion(id);
     setDeleteConfirmId(null);
@@ -243,7 +340,8 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
         const copy: ExamQuestion = {
           ...target,
           id: `${target.id}_copy_${Date.now()}`,
-          questionText: `${target.questionText} (Copy)`
+          questionText: `${target.questionText} (Copy)`,
+          status: isOwner ? target.status : 'draft'
         };
         storageService.saveExamQuestion(copy, currentUser);
         await loadQuestions();
@@ -251,24 +349,104 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
     }
   };
 
+  // Owner Review Action: Approve or Reject
+  const handleReviewAction = async (status: QuestionStatus) => {
+    if (!reviewModalQuestion) return;
+    setIsSubmittingReview(true);
+
+    try {
+      const authSession = authService.getSession();
+      const token = authSession?.token;
+
+      const res = await apiService.updateQuestionStatus(
+        reviewModalQuestion.id,
+        status,
+        reviewNotes.trim() || undefined,
+        token
+      );
+
+      if (res.success) {
+        await loadQuestions();
+        setReviewModalQuestion(null);
+        setReviewNotes('');
+      } else {
+        alert(res.error || 'تعذر تحديث حالة السؤال.');
+      }
+    } catch {
+      alert('خطأ أثناء التواصل مع الخادم.');
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  };
+
+  // Status Badge Helper
+  const renderStatusBadge = (status?: QuestionStatus) => {
+    const s = status || 'published';
+    switch (s) {
+      case 'pending_review':
+        return (
+          <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 animate-pulse">
+            <Clock className="w-3 h-3 text-amber-600" />
+            بانتظار مراجعة الإدارة (Pending Review)
+          </span>
+        );
+      case 'approved':
+        return (
+          <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <Check className="w-3 h-3 text-emerald-600" />
+            معتمد من الإدارة (Approved)
+          </span>
+        );
+      case 'published':
+        return (
+          <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">
+            <Sparkles className="w-3 h-3 text-indigo-600" />
+            منشور في الاختبارات (Published)
+          </span>
+        );
+      case 'rejected':
+        return (
+          <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">
+            <AlertTriangle className="w-3 h-3 text-rose-600" />
+            بحاجة لتعديل (Needs Revision)
+          </span>
+        );
+      case 'draft':
+      default:
+        return (
+          <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
+            <FileText className="w-3 h-3 text-slate-500" />
+            مسودة خاصة (Draft)
+          </span>
+        );
+    }
+  };
+
   return (
     <div className="space-y-6" id="admin-question-bank-tab">
-      {/* Top Banner & Actions */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      {/* Top Banner & Workflow Stats */}
+      <div className="bg-white rounded-3xl border border-slate-200 p-5 sm:p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-1">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <span className="px-2.5 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200 text-xs font-bold font-mono">
               OSPE Question Bank
             </span>
             <span className="text-xs text-slate-500 font-bold">
               إجمالي الأسئلة: <span className="font-mono text-indigo-600 font-black">{questions.length}</span>
             </span>
+            {pendingCount > 0 && isOwner && (
+              <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 text-xs font-bold animate-pulse">
+                {pendingCount} أسئلة بانتظار مراجعتك واعتمادك
+              </span>
+            )}
           </div>
           <h2 className="text-xl sm:text-2xl font-black text-slate-900">
-            بنك الأسئلة والمحطات العملية (OSPE Questions Bank)
+            بنك الأسئلة والمحطات العملية (Question Management Hub)
           </h2>
           <p className="text-xs text-slate-500">
-            إضافة وتعديل وحذف أسئلة المحطات العملية مع تحديد العلامات التشريحية ونقاط الارتكاز والصور المجهرية بدقة.
+            {isOwner
+              ? 'مساحة المالك الكاملة — إضافة، مراجعة، اعتماد ونشر أسئلة المحطات العملية والمساعدين الـ 3'
+              : 'مساحة مساعد إعداد الأسئلة — إضافة أسئلة، رفع الصور التوضيحية، حفظ مسودات، وإرسالها لمراجعة المالك'}
           </p>
         </div>
 
@@ -293,18 +471,107 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
         </div>
       </div>
 
+      {/* Workflow Tabs (Review Pipeline) */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-1">
+        <button
+          type="button"
+          onClick={() => setSelectedStatus('all')}
+          className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap ${
+            selectedStatus === 'all'
+              ? 'bg-slate-900 text-white shadow-xs'
+              : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+          }`}
+        >
+          <span>جميع الأسئلة</span>
+          <span className="px-1.5 py-0.2 rounded-md bg-white/20 text-[10px] font-mono">{questions.length}</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setSelectedStatus('pending_review')}
+          className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap ${
+            selectedStatus === 'pending_review'
+              ? 'bg-amber-600 text-white shadow-xs'
+              : 'bg-white border border-slate-200 text-amber-700 hover:bg-amber-50/50'
+          }`}
+        >
+          <Clock className="w-3.5 h-3.5" />
+          <span>بانتظار المراجعة (Pending)</span>
+          {pendingCount > 0 && (
+            <span className="px-1.5 py-0.2 rounded-md bg-amber-200 text-amber-900 text-[10px] font-bold">{pendingCount}</span>
+          )}
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setSelectedStatus('approved')}
+          className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap ${
+            selectedStatus === 'approved'
+              ? 'bg-emerald-600 text-white shadow-xs'
+              : 'bg-white border border-slate-200 text-emerald-700 hover:bg-emerald-50/50'
+          }`}
+        >
+          <Check className="w-3.5 h-3.5" />
+          <span>معتمدة (Approved)</span>
+          <span className="px-1.5 py-0.2 rounded-md bg-slate-100 text-slate-700 text-[10px] font-mono">{approvedCount}</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setSelectedStatus('published')}
+          className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap ${
+            selectedStatus === 'published'
+              ? 'bg-indigo-600 text-white shadow-xs'
+              : 'bg-white border border-slate-200 text-indigo-700 hover:bg-indigo-50/50'
+          }`}
+        >
+          <Sparkles className="w-3.5 h-3.5" />
+          <span>منشورة في الامتحانات</span>
+          <span className="px-1.5 py-0.2 rounded-md bg-slate-100 text-slate-700 text-[10px] font-mono">{publishedCount}</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setSelectedStatus('draft')}
+          className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap ${
+            selectedStatus === 'draft'
+              ? 'bg-slate-700 text-white shadow-xs'
+              : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+          }`}
+        >
+          <FileText className="w-3.5 h-3.5" />
+          <span>مسودات (Drafts)</span>
+          <span className="px-1.5 py-0.2 rounded-md bg-slate-100 text-slate-700 text-[10px] font-mono">{draftCount}</span>
+        </button>
+
+        {isAssistant && (
+          <button
+            type="button"
+            onClick={() => setSelectedStatus('my_submissions')}
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap ${
+              selectedStatus === 'my_submissions'
+                ? 'bg-purple-600 text-white shadow-xs'
+                : 'bg-white border border-slate-200 text-purple-700 hover:bg-purple-50/50'
+            }`}
+          >
+            <User className="w-3.5 h-3.5" />
+            <span>أسئلتي المقدمة ({mySubmissionsCount})</span>
+          </button>
+        )}
+      </div>
+
       {/* Filter and Search Bar */}
       <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs space-y-3">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
           {/* Search Box */}
           <div className="lg:col-span-2 relative">
-            <Search className="w-4 h-4 absolute right-3 top-3 text-slate-400" />
+            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
             <input
               type="text"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              placeholder="ابحث في نص السؤال، الإجابة، أو العينة..."
-              className="w-full pl-3 pr-9 py-2 rounded-xl border border-slate-200 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+              placeholder="البحث في نص السؤال، الإجابة، المساعد..."
+              className="w-full pl-9 pr-3 py-2 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl text-xs transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
             />
           </div>
 
@@ -313,12 +580,12 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
             <select
               value={selectedLab}
               onChange={e => setSelectedLab(e.target.value)}
-              className="w-full py-2 px-3 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 focus:outline-none focus:border-indigo-500"
+              className="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700"
             >
               <option value="all">جميع المعامل (All Labs)</option>
-              <option value="anatomy">Anatomy (التشريح)</option>
-              <option value="histology">Histology (الأنسجة)</option>
-              <option value="biochemistry">Biochemistry (الكيمياء الحيوية)</option>
+              <option value="anatomy">Anatomy (تشريح)</option>
+              <option value="histology">Histology (أنسجة)</option>
+              <option value="biochemistry">Biochemistry (كيمياء حيوية)</option>
             </select>
           </div>
 
@@ -327,15 +594,9 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
             <select
               value={selectedTopic}
               onChange={e => setSelectedTopic(e.target.value)}
-              className="w-full py-2 px-3 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 focus:outline-none focus:border-indigo-500"
+              className="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700"
             >
               <option value="all">جميع المواضيع (All Topics)</option>
-              <option value="Bones">Bones (العظام)</option>
-              <option value="Muscles">Muscles (العضلات)</option>
-              <option value="Movements">Movements (الحركات)</option>
-              <option value="Joints">Joints (المفاصل)</option>
-              <option value="Nerves">Nerves (الأعصاب)</option>
-              <option value="OSPE">General OSPE</option>
               {availableTopics.map(t => (
                 <option key={t} value={t}>{t}</option>
               ))}
@@ -347,35 +608,14 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
             <select
               value={selectedDifficulty}
               onChange={e => setSelectedDifficulty(e.target.value)}
-              className="w-full py-2 px-3 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 focus:outline-none focus:border-indigo-500"
+              className="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700"
             >
-              <option value="all">جميع المستويات (Difficulty)</option>
+              <option value="all">جميع المستويات</option>
               <option value="easy">سهل (Easy)</option>
               <option value="medium">متوسط (Medium)</option>
               <option value="hard">متقدم (Hard)</option>
             </select>
           </div>
-        </div>
-
-        {/* Filter Stats */}
-        <div className="flex items-center justify-between text-xs text-slate-500 pt-1 px-1">
-          <span>
-            يتم عرض <strong className="text-slate-800 font-bold font-mono">{filteredQuestions.length}</strong> من أصل <strong className="font-mono">{questions.length}</strong> سؤال
-          </span>
-          {(searchQuery || selectedLab !== 'all' || selectedTopic !== 'all' || selectedDifficulty !== 'all') && (
-            <button
-              type="button"
-              onClick={() => {
-                setSearchQuery('');
-                setSelectedLab('all');
-                setSelectedTopic('all');
-                setSelectedDifficulty('all');
-              }}
-              className="text-indigo-600 hover:text-indigo-800 font-bold"
-            >
-              إعادة ضبط الفلاتر
-            </button>
-          )}
         </div>
       </div>
 
@@ -389,7 +629,7 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
           </div>
         ) : (
           <div className="divide-y divide-slate-100">
-            {filteredQuestions.map((q, idx) => (
+            {filteredQuestions.map(q => (
               <div
                 key={q.id}
                 className="p-4 sm:p-5 hover:bg-slate-50/70 transition-colors flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
@@ -434,6 +674,9 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
                       <span className="text-[11px] text-slate-400 font-mono">
                         {q.timeSeconds || 30}s | {q.marks || 1} mark
                       </span>
+
+                      {/* Status Badge */}
+                      {renderStatusBadge(q.status)}
                     </div>
 
                     <h4 className="text-sm font-bold text-slate-900 leading-snug">
@@ -446,14 +689,23 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
                       </p>
                     )}
 
-                    <div className="flex items-center gap-2 pt-1 text-xs">
-                      <span className="text-slate-400">الإجابة الصحيحة:</span>
-                      <span className="font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200 font-mono">
-                        {q.correctAnswer}
-                      </span>
-                      {q.alternativeAnswers && q.alternativeAnswers.length > 0 && (
-                        <span className="text-[11px] text-slate-500">
-                          (+ {q.alternativeAnswers.length} بدائل مقبولة)
+                    <div className="flex items-center gap-3 pt-1 text-xs flex-wrap">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-slate-400">الإجابة:</span>
+                        <span className="font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200 font-mono">
+                          {q.correctAnswer}
+                        </span>
+                      </div>
+                      {q.authorName && (
+                        <span className="text-[11px] text-slate-500 flex items-center gap-1">
+                          <User className="w-3 h-3 text-slate-400" />
+                          <span>بواسطة: <strong>{q.authorName}</strong></span>
+                        </span>
+                      )}
+                      {q.reviewNotes && (
+                        <span className="text-[11px] text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 flex items-center gap-1">
+                          <MessageSquare className="w-3 h-3 text-amber-600" />
+                          <span>ملاحظة المراجعة: {q.reviewNotes}</span>
                         </span>
                       )}
                     </div>
@@ -462,6 +714,21 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
 
                 {/* Right: Actions */}
                 <div className="flex items-center gap-1.5 self-end md:self-center shrink-0">
+                  {/* Owner Review / Approval Action */}
+                  {isOwner && q.status === 'pending_review' && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setReviewModalQuestion(q);
+                        setReviewNotes(q.reviewNotes || '');
+                      }}
+                      className="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-xs transition flex items-center gap-1"
+                    >
+                      <ShieldCheck className="w-3.5 h-3.5" />
+                      <span>مراجعة واعتماد</span>
+                    </button>
+                  )}
+
                   <button
                     type="button"
                     onClick={() => setPreviewQuestion(q)}
@@ -478,22 +745,30 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
                   >
                     <Copy className="w-4 h-4" />
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => handleOpenEditModal(q)}
-                    className="p-2 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-colors"
-                    title="تعديل السؤال"
-                  >
-                    <Edit2 className="w-4 h-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setDeleteConfirmId(q.id)}
-                    className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors"
-                    title="حذف السؤال"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+
+                  {/* Edit: Owner can edit all; Assistant can edit own */}
+                  {(isOwner || q.authorId === currentUser.id) && (
+                    <button
+                      type="button"
+                      onClick={() => handleOpenEditModal(q)}
+                      className="p-2 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-colors"
+                      title="تعديل السؤال"
+                    >
+                      <Edit2 className="w-4 h-4" />
+                    </button>
+                  )}
+
+                  {/* Delete: Owner can delete all; Assistant can delete own draft */}
+                  {(isOwner || (q.authorId === currentUser.id && q.status === 'draft')) && (
+                    <button
+                      type="button"
+                      onClick={() => setDeleteConfirmId(q.id)}
+                      className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors"
+                      title="حذف السؤال"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
@@ -501,7 +776,7 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
         )}
       </div>
 
-      {/* Question Editor / Add Modal */}
+      {/* Question Editor Modal */}
       {isEditorOpen && (
         <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-2xl w-full shadow-2xl border border-slate-200 my-8 space-y-6 animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
@@ -511,7 +786,9 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
                   {editingQuestion ? 'تعديل سؤال عملي' : 'إضافة سؤال جديد لبنك الأسئلة'}
                 </h3>
                 <p className="text-xs text-slate-500">
-                  يرجى التأكد من دقة الصورة والمعالم التشريحية لضمان الاختبار الطبي المعتمد.
+                  {isOwner
+                    ? 'إضافة أو تعديل السؤال مع النشر الفوري للامتحانات العملية'
+                    : 'يمكنك حفظ السؤال كمسودة أو تقديمه لمراجعة مالكة المنصة (سكينة أسعد)'}
                 </p>
               </div>
               <button
@@ -523,7 +800,7 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
               </button>
             </div>
 
-            <form onSubmit={handleSaveQuestion} className="space-y-4 text-xs font-semibold">
+            <div className="space-y-4 text-xs font-semibold">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {/* Lab Subject */}
                 <div>
@@ -592,23 +869,47 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
                 />
               </div>
 
-              {/* Image URL with instant preview */}
-              <div>
-                <label className="block text-slate-700 mb-1">رابط صورة العينة (Specimen Image URL) *</label>
+              {/* Image Upload or URL */}
+              <div className="space-y-2 p-3 bg-slate-50 rounded-2xl border border-slate-200">
+                <div className="flex items-center justify-between">
+                  <label className="block text-slate-700 font-bold">
+                    صورة العينة التوضيحية (Specimen Diagram / Image) *
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleImageFileChange}
+                      accept="image/*"
+                      className="hidden"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={isUploadingImage}
+                      className="px-3 py-1 bg-white hover:bg-indigo-50 border border-slate-200 text-indigo-600 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-2xs"
+                    >
+                      <Upload className="w-3.5 h-3.5" />
+                      <span>{isUploadingImage ? 'جاري الرفع...' : 'رفع صورة من الجهاز'}</span>
+                    </button>
+                  </div>
+                </div>
+
                 <input
                   type="text"
                   value={formImageUrl}
                   onChange={e => setFormImageUrl(e.target.value)}
-                  placeholder="https://images.unsplash.com/... أو مسار صورة عينة موثقة"
-                  className="w-full py-2 px-3 rounded-xl border border-slate-200 text-slate-800 font-mono"
+                  placeholder="أو الصق رابط الصورة: https://... أو مسار صورة عينة موثقة"
+                  className="w-full py-2 px-3 rounded-xl border border-slate-200 text-slate-800 font-mono text-xs bg-white"
                   required
                 />
+
                 {formImageUrl && (
-                  <div className="mt-2 p-2 bg-slate-900 rounded-xl flex items-center justify-center max-h-40 overflow-hidden relative">
-                    <img src={formImageUrl} alt="Preview" className="max-h-36 object-contain" />
-                    {formMarkerX && formMarkerY && (
+                  <div className="mt-2 p-2 bg-slate-900 rounded-xl flex items-center justify-center max-h-44 overflow-hidden relative">
+                    <img src={formImageUrl} alt="Preview" className="max-h-40 object-contain rounded" />
+                    {formMarkerX !== undefined && formMarkerY !== undefined && (
                       <div
-                        className="absolute w-5 h-5 rounded-full bg-rose-600 text-white font-mono text-[10px] font-black flex items-center justify-center border border-white shadow-md -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                        className="absolute w-6 h-6 rounded-full bg-rose-600 text-white font-mono text-[10px] font-black flex items-center justify-center border-2 border-white shadow-md -translate-x-1/2 -translate-y-1/2 pointer-events-none"
                         style={{ left: `${formMarkerX}%`, top: `${formMarkerY}%` }}
                       >
                         {formMarkerLabel || '①'}
@@ -766,23 +1067,148 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
                 />
               </div>
 
-              {/* Form Buttons */}
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+              {/* Role-Specific Submission Actions */}
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setIsEditorOpen(false)}
-                  className="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-700 font-bold hover:bg-slate-50 transition-colors"
+                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-slate-200 text-slate-700 font-bold hover:bg-slate-50 transition-colors"
                 >
                   إلغاء
                 </button>
-                <button
-                  type="submit"
-                  className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-black shadow-md transition-all active:scale-95"
-                >
-                  {editingQuestion ? 'حفظ التعديلات' : 'إضافة السؤال للبنك'}
-                </button>
+
+                <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                  {/* Assistant Actions */}
+                  {isAssistant && !isOwner && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => handleSaveQuestionWithStatus('draft')}
+                        className="px-4 py-2.5 rounded-xl border border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold transition flex items-center gap-1.5"
+                      >
+                        <FileText className="w-4 h-4" />
+                        <span>حفظ كمسودة (Save Draft)</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleSaveQuestionWithStatus('pending_review')}
+                        className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-black shadow-md transition flex items-center gap-1.5"
+                      >
+                        <Send className="w-4 h-4" />
+                        <span>إرسال للمراجعة والاعتماد (Submit)</span>
+                      </button>
+                    </>
+                  )}
+
+                  {/* Owner Actions */}
+                  {isOwner && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => handleSaveQuestionWithStatus('draft')}
+                        className="px-3.5 py-2.5 rounded-xl border border-slate-300 text-slate-700 font-bold hover:bg-slate-50 transition"
+                      >
+                        حفظ كمسودة
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleSaveQuestionWithStatus('approved')}
+                        className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition flex items-center gap-1.5 shadow-xs"
+                      >
+                        <Check className="w-4 h-4" />
+                        <span>حفظ كمعتمد</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleSaveQuestionWithStatus('published')}
+                        className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-black shadow-md transition flex items-center gap-1.5"
+                      >
+                        <Sparkles className="w-4 h-4" />
+                        <span>حفظ ونشر في الاختبارات</span>
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
-            </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Review Modal (Owner Action for Assistant Submissions) */}
+      {reviewModalQuestion && (
+        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-6 sm:p-7 max-w-lg w-full shadow-2xl border border-slate-200 space-y-4 animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-5 h-5 text-indigo-600" />
+                <h3 className="text-base font-black text-slate-900">مراجعة واعتماد سؤال المساعد</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setReviewModalQuestion(null)}
+                className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-2 p-3 bg-slate-50 rounded-2xl border border-slate-100 text-xs">
+              <div>
+                <span className="text-slate-400 font-bold block">مقدم السؤال:</span>
+                <span className="font-bold text-slate-800">{reviewModalQuestion.authorName || 'مساعد إعداد الأسئلة'}</span>
+              </div>
+              <div>
+                <span className="text-slate-400 font-bold block">نص السؤال:</span>
+                <p className="font-bold text-slate-900 mt-0.5">{reviewModalQuestion.questionText}</p>
+              </div>
+              <div>
+                <span className="text-slate-400 font-bold block">الإجابة الصحيحة:</span>
+                <span className="font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                  {reviewModalQuestion.correctAnswer}
+                </span>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">
+                ملاحظات المراجعة أو التوجيهات للمساعد (Review Notes)
+              </label>
+              <textarea
+                value={reviewNotes}
+                onChange={e => setReviewNotes(e.target.value)}
+                placeholder="أضف ملاحظاتك أو أسباب طلب التعديل إن وجدت..."
+                rows={2}
+                className="w-full py-2 px-3 rounded-xl border border-slate-200 text-xs text-slate-800 font-medium"
+              />
+            </div>
+
+            <div className="flex items-center gap-2 pt-2">
+              <button
+                type="button"
+                disabled={isSubmittingReview}
+                onClick={() => handleReviewAction('rejected')}
+                className="flex-1 py-2.5 px-3 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs transition"
+              >
+                طلب تعديل / رفض
+              </button>
+              <button
+                type="button"
+                disabled={isSubmittingReview}
+                onClick={() => handleReviewAction('approved')}
+                className="flex-1 py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-xs"
+              >
+                اعتماد (Approve)
+              </button>
+              <button
+                type="button"
+                disabled={isSubmittingReview}
+                onClick={() => handleReviewAction('published')}
+                className="flex-1 py-2.5 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition shadow-md"
+              >
+                نشر مباشر (Publish)
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -799,6 +1225,7 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
                 <span className="text-xs text-slate-500 font-semibold">
                   {previewQuestion.specimenCategory || 'Specimen'}
                 </span>
+                {renderStatusBadge(previewQuestion.status)}
               </div>
               <button
                 type="button"

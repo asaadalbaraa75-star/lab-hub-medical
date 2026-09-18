@@ -125,6 +125,65 @@ export async function apiDuplicateQuestion(questionId: string): Promise<ExamQues
   return null;
 }
 
+export async function apiUpdateQuestionStatus(
+  questionId: string,
+  status: string,
+  reviewNotes?: string,
+  token?: string
+): Promise<{ success: boolean; question?: ExamQuestion; error?: string }> {
+  try {
+    const res = await fetch(`/api/questions/${questionId}/status`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token || ''}`
+      },
+      body: JSON.stringify({ status, reviewNotes })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      return { success: false, error: data.error || 'فشل تحديث حالة السؤال.' };
+    }
+    return { success: true, question: data.question };
+  } catch (e: any) {
+    return { success: false, error: e.message || 'خطأ في الاتصال بالخادم.' };
+  }
+}
+
+export async function apiUploadQuestionImage(base64Image: string): Promise<string | null> {
+  try {
+    const res = await fetch('/api/upload/image', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ image: base64Image })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      return data.url;
+    }
+  } catch (e) {
+    console.error('Failed to upload image:', e);
+  }
+  return null;
+}
+
+export async function apiContributorAccess(code: string): Promise<{ success: boolean; user?: any; token?: string; error?: string }> {
+  try {
+    const res = await fetch('/api/contributor/access', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      return { success: false, error: data.error || 'رمز الوصول غير صالح.' };
+    }
+    return { success: true, user: data.user, token: data.token };
+  } catch (e: any) {
+    return { success: false, error: e.message || 'خطأ في الاتصال بالخادم.' };
+  }
+}
+
 // --- Notifications API ---
 export async function apiFetchNotifications(): Promise<NotificationItem[]> {
   try {
@@ -223,6 +282,9 @@ export const apiService = {
   saveQuestion: apiSaveQuestion,
   deleteQuestion: apiDeleteQuestion,
   duplicateQuestion: apiDuplicateQuestion,
+  updateQuestionStatus: apiUpdateQuestionStatus,
+  uploadQuestionImage: apiUploadQuestionImage,
+  contributorAccess: apiContributorAccess,
   fetchNotifications: apiFetchNotifications,
   createNotification: apiCreateNotification,
   fetchVideos: apiFetchVideos,

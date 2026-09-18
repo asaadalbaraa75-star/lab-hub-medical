@@ -70,7 +70,6 @@ import { AnnouncementsModal } from './components/announcements/AnnouncementsModa
 import { StudentPortalModal } from './components/share/StudentPortalModal';
 import { AboutPlatformModal } from './components/about/AboutPlatformModal';
 import { SecurityAuditModal } from './components/security/SecurityAuditModal';
-import { AuthModal } from './components/auth/AuthModal';
 import { WelcomeExperienceModal } from './components/common/WelcomeExperienceModal';
 
 // Interactive Study Companion ("لبيب" / Labeeb)
@@ -726,9 +725,16 @@ export default function App() {
     }
   };
 
-  // MANDATORY ACCOUNT SYSTEM ENFORCEMENT:
-  // If not authenticated, visitor CANNOT access any educational content or dashboard
-  if (!currentUser || !authService.isAuthenticated()) {
+  // Staff authorization check
+  const isStaff = currentUser && (
+    currentUser.role === 'owner' ||
+    currentUser.role === 'admin' ||
+    currentUser.role === 'content_exams' ||
+    currentUser.role === 'exams_only'
+  );
+
+  // If visitor is attempting to access Admin/Contributor portal without staff session:
+  if (currentTab.startsWith('admin') && !isStaff) {
     return (
       <AuthPage
         onLoginSuccess={(user) => {
@@ -736,15 +742,14 @@ export default function App() {
           storageService.setCurrentUser(user);
           setProgress(storageService.getStudentProgress(user.id));
           authService.trackActivity('تسجيل الدخول للمنصة', 'Authentication', 'تم تسجيل الدخول بنجاح');
-          setIsWelcomeModalOpen(true);
-          if (currentTab && currentTab !== 'dashboard' && currentTab !== 'login' && (!currentTab.startsWith('admin') || user.role === 'admin')) {
-            updateTabWithHash(currentTab);
-          } else {
-            setCurrentTab('dashboard');
-            updateTabWithHash('dashboard');
-          }
+          setCurrentTab('admin');
+          updateTabWithHash('admin');
         }}
-        initialReturnTab={currentTab}
+        onCancel={() => {
+          setCurrentTab('dashboard');
+          updateTabWithHash('dashboard');
+        }}
+        initialReturnTab="admin"
       />
     );
   }
@@ -859,13 +864,22 @@ export default function App() {
         onClose={() => setIsSecurityAuditOpen(false)}
       />
 
-      {/* Role-Based Authentication & Switch Portal Modal */}
-      <AuthModal
-        isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
-        currentUser={currentUser}
-        onUserChange={handleUserChange}
-      />
+      {/* Role-Based Authentication & Contributor/Staff Portal */}
+      {isAuthModalOpen && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-[#0E081A]">
+          <AuthPage
+            onLoginSuccess={(user) => {
+              setCurrentUser(user);
+              storageService.setCurrentUser(user);
+              setIsAuthModalOpen(false);
+              setCurrentTab('admin');
+              updateTabWithHash('admin');
+            }}
+            onCancel={() => setIsAuthModalOpen(false)}
+            initialReturnTab="admin"
+          />
+        </div>
+      )}
 
       {/* Biochemistry Detailed Tests Guide (9 Core Qualitative Tests) */}
       <BiochemistryDetailsModal

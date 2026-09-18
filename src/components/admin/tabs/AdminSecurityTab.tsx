@@ -161,8 +161,8 @@ export const AdminSecurityTab: React.FC<Props> = ({ currentUser }) => {
     setTestCases([...updated]);
     await new Promise(r => setTimeout(r, 200));
     authService.setMockRole('admin');
-    const escalatedUser = authService.switchRole('admin');
-    if (escalatedUser.role === 'admin' && currentUser.role === 'student') {
+    const escalatedUser = authService.getCurrentUser();
+    if (escalatedUser?.role === 'admin' && currentUser.role === 'student') {
       updated[1].status = 'failed';
       updated[1].details = 'Vulnerability: Role escalation succeeded.';
     } else {
