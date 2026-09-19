@@ -127,7 +127,24 @@ class StorageService {
 
   // --- Practicals ---
   getPracticals(): Practical[] {
-    return this.get<Practical[]>(STORAGE_KEYS.PRACTICALS, INITIAL_PRACTICALS);
+    const stored = this.get<Practical[]>(STORAGE_KEYS.PRACTICALS, []);
+    if (!stored || stored.length === 0) {
+      this.set(STORAGE_KEYS.PRACTICALS, INITIAL_PRACTICALS);
+      return INITIAL_PRACTICALS;
+    }
+    // Seamlessly merge standard curriculum lessons if missing, preserving any existing edits
+    let hasUpdates = false;
+    const merged = [...stored];
+    for (const initP of INITIAL_PRACTICALS) {
+      if (!merged.some(p => p.id === initP.id)) {
+        merged.push(initP);
+        hasUpdates = true;
+      }
+    }
+    if (hasUpdates) {
+      this.set(STORAGE_KEYS.PRACTICALS, merged);
+    }
+    return merged;
   }
 
   getPracticalById(id: string): Practical | undefined {

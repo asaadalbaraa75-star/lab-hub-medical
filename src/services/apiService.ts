@@ -1,4 +1,4 @@
-import { ExamQuestion, MedicalExam, NotificationItem } from '../types';
+import { ExamQuestion, MedicalExam, NotificationItem, Practical } from '../types';
 
 export interface AskTutorResponse {
   answer: string;
@@ -272,9 +272,69 @@ export async function apiCheckVideoLink(youtubeId: string): Promise<{ isValid: b
   return { isValid: false, status: 'error', message: 'Network check failed' };
 }
 
+// --- Practicals API ---
+export async function apiFetchPracticals(): Promise<Practical[]> {
+  try {
+    const res = await fetch('/api/practicals');
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (e) {
+    console.warn('Could not fetch practicals from server API:', e);
+  }
+  return [];
+}
+
+export async function apiSavePractical(practical: Practical): Promise<{ success: boolean; practical?: Practical; error?: string }> {
+  try {
+    const res = await fetch('/api/practicals', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(practical)
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      return { success: false, error: data.error || 'فشل حفظ الدرس في الخادم' };
+    }
+    return { success: true, practical: data.practical };
+  } catch (e: any) {
+    console.warn('Failed to save practical to server API:', e);
+    return { success: false, error: e.message || 'خطأ في الاتصال بالخادم' };
+  }
+}
+
+export async function apiDeletePractical(id: string): Promise<boolean> {
+  try {
+    const res = await fetch(`/api/practicals/${id}`, { method: 'DELETE' });
+    return res.ok;
+  } catch (e) {
+    console.warn('Failed to delete practical from server API:', e);
+    return false;
+  }
+}
+
+export async function apiUpdatePracticalStatus(id: string, status: string): Promise<boolean> {
+  try {
+    const res = await fetch(`/api/practicals/${id}/status`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status })
+    });
+    return res.ok;
+  } catch (e) {
+    console.warn('Failed to update practical status on server:', e);
+    return false;
+  }
+}
+
 export const apiService = {
   askAiTutor: askLabHubTutor,
   askLabHubTutor,
+  fetchPracticals: apiFetchPracticals,
+  savePractical: apiSavePractical,
+  deletePractical: apiDeletePractical,
+  updatePracticalStatus: apiUpdatePracticalStatus,
+  uploadPracticalImage: apiUploadQuestionImage,
   fetchExams: apiFetchExams,
   saveExam: apiSaveExam,
   deleteExam: apiDeleteExam,

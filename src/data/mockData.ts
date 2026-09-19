@@ -11,6 +11,7 @@ import {
   StudentProgress,
   BiochemistryTestItem
 } from '../types';
+import { ADDITIONAL_PRACTICALS } from './curriculumPracticals';
 
 export const DEMO_USERS: User[] = [
   {
@@ -413,7 +414,7 @@ export const BIOCHEMISTRY_CARBOHYDRATE_TESTS: BiochemistryTestItem[] = [
   }
 ];
 
-export const INITIAL_PRACTICALS: Practical[] = [
+const BASE_INITIAL_PRACTICALS: Practical[] = [
   {
     id: 'prac_hist_05',
     courseId: 'histology',
@@ -1044,6 +1045,11 @@ export const INITIAL_PRACTICALS: Practical[] = [
     quizId: 'quiz_bio_01',
     spotterIds: ['spot_bio_1']
   }
+];
+
+export const INITIAL_PRACTICALS: Practical[] = [
+  ...BASE_INITIAL_PRACTICALS,
+  ...ADDITIONAL_PRACTICALS
 ];
 
 export const SPOTTER_ITEMS: SpotterItem[] = [
