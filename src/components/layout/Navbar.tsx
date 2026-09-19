@@ -26,6 +26,7 @@ import {
   ChevronLeft
 } from 'lucide-react';
 import { User, NotificationItem } from '../../types';
+import { securityService } from '../../services/securityService';
 
 interface NavbarProps {
   currentUser?: User;
@@ -69,12 +70,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [showNotifications, setShowNotifications] = useState(false);
   const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(false);
 
-  const isStaff = currentUser && (
-    currentUser.role === 'owner' ||
-    currentUser.role === 'admin' ||
-    currentUser.role === 'content_exams' ||
-    currentUser.role === 'exams_only'
-  );
+  const isStaff = securityService.isStaff(currentUser);
 
   const safeNotifications = Array.isArray(notifications) ? notifications : [];
   const unreadCount = safeNotifications.filter(n => !n.isRead).length;

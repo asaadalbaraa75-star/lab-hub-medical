@@ -6,7 +6,7 @@
  * Security Architecture & Data Integrity Service
  */
 
-import { UserRole, AdminSubPage } from '../types';
+import { User, UserRole, AdminSubPage } from '../types';
 
 export interface SecurityAuditResult {
   passed: boolean;
@@ -79,6 +79,56 @@ export class SecurityService {
   public verifyChecksum(data: any, expectedChecksum: string): boolean {
     if (!expectedChecksum) return false;
     return this.generateChecksum(data) === expectedChecksum;
+  }
+
+  /**
+   * Evaluates whether a user has full Administrator / Platform Dean privileges.
+   * Checks role ('admin' or 'owner') as well as verified UID identity.
+   */
+  public isAdmin(userOrRole?: User | UserRole | string | null): boolean {
+    if (!userOrRole) return false;
+    if (typeof userOrRole === 'string') {
+      return userOrRole === 'admin' || userOrRole === 'owner';
+    }
+    const user = userOrRole as User;
+    const role = user.role;
+    if (role === 'admin' || role === 'owner') return true;
+
+    // Verify authenticated UID identity for designated administrative accounts
+    const uid = user.id || user.userId || '';
+    if (
+      uid === 'usr_owner_soukaina' ||
+      uid === 'usr_owner_personal' ||
+      uid === 'usr_admin_1' ||
+      uid.startsWith('usr_admin') ||
+      uid.startsWith('usr_owner')
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Evaluates whether a user is authorized staff (Owner, Admin, or Assistant)
+   */
+  public isStaff(userOrRole?: User | UserRole | string | null): boolean {
+    if (!userOrRole) return false;
+    if (this.isAdmin(userOrRole)) return true;
+
+    if (typeof userOrRole === 'string') {
+      return userOrRole === 'content_exams' || userOrRole === 'exams_only';
+    }
+    const user = userOrRole as User;
+    const role = user.role;
+    if (role === 'content_exams' || role === 'exams_only') return true;
+
+    const uid = user.id || user.userId || '';
+    if (uid.startsWith('usr_assistant') || uid.startsWith('AST-')) {
+      return true;
+    }
+
+    return false;
   }
 
   /**
@@ -225,7 +275,7 @@ export class SecurityService {
         category: 'Platform Ownership & Copyright',
         title: 'Ownership & Intellectual Property Notice',
         status: 'pass' as const,
-        description: 'Comprehensive copyright notice and attribution for lead creator سكينة أسعد (Soukaina Asaad) across all modules.',
+        description: 'Comprehensive copyright notice and attribution for lead creator سكينة أسعد (Sokinah Asaad) across all modules.',
         details: 'Notice: LAB HUB © 2026 All Rights Reserved. Educational Platform — Original Project.'
       }
     ];

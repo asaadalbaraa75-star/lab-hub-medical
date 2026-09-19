@@ -20,6 +20,7 @@ import {
 } from './types';
 import { storageService } from './services/storageService';
 import { authService } from './services/authService';
+import { securityService } from './services/securityService';
 import { LAB_SUBJECTS } from './data/mockData';
 
 // Layout Components
@@ -676,8 +677,20 @@ export default function App() {
         );
 
       case 'admin':
-      case 'admin_dashboard':
-        if (currentUser.role !== 'admin') {
+      case 'admin_dashboard': {
+        const isAuthorizedAdmin = securityService.isStaff(currentUser);
+
+        if (process.env.NODE_ENV !== 'production') {
+          console.log('[AUTH DIAGNOSTIC]', {
+            authenticatedUID: currentUser?.id,
+            authenticatedEmail: currentUser?.email,
+            detectedRole: currentUser?.role,
+            authorizationResult: isAuthorizedAdmin ? 'AUTHORIZED_ADMIN' : 'DENIED',
+            source: 'securityService.isStaff'
+          });
+        }
+
+        if (!isAuthorizedAdmin) {
           return (
             <div className="bg-amber-50 border border-amber-200 rounded-3xl p-8 text-center space-y-4 max-w-lg mx-auto my-12">
               <h2 className="text-xl font-bold text-amber-900">غير مصرح بالدخول</h2>
@@ -702,6 +715,7 @@ export default function App() {
             />
           </div>
         );
+      }
 
       case 'dashboard':
       default:
@@ -726,12 +740,7 @@ export default function App() {
   };
 
   // Staff authorization check
-  const isStaff = currentUser && (
-    currentUser.role === 'owner' ||
-    currentUser.role === 'admin' ||
-    currentUser.role === 'content_exams' ||
-    currentUser.role === 'exams_only'
-  );
+  const isStaff = securityService.isStaff(currentUser);
 
   // If visitor is attempting to access Admin/Contributor portal without staff session:
   if (currentTab.startsWith('admin') && !isStaff) {

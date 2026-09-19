@@ -174,7 +174,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
               بوابة وصول إدارة المنصة ومساعدي إعداد الأسئلة
             </p>
             <p className="text-xs text-purple-300 font-medium">
-              المالكة والمطورة: <span className="text-white font-bold">سكينة أسعد</span> (Soukaina Asaad)
+              المالكة والمطورة: <span className="text-white font-bold">سكينة أسعد</span> (Sokinah Asaad)
             </p>
           </div>
 

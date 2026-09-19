@@ -78,7 +78,7 @@ async function startServer() {
     );
 
     // Platform Ownership & Copyright Header (Strict ASCII compliance)
-    res.setHeader('X-Platform-Creator', 'Soukaina Asaad');
+    res.setHeader('X-Platform-Creator', 'Sokinah Asaad');
     res.setHeader('X-Platform-Copyright', 'LAB HUB 2026. All Rights Reserved.');
     
     if (req.method === 'OPTIONS') {
@@ -88,7 +88,16 @@ async function startServer() {
     next();
   });
 
-  app.use(express.json({ limit: '1mb' }));
+  app.use(express.json({ limit: '10mb' }));
+
+  // Static uploads serving for uploaded question/lesson media
+  const UPLOADS_DIR = path.join(process.cwd(), 'uploads');
+  if (!fs.existsSync(UPLOADS_DIR)) {
+    try {
+      fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+    } catch {}
+  }
+  app.use('/uploads', express.static(UPLOADS_DIR));
 
   // API Route: Health & Platform Info Check
   app.get('/api/health', (req: Request, res: Response) => {
@@ -96,7 +105,7 @@ async function startServer() {
       status: 'ok',
       platform: 'LAB HUB Medical Laboratory Learning Platform',
       version: '2.4.0-production',
-      owner: 'سكينة أسعد (Soukaina Asaad)',
+      owner: 'سكينة أسعد (Sokinah Asaad)',
       copyright: '© 2026 LAB HUB. All Rights Reserved.',
       timestamp: new Date().toISOString()
     });
@@ -167,7 +176,7 @@ async function startServer() {
       id: 'usr_owner_soukaina',
       userId: 'usr_owner_soukaina',
       name: 'سكينة أسعد',
-      fullName: 'سكينة أسعد (Soukaina Asaad)',
+      fullName: 'سكينة أسعد (Sokinah Asaad)',
       email: 'owner@labhub.med',
       role: 'owner',
       passwordHash: hashPassword('owner123'),
@@ -182,10 +191,28 @@ async function startServer() {
       sessionCount: 50
     },
     {
+      id: 'usr_owner_personal',
+      userId: 'usr_owner_personal',
+      name: 'سكينة أسعد',
+      fullName: 'سكينة أسعد (Sokinah Asaad)',
+      email: 'asaadalbaraa75@gmail.com',
+      role: 'owner',
+      passwordHash: hashPassword('owner123'),
+      studentId: 'OWNER-2026-002',
+      department: 'Academic Directorate & Laboratory Board',
+      year: 'Platform Founder & Lead Anatomist',
+      enrolledLabs: ['anatomy', 'histology', 'biochemistry'],
+      avatarUrl: 'https://images.unsplash.com/photo-1594824813680-79883506ecf5?w=150&auto=format&fit=crop&q=80',
+      createdAt: '2026-01-01T08:00:00.000Z',
+      lastLoginAt: new Date().toISOString(),
+      lastActivityAt: new Date().toISOString(),
+      sessionCount: 50
+    },
+    {
       id: 'usr_admin_1',
       userId: 'usr_admin_1',
       name: 'سكينة أسعد (Owner)',
-      fullName: 'سكينة أسعد (Soukaina Asaad)',
+      fullName: 'سكينة أسعد (Sokinah Asaad)',
       email: 'admin@med.edu',
       role: 'owner',
       passwordHash: hashPassword('admin123'),
@@ -308,14 +335,38 @@ async function startServer() {
             );
 
           // Guarantee Owner exists
-          if (!sanitizedUsers.some(u => u.email === 'owner@labhub.med' || u.id === 'usr_owner_soukaina')) {
+          let ownerAccount = sanitizedUsers.find(u => u.email === 'owner@labhub.med' || u.id === 'usr_owner_soukaina');
+          if (!ownerAccount) {
             sanitizedUsers.unshift(defaultUsers[0]);
+          } else {
+            ownerAccount.role = 'owner';
+            ownerAccount.name = 'سكينة أسعد';
+            ownerAccount.fullName = 'سكينة أسعد (Sokinah Asaad)';
+            if (!ownerAccount.passwordHash) ownerAccount.passwordHash = hashPassword('owner123');
           }
-          if (!sanitizedUsers.some(u => u.email === 'admin@med.edu')) {
-            sanitizedUsers.push(defaultUsers[1]);
+
+          let personalOwner = sanitizedUsers.find(u => u.email === 'asaadalbaraa75@gmail.com' || u.id === 'usr_owner_personal');
+          if (!personalOwner) {
+            sanitizedUsers.splice(1, 0, defaultUsers[1]);
+          } else {
+            personalOwner.role = 'owner';
+            personalOwner.name = 'سكينة أسعد';
+            personalOwner.fullName = 'سكينة أسعد (Sokinah Asaad)';
+            if (!personalOwner.passwordHash) personalOwner.passwordHash = hashPassword('owner123');
           }
+
+          let adminAccount = sanitizedUsers.find(u => u.email === 'admin@med.edu');
+          if (!adminAccount) {
+            sanitizedUsers.push(defaultUsers[2]);
+          } else {
+            adminAccount.role = 'owner';
+            adminAccount.name = 'سكينة أسعد (Owner)';
+            adminAccount.fullName = 'سكينة أسعد (Sokinah Asaad)';
+            if (!adminAccount.passwordHash) adminAccount.passwordHash = hashPassword('admin123');
+          }
+
           // Guarantee Assistants exist
-          for (let i = 2; i <= 4; i++) {
+          for (let i = 3; i < defaultUsers.length; i++) {
             if (!sanitizedUsers.some(u => u.email === defaultUsers[i].email)) {
               sanitizedUsers.push(defaultUsers[i]);
             }
@@ -595,10 +646,28 @@ async function startServer() {
       }
 
       const cleanEmail = String(email).trim().toLowerCase();
-      const user = serverUsers.find(u => u.email === cleanEmail);
+      let user = serverUsers.find(u => u.email.toLowerCase() === cleanEmail);
+
+      // Auto-recovery for Owner account if database was previously cleared or missing owner
+      if (!user && (cleanEmail === 'owner@labhub.med' || cleanEmail === 'asaadalbaraa75@gmail.com' || cleanEmail === 'admin@med.edu')) {
+        const matchingDefault = defaultUsers.find(d => d.email.toLowerCase() === cleanEmail) || defaultUsers[0];
+        user = {
+          ...matchingDefault,
+          passwordHash: hashPassword(cleanEmail === 'admin@med.edu' ? 'admin123' : 'owner123')
+        };
+        serverUsers.unshift(user);
+        saveDb();
+      }
 
       if (!user) {
         return res.status(401).json({ error: 'Invalid email or password. Please verify your credentials.' });
+      }
+
+      // If owner email, enforce owner role & current name
+      if (cleanEmail === 'owner@labhub.med' || cleanEmail === 'asaadalbaraa75@gmail.com' || cleanEmail === 'admin@med.edu') {
+        user.role = 'owner';
+        user.name = cleanEmail === 'admin@med.edu' ? 'سكينة أسعد (Owner)' : 'سكينة أسعد';
+        user.fullName = 'سكينة أسعد (Sokinah Asaad)';
       }
 
       const inputHash = hashPassword(password);
@@ -643,7 +712,7 @@ async function startServer() {
 
       const token = createSessionToken(user);
 
-      if (user.role === 'admin') {
+      if (user.role === 'admin' || user.role === 'owner') {
         const decoded = Buffer.from(token, 'base64').toString('ascii');
         const parts = decoded.split(':');
         const tokenTimestamp = Number(parts[2]) || Date.now();
@@ -1379,7 +1448,7 @@ async function startServer() {
     }
     const token = authHeader.split(' ')[1];
     const verified = verifySessionToken(token);
-    if (!verified || verified.role !== 'admin') {
+    if (!verified || !isOwnerRole(verified.role)) {
       return res.status(403).json({ error: 'Access Denied: Faculty Admin Privileges Required.' });
     }
 
@@ -1672,11 +1741,11 @@ async function startServer() {
     }
     const token = authHeader.split(' ')[1];
     const verified = verifySessionToken(token);
-    if (!verified || verified.role !== 'admin') {
+    if (!verified || !isOwnerRole(verified.role)) {
       return res.status(403).json({ error: 'Access Denied: Faculty Admin Privileges Required.' });
     }
 
-    const adminUser = serverUsers.find(u => u.role === 'admin') || serverUsers[1];
+    const adminUser = serverUsers.find(u => u.id === verified.userId) || serverUsers.find(u => isOwnerRole(u.role)) || serverUsers[0];
 
     // Build session snapshot
     const currentSession = activeAdminSessions.find(s => s.tokenTimestamp === verified.timestamp) || {
@@ -1732,7 +1801,7 @@ async function startServer() {
     }
     const token = authHeader.split(' ')[1];
     const verified = verifySessionToken(token);
-    if (!verified || verified.role !== 'admin') {
+    if (!verified || !isOwnerRole(verified.role)) {
       return res.status(403).json({ error: 'Access Denied: Faculty Admin Privileges Required.' });
     }
 
@@ -1774,21 +1843,27 @@ async function startServer() {
       return res.status(400).json({ valid: false, message: 'Missing credentials' });
     }
     // Verify valid known roles
-    const validRoles = ['student', 'instructor', 'admin'];
+    const validRoles = ['student', 'instructor', 'admin', 'owner', 'content_exams', 'exams_only'];
     if (!validRoles.includes(role)) {
       return res.status(403).json({ valid: false, message: 'Invalid role requested' });
     }
 
+    const userInDb = serverUsers.find(u => u.id === userId || u.userId === userId);
+    const resolvedRole = userInDb ? userInDb.role : role;
+    const isOwner = isOwnerRole(resolvedRole);
+    const isStaff = isStaffRole(resolvedRole);
+
     return res.json({
       valid: true,
-      role,
+      role: resolvedRole,
       userId,
+      user: userInDb,
       verifiedTimestamp: new Date().toISOString(),
       permissions: {
         canTakeExams: true,
         canViewCurricula: true,
-        canEditQuestions: role === 'instructor' || role === 'admin',
-        canManagePlatform: role === 'admin'
+        canEditQuestions: resolvedRole === 'instructor' || isStaff,
+        canManagePlatform: isOwner
       }
     });
   });
@@ -1935,12 +2010,36 @@ async function startServer() {
     return res.json({ success: true, question });
   });
 
-  // Image upload endpoint for question contributor diagrams
+  // Image upload endpoint for question contributor diagrams (Saves base64 to disk to prevent storage bloat)
   app.post('/api/upload/image', (req: Request, res: Response) => {
     const { image } = req.body;
-    if (!image) {
+    if (!image || typeof image !== 'string') {
       return res.status(400).json({ error: 'Image payload is required.' });
     }
+
+    // If it's already a URL, return as is
+    if (image.startsWith('http://') || image.startsWith('https://') || image.startsWith('/uploads/')) {
+      return res.json({ success: true, url: image });
+    }
+
+    // Process Base64 image
+    const matches = image.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+    if (matches && matches.length === 3) {
+      try {
+        const mimeType = matches[1];
+        const base64Data = matches[2];
+        const ext = mimeType.split('/')[1]?.replace('jpeg', 'jpg') || 'png';
+        const filename = `specimen_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${ext}`;
+        const filePath = path.join(UPLOADS_DIR, filename);
+
+        fs.writeFileSync(filePath, Buffer.from(base64Data, 'base64'));
+        return res.json({ success: true, url: `/uploads/${filename}` });
+      } catch (e: any) {
+        console.warn('Failed to write image file to disk, falling back:', e);
+        return res.json({ success: true, url: image });
+      }
+    }
+
     return res.json({ success: true, url: image });
   });
 
@@ -2094,6 +2193,8 @@ async function startServer() {
   });
 
   // ==================== AI MEDICAL TUTOR API ====================
+  const aiTutorCache = new Map<string, { answer: string; source: string; timestamp: number }>();
+
   app.post('/api/ai/ask-tutor', apiRateLimiter(30, 60000), async (req: Request, res: Response) => {
     try {
       const { question, labContext, practicalTitle, mode, imageUrl } = req.body;
@@ -2103,9 +2204,16 @@ async function startServer() {
       }
 
       // Input bounding & sanitization
-      const cleanQuestion = question.trim().substring(0, 1500);
+      const cleanQuestion = question.trim().substring(0, 1000);
       if (cleanQuestion.length < 2) {
         return res.status(400).json({ error: 'Question is too short.' });
+      }
+
+      // Cache lookup to protect quotas and prevent redundant API calls
+      const cacheKey = `${(labContext || '').toLowerCase()}::${(mode || 'normal')}::${cleanQuestion.toLowerCase()}`;
+      const cached = aiTutorCache.get(cacheKey);
+      if (cached && (Date.now() - cached.timestamp < 2 * 60 * 60 * 1000)) {
+        return res.json({ answer: cached.answer, source: `${cached.source} (cached)` });
       }
 
       const client = getGeminiClient();
@@ -2145,27 +2253,24 @@ Current Context:
 ${imageUrl ? `- Referenced Medical Specimen Image: ${imageUrl}` : ''}`;
 
           const response = await client.models.generateContent({
-            model: 'gemini-3.8-flash',
+            model: 'gemini-2.5-flash',
             contents: [
               { role: 'user', parts: [{ text: `${systemPrompt}\n\nStudent Question:\n"${cleanQuestion}"` }] }
             ]
           });
 
           const replyText = response.text || 'Unable to generate response from medical tutor.';
-          return res.json({ answer: replyText, source: 'gemini-3.8-flash' });
-        } catch (apiErr) {
-          console.warn('Gemini 3.8 Flash failed, attempting fallback to gemini-2.5-flash:', apiErr);
-          try {
-            const fallbackResponse = await client.models.generateContent({
-              model: 'gemini-2.5-flash',
-              contents: [
-                { role: 'user', parts: [{ text: `You are LAB HUB AI Medical Tutor.\nQuestion: ${cleanQuestion}\nSubject: ${labContext || 'Anatomy & Histology'}` }] }
-              ]
-            });
-            return res.json({ answer: fallbackResponse.text || '', source: 'gemini-2.5-flash' });
-          } catch (e2) {
-            console.warn('Both Gemini models failed, falling back to curriculum knowledge base:', e2);
+          
+          // Store in cache
+          aiTutorCache.set(cacheKey, { answer: replyText, source: 'gemini-2.5-flash', timestamp: Date.now() });
+          if (aiTutorCache.size > 150) {
+            const oldestKey = aiTutorCache.keys().next().value;
+            if (oldestKey) aiTutorCache.delete(oldestKey);
           }
+
+          return res.json({ answer: replyText, source: 'gemini-2.5-flash' });
+        } catch (apiErr: any) {
+          console.warn('Gemini tutor request error (serving curriculum backup):', apiErr?.message || apiErr);
         }
       }
 

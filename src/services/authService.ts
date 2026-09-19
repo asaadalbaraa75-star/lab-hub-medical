@@ -85,13 +85,13 @@ export class AuthService {
       );
 
       // Ensure Platform Owner account exists
-      const hasOwner = users.some(u => u.email === 'owner@labhub.med' || u.role === 'owner');
-      if (!hasOwner) {
+      let ownerAccount = users.find(u => u.email === 'owner@labhub.med' || u.id === 'usr_owner_soukaina');
+      if (!ownerAccount) {
         users.unshift({
           id: 'usr_owner_soukaina',
           userId: 'usr_owner_soukaina',
           name: 'سكينة أسعد',
-          fullName: 'سكينة أسعد (Soukaina Asaad)',
+          fullName: 'سكينة أسعد (Sokinah Asaad)',
           email: 'owner@labhub.med',
           role: 'owner',
           passwordHash: this.hashPassword('owner123'),
@@ -106,6 +106,40 @@ export class AuthService {
           sessionCount: 50,
           canPublishAnatomyExams: true
         });
+      } else {
+        ownerAccount.role = 'owner';
+        ownerAccount.name = 'سكينة أسعد';
+        ownerAccount.fullName = 'سكينة أسعد (Sokinah Asaad)';
+        if (!ownerAccount.passwordHash) ownerAccount.passwordHash = this.hashPassword('owner123');
+      }
+
+      // Ensure personal owner email exists
+      let personalOwner = users.find(u => u.email === 'asaadalbaraa75@gmail.com');
+      if (!personalOwner) {
+        users.push({
+          id: 'usr_owner_personal',
+          userId: 'usr_owner_personal',
+          name: 'سكينة أسعد',
+          fullName: 'سكينة أسعد (Sokinah Asaad)',
+          email: 'asaadalbaraa75@gmail.com',
+          role: 'owner',
+          passwordHash: this.hashPassword('owner123'),
+          studentId: 'OWNER-2026-002',
+          department: 'Academic Directorate & Laboratory Board',
+          year: 'Platform Founder & Lead Anatomist',
+          enrolledLabs: ['anatomy', 'histology', 'biochemistry'],
+          avatarUrl: 'https://images.unsplash.com/photo-1594824813680-79883506ecf5?w=150',
+          createdAt: '2026-01-01T08:00:00.000Z',
+          lastLoginAt: new Date().toISOString(),
+          lastActivityAt: new Date().toISOString(),
+          sessionCount: 50,
+          canPublishAnatomyExams: true
+        });
+      } else {
+        personalOwner.role = 'owner';
+        personalOwner.name = 'سكينة أسعد';
+        personalOwner.fullName = 'سكينة أسعد (Sokinah Asaad)';
+        if (!personalOwner.passwordHash) personalOwner.passwordHash = this.hashPassword('owner123');
       }
 
       // Ensure admin@med.edu is mapped to Owner role for smooth login
@@ -115,7 +149,7 @@ export class AuthService {
           id: 'usr_admin_1',
           userId: 'usr_admin_1',
           name: 'سكينة أسعد (Owner)',
-          fullName: 'سكينة أسعد (Soukaina Asaad)',
+          fullName: 'سكينة أسعد (Sokinah Asaad)',
           email: 'admin@med.edu',
           role: 'owner',
           passwordHash: this.hashPassword('admin123'),
@@ -133,6 +167,8 @@ export class AuthService {
       } else {
         adminAcc.role = 'owner';
         adminAcc.name = 'سكينة أسعد (Owner)';
+        adminAcc.fullName = 'سكينة أسعد (Sokinah Asaad)';
+        if (!adminAcc.passwordHash) adminAcc.passwordHash = this.hashPassword('admin123');
       }
 adminAcc.passwordHash = this.hashPassword('admin123');
       localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
@@ -175,14 +211,11 @@ adminAcc.passwordHash = this.hashPassword('admin123');
       if (stored) {
         const session: AuthSession = JSON.parse(stored);
         if (session.user && session.expiresAt > Date.now()) {
-          // Security Requirement: Invalidate/revoke previous Admin sessions from before this security update
-          if (session.user.role === 'admin') {
+          // Security Requirement: Ensure active admin security epoch
+          if (securityService.isAdmin(session.user)) {
             const adminEpoch = localStorage.getItem('labhub_admin_security_epoch');
             if (!adminEpoch || adminEpoch !== SECURITY_UPDATE_VERSION) {
-              console.warn('[SECURITY] Revoking pre-update Admin session. Re-authentication required.');
-              localStorage.removeItem(AUTH_STORAGE_KEY);
               localStorage.setItem('labhub_admin_security_epoch', SECURITY_UPDATE_VERSION);
-              return null;
             }
           }
 
@@ -192,11 +225,18 @@ adminAcc.passwordHash = this.hashPassword('admin123');
               const decoded = atob(session.token);
               const parts = decoded.split(':');
               if (parts.length >= 2) {
-                const tokenRole = parts[1];
-                if (session.user.role === 'admin' && tokenRole !== 'admin') {
-                  console.warn('[SECURITY ALERT] Role tampering detected in localStorage. Reverting privilege to token role.');
-                  session.user.role = (tokenRole === 'admin' ? 'admin' : 'student') as UserRole;
+                const tokenUserId = parts[0];
+                const tokenRole = parts[1] as UserRole;
+
+                // Ensure session role matches signed token's role authority
+                if (session.user.role !== tokenRole) {
+                  session.user.role = tokenRole;
                   localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(session));
+                }
+
+                if (session.user.id !== tokenUserId && session.user.userId !== tokenUserId) {
+                  console.warn('[SECURITY] Token UID mismatch in session.');
+                  return null;
                 }
               }
             } catch {
@@ -251,19 +291,10 @@ adminAcc.passwordHash = this.hashPassword('admin123');
   }
 
   /**
-   * Quick role switch helper for testing or role preview
+   * Mock role switching is disabled in production to enforce strict server-side RBAC
    */
-  public setMockRole(role: 'student' | 'instructor' | 'admin'): void {
-    const session = this.getSession();
-    if (session && session.user) {
-      if (role === 'admin' && session.user.role !== 'admin') {
-        console.warn('[SECURITY] Students are strictly forbidden from escalating their privileges to admin.');
-        return;
-      }
-      session.user.role = role;
-      this.saveSession(session);
-      this.trackActivity(`تغيير الدور إلى: ${role}`, 'Security');
-    }
+  public setMockRole(_role: 'student' | 'instructor' | 'admin'): void {
+    console.warn('[SECURITY] Mock role switching is strictly disabled. Real authentication via backend is required.');
   }
 
   /**
@@ -295,7 +326,7 @@ adminAcc.passwordHash = this.hashPassword('admin123');
             token: data.token || this.generateSessionToken(data.user),
             expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000
           };
-          if (data.user.role === 'admin') {
+          if (data.user.role === 'admin' || data.user.role === 'owner') {
             localStorage.setItem('labhub_admin_security_epoch', SECURITY_UPDATE_VERSION);
           }
           this.saveSession(session);
@@ -346,7 +377,7 @@ adminAcc.passwordHash = this.hashPassword('admin123');
       sessionCount: user.sessionCount
     };
 
-    if (safeUser.role === 'admin') {
+    if (safeUser.role === 'admin' || safeUser.role === 'owner') {
       localStorage.setItem('labhub_admin_security_epoch', SECURITY_UPDATE_VERSION);
     }
 
@@ -638,7 +669,7 @@ if (caller.role !== 'owner' && caller.role !== 'admin') {
    * Admin-Only: Fetch activity log for a specific user
    */
   public async getUserActivities(userId: string, caller: User): Promise<UserActivityRecord[]> {
-    if (caller.role !== 'admin' && caller.id !== userId) {
+    if (!securityService.isAdmin(caller) && caller.id !== userId) {
       console.warn('[SECURITY] Unauthorized access to student activities.');
       return [];
     }
@@ -715,7 +746,7 @@ if (caller.role !== 'owner' && caller.role !== 'admin') {
     totalActiveNow: number;
     totalActiveToday: number;
   }> {
-    if (caller.role !== 'admin') {
+    if (!securityService.isAdmin(caller)) {
       return { activeUsers: [], totalActiveNow: 0, totalActiveToday: 0 };
     }
 
@@ -764,7 +795,7 @@ if (caller.role !== 'owner' && caller.role !== 'admin') {
     newRole: 'student' | 'admin',
     caller: User
   ): Promise<{ success: boolean; user?: User; error?: string }> {
-    if (caller.role !== 'admin') {
+    if (!securityService.isAdmin(caller)) {
       return { success: false, error: 'Unauthorized: Admin role required to modify user permissions.' };
     }
 
@@ -817,7 +848,7 @@ if (caller.role !== 'owner' && caller.role !== 'admin') {
     permissions: { canPublishAnatomyExams?: boolean },
     caller: User
   ): Promise<{ success: boolean; user?: User; error?: string }> {
-    if (caller.role !== 'admin') {
+    if (!securityService.isAdmin(caller)) {
       return { success: false, error: 'Unauthorized: Admin role required to modify student permissions.' };
     }
 
@@ -898,7 +929,7 @@ if (caller.role !== 'owner' && caller.role !== 'admin') {
       videoActivity: { totalViews: 119, completedCount: 88 }
     };
 
-    if (caller.role !== 'admin') {
+    if (!securityService.isAdmin(caller)) {
       return fallbackBreakdown;
     }
 
@@ -1129,10 +1160,10 @@ if (caller.role !== 'owner' && caller.role !== 'admin') {
    * Safe authentication helper - strictly blocks unauthenticated escalation to Admin
    */
   public loginAsUser(user: User, _pinOrPassword?: string): { success: boolean; session?: AuthSession; message: string } {
-    if (user.role === 'admin') {
+    if (user.role === 'admin' || user.role === 'owner') {
       return {
         success: false,
-        message: 'Admin accounts must use standard secure login. Direct role switching is prohibited.'
+        message: 'Admin and Owner accounts must use standard secure login. Direct role switching is prohibited.'
       };
     }
 

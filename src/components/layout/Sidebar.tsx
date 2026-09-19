@@ -14,6 +14,7 @@ import {
   LogOut
 } from 'lucide-react';
 import { User as UserType, LabSubjectId } from '../../types';
+import { securityService } from '../../services/securityService';
 import { OwnershipWatermark } from '../common/OwnershipWatermark';
 
 interface SidebarProps {
@@ -37,12 +38,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onOpenAboutModal,
   onLogout
 }) => {
-  const isStaff = currentUser && (
-    currentUser.role === 'owner' ||
-    currentUser.role === 'admin' ||
-    currentUser.role === 'content_exams' ||
-    currentUser.role === 'exams_only'
-  );
+  const isStaff = securityService.isStaff(currentUser);
 
   const isSubjectsActive = [
     'laboratories',

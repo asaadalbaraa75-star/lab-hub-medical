@@ -32,6 +32,7 @@ import {
   LabSubjectId
 } from '../../types';
 import { authService } from '../../services/authService';
+import { securityService } from '../../services/securityService';
 import { AdminOverviewTab } from './tabs/AdminOverviewTab';
 import { AdminUsersTab } from './tabs/AdminUsersTab';
 import { AdminActiveUsersTab } from './tabs/AdminActiveUsersTab';
@@ -47,7 +48,6 @@ import { AdminAiSettingsTab } from './tabs/AdminAiSettingsTab';
 import { AdminInvitesTab } from './tabs/AdminInvitesTab';
 import { AdminStaffTab } from './tabs/AdminStaffTab';
 import { AdminActivityLogTab } from './tabs/AdminActivityLogTab';
-import { securityService } from '../../services/securityService';
 import { Radio, HelpCircle, Award, Bell, Bot, UserPlus, ShieldAlert } from 'lucide-react';
 import { OwnershipWatermark } from '../common/OwnershipWatermark';
 
@@ -86,9 +86,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [userSpecificLogs, setUserSpecificLogs] = useState<UserActivityRecord[]>([]);
 
   // Strict Authorization Check: Platform Owner and designated assistants only
-  const isOwner =
-  currentUser.role === 'owner' || currentUser.role === 'admin';
-  const isAuthorizedStaff = isOwner || currentUser.role === 'content_exams' || currentUser.role === 'exams_only';
+  const isOwner = securityService.isAdmin(currentUser);
+  const isAuthorizedStaff = securityService.isStaff(currentUser);
 
   // Read subpage from hash if present (e.g. #admin/users, #admin/activity)
   useEffect(() => {

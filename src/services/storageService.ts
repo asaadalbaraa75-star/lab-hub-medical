@@ -26,7 +26,6 @@ import {
 } from '../types';
 
 import {
-  DEMO_USERS,
   LAB_SUBJECTS,
   INITIAL_PRACTICALS,
   SPOTTER_ITEMS,
@@ -98,11 +97,9 @@ class StorageService {
     return null;
   }
 
-  getEffectiveUser(caller?: User): User {
+  getEffectiveUser(caller?: User): User | null {
     if (caller) return caller;
-    const current = this.getCurrentUser();
-    if (current) return current;
-    return DEMO_USERS[0];
+    return this.getCurrentUser();
   }
 
   setCurrentUser(user: User): void {
@@ -110,21 +107,22 @@ class StorageService {
   }
 
   getUsers(): User[] {
-    return DEMO_USERS;
+    const sessionUser = this.getCurrentUser();
+    return sessionUser ? [sessionUser] : [];
   }
 
   getAllDemoUsers(): User[] {
-    return DEMO_USERS;
+    return [];
   }
 
-  switchUserByRole(role: 'student' | 'instructor' | 'admin'): User {
-    const target = DEMO_USERS.find(u => u.role === role) || DEMO_USERS[0];
-    this.setCurrentUser(target);
-    return target;
+  switchUserByRole(_role: any): User | null {
+    console.warn('[SECURITY] Fake role switching is disabled. Real authentication required.');
+    return this.getCurrentUser();
   }
 
-  setCurrentUserRole(role: 'student' | 'instructor' | 'admin'): User {
-    return this.switchUserByRole(role);
+  setCurrentUserRole(_role: any): User | null {
+    console.warn('[SECURITY] Fake role switching is disabled. Real authentication required.');
+    return this.getCurrentUser();
   }
 
   // --- Practicals ---
@@ -138,8 +136,8 @@ class StorageService {
 
   savePractical(practical: Practical, caller?: User): boolean {
     const user = this.getEffectiveUser(caller);
-    if (!securityService.hasPermission(user.role, 'edit_questions')) {
-      console.warn(`[SECURITY] Access denied: User ${user.name} (${user.role}) cannot edit practical content.`);
+    if (!user || !securityService.hasPermission(user.role, 'edit_questions')) {
+      console.warn(`[SECURITY] Access denied: User ${user?.name || 'Visitor'} (${user?.role || 'none'}) cannot edit practical content.`);
       return false;
     }
 
@@ -156,8 +154,8 @@ class StorageService {
 
   deletePractical(id: string, caller?: User): boolean {
     const user = this.getEffectiveUser(caller);
-    if (user.role !== 'admin') {
-      console.warn(`[SECURITY] Access denied: User ${user.name} (${user.role}) cannot delete practical content.`);
+    if (!user || (user.role !== 'admin' && user.role !== 'owner')) {
+      console.warn(`[SECURITY] Access denied: User ${user?.name || 'Visitor'} (${user?.role || 'none'}) cannot delete practical content.`);
       return false;
     }
     const list = this.getPracticals();
@@ -317,8 +315,8 @@ class StorageService {
 
   createAnnouncement(announcement: Announcement, caller?: User): boolean {
     const user = this.getEffectiveUser(caller);
-    if (!securityService.hasPermission(user.role, 'edit_questions')) {
-      console.warn(`[SECURITY] Access denied: User ${user.name} (${user.role}) cannot post announcements.`);
+    if (!user || !securityService.hasPermission(user.role, 'edit_questions')) {
+      console.warn(`[SECURITY] Access denied: User ${user?.name || 'Visitor'} (${user?.role || 'none'}) cannot post announcements.`);
       return false;
     }
 
@@ -370,8 +368,8 @@ class StorageService {
 
   uploadFile(file: FileAsset, caller?: User): boolean {
     const user = this.getEffectiveUser(caller);
-    if (!securityService.hasPermission(user.role, 'edit_questions')) {
-      console.warn(`[SECURITY] Access denied: User ${user.name} (${user.role}) cannot upload assets to curriculum repository.`);
+    if (!user || !securityService.hasPermission(user.role, 'edit_questions')) {
+      console.warn(`[SECURITY] Access denied: User ${user?.name || 'Visitor'} (${user?.role || 'none'}) cannot upload assets to curriculum repository.`);
       return false;
     }
     const list = this.getFiles();
@@ -458,8 +456,8 @@ class StorageService {
 
   deleteMedicalExam(id: string, caller?: User): boolean {
     const user = this.getEffectiveUser(caller);
-    if (!securityService.hasPermission(user.role, 'delete_exams')) {
-      console.warn(`[SECURITY] Access denied: User ${user.name} (${user.role}) cannot delete exams.`);
+    if (!user || !securityService.hasPermission(user.role, 'delete_exams')) {
+      console.warn(`[SECURITY] Access denied: User ${user?.name || 'Visitor'} (${user?.role || 'none'}) cannot delete exams.`);
       return false;
     }
     const list = this.get<MedicalExam[]>(STORAGE_KEYS.MEDICAL_EXAMS, MEDICAL_PRACTICAL_EXAMS);
@@ -485,8 +483,8 @@ class StorageService {
 
   saveExamQuestion(question: ExamQuestion, caller?: User): boolean {
     const user = this.getEffectiveUser(caller);
-    if (!securityService.hasPermission(user.role, 'edit_questions')) {
-      console.warn(`[SECURITY] Access denied: User ${user.name} (${user.role}) cannot modify question banks.`);
+    if (!user || !securityService.hasPermission(user.role, 'edit_questions')) {
+      console.warn(`[SECURITY] Access denied: User ${user?.name || 'Visitor'} (${user?.role || 'none'}) cannot modify question banks.`);
       return false;
     }
     const list = this.get<ExamQuestion[]>(STORAGE_KEYS.EXAM_QUESTIONS, PRACTICAL_EXAM_QUESTIONS);
@@ -508,8 +506,8 @@ class StorageService {
 
   deleteExamQuestion(id: string, caller?: User): boolean {
     const user = this.getEffectiveUser(caller);
-    if (!securityService.hasPermission(user.role, 'delete_questions')) {
-      console.warn(`[SECURITY] Access denied: User ${user.name} (${user.role}) cannot delete questions.`);
+    if (!user || !securityService.hasPermission(user.role, 'delete_questions')) {
+      console.warn(`[SECURITY] Access denied: User ${user?.name || 'Visitor'} (${user?.role || 'none'}) cannot delete questions.`);
       return false;
     }
     const list = this.get<ExamQuestion[]>(STORAGE_KEYS.EXAM_QUESTIONS, PRACTICAL_EXAM_QUESTIONS);
