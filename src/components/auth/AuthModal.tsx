@@ -153,14 +153,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   Elevated Role Security PIN Required
                 </span>
                 <span className="text-[10px] text-amber-700 font-mono">
-                  {selectedUser.role === 'admin' ? 'Default: 2026' : 'Default: 1234'}
+                  رمز أمان الحساب
                 </span>
               </div>
               <input
                 type="password"
                 value={securityPin}
                 onChange={e => setSecurityPin(e.target.value)}
-                placeholder={selectedUser.role === 'admin' ? 'Enter Admin PIN (2026)' : 'Enter Faculty PIN (1234)'}
+                placeholder="أدخل رمز الحماية الخاص بالحساب (Security PIN)"
                 className="w-full text-sm px-3 py-2 rounded-lg border border-amber-300 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500"
               />
             </div>

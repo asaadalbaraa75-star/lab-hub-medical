@@ -259,7 +259,11 @@ export const AnatomyLabView: React.FC<AnatomyLabViewProps> = () => {
 
         <button
           type="button"
-          className="self-end sm:self-center px-5 py-2.5 rounded-xl bg-teal-600 group-hover:bg-teal-500 text-white text-xs font-bold shrink-0 transition-colors flex items-center gap-2 shadow-md"
+          onClick={(e) => {
+            e.stopPropagation();
+            setActiveTab('muscles');
+          }}
+          className="self-end sm:self-center px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white text-xs font-bold shrink-0 transition-colors flex items-center gap-2 shadow-md cursor-pointer"
         >
           <span>Open Muscles Lab</span>
           <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />

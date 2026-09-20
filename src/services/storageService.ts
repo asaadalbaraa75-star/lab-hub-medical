@@ -169,6 +169,10 @@ class StorageService {
     return true;
   }
 
+  savePracticals(practicals: Practical[]): void {
+    this.set(STORAGE_KEYS.PRACTICALS, practicals);
+  }
+
   deletePractical(id: string, caller?: User): boolean {
     const user = this.getEffectiveUser(caller);
     if (!user || (user.role !== 'admin' && user.role !== 'owner')) {

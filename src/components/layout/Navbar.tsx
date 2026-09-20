@@ -112,7 +112,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 LAB HUB
               </span>
               <span className="text-[9px] font-medium text-purple-300 block tracking-normal">
-                تطوير: سكينة أسعد
+                تطوير: سكينة أسعد (Sokinah Asaad)
               </span>
             </div>
           </div>
@@ -267,14 +267,45 @@ export const Navbar: React.FC<NavbarProps> = ({
                       </button>
                     )}
                   </div>
-                  <div className="space-y-2 max-h-56 overflow-y-auto">
+                  <div className="space-y-2 max-h-64 overflow-y-auto">
                     {safeNotifications.length === 0 ? (
-                      <p className="text-xs text-slate-400 py-3 text-center">لا توجد إشعارات جديدة</p>
+                      <p className="text-xs text-slate-400 py-4 text-center">لا توجد إشعارات جديدة</p>
                     ) : (
-                      safeNotifications.slice(0, 5).map(n => (
-                        <div key={n.id} className="p-2 rounded-xl bg-white/5 text-xs text-slate-300">
-                          <p className="font-bold text-white">{n.title}</p>
-                          <p className="text-[11px] text-slate-400 mt-0.5">{n.message}</p>
+                      safeNotifications.map(n => (
+                        <div
+                          key={n.id}
+                          onClick={() => {
+                            if (onMarkNotificationRead) onMarkNotificationRead(n.id);
+                            if (n.linkTarget && onSelectTab) {
+                              onSelectTab(n.linkTarget.tab, n.linkTarget.labId, n.linkTarget.practicalId);
+                              setShowNotifications(false);
+                            }
+                          }}
+                          className={`p-2.5 rounded-xl border text-xs transition-all cursor-pointer ${
+                            n.isRead
+                              ? 'bg-white/5 border-white/5 text-slate-400 hover:bg-white/10'
+                              : 'bg-purple-950/40 border-purple-500/40 text-slate-200 hover:bg-purple-950/60'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between gap-1 mb-1">
+                            <span className="font-bold text-white flex items-center gap-1.5">
+                              {!n.isRead && (
+                                <span className="w-2 h-2 rounded-full bg-[#FF007A] shrink-0" />
+                              )}
+                              {n.title}
+                            </span>
+                            {n.time && (
+                              <span className="text-[9px] text-purple-300 font-mono shrink-0">{n.time}</span>
+                            )}
+                          </div>
+                          <p className="text-[11px] leading-relaxed text-slate-300">{n.message}</p>
+                          {n.linkTarget && (
+                            <div className="mt-1.5 flex justify-end">
+                              <span className="text-[10px] text-cyan-400 hover:underline font-bold">
+                                الانتقال للدرس / الاختبار ←
+                              </span>
+                            </div>
+                          )}
                         </div>
                       ))
                     )}
@@ -512,10 +543,10 @@ export const Navbar: React.FC<NavbarProps> = ({
               )}
 
               <p className="text-[10px] text-center text-slate-400 font-mono" dir="ltr">
-                © LAB HUB • Developed by Sakina Asaad
+                © LAB HUB • Developed by Sokinah Asaad
               </p>
               <p className="text-[10px] text-center text-purple-300/80" dir="rtl">
-                منصة المعامل الطبية والامتحانات العملية • تطوير: سكينة أسعد
+                منصة المعامل الطبية والامتحانات العملية • تطوير: سكينة أسعد (Sokinah Asaad)
               </p>
             </div>
           </div>

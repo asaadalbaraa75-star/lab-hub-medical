@@ -12,10 +12,15 @@ import {
   Eye,
   FileText,
   Save,
-  X
+  X,
+  Image as ImageIcon,
+  Upload,
+  Clock,
+  Sparkles
 } from 'lucide-react';
-import { Practical, PracticalStatus, User, LabSubjectId } from '../../../types';
+import { Practical, PracticalStatus, User, LabSubjectId, PracticalMedia } from '../../../types';
 import { storageService } from '../../../services/storageService';
+import { apiFetchPracticals, apiSavePractical, apiDeletePractical } from '../../../services/apiService';
 
 interface Props {
   currentUser: User;
@@ -31,6 +36,7 @@ export const AdminContentTab: React.FC<Props> = ({
   const [practicals, setPracticals] = useState<Practical[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSubject, setSelectedSubject] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'published' | 'draft'>('all');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingPractical, setEditingPractical] = useState<Practical | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
@@ -44,8 +50,27 @@ export const AdminContentTab: React.FC<Props> = ({
   const [formClinical, setFormClinical] = useState('');
   const [formSummary, setFormSummary] = useState('');
 
-  const loadPracticals = () => {
-    const list = storageService.getPracticals();
+  // Image Management State inside Practical Form
+  const [formImages, setFormImages] = useState<PracticalMedia[]>([]);
+  const [newImageUrl, setNewImageUrl] = useState('');
+  const [newImageCaption, setNewImageCaption] = useState('');
+  const [newImageStain, setNewImageStain] = useState('');
+  const [editingImageIndex, setEditingImageIndex] = useState<number | null>(null);
+
+  const loadPracticals = async () => {
+    let list: Practical[] = storageService.getPracticals();
+    try {
+      const serverList = await apiFetchPracticals();
+      if (serverList && serverList.length > 0) {
+        const mergedMap = new Map<string, Practical>();
+        list.forEach(p => mergedMap.set(p.id, p));
+        serverList.forEach(p => mergedMap.set(p.id, p));
+        list = Array.from(mergedMap.values());
+        storageService.savePracticals(list);
+      }
+    } catch (e) {
+      console.warn('Fallback to local storage practicals:', e);
+    }
     setPracticals(list);
   };
 
@@ -53,19 +78,33 @@ export const AdminContentTab: React.FC<Props> = ({
     loadPracticals();
   }, []);
 
+  const totalCount = practicals.length;
+  const publishedCount = practicals.filter(p => p.status === 'published' || p.status === 'approved').length;
+  const draftCount = practicals.filter(p => p.status !== 'published' && p.status !== 'approved').length;
+
   const filteredPracticals = practicals.filter(p => {
     const matchesSubject = selectedSubject === 'all' || p.courseId === selectedSubject;
+    const isPublished = p.status === 'published' || p.status === 'approved';
+    const matchesStatus =
+      statusFilter === 'all' ||
+      (statusFilter === 'published' && isPublished) ||
+      (statusFilter === 'draft' && !isPublished);
+
     const q = searchQuery.toLowerCase().trim();
     const matchesSearch =
       !q ||
       p.title.toLowerCase().includes(q) ||
       (p.subTitle && p.subTitle.toLowerCase().includes(q)) ||
       (p.learningObjectives && p.learningObjectives.some(o => o.toLowerCase().includes(q)));
-    return matchesSubject && matchesSearch;
+    return matchesSubject && matchesStatus && matchesSearch;
+  }).sort((a, b) => {
+    const timeA = new Date(a.lastUpdated || '2026-01-01').getTime();
+    const timeB = new Date(b.lastUpdated || '2026-01-01').getTime();
+    return timeB - timeA;
   });
 
-  const handleTogglePublish = (p: Practical) => {
-    const newStatus: PracticalStatus = p.status === 'published' ? 'draft' : 'published';
+  const handleTogglePublish = async (p: Practical) => {
+    const newStatus: PracticalStatus = (p.status === 'published' || p.status === 'approved') ? 'draft' : 'published';
     storageService.updatePracticalStatus(
       p.id,
       newStatus,
@@ -73,6 +112,13 @@ export const AdminContentTab: React.FC<Props> = ({
       newStatus === 'published' ? 'Approved by Admin' : 'Unpublished by Admin',
       currentUser
     );
+    try {
+      await apiSavePractical({
+        ...p,
+        status: newStatus,
+        lastUpdated: new Date().toISOString()
+      });
+    } catch {}
     loadPracticals();
   };
 
@@ -85,6 +131,11 @@ export const AdminContentTab: React.FC<Props> = ({
     setFormObjectives('');
     setFormClinical('');
     setFormSummary('');
+    setFormImages([]);
+    setNewImageUrl('');
+    setNewImageCaption('');
+    setNewImageStain('');
+    setEditingImageIndex(null);
     setIsAddModalOpen(true);
   };
 
@@ -97,10 +148,68 @@ export const AdminContentTab: React.FC<Props> = ({
     setFormObjectives(p.learningObjectives ? p.learningObjectives.join('\n') : '');
     setFormClinical(p.clinicalCorrelation ? p.clinicalCorrelation.diagnosticPearls || p.clinicalCorrelation.condition : '');
     setFormSummary(p.beforeTheLab ? p.beforeTheLab.preLabSummary || '' : '');
+    setFormImages(p.images ? [...p.images] : []);
+    setNewImageUrl('');
+    setNewImageCaption('');
+    setNewImageStain('');
+    setEditingImageIndex(null);
     setIsAddModalOpen(true);
   };
 
-  const handleSaveForm = (e: React.FormEvent) => {
+  const handleAddOrUpdateImage = () => {
+    if (!newImageUrl.trim()) return;
+    const media: PracticalMedia = {
+      url: newImageUrl.trim(),
+      caption: newImageCaption.trim() || 'صورة مجهرية / تشريحية تعليمية',
+      stainOrView: newImageStain.trim() || undefined
+    };
+
+    if (editingImageIndex !== null) {
+      const updated = [...formImages];
+      updated[editingImageIndex] = media;
+      setFormImages(updated);
+      setEditingImageIndex(null);
+    } else {
+      setFormImages([...formImages, media]);
+    }
+
+    setNewImageUrl('');
+    setNewImageCaption('');
+    setNewImageStain('');
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const result = event.target?.result as string;
+      if (result) {
+        setNewImageUrl(result);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleDeleteImage = (index: number) => {
+    setFormImages(formImages.filter((_, i) => i !== index));
+    if (editingImageIndex === index) {
+      setEditingImageIndex(null);
+      setNewImageUrl('');
+      setNewImageCaption('');
+      setNewImageStain('');
+    }
+  };
+
+  const handleStartEditImage = (index: number) => {
+    const img = formImages[index];
+    setEditingImageIndex(index);
+    setNewImageUrl(img.url);
+    setNewImageCaption(img.caption || '');
+    setNewImageStain(img.stainOrView || '');
+  };
+
+  const handleSaveForm = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formTitle.trim()) return;
 
@@ -127,9 +236,13 @@ export const AdminContentTab: React.FC<Props> = ({
         beforeTheLab: {
           ...editingPractical.beforeTheLab,
           preLabSummary: formSummary.trim() || editingPractical.beforeTheLab?.preLabSummary || ''
-        }
+        },
+        images: formImages
       };
       storageService.savePractical(updated, currentUser);
+      try {
+        await apiSavePractical(updated);
+      } catch {}
     } else {
       // Create new
       const newPractical: Practical = {
@@ -160,7 +273,7 @@ export const AdminContentTab: React.FC<Props> = ({
             description: 'Wear standard PPE and calibrate lab equipment.'
           }
         ],
-        images: [],
+        images: formImages,
         interactiveImages: [],
         identificationPoints: ['Key structural diagnostic features.'],
         commonMistakes: [],
@@ -181,14 +294,20 @@ export const AdminContentTab: React.FC<Props> = ({
         approvalDate: new Date().toISOString()
       };
       storageService.savePractical(newPractical, currentUser);
+      try {
+        await apiSavePractical(newPractical);
+      } catch {}
     }
 
     setIsAddModalOpen(false);
     loadPracticals();
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     storageService.deletePractical(id, currentUser);
+    try {
+      await apiDeletePractical(id);
+    } catch {}
     setDeleteConfirmId(null);
     loadPracticals();
   };
@@ -217,27 +336,71 @@ export const AdminContentTab: React.FC<Props> = ({
         </button>
       </div>
 
-      {/* Discipline Switcher Tabs */}
-      <div className="flex flex-wrap items-center gap-2 bg-white p-2 rounded-2xl border border-[#E2E8F0]">
-        {[
-          { id: 'all', label: 'جميع المعامل' },
-          { id: 'anatomy', label: '🫀 التشريح (Anatomy)' },
-          { id: 'histology', label: '🔬 الأنسجة (Histology)' },
-          { id: 'biochemistry', label: '🧪 الكيمياء الحيوية (Biochemistry)' },
-        ].map(tab => (
+      {/* Discipline & Status Switcher Tabs */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-1.5 bg-white p-1.5 rounded-2xl border border-[#E2E8F0]">
+          {[
+            { id: 'all', label: 'جميع المعامل' },
+            { id: 'anatomy', label: '🫀 التشريح (Anatomy)' },
+            { id: 'histology', label: '🔬 الأنسجة (Histology)' },
+            { id: 'biochemistry', label: '🧪 الكيمياء الحيوية (Biochemistry)' },
+          ].map(tab => (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setSelectedSubject(tab.id)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors ${
+                selectedSubject === tab.id
+                  ? 'bg-indigo-600 text-white shadow-2xs'
+                  : 'text-slate-600 hover:bg-slate-100'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Status Filters & Counts */}
+        <div className="flex items-center gap-1.5 bg-white p-1.5 rounded-2xl border border-[#E2E8F0] self-start sm:self-auto">
           <button
-            key={tab.id}
             type="button"
-            onClick={() => setSelectedSubject(tab.id)}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors ${
-              selectedSubject === tab.id
-                ? 'bg-indigo-600 text-white shadow-2xs'
+            onClick={() => setStatusFilter('all')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 ${
+              statusFilter === 'all'
+                ? 'bg-slate-800 text-white'
                 : 'text-slate-600 hover:bg-slate-100'
             }`}
           >
-            {tab.label}
+            <span>الكل</span>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200/40">{totalCount}</span>
           </button>
-        ))}
+          <button
+            type="button"
+            onClick={() => setStatusFilter('published')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 ${
+              statusFilter === 'published'
+                ? 'bg-emerald-600 text-white'
+                : 'text-emerald-700 hover:bg-emerald-50'
+            }`}
+          >
+            <CheckCircle2 className="w-3.5 h-3.5" />
+            <span>منشور</span>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-200/40">{publishedCount}</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setStatusFilter('draft')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 ${
+              statusFilter === 'draft'
+                ? 'bg-amber-600 text-white'
+                : 'text-amber-700 hover:bg-amber-50'
+            }`}
+          >
+            <Clock className="w-3.5 h-3.5" />
+            <span>مسودة</span>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-amber-200/40">{draftCount}</span>
+          </button>
+        </div>
       </div>
 
       {/* Search Input */}
@@ -285,12 +448,36 @@ export const AdminContentTab: React.FC<Props> = ({
                   return (
                     <tr key={p.id} className="hover:bg-slate-50/80 transition-colors">
                       <td className="px-4 py-3.5">
-                        <div className="font-bold text-slate-900">{p.title}</div>
-                        {p.subTitle && (
-                          <div className="text-[10px] text-slate-400 truncate max-w-md mt-0.5">
-                            {p.subTitle}
+                        <div className="flex items-center gap-3">
+                          {p.images && p.images.length > 0 ? (
+                            <img
+                              src={p.images[0].url}
+                              alt={p.title}
+                              referrerPolicy="no-referrer"
+                              className="w-10 h-10 rounded-lg object-cover border border-slate-200 shrink-0"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).style.display = 'none';
+                              }}
+                            />
+                          ) : (
+                            <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 shrink-0">
+                              <ImageIcon className="w-4 h-4" />
+                            </div>
+                          )}
+                          <div className="min-w-0">
+                            <div className="font-bold text-slate-900 truncate">{p.title}</div>
+                            <div className="flex items-center gap-2 mt-0.5">
+                              {p.subTitle && (
+                                <span className="text-[10px] text-slate-400 truncate max-w-xs">
+                                  {p.subTitle}
+                                </span>
+                              )}
+                              <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-slate-100 text-slate-600 font-mono shrink-0">
+                                {p.images?.length || 0} صور
+                              </span>
+                            </div>
                           </div>
-                        )}
+                        </div>
                       </td>
                       <td className="px-4 py-3.5 whitespace-nowrap">
                         <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold ${
@@ -472,6 +659,155 @@ export const AdminContentTab: React.FC<Props> = ({
                   placeholder="Essential instructions for students before entering the lab..."
                   className="w-full p-2.5 rounded-xl border border-slate-200"
                 />
+              </div>
+
+              {/* Image Management Section */}
+              <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <ImageIcon className="w-4 h-4 text-indigo-600" />
+                    <span className="font-bold text-slate-800 text-xs">معرض صور وشرائح الدرس العملي ({formImages.length})</span>
+                  </div>
+                  <span className="text-[10px] text-slate-500 font-normal">عرض، إضافة، وتعديل الصور</span>
+                </div>
+
+                {/* Existing Images Grid */}
+                {formImages.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-56 overflow-y-auto p-1">
+                    {formImages.map((img, idx) => (
+                      <div
+                        key={idx}
+                        className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-2xs flex flex-col justify-between"
+                      >
+                        <div className="relative h-24 bg-slate-100 flex items-center justify-center overflow-hidden group">
+                          <img
+                            src={img.url}
+                            alt={img.caption || `صورة ${idx + 1}`}
+                            referrerPolicy="no-referrer"
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1530497610245-94d3c16cda28?auto=format&fit=crop&w=400&q=80';
+                            }}
+                          />
+                          {img.stainOrView && (
+                            <span className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded-md bg-black/70 text-white font-mono text-[9px] backdrop-blur-xs">
+                              {img.stainOrView}
+                            </span>
+                          )}
+                        </div>
+                        <div className="p-2 flex items-center justify-between gap-1.5 text-[11px]">
+                          <span className="font-bold text-slate-800 truncate flex-1" title={img.caption}>
+                            {img.caption || `صورة #${idx + 1}`}
+                          </span>
+                          <div className="flex items-center gap-1 shrink-0">
+                            <button
+                              type="button"
+                              onClick={() => handleStartEditImage(idx)}
+                              className="p-1 rounded-md text-indigo-600 hover:bg-indigo-50 transition-colors"
+                              title="تعديل بيانات الصورة"
+                            >
+                              <Edit className="w-3 h-3" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteImage(idx)}
+                              className="p-1 rounded-md text-rose-600 hover:bg-rose-50 transition-colors"
+                              title="حذف هذه الصورة"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-4 bg-white rounded-xl border border-dashed border-slate-200 text-slate-400 text-[11px]">
+                    لا توجد صور مضافة لهذا الدرس حتى الآن. يمكنك إضافة صور من الحقول أدناه.
+                  </div>
+                )}
+
+                {/* Add/Edit Image Form Controls */}
+                <div className="bg-white p-3 rounded-xl border border-slate-200 space-y-2.5">
+                  <div className="flex items-center justify-between text-[11px] font-bold text-slate-700">
+                    <span>{editingImageIndex !== null ? '✏️ تعديل الصورة المحددة' : '➕ إضافة صورة جديدة للدرس'}</span>
+                    {editingImageIndex !== null && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditingImageIndex(null);
+                          setNewImageUrl('');
+                          setNewImageCaption('');
+                          setNewImageStain('');
+                        }}
+                        className="text-xs text-slate-400 hover:text-slate-600"
+                      >
+                        إلغاء التعديل
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="flex gap-2 items-center">
+                    <input
+                      type="text"
+                      value={newImageUrl}
+                      onChange={e => setNewImageUrl(e.target.value)}
+                      placeholder="رابط الصورة المباشر (URL) أو ارفع من جهازك..."
+                      className="flex-1 p-2 rounded-lg border border-slate-200 text-[11px]"
+                    />
+                    <label className="cursor-pointer px-2.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold flex items-center gap-1.5 transition-colors shrink-0">
+                      <Upload className="w-3.5 h-3.5" />
+                      <span>رفع ملف</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileUpload}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <input
+                      type="text"
+                      value={newImageCaption}
+                      onChange={e => setNewImageCaption(e.target.value)}
+                      placeholder="وصف الصورة (مثل: مقطع عرضي في النخاع)"
+                      className="p-2 rounded-lg border border-slate-200 text-[11px]"
+                    />
+                    <input
+                      type="text"
+                      value={newImageStain}
+                      onChange={e => setNewImageStain(e.target.value)}
+                      placeholder="نوع الصبغة أو الزاوية (مثل: H&E 40x)"
+                      className="p-2 rounded-lg border border-slate-200 text-[11px]"
+                    />
+                  </div>
+
+                  {newImageUrl && (
+                    <div className="flex items-center gap-2 bg-slate-50 p-1.5 rounded-lg border border-slate-200">
+                      <img
+                        src={newImageUrl}
+                        alt="معاينة"
+                        referrerPolicy="no-referrer"
+                        className="w-10 h-10 object-cover rounded-md border border-slate-300"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = 'none';
+                        }}
+                      />
+                      <span className="text-[10px] text-slate-500 truncate flex-1">جاهزة للإضافة للدرس</span>
+                    </div>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={handleAddOrUpdateImage}
+                    disabled={!newImageUrl.trim()}
+                    className="w-full py-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold text-[11px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {editingImageIndex !== null ? 'تحديث بيانات الصورة' : 'إضافة الصورة إلى قائمة الدرس'}
+                  </button>
+                </div>
               </div>
 
               <div className="flex items-center gap-3 pt-2">

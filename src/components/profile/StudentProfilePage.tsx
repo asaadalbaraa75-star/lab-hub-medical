@@ -26,7 +26,7 @@ import { User, StudentProgress, LabSubjectId } from '../../types';
 import { LAB_SUBJECTS } from '../../data/mockData';
 
 interface StudentProfilePageProps {
-  currentUser: User;
+  currentUser?: User | null;
   progress: StudentProgress;
   onSelectLab: (labId: LabSubjectId) => void;
   onSelectTab: (tab: string) => void;
@@ -38,6 +38,18 @@ export const StudentProfilePage: React.FC<StudentProfilePageProps> = ({
   onSelectLab,
   onSelectTab
 }) => {
+  const safeUser: User = currentUser || {
+    id: 'guest_student',
+    name: 'طالب طب بشري (Medical Student)',
+    email: 'student@med.sanaau.edu.ye',
+    role: 'student',
+    studentId: 'MED-BATCH44-001',
+    department: 'كلية الطب والعلوم الصحية — الدفعة 44 (جامعة صنعاء)',
+    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+    enrolledLabs: ['anatomy', 'histology', 'biochemistry'],
+    sessionCount: 1
+  };
+
   const getLabIcon = (id: string) => {
     switch (id) {
       case 'anatomy':
@@ -64,38 +76,38 @@ export const StudentProfilePage: React.FC<StudentProfilePageProps> = ({
       <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E2E8F0] shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div className="flex items-center gap-5">
           <img
-            src={currentUser.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150'}
-            alt={currentUser.name}
+            src={safeUser.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150'}
+            alt={safeUser.name}
             className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover border-2 border-indigo-100 shadow-md shrink-0"
           />
           <div className="space-y-1.5">
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="text-xl sm:text-2xl font-black text-slate-900">
-                {currentUser.name}
+                {safeUser.name}
               </h1>
               <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold ${
-                currentUser.role === 'admin'
+                safeUser.role === 'admin' || safeUser.role === 'owner'
                   ? 'bg-purple-100 text-purple-800'
-                  : currentUser.role === 'instructor'
+                  : safeUser.role === 'instructor'
                   ? 'bg-teal-100 text-teal-800'
                   : 'bg-indigo-100 text-indigo-800'
               }`}>
-                {currentUser.role === 'admin' ? '🛡️ Faculty Admin' : currentUser.role === 'instructor' ? '👨‍🏫 Instructor' : '🎓 Medical Student'}
+                {safeUser.role === 'owner' ? '👑 Platform Owner' : safeUser.role === 'admin' ? '🛡️ Faculty Admin' : safeUser.role === 'instructor' ? '👨‍🏫 Instructor' : '🎓 Medical Student'}
               </span>
             </div>
 
             <p className="text-xs sm:text-sm text-slate-500 font-medium">
-              {currentUser.department || 'Faculty of Medicine — 1st Year Medical Sciences'}
+              {safeUser.department || 'كلية الطب والعلوم الصحية — الدفعة 44 (جامعة صنعاء)'}
             </p>
 
             <div className="flex flex-wrap items-center gap-3 pt-1 text-xs text-slate-600 font-mono">
               <span className="flex items-center gap-1 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">
                 <GraduationCap className="w-3.5 h-3.5 text-slate-400" />
-                {currentUser.studentId || 'MED-2026-001'}
+                {safeUser.studentId || 'MED-2026-001'}
               </span>
               <span className="flex items-center gap-1 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">
                 <Mail className="w-3.5 h-3.5 text-slate-400" />
-                {currentUser.email}
+                {safeUser.email}
               </span>
             </div>
           </div>
@@ -139,7 +151,7 @@ export const StudentProfilePage: React.FC<StudentProfilePageProps> = ({
 
         <div className="bg-white p-5 rounded-2xl border border-[#E2E8F0] shadow-2xs">
           <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">عدد الجلسات التعليمية</div>
-          <div className="text-2xl font-black text-slate-900">{currentUser.sessionCount || 1}</div>
+          <div className="text-2xl font-black text-slate-900">{safeUser.sessionCount || 1}</div>
           <div className="text-[11px] text-indigo-600 font-semibold mt-1">جلسة دراسية نشطة</div>
         </div>
       </div>
@@ -237,7 +249,7 @@ export const StudentProfilePage: React.FC<StudentProfilePageProps> = ({
           <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200/60 space-y-1">
             <div className="text-slate-500 font-semibold">آخر تسجيل دخول</div>
             <div className="font-mono text-slate-800 font-bold">
-              {currentUser.lastLoginAt ? new Date(currentUser.lastLoginAt).toLocaleString('ar-EG', { dateStyle: 'medium', timeStyle: 'short' }) : 'الآن'}
+              {safeUser.lastLoginAt ? new Date(safeUser.lastLoginAt).toLocaleString('ar-EG', { dateStyle: 'medium', timeStyle: 'short' }) : 'الآن'}
             </div>
             <p className="text-[11px] text-slate-400">
               مسجل من جهازك الحالي بشكل آمن ومحمي ضد التلاعب.

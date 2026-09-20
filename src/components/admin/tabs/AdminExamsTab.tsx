@@ -111,6 +111,15 @@ export const AdminExamsTab: React.FC<Props> = ({ currentUser, onPreviewExam }) =
       );
     }
 
+    // Auto-sort exams: Subject (anatomy -> histology -> biochemistry -> mixed) -> Title
+    const subjectOrder: Record<string, number> = { anatomy: 1, histology: 2, biochemistry: 3, mixed: 4 };
+    result.sort((a, b) => {
+      const subA = subjectOrder[a.labId] || 99;
+      const subB = subjectOrder[b.labId] || 99;
+      if (subA !== subB) return subA - subB;
+      return (a.title || a.titleArabic || '').localeCompare(b.title || b.titleArabic || '', 'ar');
+    });
+
     setFilteredExams(result);
   }, [exams, selectedLab, selectedStatus, searchQuery]);
 
@@ -218,17 +227,24 @@ export const AdminExamsTab: React.FC<Props> = ({ currentUser, onPreviewExam }) =
     await loadData();
   };
 
-  const availableQuestionsForForm = allQuestions.filter(q => {
-    const matchesLab = q.labId === formLabId;
-    if (!questionSearchQuery.trim()) return matchesLab;
-    const s = questionSearchQuery.toLowerCase();
-    return matchesLab && (
-      q.questionText?.toLowerCase().includes(s) ||
-      q.questionTextArabic?.includes(s) ||
-      q.correctAnswer?.toLowerCase().includes(s) ||
-      q.topic?.toLowerCase().includes(s)
-    );
-  });
+  const availableQuestionsForForm = allQuestions
+    .filter(q => {
+      const matchesLab = q.labId === formLabId;
+      if (!questionSearchQuery.trim()) return matchesLab;
+      const s = questionSearchQuery.toLowerCase();
+      return matchesLab && (
+        q.questionText?.toLowerCase().includes(s) ||
+        q.questionTextArabic?.includes(s) ||
+        q.correctAnswer?.toLowerCase().includes(s) ||
+        q.topic?.toLowerCase().includes(s)
+      );
+    })
+    .sort((a, b) => {
+      const topicA = (a.topic || '').toLowerCase();
+      const topicB = (b.topic || '').toLowerCase();
+      if (topicA !== topicB) return topicA.localeCompare(topicB, 'ar');
+      return (a.questionText || '').localeCompare(b.questionText || '', 'ar');
+    });
 
   return (
     <div className="space-y-6" id="admin-exams-tab">

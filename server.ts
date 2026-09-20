@@ -14,6 +14,7 @@ import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI } from '@google/genai';
 import dotenv from 'dotenv';
 import { MEDICAL_PRACTICAL_EXAMS, PRACTICAL_EXAM_QUESTIONS } from './src/data/medicalExamData';
+import { INITIAL_PRACTICALS } from './src/data/mockData';
 
 dotenv.config();
 
@@ -403,7 +404,8 @@ async function startServer() {
       exams: MEDICAL_PRACTICAL_EXAMS as any[],
       questions: PRACTICAL_EXAM_QUESTIONS as any[],
       notifications: defaultNotifications,
-      customVideos: []
+      customVideos: [],
+      practicals: INITIAL_PRACTICALS as any[]
     };
   };
 
@@ -415,6 +417,9 @@ async function startServer() {
   let serverQuestions: any[] = initialData.questions;
   let serverNotifications: any[] = initialData.notifications;
   let serverCustomVideos: any[] = initialData.customVideos;
+  let serverPracticals: any[] = (initialData.practicals && initialData.practicals.length > 0)
+    ? initialData.practicals
+    : INITIAL_PRACTICALS;
 
   const saveDb = () => {
     try {
@@ -425,7 +430,8 @@ async function startServer() {
         exams: serverExams,
         questions: serverQuestions,
         notifications: serverNotifications,
-        customVideos: serverCustomVideos
+        customVideos: serverCustomVideos,
+        practicals: serverPracticals
       }, null, 2), 'utf-8');
     } catch (e) {
       console.error('[DB] Failed to save database to disk:', e);
@@ -1866,6 +1872,52 @@ async function startServer() {
         canManagePlatform: isOwner
       }
     });
+  });
+
+  // ==================== PRACTICAL LESSONS API ====================
+  app.get('/api/practicals', (req: Request, res: Response) => {
+    res.json(serverPracticals);
+  });
+
+  app.post('/api/practicals', (req: Request, res: Response) => {
+    const practical = req.body;
+    if (!practical || !practical.title) {
+      return res.status(400).json({ error: 'Practical title is required' });
+    }
+    const practicalId = practical.id || `prac_${practical.courseId || 'med'}_${Date.now()}`;
+    const newPractical = {
+      ...practical,
+      id: practicalId,
+      lastUpdated: new Date().toISOString()
+    };
+    const existingIndex = serverPracticals.findIndex(p => p.id === practicalId);
+    if (existingIndex >= 0) {
+      serverPracticals[existingIndex] = newPractical;
+    } else {
+      serverPracticals.unshift(newPractical);
+    }
+    saveDb();
+    res.json({ success: true, practical: newPractical });
+  });
+
+  app.delete('/api/practicals/:id', (req: Request, res: Response) => {
+    const { id } = req.params;
+    serverPracticals = serverPracticals.filter(p => p.id !== id);
+    saveDb();
+    res.json({ success: true });
+  });
+
+  app.put('/api/practicals/:id/status', (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { status } = req.body;
+    const item = serverPracticals.find(p => p.id === id);
+    if (item) {
+      item.status = status;
+      item.lastUpdated = new Date().toISOString();
+      saveDb();
+      return res.json({ success: true, practical: item });
+    }
+    res.status(404).json({ error: 'Practical not found' });
   });
 
   // ==================== EXAMS API ====================

@@ -56,7 +56,7 @@ export const EducationalVideosSection: React.FC<Props> = ({ onVideoCompleted }) 
   });
 
   const currentUser = authService.getCurrentUser() || { role: 'student' as const };
-  const isTeacherOrAdmin = currentUser.role === 'admin' || currentUser.role === 'instructor';
+  const isTeacherOrAdmin = currentUser?.role === 'admin' || currentUser?.role === 'instructor' || currentUser?.role === 'owner';
 
   const [selectedVideo, setSelectedVideo] = useState<EducationalVideo>(videoList[0] || EDUCATIONAL_VIDEOS[0]);
   const [selectedSubject, setSelectedSubject] = useState<'all' | 'anatomy' | 'histology' | 'biochemistry'>('all');
@@ -120,24 +120,38 @@ export const EducationalVideosSection: React.FC<Props> = ({ onVideoCompleted }) 
     return trimmed;
   };
 
-  // Filter videos
-  const filteredVideos = videoList.filter(v => {
-    // Only show active to students
-    if (!isTeacherOrAdmin && v.status === 'unavailable') return false;
-    if (isTeacherOrAdmin && !showUnavailable && v.status === 'unavailable') return false;
+  // Filter videos and sort by Subject -> Topic -> Title
+  const subjectOrder: Record<string, number> = { anatomy: 1, histology: 2, biochemistry: 3 };
 
-    const matchSubject = selectedSubject === 'all' || v.subject === selectedSubject || v.subjectId === selectedSubject;
-    const q = searchQuery.toLowerCase();
-    const matchSearch = 
-      v.title.toLowerCase().includes(q) ||
-      (v.titleAr && v.titleAr.toLowerCase().includes(q)) ||
-      v.topicName.toLowerCase().includes(q) ||
-      (v.topic && v.topic.toLowerCase().includes(q)) ||
-      v.instructor.toLowerCase().includes(q) ||
-      v.description.toLowerCase().includes(q);
+  const filteredVideos = videoList
+    .filter(v => {
+      // Only show active to students
+      if (!isTeacherOrAdmin && v.status === 'unavailable') return false;
+      if (isTeacherOrAdmin && !showUnavailable && v.status === 'unavailable') return false;
 
-    return matchSubject && matchSearch;
-  });
+      const matchSubject = selectedSubject === 'all' || v.subject === selectedSubject || v.subjectId === selectedSubject;
+      const q = searchQuery.toLowerCase();
+      const matchSearch = 
+        v.title.toLowerCase().includes(q) ||
+        (v.titleAr && v.titleAr.toLowerCase().includes(q)) ||
+        v.topicName.toLowerCase().includes(q) ||
+        (v.topic && v.topic.toLowerCase().includes(q)) ||
+        v.instructor.toLowerCase().includes(q) ||
+        v.description.toLowerCase().includes(q);
+
+      return matchSubject && matchSearch;
+    })
+    .sort((a, b) => {
+      const subA = subjectOrder[a.subject || a.subjectId] || 99;
+      const subB = subjectOrder[b.subject || b.subjectId] || 99;
+      if (subA !== subB) return subA - subB;
+
+      const topA = (a.topicName || a.topic || '').toLowerCase();
+      const topB = (b.topicName || b.topic || '').toLowerCase();
+      if (topA !== topB) return topA.localeCompare(topB, 'ar');
+
+      return (a.title || '').localeCompare(b.title || '', 'ar');
+    });
 
   // Keep selected video in sync
   useEffect(() => {
@@ -389,7 +403,7 @@ export const EducationalVideosSection: React.FC<Props> = ({ onVideoCompleted }) 
     }
   };
 
-  const activeVideoId = selectedVideo?.youtubeVideoId || selectedVideo?.youtubeId || 'heSsAreO_y0';
+  const activeVideoId = extractCleanYoutubeId(selectedVideo?.youtubeVideoId || selectedVideo?.youtubeId || selectedVideo?.youtubeUrl || 'heSsAreO_y0');
   const iframeSrc = `https://www.youtube-nocookie.com/embed/${activeVideoId}?rel=0&modestbranding=1&playsinline=1${activeChapterSeconds > 0 ? `&start=${activeChapterSeconds}` : ''}`;
 
   return (

@@ -153,6 +153,22 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
       );
     }
 
+    // Auto-sort questions hierarchically: Subject (anatomy -> histology -> biochemistry) -> Unit/Topic -> Question Text
+    const subjectOrder: Record<string, number> = { anatomy: 1, histology: 2, biochemistry: 3 };
+    result.sort((a, b) => {
+      const subA = subjectOrder[a.labId] || 99;
+      const subB = subjectOrder[b.labId] || 99;
+      if (subA !== subB) return subA - subB;
+
+      const unitA = (a.topic || a.specimenCategory || '').toLowerCase();
+      const unitB = (b.topic || b.specimenCategory || '').toLowerCase();
+      if (unitA !== unitB) return unitA.localeCompare(unitB, 'ar');
+
+      const textA = (a.questionText || a.questionTextArabic || '').toLowerCase();
+      const textB = (b.questionText || b.questionTextArabic || '').toLowerCase();
+      return textA.localeCompare(textB, 'ar');
+    });
+
     setFilteredQuestions(result);
   }, [questions, selectedLab, selectedTopic, selectedDifficulty, selectedStatus, searchQuery, currentUser.id]);
 

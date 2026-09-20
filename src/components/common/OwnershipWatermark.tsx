@@ -1,6 +1,6 @@
 /*
- * © LAB HUB · Developed by Sakina Asaad
- * تطوير: سكينة أسعد
+ * © LAB HUB · Developed by Sokinah Asaad
+ * تطوير وإشراف: سكينة أسعد
  * 
  * Standardized Software Ownership & Copyright Attribution Component
  * Core Platform Component — Permanent Brand Protection
@@ -29,7 +29,7 @@ export const OwnershipWatermark: React.FC<OwnershipWatermarkProps> = ({
         {showIcon && <Award className="w-3.5 h-3.5 text-purple-400 shrink-0" />}
         <span className="font-bold text-slate-200 tracking-wide">© LAB HUB</span>
         <span className="text-slate-500">•</span>
-        <span className="text-slate-300 font-medium">Developed by Sakina Asaad</span>
+        <span className="text-slate-300 font-medium">Developed by Sokinah Asaad</span>
         <span className="text-slate-500 hidden sm:inline">•</span>
         <span className="text-purple-300 font-medium hidden sm:inline" dir="rtl">تطوير: سكينة أسعد</span>
       </div>
@@ -44,7 +44,7 @@ export const OwnershipWatermark: React.FC<OwnershipWatermarkProps> = ({
       >
         <span className="font-bold text-white">© LAB HUB</span>
         <span className="mx-1 text-slate-500">|</span>
-        <span>Developed by Sakina Asaad</span>
+        <span>Developed by Sokinah Asaad</span>
         <span className="mx-1 text-slate-500">|</span>
         <span className="text-purple-300" dir="rtl">تطوير: سكينة أسعد</span>
       </div>
@@ -60,7 +60,7 @@ export const OwnershipWatermark: React.FC<OwnershipWatermarkProps> = ({
           {showIcon && <ShieldCheck className="w-4 h-4 text-purple-400 shrink-0" />}
           <span className="font-bold text-slate-200">© LAB HUB</span>
           <span>•</span>
-          <span className="text-slate-300">Developed by Sakina Asaad</span>
+          <span className="text-slate-300">Developed by Sokinah Asaad</span>
         </div>
         <div className="text-purple-300 font-medium" dir="rtl">
           منصة المختبرات الطبية والامتحانات العملية • تطوير: سكينة أسعد
@@ -77,7 +77,7 @@ export const OwnershipWatermark: React.FC<OwnershipWatermarkProps> = ({
         <div className="flex items-center gap-2" dir="ltr">
           <span className="font-bold text-slate-300">© LAB HUB</span>
           <span className="text-slate-600">•</span>
-          <span>Developed by Sakina Asaad</span>
+          <span>Developed by Sokinah Asaad</span>
         </div>
         <div className="flex items-center gap-2 text-slate-400" dir="rtl">
           <span>جميع الحقوق محفوظة للمنصة</span>
@@ -93,7 +93,7 @@ export const OwnershipWatermark: React.FC<OwnershipWatermarkProps> = ({
       <div className={`text-[11px] text-slate-400 flex items-center gap-1.5 ${className}`} dir="ltr">
         <span className="font-semibold text-slate-300">© LAB HUB</span>
         <span className="text-slate-600">•</span>
-        <span>Developed by Sakina Asaad</span>
+        <span>Developed by Sokinah Asaad</span>
         <span className="text-slate-600">/</span>
         <span className="text-purple-300" dir="rtl">تطوير: سكينة أسعد</span>
       </div>
@@ -109,7 +109,7 @@ export const OwnershipWatermark: React.FC<OwnershipWatermarkProps> = ({
       {showIcon && <Award className="w-3.5 h-3.5 text-purple-400 shrink-0" />}
       <span className="font-bold text-slate-200">© LAB HUB</span>
       <span className="text-slate-600">•</span>
-      <span className="text-slate-300">Developed by Sakina Asaad</span>
+      <span className="text-slate-300">Developed by Sokinah Asaad</span>
       <span className="text-slate-600 hidden sm:inline">•</span>
       <span className="text-purple-300 hidden sm:inline" dir="rtl">تطوير: سكينة أسعد</span>
     </div>

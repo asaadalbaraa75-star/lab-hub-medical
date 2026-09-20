@@ -1,9 +1,8 @@
 /*
- * © LAB HUB · Developed by Sakina Asaad
- * تطوير: سكينة أسعد
- * 
- * About Platform, Software Ownership & Intellectual Property Modal
- * Core Platform Component — Brand Identity & Copyright Protection
+ * © LAB HUB · Developed by Sokinah Asaad
+ * تطوير وإشراف: سكينة أسعد
+ * إهداء إلى الدفعة 44 – طب بشري – جامعة صنعاء
+ * تمت مراجعة المنصة من قبل الدكاترة: ثابت الذيفاني، حمزه الوصابي، عبدالله الجلال
  */
 
 import React from 'react';
@@ -17,7 +16,10 @@ import {
   FlaskConical,
   ShieldCheck,
   Heart,
-  Share2
+  Share2,
+  GraduationCap,
+  Quote,
+  UserCheck
 } from 'lucide-react';
 import { CompanionAvatarSvg } from '../companion/CompanionAvatarSvg';
 
@@ -67,6 +69,35 @@ export const AboutPlatformModal: React.FC<AboutPlatformModalProps> = ({
 
         {/* Modal Scrollable Body */}
         <div className="p-6 space-y-6 overflow-y-auto text-right text-slate-200" dir="rtl">
+          {/* Dedication Banner for Batch 44 */}
+          <div className="p-4 rounded-2xl bg-gradient-to-r from-purple-950/80 via-indigo-950/70 to-purple-950/80 border border-purple-500/40 flex items-center gap-3">
+            <div className="w-12 h-12 rounded-2xl bg-purple-600/30 border border-purple-400/40 flex items-center justify-center text-purple-300 shrink-0">
+              <GraduationCap className="w-6 h-6 text-purple-300" />
+            </div>
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-black text-white">إهداء إلى الدفعة 44 – طب بشري – جامعة صنعاء</span>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 font-bold border border-purple-500/30">
+                  دفعة الأمل والتميز
+                </span>
+              </div>
+              <p className="text-xs text-purple-200/90 leading-relaxed">
+                هذه المنصة ثمرة جهد وإهداء خاص لزملائنا وإخواننا في الدفعة 44 طب بشري بجامعة صنعاء، لتكون عوناً ومرجعاً معملياً شاملاً في مسيرتكم الطبية المباركة.
+              </p>
+            </div>
+          </div>
+
+          {/* Motivational Quote for Medical Students */}
+          <div className="p-4 rounded-2xl bg-white/5 border border-purple-500/20 text-purple-200 text-xs leading-relaxed flex items-start gap-3">
+            <Quote className="w-5 h-5 text-purple-400 shrink-0 mt-0.5" />
+            <div>
+              <span className="font-bold text-white block mb-1">رسالة تحفيزية لطبيب الغد:</span>
+              <p className="italic">
+                «وراء كل تشخيص دقيق وطبيب متمكن، ساعات طوال من الصبر والبحث والتركيز في معامل العلم لصون أثمن ما استودعك الله إياه: صحة الإنسان وحياته. استمر، فالمريض القادم بانتظار علمك وأمانتك.»
+              </p>
+            </div>
+          </div>
+
           {/* Official Mandated Platform Ownership Banner */}
           <div className="p-5 rounded-2xl bg-gradient-to-br from-purple-950/60 to-slate-900 border border-purple-500/40 shadow-inner space-y-3 text-left" dir="ltr">
             <div className="flex items-center justify-between">
@@ -76,7 +107,7 @@ export const AboutPlatformModal: React.FC<AboutPlatformModalProps> = ({
                   Medical Laboratory Practical Examination Platform
                 </p>
                 <p className="text-xs font-bold text-slate-300 mt-1">
-                  Developed by Sakina Asaad
+                  Developed by Sokinah Asaad
                 </p>
               </div>
               <div className="w-12 h-12 rounded-2xl bg-purple-600/30 border border-purple-400/40 flex items-center justify-center p-1">
@@ -87,7 +118,7 @@ export const AboutPlatformModal: React.FC<AboutPlatformModalProps> = ({
             <div className="text-xs text-slate-300 space-y-2 border-t border-white/10 pt-3">
               <div className="flex items-center justify-between text-[11px] text-slate-400">
                 <span>© LAB HUB • All Rights Reserved</span>
-                <span className="text-purple-300 font-medium" dir="rtl">تطوير: سكينة أسعد</span>
+                <span className="text-purple-300 font-medium" dir="rtl">تطوير: سكينة أسعد (Sokinah Asaad)</span>
               </div>
             </div>
           </div>
@@ -104,23 +135,48 @@ export const AboutPlatformModal: React.FC<AboutPlatformModalProps> = ({
                     تطوير وإشراف المبادرة • Developer & Owner
                   </span>
                   <h3 className="text-lg sm:text-xl font-black text-white">
-                    سكينة أسعد
+                    Sokinah Asaad (سكينة أسعد)
                   </h3>
                   <p className="text-xs text-slate-400 mt-0.5">
-                    صاحبة ومطورة منصة LAB HUB التعليمية
+                    صاحبة ومطورة منصة LAB HUB التعليمية الطبية
                   </p>
                 </div>
               </div>
 
               <div className="order-1 sm:order-2 px-3 py-1 bg-purple-950/60 border border-purple-500/30 rounded-xl text-purple-300 text-xs font-bold flex items-center gap-1.5">
                 <Heart className="w-3.5 h-3.5 text-rose-400 fill-rose-400" />
-                <span>إهداء إلى دفعة طلاب الطب البشري</span>
+                <span>إهداء إلى الدفعة 44 طب بشري – جامعة صنعاء</span>
               </div>
             </div>
 
             <p className="text-xs text-slate-300 leading-relaxed pt-3 border-t border-white/10">
-              تم تأسيس وتطوير منصة <strong>LAB HUB</strong> بواسطة <strong>سكينة أسعد</strong> كمبادرة تعليمية موحدة لتيسير الوصول إلى المعامل الطبية لطلاب الطب البشري، وتوفير مرجع علمي عملي دقيق يجمع بين محطات التشريح، شرائح الأنسجة المجهرية، واختبارات الكيمياء الحيوية، واختبارات الـ OSPE التفاعلية في منصة مركزية واحدة.
+              تم تأسيس وتطوير منصة <strong>LAB HUB</strong> بواسطة <strong>سكينة أسعد (Sokinah Asaad)</strong> كمبادرة تعليمية موحدة لتيسير الوصول إلى المعامل الطبية لطلاب الطب البشري، وتوفير مرجع علمي عملي دقيق يجمع بين محطات التشريح، شرائح الأنسجة المجهرية، واختبارات الكيمياء الحيوية، واختبارات الـ OSPE التفاعلية في منصة مركزية واحدة.
             </p>
+          </div>
+
+          {/* Academic Reviewers Section */}
+          <div className="p-5 rounded-2xl bg-purple-950/30 border border-purple-500/30 space-y-3">
+            <div className="flex items-center gap-2 text-white font-bold text-xs">
+              <UserCheck className="w-4 h-4 text-purple-400" />
+              <span>المراجعة العلمية والأكاديمية المعتمدة للمنصة</span>
+            </div>
+            <p className="text-[11px] text-slate-300">
+              تمت مراجعة وتدقيق المحتوى العلمي والعملي لمنصة LAB HUB بدقة من قِبل نخبة من الأساتذة والدكاترة الأفاضل:
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+              <div className="bg-black/30 p-3 rounded-xl border border-white/10 text-center space-y-1">
+                <div className="font-bold text-white text-xs">د. ثابت الذيفاني</div>
+                <div className="text-[10px] text-purple-300">مراجعة أكاديمية وطبية</div>
+              </div>
+              <div className="bg-black/30 p-3 rounded-xl border border-white/10 text-center space-y-1">
+                <div className="font-bold text-white text-xs">د. حمزه الوصابي</div>
+                <div className="text-[10px] text-purple-300">مراجعة أكاديمية وطبية</div>
+              </div>
+              <div className="bg-black/30 p-3 rounded-xl border border-white/10 text-center space-y-1">
+                <div className="font-bold text-white text-xs">د. عبدالله الجلال</div>
+                <div className="text-[10px] text-purple-300">مراجعة أكاديمية وطبية</div>
+              </div>
+            </div>
           </div>
 
           {/* Study Companion "Labeeb" Section */}

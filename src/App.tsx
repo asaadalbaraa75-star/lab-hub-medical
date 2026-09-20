@@ -78,8 +78,15 @@ import { LabHubCompanion } from './components/companion/LabHubCompanion';
 import { companionService } from './components/companion/companionStore';
 
 export default function App() {
-  // Application State - Strictly Enforced Authentication
-  const [currentUser, setCurrentUser] = useState<User | null>(() => authService.getCurrentUser());
+  // Application State - Strictly Enforced Authentication & Loading Guard
+  const [currentUser, setCurrentUser] = useState<User | null>(() => {
+    try {
+      return authService.getCurrentUser();
+    } catch {
+      return null;
+    }
+  });
+  const [isAuthLoading, setIsAuthLoading] = useState<boolean>(true);
   const [users, setUsers] = useState<User[]>(() => storageService.getUsers());
   const [progress, setProgress] = useState(() => storageService.getStudentProgress(currentUser?.id));
   const [schedule, setSchedule] = useState(() => storageService.getSchedule());
@@ -88,6 +95,22 @@ export default function App() {
   const [quizzes, setQuizzes] = useState(() => storageService.getQuizzes());
   const [announcements, setAnnouncements] = useState(() => storageService.getAnnouncements());
   const [notifications, setNotifications] = useState(() => storageService.getNotifications());
+
+  // Resolve session on initial load
+  useEffect(() => {
+    try {
+      const user = authService.getCurrentUser();
+      setCurrentUser(user);
+      if (user?.id) {
+        setProgress(storageService.getStudentProgress(user.id));
+      }
+    } catch (e) {
+      console.warn('Session verification fallback:', e);
+      setCurrentUser(null);
+    } finally {
+      setIsAuthLoading(false);
+    }
+  }, []);
 
   // Parse initial tab from URL hash or path
   const getInitialTabState = () => {
@@ -210,6 +233,7 @@ export default function App() {
   const handleLogout = async () => {
     await authService.logout();
     setCurrentUser(null);
+    setCurrentTab('dashboard');
     window.location.hash = '';
   };
 
@@ -392,6 +416,13 @@ export default function App() {
       return;
     }
 
+    // Role-based route guard: Students are never routed to admin panel
+    if (tab.startsWith('admin') && currentUser && !securityService.isStaff(currentUser)) {
+      setCurrentTab('dashboard');
+      updateTabWithHash('dashboard');
+      return;
+    }
+
     setSelectedPracticalId(null);
     setActiveQuiz(null);
     setCurrentTab(tab);
@@ -462,7 +493,7 @@ export default function App() {
       return (
         <QuizRunner
           quiz={activeQuiz}
-          userId={currentUser.id}
+          userId={currentUser?.id || 'guest_student'}
           onCompleteQuiz={handleCompleteQuizAttempt}
           onBack={() => {
             if (selectedLabId) {
@@ -742,6 +773,21 @@ export default function App() {
   // Staff authorization check
   const isStaff = securityService.isStaff(currentUser);
 
+  // Authentication Loading Screen
+  if (isAuthLoading) {
+    return (
+      <div className="min-h-screen bg-[#070B14] flex flex-col items-center justify-center text-slate-100 p-4">
+        <div className="relative flex items-center justify-center mb-4">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-cyan-400 flex items-center justify-center text-white font-black text-xl shadow-[0_0_30px_rgba(168,85,247,0.4)] animate-pulse">
+            LH
+          </div>
+        </div>
+        <div className="text-base font-bold text-slate-200 tracking-wide">LAB HUB • Medical Sciences</div>
+        <div className="text-xs text-slate-400 mt-1 font-mono">التحقق من الجلسة الطبية والأمان...</div>
+      </div>
+    );
+  }
+
   // If visitor is attempting to access Admin/Contributor portal without staff session:
   if (currentTab.startsWith('admin') && !isStaff) {
     return (
@@ -751,8 +797,13 @@ export default function App() {
           storageService.setCurrentUser(user);
           setProgress(storageService.getStudentProgress(user.id));
           authService.trackActivity('تسجيل الدخول للمنصة', 'Authentication', 'تم تسجيل الدخول بنجاح');
-          setCurrentTab('admin');
-          updateTabWithHash('admin');
+          if (securityService.isStaff(user)) {
+            setCurrentTab('admin');
+            updateTabWithHash('admin');
+          } else {
+            setCurrentTab('dashboard');
+            updateTabWithHash('dashboard');
+          }
         }}
         onCancel={() => {
           setCurrentTab('dashboard');
@@ -804,7 +855,7 @@ export default function App() {
                 activeLabId={selectedLabId || undefined}
                 onSelectTab={handleTabSelect}
                 currentUser={currentUser}
-                userRole={currentUser.role}
+                userRole={currentUser?.role || 'student'}
                 onOpenAiTutor={() => setIsAiTutorOpen(true)}
                 onOpenAboutModal={() => setIsAboutModalOpen(true)}
                 onLogout={handleLogout}

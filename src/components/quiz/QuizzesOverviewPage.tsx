@@ -17,10 +17,19 @@ export const QuizzesOverviewPage: React.FC<QuizzesOverviewPageProps> = ({
 
   const safeQuizzes = Array.isArray(quizzes) ? quizzes : [];
 
-  const filteredQuizzes = safeQuizzes.filter(q => {
-    if (selectedLab !== 'all' && q.labId !== selectedLab) return false;
-    return true;
-  });
+  const subjectOrder: Record<string, number> = { anatomy: 1, histology: 2, biochemistry: 3 };
+
+  const filteredQuizzes = safeQuizzes
+    .filter(q => {
+      if (selectedLab !== 'all' && q.labId !== selectedLab) return false;
+      return true;
+    })
+    .sort((a, b) => {
+      const subA = subjectOrder[a.labId] || 99;
+      const subB = subjectOrder[b.labId] || 99;
+      if (subA !== subB) return subA - subB;
+      return (a.title || '').localeCompare(b.title || '', 'ar');
+    });
 
   return (
     <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-300" id="quizzes-overview-page">

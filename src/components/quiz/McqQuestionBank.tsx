@@ -45,6 +45,8 @@ export const McqQuestionBank: React.FC<Props> = ({ onBackToHub }) => {
 
   // Filtered question set
   const filteredQuestions = useMemo(() => {
+    const subjectOrder: Record<string, number> = { anatomy: 1, histology: 2, biochemistry: 3 };
+
     return ALL_MCQ_BANK.filter(q => {
       const matchSubject = selectedSubject === 'all' || q.subjectId === selectedSubject;
       const matchDifficulty = selectedDifficulty === 'all' || q.difficulty === selectedDifficulty;
@@ -55,6 +57,16 @@ export const McqQuestionBank: React.FC<Props> = ({ onBackToHub }) => {
       const matchMistakes = !onlyShowMistakes || (userAnswers[q.id] !== undefined && userAnswers[q.id] !== q.correctIndex);
 
       return matchSubject && matchDifficulty && matchSearch && matchBookmark && matchMistakes;
+    }).sort((a, b) => {
+      const subA = subjectOrder[a.subjectId] || 99;
+      const subB = subjectOrder[b.subjectId] || 99;
+      if (subA !== subB) return subA - subB;
+
+      const topA = (a.topic || '').toLowerCase();
+      const topB = (b.topic || '').toLowerCase();
+      if (topA !== topB) return topA.localeCompare(topB, 'ar');
+
+      return a.id.localeCompare(b.id, undefined, { numeric: true });
     });
   }, [selectedSubject, selectedDifficulty, searchQuery, onlyShowBookmarked, onlyShowMistakes, bookmarkedIds, userAnswers]);
 

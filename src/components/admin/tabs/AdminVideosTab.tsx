@@ -200,17 +200,31 @@ export const AdminVideosTab: React.FC<Props> = ({ currentUser }) => {
     setFormTestResult(result);
   };
 
-  const filteredVideos = videos.filter(v => {
-    const matchesSubject = selectedSubject === 'all' || v.subject === selectedSubject;
-    const q = searchQuery.toLowerCase().trim();
-    const matchesSearch =
-      !q ||
-      v.title.toLowerCase().includes(q) ||
-      (v.titleAr && v.titleAr.toLowerCase().includes(q)) ||
-      v.instructor.toLowerCase().includes(q) ||
-      v.topic.toLowerCase().includes(q);
-    return matchesSubject && matchesSearch;
-  });
+  const subjectOrder: Record<string, number> = { anatomy: 1, histology: 2, biochemistry: 3 };
+
+  const filteredVideos = videos
+    .filter(v => {
+      const matchesSubject = selectedSubject === 'all' || v.subject === selectedSubject;
+      const q = searchQuery.toLowerCase().trim();
+      const matchesSearch =
+        !q ||
+        v.title.toLowerCase().includes(q) ||
+        (v.titleAr && v.titleAr.toLowerCase().includes(q)) ||
+        v.instructor.toLowerCase().includes(q) ||
+        v.topic.toLowerCase().includes(q);
+      return matchesSubject && matchesSearch;
+    })
+    .sort((a, b) => {
+      const subA = subjectOrder[a.subject] || 99;
+      const subB = subjectOrder[b.subject] || 99;
+      if (subA !== subB) return subA - subB;
+
+      const topA = (a.topic || a.topicName || '').toLowerCase();
+      const topB = (b.topic || b.topicName || '').toLowerCase();
+      if (topA !== topB) return topA.localeCompare(topB, 'ar');
+
+      return (a.title || '').localeCompare(b.title || '', 'ar');
+    });
 
   const handleTogglePublish = (vid: EducationalVideo) => {
     const newStatus = vid.status === 'active' ? 'unavailable' : 'active';

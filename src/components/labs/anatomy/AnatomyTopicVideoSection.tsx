@@ -69,8 +69,9 @@ export const AnatomyTopicVideoSection: React.FC<AnatomyTopicVideoSectionProps> =
   const [isPlayingEmbed, setIsPlayingEmbed] = useState<boolean>(false);
 
   // User role state
-  const currentUser = authService.getSession().user;
-  const isTeacherOrAdmin = currentUser.role === 'admin' || currentUser.role === 'instructor';
+  const session = authService.getSession();
+  const currentUser = session?.user;
+  const isTeacherOrAdmin = currentUser?.role === 'admin' || currentUser?.role === 'instructor' || currentUser?.role === 'owner';
 
   // Admin edit form state
   const [editYoutubeId, setEditYoutubeId] = useState<string>('');

@@ -203,8 +203,8 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
     setIsExamModalOpen(false);
   };
 
-  const isFaculty = currentUser.role === 'admin' || currentUser.role === 'instructor';
-  const hasAnatomyPermission = Boolean(currentUser.canPublishAnatomyExams);
+  const isFaculty = currentUser?.role === 'admin' || currentUser?.role === 'instructor' || currentUser?.role === 'owner';
+  const hasAnatomyPermission = Boolean(currentUser?.canPublishAnatomyExams);
   const canAccess = isFaculty || hasAnatomyPermission;
 
   if (!canAccess) {

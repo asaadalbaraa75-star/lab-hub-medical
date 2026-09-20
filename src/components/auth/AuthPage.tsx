@@ -364,30 +364,6 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   </div>
                 </div>
 
-                {/* 1-Click Fill for Owner */}
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setLoginEmail('owner@labhub.med');
-                      setLoginPassword('owner123');
-                    }}
-                    className="flex-1 py-1.5 px-2 rounded-lg bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-900 text-[11px] font-bold transition"
-                  >
-                    مالكة المنصة (سكينة أسعد)
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setLoginEmail('admin@med.edu');
-                      setLoginPassword('admin123');
-                    }}
-                    className="flex-1 py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-800 text-[11px] font-medium transition"
-                  >
-                    مدير النظام (Admin)
-                  </button>
-                </div>
-
                 <button
                   type="submit"
                   id="auth-login-submit-btn"

@@ -1,9 +1,8 @@
 /*
- * © LAB HUB · Developed by Sakina Asaad
- * تطوير: سكينة أسعد
- * 
- * Global Platform Footer & Software Ownership Attribution
- * Core Platform Component — Brand Identity & Copyright Protection
+ * © LAB HUB · Developed by Sokinah Asaad
+ * تطوير وإشراف: سكينة أسعد
+ * إهداء إلى الدفعة 44 – طب بشري – جامعة صنعاء
+ * تمت مراجعة المنصة من قبل الدكاترة: ثابت الذيفاني، حمزه الوصابي، عبدالله الجلال
  */
 
 import React from 'react';
@@ -15,7 +14,10 @@ import {
   Bone,
   FlaskConical,
   Lock,
-  Sparkles
+  Sparkles,
+  Heart,
+  GraduationCap,
+  Quote
 } from 'lucide-react';
 import { OwnershipWatermark } from './OwnershipWatermark';
 
@@ -38,6 +40,34 @@ export const PlatformFooter: React.FC<PlatformFooterProps> = ({
       className="mt-16 bg-[#080C18]/95 border-t border-white/10 py-10 px-4 sm:px-6 lg:px-8 text-slate-400 relative z-20 backdrop-blur-md"
     >
       <div className="max-w-7xl mx-auto space-y-8">
+        {/* Dedication Banner for Batch 44 & Motivational Quote */}
+        <div className="bg-gradient-to-r from-purple-950/70 via-indigo-950/60 to-purple-950/70 border border-purple-500/30 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 text-right" dir="rtl">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-purple-600/30 border border-purple-400/40 flex items-center justify-center text-purple-300 shrink-0">
+              <GraduationCap className="w-5 h-5 text-purple-300" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-black text-white">إهداء إلى الدفعة 44 – طب بشري – جامعة صنعاء</span>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 font-bold border border-purple-500/30">
+                  دفعة الأمل والتميز
+                </span>
+              </div>
+              <p className="text-[11px] text-purple-200/80 mt-0.5 flex items-center gap-1">
+                <Quote className="w-3 h-3 text-purple-400 inline shrink-0" />
+                <span>«وراء كل تشخيص دقيق وطبيب متمكن، ساعات من الصبر والبحث في معامل العلم لصون أثمن ما يملكه الإنسان: حياته»</span>
+              </p>
+            </div>
+          </div>
+
+          <div className="text-[11px] text-slate-300 bg-black/30 px-3 py-1.5 rounded-xl border border-white/10 shrink-0 text-center sm:text-right">
+            <span className="text-purple-300 font-bold">تمت مراجعة المنصة من قِبل الدكاترة الأفاضل:</span>
+            <div className="text-white font-medium text-[11px] mt-0.5">
+              د. ثابت الذيفاني • د. حمزه الوصابي • د. عبدالله الجلال
+            </div>
+          </div>
+        </div>
+
         {/* Top Tier: Brand, Mission, & Quick Links */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
           {/* Brand & Purpose Description */}
@@ -130,7 +160,7 @@ export const PlatformFooter: React.FC<PlatformFooterProps> = ({
             </div>
 
             <p className="text-sm font-black text-white">
-              سكينة أسعد
+              Sokinah Asaad (سكينة أسعد)
             </p>
             <p className="text-[11px] text-slate-400 leading-snug">
               صاحبة ومطورة منصة LAB HUB التعليمية الطبية
@@ -148,12 +178,12 @@ export const PlatformFooter: React.FC<PlatformFooterProps> = ({
           </div>
         </div>
 
-        {/* Bottom Tier: Exact Software Ownership & Copyright as Mandated */}
+        {/* Bottom Tier: Exact Software Ownership & Copyright */}
         <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400">
           <div className="flex flex-col sm:flex-row items-center gap-2 text-center sm:text-left" dir="ltr">
             <span className="font-bold text-slate-200">© LAB HUB</span>
             <span className="hidden sm:inline text-slate-600">•</span>
-            <span className="text-slate-300 font-medium">Developed by Sakina Asaad</span>
+            <span className="text-slate-300 font-medium">Developed by Sokinah Asaad</span>
             <span className="hidden sm:inline text-slate-600">•</span>
             <span className="text-purple-300 font-medium" dir="rtl">تطوير: سكينة أسعد</span>
           </div>

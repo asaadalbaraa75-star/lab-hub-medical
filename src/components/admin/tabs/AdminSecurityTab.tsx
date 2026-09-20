@@ -249,7 +249,7 @@ export const AdminSecurityTab: React.FC<Props> = ({ currentUser }) => {
     setTestCases([...updated]);
     await new Promise(r => setTimeout(r, 200));
     const session = authService.getSession();
-    if (session && session.user.role === 'admin' && session.token) {
+    if (session && session.user?.role === 'admin' && session.token) {
       try {
         const res = await fetch('/api/admin/users', {
           headers: { 'Authorization': `Bearer ${session.token}` }
