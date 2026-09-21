@@ -163,7 +163,15 @@ export const AboutPlatformModal: React.FC<AboutPlatformModalProps> = ({
             <p className="text-[11px] text-slate-300">
               تمت مراجعة وتدقيق المحتوى العلمي والعملي لمنصة LAB HUB بدقة من قِبل نخبة من الأساتذة والدكاترة الأفاضل:
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 pt-1">
+              <div className="bg-black/30 p-3 rounded-xl border border-white/10 text-center space-y-1">
+                <div className="font-bold text-white text-xs">ندى البريطي</div>
+                <div className="text-[10px] text-purple-300">مراجعة أكاديمية وطبية</div>
+              </div>
+              <div className="bg-black/30 p-3 rounded-xl border border-white/10 text-center space-y-1">
+                <div className="font-bold text-white text-xs">محمد بدر محمد علي</div>
+                <div className="text-[10px] text-purple-300">مراجعة أكاديمية وطبية</div>
+              </div>
               <div className="bg-black/30 p-3 rounded-xl border border-white/10 text-center space-y-1">
                 <div className="font-bold text-white text-xs">د. ثابت الذيفاني</div>
                 <div className="text-[10px] text-purple-300">مراجعة أكاديمية وطبية</div>

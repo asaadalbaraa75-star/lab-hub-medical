@@ -14,6 +14,7 @@ import {
   Activity,
   TrendingUp,
   BookOpen,
+  Image as ImageIcon,
   Video,
   Lock,
   RefreshCw,
@@ -39,6 +40,7 @@ import { AdminActiveUsersTab } from './tabs/AdminActiveUsersTab';
 import { AdminActivityTab } from './tabs/AdminActivityTab';
 import { AdminAnalyticsTab } from './tabs/AdminAnalyticsTab';
 import { AdminContentTab } from './tabs/AdminContentTab';
+import { AdminImagesTab } from './tabs/AdminImagesTab';
 import { AdminVideosTab } from './tabs/AdminVideosTab';
 import { AdminSecurityTab } from './tabs/AdminSecurityTab';
 import { AdminExamsTab } from './tabs/AdminExamsTab';
@@ -106,6 +108,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       else if (hash.includes('admin/notifications')) target = 'notifications';
       else if (hash.includes('admin/ai_settings') || hash.includes('admin/ai')) target = 'ai_settings';
       else if (hash.includes('admin/content')) target = 'content';
+      else if (hash.includes('admin/images') || hash.includes('admin/image') || hash.includes('admin/photos')) target = 'images';
       else if (hash.includes('admin/videos')) target = 'videos';
       else if (hash.includes('admin/security')) target = 'security';
       else if (hash === '#admin') target = 'overview';
@@ -227,6 +230,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     { id: 'exams', label: 'إدارة الامتحانات (Exams)', icon: <Award className="w-4 h-4 text-purple-600" /> },
     { id: 'question_bank', label: 'بنك الأسئلة (OSPE Bank)', icon: <HelpCircle className="w-4 h-4 text-indigo-600" /> },
     { id: 'content', label: 'إدارة المحتوى المعملي', icon: <BookOpen className="w-4 h-4 text-emerald-600" /> },
+    { id: 'images', label: 'إدارة الصور (IMAGE MANAGEMENT)', icon: <ImageIcon className="w-4 h-4 text-rose-500" /> },
     { id: 'videos', label: 'إدارة الفيديوهات', icon: <Video className="w-4 h-4 text-cyan-600" /> },
     { id: 'invites', label: 'دعوات المسؤولين (ADMIN INVITES)', icon: <UserPlus className="w-4 h-4 text-indigo-600" /> },
     { id: 'admins', label: 'إدارة المسؤولين (STAFF)', icon: <Users className="w-4 h-4 text-purple-600" /> },
@@ -387,6 +391,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             currentUser={currentUser}
             onSelectLab={onSelectLab}
             onOpenPractical={onOpenPractical}
+          />
+        )}
+
+        {activeSubPage === 'images' && (
+          <AdminImagesTab
+            currentUser={currentUser}
           />
         )}
 

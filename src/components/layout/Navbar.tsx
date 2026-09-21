@@ -210,7 +210,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => handleNavClick('laboratories')}
               className="ml-1 px-4 py-1.5 rounded-full text-xs font-bold text-white bg-gradient-to-r from-[#FF007A] to-[#A855F7] hover:from-[#E0067A] hover:to-[#9333EA] shadow-[0_0_20px_rgba(255,0,122,0.4)] transition-all cursor-pointer active:scale-95"
             >
-              المعامل 3D
+              المعامل الطبية
             </button>
           </nav>
 
@@ -415,7 +415,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 >
                   <div className="flex items-center gap-3">
                     <BookOpen className="w-4 h-4 text-purple-400" />
-                    <span>المعامل الطبية (Laboratories 3D)</span>
+                    <span>المعامل الطبية (Laboratories)</span>
                   </div>
                   <ChevronLeft className="w-4 h-4 text-slate-500" />
                 </button>

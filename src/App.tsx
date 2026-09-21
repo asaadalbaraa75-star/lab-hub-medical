@@ -55,9 +55,7 @@ import { VirtualHistologyViewer } from './components/interactive/VirtualHistolog
 import { McqQuestionBank } from './components/quiz/McqQuestionBank';
 import { EducationalVideosSection } from './components/video/EducationalVideosSection';
 import { AnatomicalPlanesInteractiveView } from './components/labs/anatomy/AnatomicalPlanesInteractiveView';
-import { AnatomyInteractive3DViewer } from './components/labs/anatomy/AnatomyInteractive3DViewer';
 import { AnatomyMovementsAndJointsViewer } from './components/labs/anatomy/AnatomyMovementsAndJointsViewer';
-import { RealisticHuman3DViewer } from './components/labs/anatomy/3d/RealisticHuman3DViewer';
 import { BiochemistryPathwaysViewer } from './components/labs/biochemistry/BiochemistryPathwaysViewer';
 import { FirstYearMedicalVisualMap } from './components/visualMap/FirstYearMedicalVisualMap';
 
@@ -169,8 +167,6 @@ export default function App() {
         'mcq_bank',
         'educational_videos',
         'interactive_planes',
-        'interactive_3d_muscles',
-        'realistic_3d_human',
         'anatomy_movements',
         'biochemistry_pathways',
         'visual_map',
@@ -696,20 +692,6 @@ export default function App() {
           </div>
         );
 
-      case 'interactive_3d_muscles':
-        return (
-          <div className="animate-in fade-in duration-300">
-            <AnatomyInteractive3DViewer onBack={() => handleTabSelect('dashboard')} />
-          </div>
-        );
-
-      case 'realistic_3d_human':
-        return (
-          <div className="animate-in fade-in duration-300">
-            <RealisticHuman3DViewer onBack={() => handleTabSelect('dashboard')} />
-          </div>
-        );
-
       case 'anatomy_movements':
         return (
           <div className="animate-in fade-in duration-300">
@@ -873,7 +855,7 @@ export default function App() {
       {/* Main App Layout Grid */}
       <div className="relative z-10 flex-1 flex max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-6 gap-8">
         {/* Left Desktop Sidebar: Available for tabular and administrative pages */}
-        {!['dashboard', 'laboratories', 'interactive_planes', 'interactive_3d_muscles', 'anatomy_movements', 'biochemistry_pathways'].includes(currentTab) && (
+        {!['dashboard', 'laboratories', 'interactive_planes', 'anatomy_movements', 'biochemistry_pathways'].includes(currentTab) && (
           <aside className="hidden lg:block w-64 shrink-0">
             <div className="sticky top-24">
               <Sidebar

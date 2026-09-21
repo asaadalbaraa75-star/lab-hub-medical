@@ -327,6 +327,113 @@ export async function apiUpdatePracticalStatus(id: string, status: string): Prom
   }
 }
 
+// --- Images Management API ---
+export async function apiFetchImages(): Promise<any[]> {
+  try {
+    const res = await fetch('/api/images');
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (e) {
+    console.warn('Could not fetch images from server API:', e);
+  }
+  return [];
+}
+
+export async function apiAddImage(payload: {
+  image: string;
+  title: string;
+  caption?: string;
+  subject?: string;
+  lessonId?: string;
+  category?: string;
+  stainOrView?: string;
+  magnification?: string;
+  uploadedBy?: string;
+  userId?: string;
+  userEmail?: string;
+}): Promise<{ success: boolean; image?: any; error?: string }> {
+  try {
+    const res = await fetch('/api/images', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      return { success: false, error: data.error || 'فشل حفظ الصورة' };
+    }
+    return { success: true, image: data.image };
+  } catch (e: any) {
+    console.error('Failed to add image via API:', e);
+    return { success: false, error: e.message || 'خطأ في الاتصال بالخادم' };
+  }
+}
+
+export async function apiUpdateImage(id: string, payload: {
+  image?: string;
+  title?: string;
+  caption?: string;
+  subject?: string;
+  lessonId?: string;
+  category?: string;
+  stainOrView?: string;
+  magnification?: string;
+  updatedBy?: string;
+  userId?: string;
+  userEmail?: string;
+}): Promise<{ success: boolean; image?: any; error?: string }> {
+  try {
+    const res = await fetch(`/api/images/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      return { success: false, error: data.error || 'فشل تحديث الصورة' };
+    }
+    return { success: true, image: data.image };
+  } catch (e: any) {
+    console.error('Failed to update image via API:', e);
+    return { success: false, error: e.message || 'خطأ في الاتصال بالخادم' };
+  }
+}
+
+export async function apiDeleteImage(id: string, userMeta?: { userId?: string; userName?: string; userEmail?: string }): Promise<boolean> {
+  try {
+    const query = new URLSearchParams(userMeta as any).toString();
+    const res = await fetch(`/api/images/${id}?${query}`, { method: 'DELETE' });
+    return res.ok;
+  } catch (e) {
+    console.error('Failed to delete image via API:', e);
+    return false;
+  }
+}
+
+export async function apiAssignImage(payload: {
+  imageId: string;
+  lessonId: string;
+  subject?: string;
+  caption?: string;
+}): Promise<{ success: boolean; image?: any; error?: string }> {
+  try {
+    const res = await fetch('/api/images/assign', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      return { success: false, error: data.error || 'فشل تعيين الصورة للدرس' };
+    }
+    return { success: true, image: data.image };
+  } catch (e: any) {
+    console.error('Failed to assign image via API:', e);
+    return { success: false, error: e.message || 'خطأ في الاتصال بالخادم' };
+  }
+}
+
 export const apiService = {
   askAiTutor: askLabHubTutor,
   askLabHubTutor,
@@ -351,6 +458,11 @@ export const apiService = {
   saveVideo: apiSaveVideo,
   batchSaveVideos: apiBatchSaveVideos,
   deleteVideo: apiDeleteVideo,
-  checkVideoLink: apiCheckVideoLink
+  checkVideoLink: apiCheckVideoLink,
+  fetchImages: apiFetchImages,
+  addImage: apiAddImage,
+  updateImage: apiUpdateImage,
+  deleteImage: apiDeleteImage,
+  assignImage: apiAssignImage
 };
 

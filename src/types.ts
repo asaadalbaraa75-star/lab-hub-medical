@@ -122,12 +122,30 @@ export type AdminSubPage =
   | 'activity' 
   | 'analytics' 
   | 'content' 
+  | 'images'
   | 'videos' 
   | 'security'
   | 'exams'
   | 'question_bank'
   | 'notifications'
   | 'ai_settings';
+
+export interface ManagedImage {
+  id: string;
+  url: string;
+  title: string;
+  caption?: string;
+  subject: LabSubjectId;
+  lessonId?: string;
+  lessonTitle?: string;
+  category?: 'lesson' | 'spotter' | 'diagram' | 'general';
+  uploadedBy: string;
+  uploadedAt: string;
+  updatedAt: string;
+  size?: string;
+  stainOrView?: string;
+  magnification?: string;
+}
 
 export interface AdminAnalyticsMetrics {
   totalUsers: number;

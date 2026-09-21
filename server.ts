@@ -318,6 +318,7 @@ async function startServer() {
     questions: any[];
     notifications: any[];
     customVideos: any[];
+    customImages: any[];
     practicals: any[];
   } => {
     try {
@@ -392,6 +393,7 @@ async function startServer() {
             questions: Array.isArray(parsed.questions) && parsed.questions.length > 0 ? parsed.questions : (PRACTICAL_EXAM_QUESTIONS as any[]),
             notifications: Array.isArray(parsed.notifications) && parsed.notifications.length > 0 ? parsed.notifications : defaultNotifications,
             customVideos: Array.isArray(parsed.customVideos) ? parsed.customVideos : [],
+            customImages: Array.isArray(parsed.customImages) ? parsed.customImages : (Array.isArray(parsed.images) ? parsed.images : []),
             practicals: Array.isArray(parsed.practicals) && parsed.practicals.length > 0 ? parsed.practicals : (INITIAL_PRACTICALS as any[])
           };
         }
@@ -407,6 +409,7 @@ async function startServer() {
       questions: PRACTICAL_EXAM_QUESTIONS as any[],
       notifications: defaultNotifications,
       customVideos: [],
+      customImages: [],
       practicals: INITIAL_PRACTICALS as any[]
     };
   };
@@ -422,6 +425,34 @@ async function startServer() {
   let serverPracticals: any[] = (initialData.practicals && initialData.practicals.length > 0)
     ? initialData.practicals
     : INITIAL_PRACTICALS;
+  let serverCustomImages: any[] = initialData.customImages || [];
+
+  // If no custom images exist yet in persistent storage, index all existing practical lesson images
+  if (serverCustomImages.length === 0 && Array.isArray(serverPracticals)) {
+    serverPracticals.forEach((p: any) => {
+      if (Array.isArray(p.images)) {
+        p.images.forEach((img: any, idx: number) => {
+          if (img && img.url) {
+            serverCustomImages.push({
+              id: `img_${p.id}_${idx}`,
+              url: img.url,
+              title: img.caption || `${p.title} - صورة ${idx + 1}`,
+              caption: img.caption || '',
+              subject: p.courseId || 'anatomy',
+              lessonId: p.id,
+              lessonTitle: p.title,
+              category: 'lesson',
+              uploadedBy: p.authorName || 'سكينة أسعد (Owner)',
+              uploadedAt: p.lastUpdated || new Date().toISOString(),
+              updatedAt: p.lastUpdated || new Date().toISOString(),
+              stainOrView: img.stainOrView || '',
+              magnification: img.magnification || ''
+            });
+          }
+        });
+      }
+    });
+  }
 
   const saveDb = () => {
     try {
@@ -433,6 +464,7 @@ async function startServer() {
         questions: serverQuestions,
         notifications: serverNotifications,
         customVideos: serverCustomVideos,
+        customImages: serverCustomImages,
         practicals: serverPracticals
       }, null, 2), 'utf-8');
     } catch (e) {
@@ -2135,6 +2167,246 @@ async function startServer() {
     serverNotifications.forEach(n => { n.isRead = true; });
     saveDb();
     res.json({ success: true });
+  });
+
+  // ==================== IMAGES MANAGER API ====================
+  app.get('/api/images', (req: Request, res: Response) => {
+    res.json(serverCustomImages);
+  });
+
+  app.post('/api/images', (req: Request, res: Response) => {
+    const { image, title, caption, subject, lessonId, category, stainOrView, magnification, uploadedBy, userId, userEmail } = req.body;
+    if (!image || typeof image !== 'string') {
+      return res.status(400).json({ error: 'الصورة مطلوبة (Image payload is required)' });
+    }
+    if (!title) {
+      return res.status(400).json({ error: 'عنوان الصورة مطلوب (Image title is required)' });
+    }
+
+    let finalUrl = image;
+    // Process base64 if provided
+    const matches = image.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+    if (matches && matches.length === 3) {
+      try {
+        const mimeType = matches[1];
+        const base64Data = matches[2];
+        const ext = mimeType.split('/')[1]?.replace('jpeg', 'jpg') || 'png';
+        const filename = `img_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${ext}`;
+        const filePath = path.join(UPLOADS_DIR, filename);
+        fs.writeFileSync(filePath, Buffer.from(base64Data, 'base64'));
+        finalUrl = `/uploads/${filename}`;
+      } catch (e) {
+        console.warn('Failed to save image to disk:', e);
+      }
+    }
+
+    let lessonTitle = '';
+    if (lessonId) {
+      const practical = serverPracticals.find((p: any) => p.id === lessonId);
+      if (practical) {
+        lessonTitle = practical.title;
+        if (!Array.isArray(practical.images)) practical.images = [];
+        practical.images.push({
+          url: finalUrl,
+          caption: caption || title,
+          stainOrView: stainOrView || '',
+          magnification: magnification || ''
+        });
+        practical.lastUpdated = new Date().toISOString();
+      }
+    }
+
+    const newRecord = {
+      id: `img_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+      url: finalUrl,
+      title: title.trim(),
+      caption: caption || '',
+      subject: subject || 'anatomy',
+      lessonId: lessonId || undefined,
+      lessonTitle: lessonTitle || undefined,
+      category: category || 'lesson',
+      uploadedBy: uploadedBy || 'سكينة أسعد (Owner)',
+      uploadedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      stainOrView: stainOrView || '',
+      magnification: magnification || ''
+    };
+
+    serverCustomImages.unshift(newRecord);
+
+    serverActivities.unshift({
+      id: `act_${Date.now()}`,
+      userId: userId || 'admin',
+      userName: uploadedBy || 'مسؤول معتمد',
+      userEmail: userEmail || 'admin@med.edu',
+      activity: `إضافة صورة جديدة: ${title}`,
+      section: 'إدارة الصور',
+      timestamp: new Date().toISOString(),
+      metadata: { imageId: newRecord.id, subject: newRecord.subject, lessonId: newRecord.lessonId }
+    });
+
+    saveDb();
+    res.json({ success: true, image: newRecord });
+  });
+
+  app.put('/api/images/:id', (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { image, title, caption, subject, lessonId, category, stainOrView, magnification, updatedBy, userId, userEmail } = req.body;
+
+    const existingIndex = serverCustomImages.findIndex(img => img.id === id);
+    if (existingIndex === -1) {
+      return res.status(404).json({ error: 'الصورة غير موجودة (Image not found)' });
+    }
+
+    const currentRecord = serverCustomImages[existingIndex];
+    let finalUrl = currentRecord.url;
+
+    if (image && image !== currentRecord.url) {
+      const matches = image.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+      if (matches && matches.length === 3) {
+        try {
+          const mimeType = matches[1];
+          const base64Data = matches[2];
+          const ext = mimeType.split('/')[1]?.replace('jpeg', 'jpg') || 'png';
+          const filename = `img_replaced_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${ext}`;
+          const filePath = path.join(UPLOADS_DIR, filename);
+          fs.writeFileSync(filePath, Buffer.from(base64Data, 'base64'));
+          finalUrl = `/uploads/${filename}`;
+        } catch (e) {
+          console.warn('Failed to save replacement image:', e);
+          finalUrl = image;
+        }
+      } else {
+        finalUrl = image;
+      }
+    }
+
+    let lessonTitle = currentRecord.lessonTitle;
+    if (lessonId) {
+      const practical = serverPracticals.find((p: any) => p.id === lessonId);
+      if (practical) {
+        lessonTitle = practical.title;
+        if (!Array.isArray(practical.images)) practical.images = [];
+        const practicalImgIdx = practical.images.findIndex((img: any) => img.url === currentRecord.url);
+        if (practicalImgIdx >= 0) {
+          practical.images[practicalImgIdx] = {
+            url: finalUrl,
+            caption: caption !== undefined ? caption : practical.images[practicalImgIdx].caption,
+            stainOrView: stainOrView || practical.images[practicalImgIdx].stainOrView,
+            magnification: magnification || practical.images[practicalImgIdx].magnification
+          };
+        } else {
+          practical.images.push({
+            url: finalUrl,
+            caption: caption || title || currentRecord.title,
+            stainOrView: stainOrView || '',
+            magnification: magnification || ''
+          });
+        }
+        practical.lastUpdated = new Date().toISOString();
+      }
+    }
+
+    const updatedRecord = {
+      ...currentRecord,
+      url: finalUrl,
+      title: title ? title.trim() : currentRecord.title,
+      caption: caption !== undefined ? caption : currentRecord.caption,
+      subject: subject || currentRecord.subject,
+      lessonId: lessonId !== undefined ? lessonId : currentRecord.lessonId,
+      lessonTitle: lessonTitle,
+      category: category || currentRecord.category,
+      stainOrView: stainOrView !== undefined ? stainOrView : currentRecord.stainOrView,
+      magnification: magnification !== undefined ? magnification : currentRecord.magnification,
+      updatedAt: new Date().toISOString()
+    };
+
+    serverCustomImages[existingIndex] = updatedRecord;
+
+    serverActivities.unshift({
+      id: `act_${Date.now()}`,
+      userId: userId || 'admin',
+      userName: updatedBy || 'مسؤول معتمد',
+      userEmail: userEmail || 'admin@med.edu',
+      activity: `تعديل/استبدال صورة: ${updatedRecord.title}`,
+      section: 'إدارة الصور',
+      timestamp: new Date().toISOString(),
+      metadata: { imageId: id, subject: updatedRecord.subject }
+    });
+
+    saveDb();
+    res.json({ success: true, image: updatedRecord });
+  });
+
+  app.delete('/api/images/:id', (req: Request, res: Response) => {
+    const { id } = req.params;
+    const target = serverCustomImages.find(img => img.id === id);
+    if (!target) {
+      return res.status(404).json({ error: 'الصورة غير موجودة' });
+    }
+
+    // If attached to a practical lesson, remove from that lesson
+    if (target.lessonId) {
+      const practical = serverPracticals.find((p: any) => p.id === target.lessonId);
+      if (practical && Array.isArray(practical.images)) {
+        practical.images = practical.images.filter((img: any) => img.url !== target.url);
+        practical.lastUpdated = new Date().toISOString();
+      }
+    }
+
+    serverCustomImages = serverCustomImages.filter(img => img.id !== id);
+
+    serverActivities.unshift({
+      id: `act_${Date.now()}`,
+      userId: (req.query.userId as string) || 'admin',
+      userName: (req.query.userName as string) || 'مسؤول معتمد',
+      userEmail: (req.query.userEmail as string) || 'admin@med.edu',
+      activity: `حذف صورة: ${target.title}`,
+      section: 'إدارة الصور',
+      timestamp: new Date().toISOString(),
+      metadata: { imageId: id }
+    });
+
+    saveDb();
+    res.json({ success: true });
+  });
+
+  app.post('/api/images/assign', (req: Request, res: Response) => {
+    const { imageId, lessonId, subject, caption } = req.body;
+    if (!imageId || !lessonId) {
+      return res.status(400).json({ error: 'imageId and lessonId are required' });
+    }
+
+    const image = serverCustomImages.find(img => img.id === imageId);
+    if (!image) {
+      return res.status(404).json({ error: 'الصورة غير موجودة' });
+    }
+
+    const practical = serverPracticals.find((p: any) => p.id === lessonId);
+    if (!practical) {
+      return res.status(404).json({ error: 'الدرس غير موجود' });
+    }
+
+    image.lessonId = practical.id;
+    image.lessonTitle = practical.title;
+    image.subject = subject || practical.courseId || image.subject;
+    if (caption) image.caption = caption;
+    image.updatedAt = new Date().toISOString();
+
+    if (!Array.isArray(practical.images)) practical.images = [];
+    const existsInLesson = practical.images.some((img: any) => img.url === image.url);
+    if (!existsInLesson) {
+      practical.images.push({
+        url: image.url,
+        caption: caption || image.caption || image.title,
+        stainOrView: image.stainOrView || '',
+        magnification: image.magnification || ''
+      });
+      practical.lastUpdated = new Date().toISOString();
+    }
+
+    saveDb();
+    res.json({ success: true, image });
   });
 
   // ==================== VIDEOS MANAGER API ====================

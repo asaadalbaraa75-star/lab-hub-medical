@@ -166,6 +166,7 @@ export class SecurityService {
       | 'delete_exams' 
       | 'publish_exams'
       | 'upload_question_image'
+      | 'manage_images'
       | 'review_approvals' 
       | 'manage_users' 
       | 'manage_invites'
@@ -184,7 +185,8 @@ export class SecurityService {
 
       case 'edit_content':
       case 'upload_lesson_image':
-        return isOwner || isContentAdmin; // Owner and Content Editors can edit lessons and upload lesson media
+      case 'manage_images':
+        return isOwner || isContentAdmin; // Owner and Content Editors can edit lessons and manage images
 
       case 'edit_questions':
       case 'create_exams':
@@ -208,6 +210,30 @@ export class SecurityService {
     }
   }
 
+  public canPerformAction(
+    userRole: UserRole,
+    action: 
+      | 'view_content' 
+      | 'take_exam' 
+      | 'save_own_progress' 
+      | 'edit_content'
+      | 'upload_lesson_image'
+      | 'edit_questions' 
+      | 'delete_questions' 
+      | 'create_exams' 
+      | 'delete_exams' 
+      | 'publish_exams'
+      | 'upload_question_image'
+      | 'manage_images'
+      | 'review_approvals' 
+      | 'manage_users' 
+      | 'manage_invites'
+      | 'view_activity_log'
+      | 'system_admin'
+  ): boolean {
+    return this.hasPermission(userRole, action);
+  }
+
   /**
    * Admin dashboard sub-page access control based on user role
    */
@@ -220,8 +246,8 @@ export class SecurityService {
     if (isOwner) return true;
 
     if (isContentAdmin) {
-      // CONTENT + EXAMS assistant/editor role: Overview, Exams, Question Bank, Content, Videos
-      return ['overview', 'exams', 'question_bank', 'content', 'videos'].includes(page);
+      // CONTENT + EXAMS assistant/editor role: Overview, Exams, Question Bank, Content, Images, Videos
+      return ['overview', 'exams', 'question_bank', 'content', 'images', 'videos'].includes(page);
     }
 
     if (isExamsAdmin) {
