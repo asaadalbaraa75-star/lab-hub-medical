@@ -318,6 +318,7 @@ async function startServer() {
     questions: any[];
     notifications: any[];
     customVideos: any[];
+    practicals: any[];
   } => {
     try {
       if (fs.existsSync(DB_FILE)) {
@@ -390,7 +391,8 @@ async function startServer() {
             exams: Array.isArray(parsed.exams) && parsed.exams.length > 0 ? parsed.exams : (MEDICAL_PRACTICAL_EXAMS as any[]),
             questions: Array.isArray(parsed.questions) && parsed.questions.length > 0 ? parsed.questions : (PRACTICAL_EXAM_QUESTIONS as any[]),
             notifications: Array.isArray(parsed.notifications) && parsed.notifications.length > 0 ? parsed.notifications : defaultNotifications,
-            customVideos: Array.isArray(parsed.customVideos) ? parsed.customVideos : []
+            customVideos: Array.isArray(parsed.customVideos) ? parsed.customVideos : [],
+            practicals: Array.isArray(parsed.practicals) && parsed.practicals.length > 0 ? parsed.practicals : (INITIAL_PRACTICALS as any[])
           };
         }
       }
@@ -993,7 +995,7 @@ async function startServer() {
     return res.json({ success: true, activity: act });
   });
 
-  const isStaffRole = (role?: string) => ['owner', 'admin', 'content_exams', 'exams_only'].includes(role || '');
+  const isStaffRole = (role?: string) => ['owner', 'admin', 'content_exams', 'editor', 'exams_only', 'exam_editor', 'instructor'].includes(role || '');
   const isOwnerRole = (role?: string) => ['owner', 'admin'].includes(role || '');
 
   // --- ADMIN ROUTE: GET ALL STAFF (Strict Staff / Owner Permission) ---

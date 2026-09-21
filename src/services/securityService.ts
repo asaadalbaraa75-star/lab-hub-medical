@@ -117,14 +117,32 @@ export class SecurityService {
     if (this.isAdmin(userOrRole)) return true;
 
     if (typeof userOrRole === 'string') {
-      return userOrRole === 'content_exams' || userOrRole === 'exams_only';
+      return (
+        userOrRole === 'content_exams' ||
+        userOrRole === 'editor' ||
+        userOrRole === 'exams_only' ||
+        userOrRole === 'exam_editor' ||
+        userOrRole === 'instructor'
+      );
     }
     const user = userOrRole as User;
     const role = user.role;
-    if (role === 'content_exams' || role === 'exams_only') return true;
+    if (
+      role === 'content_exams' ||
+      role === 'editor' ||
+      role === 'exams_only' ||
+      role === 'exam_editor' ||
+      role === 'instructor'
+    ) return true;
 
     const uid = user.id || user.userId || '';
-    if (uid.startsWith('usr_assistant') || uid.startsWith('AST-')) {
+    if (
+      uid.startsWith('usr_assistant') ||
+      uid.startsWith('AST-') ||
+      uid.startsWith('usr_helper') ||
+      uid.startsWith('usr_editor') ||
+      uid.startsWith('usr_staff')
+    ) {
       return true;
     }
 
@@ -155,8 +173,8 @@ export class SecurityService {
       | 'system_admin'
   ): boolean {
     const isOwner = userRole === 'owner' || userRole === 'admin';
-    const isContentAdmin = userRole === 'content_exams';
-    const isExamsAdmin = userRole === 'exams_only';
+    const isContentAdmin = userRole === 'content_exams' || userRole === 'editor';
+    const isExamsAdmin = userRole === 'exams_only' || userRole === 'exam_editor';
 
     switch (action) {
       case 'view_content':
@@ -166,7 +184,7 @@ export class SecurityService {
 
       case 'edit_content':
       case 'upload_lesson_image':
-        return isOwner || isContentAdmin; // Exams-only assistants CANNOT edit lesson content
+        return isOwner || isContentAdmin; // Owner and Content Editors can edit lessons and upload lesson media
 
       case 'edit_questions':
       case 'create_exams':
@@ -176,6 +194,8 @@ export class SecurityService {
       case 'publish_exams':
       case 'delete_questions':
       case 'delete_exams':
+        return isOwner || isContentAdmin || isExamsAdmin; // Authorized staff can manage and delete questions/exams
+
       case 'review_approvals':
       case 'manage_users':
       case 'manage_invites':
@@ -193,20 +213,20 @@ export class SecurityService {
    */
   public canAccessAdminSubPage(userRole: UserRole, page: AdminSubPage): boolean {
     const isOwner = userRole === 'owner' || userRole === 'admin';
-    const isContentAdmin = userRole === 'content_exams';
-    const isExamsAdmin = userRole === 'exams_only';
+    const isContentAdmin = userRole === 'content_exams' || userRole === 'editor';
+    const isExamsAdmin = userRole === 'exams_only' || userRole === 'exam_editor';
 
     // Owner has unrestricted access to every sub-page
     if (isOwner) return true;
 
     if (isContentAdmin) {
-      // CONTENT + EXAMS assistant role: Question Bank, Content, Videos
-      return ['question_bank', 'content', 'videos'].includes(page);
+      // CONTENT + EXAMS assistant/editor role: Overview, Exams, Question Bank, Content, Videos
+      return ['overview', 'exams', 'question_bank', 'content', 'videos'].includes(page);
     }
 
     if (isExamsAdmin) {
-      // EXAMS ONLY assistant role: Question Bank only
-      return ['question_bank'].includes(page);
+      // EXAMS ONLY assistant role: Overview, Exams, Question Bank
+      return ['overview', 'exams', 'question_bank'].includes(page);
     }
 
     return false;

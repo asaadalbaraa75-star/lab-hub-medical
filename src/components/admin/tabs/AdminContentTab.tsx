@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import { Practical, PracticalStatus, User, LabSubjectId, PracticalMedia } from '../../../types';
 import { storageService } from '../../../services/storageService';
-import { apiFetchPracticals, apiSavePractical, apiDeletePractical } from '../../../services/apiService';
+import { apiService, apiFetchPracticals, apiSavePractical, apiDeletePractical } from '../../../services/apiService';
 
 interface Props {
   currentUser: User;
@@ -58,20 +58,18 @@ export const AdminContentTab: React.FC<Props> = ({
   const [editingImageIndex, setEditingImageIndex] = useState<number | null>(null);
 
   const loadPracticals = async () => {
-    let list: Practical[] = storageService.getPracticals();
     try {
       const serverList = await apiFetchPracticals();
       if (serverList && serverList.length > 0) {
-        const mergedMap = new Map<string, Practical>();
-        list.forEach(p => mergedMap.set(p.id, p));
-        serverList.forEach(p => mergedMap.set(p.id, p));
-        list = Array.from(mergedMap.values());
-        storageService.savePracticals(list);
+        setPracticals(serverList);
+        storageService.savePracticals(serverList);
+        return;
       }
     } catch (e) {
       console.warn('Fallback to local storage practicals:', e);
     }
-    setPracticals(list);
+    const localList = storageService.getPracticals();
+    setPracticals(localList);
   };
 
   useEffect(() => {
@@ -182,10 +180,15 @@ export const AdminContentTab: React.FC<Props> = ({
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = (event) => {
+    reader.onload = async (event) => {
       const result = event.target?.result as string;
       if (result) {
-        setNewImageUrl(result);
+        try {
+          const uploaded = await apiService.uploadPracticalImage(result);
+          setNewImageUrl(uploaded || result);
+        } catch {
+          setNewImageUrl(result);
+        }
       }
     };
     reader.readAsDataURL(file);
@@ -218,6 +221,21 @@ export const AdminContentTab: React.FC<Props> = ({
       .map(o => o.trim())
       .filter(Boolean);
 
+    // Ensure any base64 images are uploaded to shared server storage
+    const processedImages = await Promise.all(
+      formImages.map(async img => {
+        if (img.url && img.url.startsWith('data:image/')) {
+          try {
+            const uploaded = await apiService.uploadPracticalImage(img.url);
+            return { ...img, url: uploaded || img.url };
+          } catch {
+            return img;
+          }
+        }
+        return img;
+      })
+    );
+
     if (editingPractical) {
       // Edit existing
       const updated: Practical = {
@@ -237,7 +255,7 @@ export const AdminContentTab: React.FC<Props> = ({
           ...editingPractical.beforeTheLab,
           preLabSummary: formSummary.trim() || editingPractical.beforeTheLab?.preLabSummary || ''
         },
-        images: formImages
+        images: processedImages
       };
       storageService.savePractical(updated, currentUser);
       try {
@@ -273,7 +291,7 @@ export const AdminContentTab: React.FC<Props> = ({
             description: 'Wear standard PPE and calibrate lab equipment.'
           }
         ],
-        images: formImages,
+        images: processedImages,
         interactiveImages: [],
         identificationPoints: ['Key structural diagnostic features.'],
         commonMistakes: [],

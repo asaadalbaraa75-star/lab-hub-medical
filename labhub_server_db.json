@@ -18,12 +18,12 @@
       ],
       "avatarUrl": "https://images.unsplash.com/photo-1594824813680-79883506ecf5?w=150&auto=format&fit=crop&q=80",
       "createdAt": "2026-01-01T08:00:00.000Z",
-      "lastLoginAt": "2026-09-19T17:17:14.093Z",
-      "lastActivityAt": "2026-09-19T17:17:14.093Z",
-      "sessionCount": 54,
+      "lastLoginAt": "2026-09-21T17:24:44.843Z",
+      "lastActivityAt": "2026-09-21T17:24:44.843Z",
+      "sessionCount": 55,
       "isOnline": true,
       "currentSessionStatus": "online",
-      "lastLogoutAt": "2026-09-19T17:04:32.657Z"
+      "lastLogoutAt": "2026-09-19T17:17:14.093Z"
     },
     {
       "id": "usr_owner_personal",
@@ -68,11 +68,11 @@
       ],
       "avatarUrl": "https://images.unsplash.com/photo-1594824813680-79883506ecf5?w=150&auto=format&fit=crop&q=80",
       "createdAt": "2025-09-01T08:00:00.000Z",
-      "lastLoginAt": "2026-09-19T17:04:27.364Z",
-      "lastActivityAt": "2026-09-19T17:08:22.795Z",
-      "sessionCount": 44,
-      "currentSessionStatus": "offline",
-      "isOnline": false,
+      "lastLoginAt": "2026-09-21T17:24:49.879Z",
+      "lastActivityAt": "2026-09-21T17:24:49.879Z",
+      "sessionCount": 45,
+      "currentSessionStatus": "online",
+      "isOnline": true,
       "lastLogoutAt": "2026-09-19T17:08:22.795Z"
     },
     {
@@ -115,11 +115,11 @@
       ],
       "avatarUrl": "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150&auto=format&fit=crop&q=80",
       "createdAt": "2026-02-01T08:00:00.000Z",
-      "lastLoginAt": "2026-09-18T10:53:46.728Z",
-      "lastActivityAt": "2026-09-18T10:53:46.728Z",
-      "sessionCount": 11,
-      "isOnline": false,
-      "currentSessionStatus": "offline",
+      "lastLoginAt": "2026-09-21T17:24:52.261Z",
+      "lastActivityAt": "2026-09-21T17:24:52.261Z",
+      "sessionCount": 12,
+      "isOnline": true,
+      "currentSessionStatus": "online",
       "lastLogoutAt": "2026-09-18T10:53:46.728Z"
     },
     {
@@ -175,6 +175,95 @@
   ],
   "activities": [
     {
+      "id": "act_1790011496617",
+      "userId": "usr_std_1790011496617",
+      "userName": "Test Student",
+      "userEmail": "test_student@student.edu",
+      "activity": "إنشاء حساب طالب جديد وتسجيل الدخول",
+      "section": "Authentication",
+      "timestamp": "2026-09-21T17:24:56.617Z",
+      "loginTime": "2026-09-21T17:24:56.617Z",
+      "sessionStatus": "online",
+      "metadata": {
+        "type": "register",
+        "role": "student",
+        "loginTime": "2026-09-21T17:24:56.617Z",
+        "sessionStatus": "online"
+      }
+    },
+    {
+      "id": "act_login_1790011492261_qv2p",
+      "userId": "usr_assistant_1",
+      "userName": "مساعد 1 (Assistant 1)",
+      "userEmail": "assistant1@labhub.med",
+      "activity": "تسجيل الدخول إلى المنصة (جلسة رقم 12)",
+      "section": "Authentication",
+      "timestamp": "2026-09-21T17:24:52.261Z",
+      "loginTime": "2026-09-21T17:24:52.261Z",
+      "sessionStatus": "online",
+      "metadata": {
+        "type": "login",
+        "role": "content_exams",
+        "sessionNumber": 12,
+        "loginTime": "2026-09-21T17:24:52.261Z",
+        "sessionStatus": "online"
+      }
+    },
+    {
+      "id": "act_login_1790011489879_izgb",
+      "userId": "usr_admin_1",
+      "userName": "سكينة أسعد (Owner)",
+      "userEmail": "admin@med.edu",
+      "activity": "تسجيل الدخول إلى المنصة (جلسة رقم 45)",
+      "section": "Authentication",
+      "timestamp": "2026-09-21T17:24:49.879Z",
+      "loginTime": "2026-09-21T17:24:49.879Z",
+      "sessionStatus": "online",
+      "metadata": {
+        "type": "login",
+        "role": "owner",
+        "sessionNumber": 45,
+        "loginTime": "2026-09-21T17:24:49.879Z",
+        "sessionStatus": "online"
+      }
+    },
+    {
+      "id": "act_login_1790011484843_l6sj",
+      "userId": "usr_owner_soukaina",
+      "userName": "سكينة أسعد",
+      "userEmail": "owner@labhub.med",
+      "activity": "تسجيل الدخول إلى المنصة (جلسة رقم 55)",
+      "section": "Authentication",
+      "timestamp": "2026-09-21T17:24:44.843Z",
+      "loginTime": "2026-09-21T17:24:44.843Z",
+      "sessionStatus": "online",
+      "metadata": {
+        "type": "login",
+        "role": "owner",
+        "sessionNumber": 55,
+        "loginTime": "2026-09-21T17:24:44.843Z",
+        "sessionStatus": "online"
+      }
+    },
+    {
+      "id": "act_1790010923762_dl65",
+      "userId": "usr_admin_1",
+      "userName": "سكينة أسعد (Owner)",
+      "userEmail": "admin@med.edu",
+      "activity": "تصفح قسم: progress",
+      "section": "progress",
+      "timestamp": "2026-09-21T17:15:23.762Z"
+    },
+    {
+      "id": "act_1790010922721_lp62",
+      "userId": "usr_admin_1",
+      "userName": "سكينة أسعد (Owner)",
+      "userEmail": "admin@med.edu",
+      "activity": "تصفح قسم: admin",
+      "section": "admin",
+      "timestamp": "2026-09-21T17:15:22.721Z"
+    },
+    {
       "id": "act_login_1789838234093_v7bj",
       "userId": "usr_owner_soukaina",
       "userName": "سكينة أسعد",
@@ -183,14 +272,15 @@
       "section": "Authentication",
       "timestamp": "2026-09-19T17:17:14.093Z",
       "loginTime": "2026-09-19T17:17:14.093Z",
-      "sessionStatus": "online",
+      "sessionStatus": "offline",
       "metadata": {
         "type": "login",
         "role": "owner",
         "sessionNumber": 54,
         "loginTime": "2026-09-19T17:17:14.093Z",
         "sessionStatus": "online"
-      }
+      },
+      "logoutTime": "2026-09-19T17:17:14.093Z"
     },
     {
       "id": "act_login_1789837472657_ijkf",
@@ -2501,6 +2591,2246 @@
         {
           "time": "11:00",
           "title": "Crystals in Acidic vs Alkaline Urine"
+        }
+      ]
+    }
+  ],
+  "practicals": [
+    {
+      "id": "prac_hist_05",
+      "courseId": "histology",
+      "categoryId": "hist_muscle",
+      "practicalNumber": 5,
+      "title": "Muscle Tissue",
+      "subTitle": "Histological Identification of Skeletal, Cardiac & Smooth Muscle Fibers",
+      "estimatedTime": "45 mins",
+      "version": "2.1",
+      "lastUpdated": "Aug 24, 2026",
+      "status": "published",
+      "authorName": "Dr. Tariq Vance, MD",
+      "authorRole": "Senior Histology Faculty",
+      "approvedBy": "Prof. Eleanor Hayes, MD",
+      "approvalDate": "Aug 25, 2026",
+      "learningObjectives": [
+        "Differentiate the microscopic morphology of Skeletal, Cardiac, and Smooth muscle tissues under H&E stain.",
+        "Identify cross-striations, sarcomeric banding (A-bands and I-bands), and multinucleated peripheral nuclei in skeletal muscle fibers.",
+        "Recognize intercalated discs, branching fibers, and central nuclei in cardiac myocytes under 400x magnification.",
+        "Distinguish spindle-shaped smooth muscle cells with corkscrew-like nuclei in non-striated involuntary tissue.",
+        "Correlate muscle histology with clinical entities including Duchenne Muscular Dystrophy, Myocardial Infarction, and Leiomyoma."
+      ],
+      "beforeTheLab": {
+        "previousKnowledge": [
+          "General cell biology and cytoskeleton filament architecture (Actin and Myosin).",
+          "Basic tissue classification (Epithelium vs Connective vs Muscle vs Nerve).",
+          "Light microscope operation and Koehler illumination adjustment."
+        ],
+        "recommendedReading": [
+          "Junqueira's Basic Histology: Text & Atlas (16th Ed.), Chapter 10: Muscle Tissue, pp. 195-218.",
+          "Wheater’s Functional Histology (7th Ed.), Section 6: Muscle, pp. 112-129."
+        ],
+        "preparationChecklist": [
+          {
+            "id": "chk_h5_1",
+            "text": "Read Junqueira Chapter 10 summary on contractile apparatus"
+          },
+          {
+            "id": "chk_h5_2",
+            "text": "Watch the 6-minute pre-lab video on identifying intercalated discs"
+          },
+          {
+            "id": "chk_h5_3",
+            "text": "Review standard H&E staining characteristics of sarcoplasm"
+          },
+          {
+            "id": "chk_h5_4",
+            "text": "Complete the pre-lab diagnostic quiz"
+          }
+        ],
+        "preLabSummary": "Muscular tissue consists of elongated cells specialized for contraction. Sarcoplasm contains abundant acidophilic contractile proteins giving it an intense pink/red stain with eosin. Focus on: (1) Nuclear position (peripheral vs central), (2) Striations (present vs absent), and (3) Fiber architecture (branching vs parallel vs spindle)."
+      },
+      "equipment": [
+        {
+          "id": "eq_hist_1",
+          "name": "Binocular Compound Microscope",
+          "image": "https://images.unsplash.com/photo-1582719508461-905c673771fd?w=300&auto=format&fit=crop&q=80",
+          "description": "Olympus CX23 with 4x, 10x, 40x and 100x oil-immersion objectives and LED Koehler illuminator.",
+          "safetyNotes": "Always carry with two hands; never use coarse focus adjustment at 40x or 100x."
+        },
+        {
+          "id": "eq_hist_2",
+          "name": "Histological Slide Set (Set H-05)",
+          "image": "https://images.unsplash.com/photo-1579154204601-01588f351e67?w=300&auto=format&fit=crop&q=80",
+          "description": "Standard glass slides containing tongue (skeletal), heart wall (cardiac), and urinary bladder/jejunum (smooth muscle) stained with Hematoxylin & Eosin (H&E).",
+          "safetyNotes": "Handle glass slides by edges; notify instructor immediately if cracked."
+        },
+        {
+          "id": "eq_hist_3",
+          "name": "Immersion Oil & Lens Tissue",
+          "image": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=300&auto=format&fit=crop&q=80",
+          "description": "High-viscosity Type A immersion oil with specialized lint-free optical lens cleaning paper.",
+          "safetyNotes": "Use optical solvent only with approved lens paper to protect objective coatings."
+        }
+      ],
+      "procedure": [
+        {
+          "stepNumber": 1,
+          "title": "Initial Scanner Overview (4x Objective)",
+          "description": "Mount Slide H-05A (Skeletal Muscle / Tongue). Focus on the muscular layer under 4x magnification. Identify the fascicular architecture bounded by connective tissue perimysium.",
+          "cautionNote": "Ensure slide cover slip faces upward."
+        },
+        {
+          "stepNumber": 2,
+          "title": "Detailed Cellular Examination (40x High Power)",
+          "description": "Rotate nosepiece to 40x objective. In longitudinal section (LS), observe cylindrical unbranched fibers with alternating dark A-bands (anisotropic) and light I-bands (isotropic). Locate multiple elongated nuclei situated strictly at the periphery just beneath the sarcolemma.",
+          "cautionNote": "Use only fine focus knob to avoid smashing the glass slide."
+        },
+        {
+          "stepNumber": 3,
+          "title": "Examine Cardiac Muscle (Slide H-05B)",
+          "description": "Switch to the cardiac muscle slide. Note the branching anastomosing fibers, single centrally placed oval nucleus per myocyte, and transverse eosinophilic step-like lines representing intercalated discs.",
+          "cautionNote": "Intercalated discs appear as darker transverse zig-zag bands; increase condenser contrast slightly."
+        },
+        {
+          "stepNumber": 4,
+          "title": "Examine Smooth Muscle (Slide H-05C - Intestinal Wall)",
+          "description": "Locate the muscularis externa of the small intestine. Note tightly packed, spindle-shaped (fusiform) cells with no striations. The single centrally located nucleus appears elongated with blunted ends (cigar-shaped) in relaxed state.",
+          "cautionNote": "Do not confuse smooth muscle with dense regular collagenous connective tissue."
+        }
+      ],
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1579154204601-01588f351e67?w=800&auto=format&fit=crop&q=80",
+          "caption": "Skeletal muscle longitudinal section (LS) showing prominent cross-striations and peripheral nuclei (H&E, 400x).",
+          "magnification": "400x",
+          "stainOrView": "H&E Stain"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1576086213369-97a306d36557?w=800&auto=format&fit=crop&q=80",
+          "caption": "Cardiac muscle showing branching fibers, central nuclei and dark intercalated discs.",
+          "magnification": "400x",
+          "stainOrView": "Iron Hematoxylin / H&E"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?w=800&auto=format&fit=crop&q=80",
+          "caption": "Smooth muscle in circular and longitudinal layers of muscularis externa.",
+          "magnification": "200x",
+          "stainOrView": "H&E Stain"
+        }
+      ],
+      "interactiveImages": [
+        {
+          "id": "inter_hist_m1",
+          "title": "Interactive Skeletal Muscle Slide (LS & XS)",
+          "baseImage": "https://images.unsplash.com/photo-1579154204601-01588f351e67?w=1000&auto=format&fit=crop&q=80",
+          "magnification": "400x High Power Field",
+          "stainOrView": "Hematoxylin & Eosin (H&E)",
+          "description": "Click the numbered circular pins to inspect the sarcolemma, striations, peripheral nuclei, and endomysial capillary networks.",
+          "pins": [
+            {
+              "id": "pin_h1",
+              "x": 28,
+              "y": 35,
+              "label": "1",
+              "structureName": "Peripheral Multinucleated Nuclei",
+              "histologicalFeatures": "Flattened, heterochromatic nuclei situated immediately beneath the sarcolemma. True syncytial feature distinguishing skeletal muscle from all other muscle types.",
+              "clinicalSignificance": "Centralization of nuclei in skeletal muscle fibers is a classic hallmark of muscular dystrophies and regenerative myopathies.",
+              "stain": "Basophilic (Dark Purple Hematoxylin)"
+            },
+            {
+              "id": "pin_h2",
+              "x": 52,
+              "y": 48,
+              "label": "2",
+              "structureName": "A-Band & I-Band Cross Striations",
+              "histologicalFeatures": "Alternating anisotropic (A-bands, dark, myosin filaments) and isotropic (I-bands, light, actin filaments bisected by Z-discs). Reflects paracrystalline sarcomere alignment.",
+              "clinicalSignificance": "Titin and nebulin protein mutations disrupt sarcomeric registration leading to familial skeletal and dilated cardiomyopathies.",
+              "stain": "Acidophilic Eosin (Pink/Red)"
+            },
+            {
+              "id": "pin_h3",
+              "x": 75,
+              "y": 65,
+              "label": "3",
+              "structureName": "Endomysium & Capillary Bed",
+              "histologicalFeatures": "Delicate loose connective tissue layer containing reticular fibers, fibroblasts, and continuous capillaries wrapping individual muscle fibers.",
+              "clinicalSignificance": "Endomysial autoantibodies (EMA) and anti-tTG are key diagnostic markers in Celiac Disease; inflammatory infiltrates occur in Polymyositis.",
+              "stain": "Light Pink / Reticulin"
+            },
+            {
+              "id": "pin_h4",
+              "x": 18,
+              "y": 72,
+              "label": "4",
+              "structureName": "Perimysium Septum",
+              "histologicalFeatures": "Denser collagenous sheath binding groups of 10 to 100 muscle fibers into distinct functional fascicles.",
+              "clinicalSignificance": "Site of primary perifascicular atrophy characteristically seen in Dermatomyositis.",
+              "stain": "Collagen Pink"
+            }
+          ]
+        }
+      ],
+      "videoLecture": {
+        "title": "Muscle Histology Identification Masterclass",
+        "duration": "14:20",
+        "thumbnail": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop&q=80",
+        "instructorName": "Dr. Tariq Vance, MD",
+        "chapters": [
+          {
+            "time": "00:00",
+            "title": "Introduction & Muscle Classification"
+          },
+          {
+            "time": "02:45",
+            "title": "Skeletal Muscle Striation & Peripheral Nuclei"
+          },
+          {
+            "time": "06:15",
+            "title": "Cardiac Muscle & Intercalated Discs"
+          },
+          {
+            "time": "09:50",
+            "title": "Smooth Muscle vs Dense Connective Tissue"
+          },
+          {
+            "time": "12:30",
+            "title": "High-Yield Spotter Exam Tips"
+          }
+        ]
+      },
+      "identificationPoints": [
+        "SKELETAL MUSCLE: Long cylindrical fibers, NO branching, transverse striations, MULTIPLE PERIPHERAL nuclei.",
+        "CARDIAC MUSCLE: Branching anastomosing fibers, transverse striations, SINGLE CENTRAL nucleus, dark INTERCALATED DISCS.",
+        "SMOOTH MUSCLE: Spindle-shaped (fusiform) cells, NO striations, SINGLE CENTRAL elongated (cigar-shaped) nucleus, tightly bundled."
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Confusing smooth muscle with dense regular collagenous connective tissue (e.g. tendon).",
+          "correction": "Smooth muscle nuclei are inside the cell body (cigar-shaped with rounded ends), whereas tendon fibroblast nuclei are outside compressed fibers and appear intensely condensed.",
+          "whyItMatters": "Extremely common trap in histology practical exams and pathology biopsies."
+        },
+        {
+          "mistake": "Looking for striations at 4x or 10x magnification.",
+          "correction": "Striations require at least 40x high power with proper condenser aperture and Koehler illumination adjustment.",
+          "whyItMatters": "Wastes critical exam time if searching at low power."
+        },
+        {
+          "mistake": "Mistaking a cross-section of cardiac muscle passing through the peripheral sarcoplasm as non-nucleated.",
+          "correction": "Because the single nucleus is central, cross-sections cutting near the cell poles will not catch the nucleus.",
+          "whyItMatters": "Analyze multiple adjacent cells in cross-section rather than a single isolated circle."
+        }
+      ],
+      "clinicalCorrelation": {
+        "condition": "Duchenne Muscular Dystrophy (DMD) & Myocardial Infarction",
+        "pathophysiology": "In DMD, mutations in the dystrophin gene lead to sarcolemmal fragility during contraction, calcium influx, myonecrosis, and replacement of muscle fibers with fibrofatty tissue. In myocardial infarction, coagulative necrosis of cardiac myocytes occurs with loss of cross-striations, hypereosinophilia, and neutrophilic infiltration.",
+        "clinicalPresentation": "Progressive muscle weakness in young boys (Gowers sign, pseudohypertrophy of calves) in DMD. Crushing substernal chest pain and elevated cardiac troponin in acute MI.",
+        "diagnosticPearls": "Biopsy reveals hypercontracted rounded fibers, wide fiber diameter variation, and endomysial fibrosis."
+      },
+      "safety": {
+        "biosafetyLevel": "BSL-1 (Fixed Histological Specimen)",
+        "hazards": [
+          "Glass slide breakage hazard",
+          "Chemical exposure from xylene/clearing agent residue if improperly cured",
+          "Ergonomic strain during prolonged microscopy"
+        ],
+        "ppeRequired": [
+          "Standard medical laboratory coat",
+          "Nitrile gloves when handling oil and solvents",
+          "Safety glasses or optical splash shield"
+        ],
+        "emergencyProtocol": "In case of broken slide glass, notify the laboratory demonstrator immediately. Use forceps and dustpan — NEVER pick up shards by bare hands. Deposit glass in the designated biohazard sharps container."
+      },
+      "references": [
+        {
+          "title": "Junqueira's Basic Histology: Text and Atlas",
+          "authors": "Anthony L. Mescher",
+          "editionOrYear": "16th Edition (2021)",
+          "pages": "pp. 195–218"
+        },
+        {
+          "title": "Histology: A Text and Atlas with Correlated Cell and Molecular Biology",
+          "authors": "Wojciech Pawlina & Michael H. Ross",
+          "editionOrYear": "8th Edition (2020)",
+          "pages": "pp. 340–378"
+        },
+        {
+          "title": "Wheater’s Functional Histology: A Text and Colour Atlas",
+          "authors": "Geraldine O’Dowd et al.",
+          "editionOrYear": "7th Edition (2023)",
+          "pages": "pp. 112–135"
+        }
+      ],
+      "quizId": "quiz_hist_05",
+      "spotterIds": [
+        "spot_hist_1",
+        "spot_hist_2"
+      ]
+    },
+    {
+      "id": "prac_anat_02",
+      "courseId": "anatomy",
+      "categoryId": "anat_bones",
+      "practicalNumber": 2,
+      "title": "Upper Limb Osteology — Scapula & Humerus",
+      "subTitle": "Anatomical Landmarks, Muscular Attachments & Clinical Fracture Sites",
+      "estimatedTime": "50 mins",
+      "version": "1.4",
+      "lastUpdated": "Aug 20, 2026",
+      "status": "published",
+      "authorName": "Dr. Tariq Vance, MD",
+      "authorRole": "Senior Anatomy Faculty",
+      "approvedBy": "Prof. Eleanor Hayes, MD",
+      "approvalDate": "Aug 21, 2026",
+      "learningObjectives": [
+        "Identify all major osteological landmarks of the Scapula (Acromion, Coracoid process, Glenoid cavity, Spine, Supraspinous & Infraspinous fossae).",
+        "Identify the surgical vs anatomical neck, greater & lesser tubercles, bicipital groove, and deltoid tuberosity of the Humerus.",
+        "Determine the anatomical side (left vs right) of dry scapula and humerus bones in under 30 seconds.",
+        "Map the rotator cuff muscle insertions (Supraspinatus, Infraspinatus, Teres Minor, Subscapularis).",
+        "Correlate humeral fracture locations with associated nerve injuries (Surgical neck -> Axillary nerve; Midshaft -> Radial nerve; Supracondylar -> Median nerve)."
+      ],
+      "beforeTheLab": {
+        "previousKnowledge": [
+          "Anatomical planes and positional terminology (anterior, posterior, medial, lateral, proximal, distal).",
+          "Principles of synovial ball-and-socket glenohumeral joint mechanics."
+        ],
+        "recommendedReading": [
+          "Moore's Clinically Oriented Anatomy (9th Ed.), Chapter 6: Upper Limb, pp. 680-715.",
+          "Netter Atlas of Human Anatomy (8th Ed.), Plates 405-412."
+        ],
+        "preparationChecklist": [
+          {
+            "id": "chk_a2_1",
+            "text": "Review rotator cuff mnemonic (SITS)"
+          },
+          {
+            "id": "chk_a2_2",
+            "text": "Study the three borders and three angles of the scapula"
+          },
+          {
+            "id": "chk_a2_3",
+            "text": "Practice bone side-determination rule for the humerus"
+          }
+        ],
+        "preLabSummary": "The scapula is a flat triangular bone on the posterolateral aspect of the thorax. The humerus is the largest bone of the upper limb. Master the bony landmarks as they serve as attachment points for 17 muscles on the scapula alone!"
+      },
+      "equipment": [
+        {
+          "id": "eq_anat_1",
+          "name": "Dry Human Osteology Specimen (Scapula & Humerus)",
+          "image": "https://images.unsplash.com/photo-1530497610245-94d3c16cda28?w=300&auto=format&fit=crop&q=80",
+          "description": "Authentic anatomical bone specimens with preserved foramina and muscular impression markings.",
+          "safetyNotes": "Handle with clean dry hands over padded examination trays; avoid dropping fragile bone processes."
+        },
+        {
+          "id": "eq_anat_2",
+          "name": "Pointer & Calibrated Osteometric Board",
+          "image": "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=300&auto=format&fit=crop&q=80",
+          "description": "Blunt stainless steel anatomical pointer for non-damaging landmark identification.",
+          "safetyNotes": "Never use sharp metal probes on genuine dry bone specimens."
+        }
+      ],
+      "procedure": [
+        {
+          "stepNumber": 1,
+          "title": "Side Determination of the Scapula",
+          "description": "Hold the scapula such that the Glenoid cavity faces laterally, the prominent Spine is posterior and superior, and the smooth concave Subscapular fossa faces anteriorly toward the ribs."
+        },
+        {
+          "stepNumber": 2,
+          "title": "Landmarks of the Scapula",
+          "description": "Palpate the Acromion process continuing from the spine. Identify the beak-like Coracoid process pointing anterolaterally. Note the suprascapular notch medially on the superior border (bridged by superior transverse scapular ligament)."
+        },
+        {
+          "stepNumber": 3,
+          "title": "Side Determination of the Humerus",
+          "description": "Place the hemispherical Head superiorly and directed medially. Place the deep Olecranon fossa posteriorly at the distal end. The lesser tubercle faces anteriorly."
+        },
+        {
+          "stepNumber": 4,
+          "title": "Trace Nerve Pathways Along Humeral Shaft",
+          "description": "Trace the radial (spiral) groove winding obliquely around the posterior midshaft. Observe the groove for the ulnar nerve behind the medial epicondyle (the funny bone)."
+        }
+      ],
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1530497610245-94d3c16cda28?w=800&auto=format&fit=crop&q=80",
+          "caption": "Anterior and posterior osteological views of the human right scapula.",
+          "magnification": "Gross Specimen",
+          "stainOrView": "Dry Bone Anatomy"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&auto=format&fit=crop&q=80",
+          "caption": "Humerus proximal landmarks: Greater tubercle, lesser tubercle, intertubercular sulcus.",
+          "magnification": "Gross Specimen",
+          "stainOrView": "Dry Bone Anatomy"
+        }
+      ],
+      "interactiveImages": [
+        {
+          "id": "inter_anat_1",
+          "title": "Interactive Right Scapula (Posterior View)",
+          "baseImage": "https://images.unsplash.com/photo-1530497610245-94d3c16cda28?w=1000&auto=format&fit=crop&q=80",
+          "magnification": "Gross Osteology",
+          "stainOrView": "Posterior Aspect",
+          "description": "Click the pins to review scapular landmarks, rotator cuff insertions, and neurovascular relations.",
+          "pins": [
+            {
+              "id": "pin_a1",
+              "x": 25,
+              "y": 20,
+              "label": "1",
+              "structureName": "Acromion Process",
+              "histologicalFeatures": "Large, flat quadrilateral bony projection continuing laterally from the scapular spine. Articulates with the clavicle at the acromioclavicular (AC) joint.",
+              "clinicalSignificance": "Type III hooked acromion is strongly associated with subacromial impingement syndrome and rotator cuff tears."
+            },
+            {
+              "id": "pin_a2",
+              "x": 45,
+              "y": 18,
+              "label": "2",
+              "structureName": "Supraspinatus Fossa",
+              "histologicalFeatures": "Depression superior to the spine of the scapula. Gives origin to the Supraspinatus muscle.",
+              "clinicalSignificance": "Supraspinatus initiates abduction of the arm (first 0-15 degrees); most commonly torn rotator cuff tendon."
+            },
+            {
+              "id": "pin_a3",
+              "x": 75,
+              "y": 35,
+              "label": "3",
+              "structureName": "Glenoid Cavity & Supraglenoid Tubercle",
+              "histologicalFeatures": "Shallow pear-shaped articular surface deepened by fibrocartilaginous glenoid labrum. Origin of the long head of biceps brachii.",
+              "clinicalSignificance": "SLAP tear (Superior Labrum Anterior to Posterior) involves the biceps anchor at this landmark."
+            },
+            {
+              "id": "pin_a4",
+              "x": 50,
+              "y": 60,
+              "label": "4",
+              "structureName": "Infraspinatus Fossa",
+              "histologicalFeatures": "Large triangular depression occupying lower two-thirds of dorsal surface. Origin of Infraspinatus (powerful lateral rotator of the shoulder).",
+              "clinicalSignificance": "Innervated by the Suprascapular nerve (C5, C6) passing through the spinoglenoid notch."
+            }
+          ]
+        }
+      ],
+      "identificationPoints": [
+        "SCAPULA: Glenoid cavity is lateral, Spine is posterior/superior, Subscapular fossa is anterior.",
+        "HUMERUS: Head is proximal/medial, Olecranon fossa is distal/posterior, Bicipital groove is anterior.",
+        "ROTATOR CUFF INSERTIONS: Subscapularis -> Lesser tubercle; Supraspinatus, Infraspinatus, Teres minor (S-I-T) -> Greater tubercle facets (superior, middle, inferior)."
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Confusing Anatomical Neck with Surgical Neck of the Humerus.",
+          "correction": "Anatomical neck is the slight constriction immediately around the articular head; Surgical neck is distal to the tubercles and is the most common site of fracture.",
+          "whyItMatters": "Surgical neck fractures endanger the Axillary nerve and Posterior Circumflex Humeral artery."
+        },
+        {
+          "mistake": "Flipping left and right scapula by confusing the anterior and posterior surfaces.",
+          "correction": "The prominent ridge (Spine) is ALWAYS on the posterior back side; the smooth concave surface faces the ribs.",
+          "whyItMatters": "Failing side-determination results in complete loss of marks on practical spotter stations."
+        }
+      ],
+      "clinicalCorrelation": {
+        "condition": "Humeral Fractures & Associated Peripheral Nerve Palsies (ARM Mnemonic)",
+        "pathophysiology": "Proximity of major nerves to the humerus makes specific fracture sites vulnerable: Surgical neck -> Axillary nerve (Deltoid paralysis, loss of shoulder abduction, sensation loss over regimental badge area); Midshaft shaft -> Radial nerve (Wrist drop, loss of forearm/wrist/finger extension); Medial epicondyle / Supracondylar -> Ulnar / Median nerve.",
+        "clinicalPresentation": "Patient presenting with wrist drop following humerus shaft trauma (Holstein-Lewis fracture).",
+        "diagnosticPearls": "Always test radial nerve motor (wrist extension) and sensory (first dorsal web space) function after humeral trauma."
+      },
+      "safety": {
+        "biosafetyLevel": "BSL-1 (Clean Osteological Specimen)",
+        "hazards": [
+          "Fragile dry bone edge fractures",
+          "Pinch hazard if mounting on skeleton stands"
+        ],
+        "ppeRequired": [
+          "Laboratory coat",
+          "Examination gloves"
+        ],
+        "emergencyProtocol": "Clean any debris with provided brush. Return bone to padded box immediately after completion."
+      },
+      "references": [
+        {
+          "title": "Moore's Clinically Oriented Anatomy",
+          "authors": "Arthur F. Dalley & Anne M. R. Agur",
+          "editionOrYear": "9th Edition (2022)",
+          "pages": "pp. 680–725"
+        },
+        {
+          "title": "Gray's Anatomy for Students",
+          "authors": "Richard Drake, A. Wayne Vogl, Adam W. M. Mitchell",
+          "editionOrYear": "5th Edition (2023)",
+          "pages": "pp. 650–695"
+        }
+      ],
+      "quizId": "quiz_anat_02",
+      "spotterIds": [
+        "spot_anat_1",
+        "spot_anat_2"
+      ]
+    },
+    {
+      "id": "prac_bio_01",
+      "courseId": "biochemistry",
+      "categoryId": "bio_carbohydrates",
+      "practicalNumber": 1,
+      "title": "Qualitative Identification of Carbohydrates",
+      "subTitle": "Systematic Chemical Reactions for Monosaccharides, Disaccharides & Polysaccharides",
+      "estimatedTime": "45 mins",
+      "version": "3.1",
+      "lastUpdated": "Aug 26, 2026",
+      "status": "published",
+      "authorName": "Dr. Tariq Vance, MD, MSc",
+      "authorRole": "Clinical Biochemistry Faculty",
+      "approvedBy": "Prof. Eleanor Hayes, MD",
+      "approvalDate": "Aug 27, 2026",
+      "learningObjectives": [
+        "Master the principle and reaction mechanism of the Molisch General Carbohydrate Test (alpha-naphthol dehydration violet ring).",
+        "Differentiate reducing from non-reducing sugars using alkaline copper reduction tests (Benedict & Fehling tests).",
+        "Distinguish reducing monosaccharides from reducing disaccharides using Barfoed’s acid copper acetate test.",
+        "Differentiate ketohexoses (fructose) from aldohexoses (glucose) using Seliwanoff’s resorcinol-HCl rapid colorimetric test.",
+        "Identify starch and glycogen polysaccharides using Iodine-potassium iodide helical inclusion complex formation."
+      ],
+      "beforeTheLab": {
+        "previousKnowledge": [
+          "Fundamental chemistry of carbohydrates: aldoses vs. ketoses, hemiacetal ring structures, and glycosidic bond formation.",
+          "Principles of oxidation-reduction reactions involving cupric (Cu²⁺) and cuprous (Cu⁺) ions.",
+          "Laboratory safety handling strong mineral acids (concentrated H₂SO₄ and concentrated HCl)."
+        ],
+        "recommendedReading": [
+          "Harper's Illustrated Biochemistry (32nd Ed.), Chapter 14: Carbohydrates of Physiological Significance, pp. 132-148.",
+          "Lehninger Principles of Biochemistry (8th Ed.), Chapter 7: Carbohydrates and Glycobiology, pp. 245-280."
+        ],
+        "preparationChecklist": [
+          {
+            "id": "chk_b1_1",
+            "text": "Review difference between reducing sugars (free anomeric carbon) and non-reducing sugars (sucrose)"
+          },
+          {
+            "id": "chk_b1_2",
+            "text": "Review acid pipetting precautions when layering concentrated H2SO4 down the tube wall"
+          },
+          {
+            "id": "chk_b1_3",
+            "text": "Understand the reaction time cutoffs for Barfoed (2-3 min) and Seliwanoff (<1 min)"
+          }
+        ],
+        "preLabSummary": "Carbohydrate identification follows a hierarchical algorithm: 1. Molisch's Test screens for carbohydrate presence; 2. Iodine Test distinguishes polysaccharides; 3. Benedict's Test identifies reducing capability; 4. Barfoed's Test differentiates monosaccharides from disaccharides; 5. Seliwanoff's Test identifies rapid ketose condensation."
+      },
+      "equipment": [
+        {
+          "id": "eq_bio_1",
+          "name": "Biochemistry Chemical Reagent Rack",
+          "image": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=300&auto=format&fit=crop&q=80",
+          "description": "Reagent bottles: Molisch reagent (5% alpha-naphthol in ethanol), Concentrated H2SO4, Benedict reagent (CuSO4, Na2CO3, sodium citrate), Barfoed reagent, Seliwanoff reagent, Iodine solution.",
+          "safetyNotes": "Wear chemical safety goggles and nitrile gloves when handling concentrated sulfuric acid; acid causes severe chemical burns."
+        },
+        {
+          "id": "eq_bio_2",
+          "name": "Thermostatic Boiling Water Bath & Tube Racks",
+          "image": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=300&auto=format&fit=crop&q=80",
+          "description": "Water bath maintained at 100°C for timed boiling of Benedict, Barfoed, and Seliwanoff reaction tubes.",
+          "safetyNotes": "Use wooden test tube holders; never lean face over boiling water bath."
+        },
+        {
+          "id": "eq_bio_3",
+          "name": "Borosilicate Glass Test Tubes & Pipettes",
+          "image": "https://images.unsplash.com/photo-1579154204601-01588f351e67?w=300&auto=format&fit=crop&q=80",
+          "description": "Heat-resistant borosilicate tubes with calibration marks, graduated pipettes, and safety pipette bulbs.",
+          "safetyNotes": "Check glass rims for chips or micro-cracks before heating."
+        }
+      ],
+      "procedure": [
+        {
+          "stepNumber": 1,
+          "title": "Molisch General Test for Carbohydrates",
+          "description": "Add 2 mL of unknown test solution into a clean test tube. Add 2 drops of Molisch reagent (alpha-naphthol) and mix gently. Carefully incline the test tube and slowly pour 2 mL of concentrated H2SO4 down the inside wall of the tube without shaking, so it forms a dense layer beneath the aqueous solution.",
+          "cautionNote": "Do not shake! A purple/violet ring forms at the liquid junction if carbohydrate is present."
+        },
+        {
+          "stepNumber": 2,
+          "title": "Iodine Test for Polysaccharides",
+          "description": "Add 1 mL of test solution to a porcelain spot plate or tube. Add 1–2 drops of Lugol’s iodine solution. Observe immediate color changes: Deep blue-black indicates amylose/starch; reddish-brown indicates glycogen or erythrodextrin; yellow/brown indicates monosaccharide/disaccharide.",
+          "cautionNote": "Do not boil before reading; iodine-starch complexes dissociate on heating."
+        },
+        {
+          "stepNumber": 3,
+          "title": "Benedict Qualitative Test for Reducing Sugars",
+          "description": "Combine 5 mL of Benedict reagent with 8 drops (approx. 0.5 mL) of carbohydrate solution in a tube. Mix thoroughly and place into a vigorously boiling water bath for exactly 3 to 5 minutes. Remove and observe precipitate color: Green (0.5%), Yellow (1%), Orange (1.5%), Brick-Red (>2% reducing sugar).",
+          "cautionNote": "Always use test tube holder. Sucrose is negative (remains blue)."
+        },
+        {
+          "stepNumber": 4,
+          "title": "Barfoed Test — Monosaccharide vs Disaccharide Distinction",
+          "description": "Add 2 mL of Barfoed reagent (cupric acetate in dilute acetic acid) to 2 mL of test solution. Place in boiling water bath and record time with stopwatch. Monosaccharides form a red cuprous oxide precipitate along the bottom and sides within 2 to 3 minutes. Reducing disaccharides require >10 minutes.",
+          "cautionNote": "Strictly monitor time: prolonged boiling beyond 3 minutes will hydrolyze disaccharides yielding false positives."
+        },
+        {
+          "stepNumber": 5,
+          "title": "Seliwanoff Test for Rapid Ketose Differentiation",
+          "description": "Add 3 mL of Seliwanoff reagent (resorcinol in dilute HCl) to 1 mL of carbohydrate solution. Place in boiling water bath. Rapid cherry-red coloration within 30 to 60 seconds indicates a ketohexose (fructose). Aldohexoses (glucose) remain colorless or pale pink after several minutes.",
+          "cautionNote": "Do not boil beyond 1 minute; excessive boiling hydrolyzes aldoses producing false cherry-red."
+        }
+      ],
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=800&auto=format&fit=crop&q=80",
+          "caption": "Benedict test series showing color gradient: Blue (negative/sucrose) to Green, Orange, and Brick-Red (Cuprous oxide Cu2O precipitate).",
+          "magnification": "Macroscopic Colorimetric Reaction",
+          "stainOrView": "Benedict Reagent Reduction"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1579154204601-01588f351e67?w=800&auto=format&fit=crop&q=80",
+          "caption": "Molisch test positive purple/violet ring formed at the liquid junction of concentrated H2SO4 and carbohydrate solution.",
+          "magnification": "Macroscopic Ring Junction",
+          "stainOrView": "Molisch Alpha-Naphthol Reaction"
+        }
+      ],
+      "interactiveImages": [
+        {
+          "id": "inter_bio_1",
+          "title": "Interactive Carbohydrate Diagnostic Algorithm & Test Tubes",
+          "baseImage": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=1000&auto=format&fit=crop&q=80",
+          "magnification": "Laboratory Analytical Panel",
+          "stainOrView": "Qualitative Chemical Reactions",
+          "description": "Click the pins to explore each chemical reaction test tube, molecular mechanism, and diagnostic value.",
+          "pins": [
+            {
+              "id": "pin_bio1",
+              "x": 25,
+              "y": 50,
+              "label": "1",
+              "structureName": "Benedict Positive Reaction (Brick-Red Cu2O)",
+              "histologicalFeatures": "Reducing sugars possess free anomeric aldehyde or ketone groups capable of reducing Cu2+ (cupric) to Cu+ (cuprous) oxide in hot alkaline carbonate buffer.",
+              "clinicalSignificance": "Classic qualitative test for glucosuria in uncontrolled diabetes mellitus and inborn errors of carbohydrate metabolism.",
+              "stain": "Brick-Red Cuprous Oxide Precipitate"
+            },
+            {
+              "id": "pin_bio2",
+              "x": 55,
+              "y": 45,
+              "label": "2",
+              "structureName": "Seliwanoff Cherry-Red Ketose Complex",
+              "histologicalFeatures": "Ketohexoses (Fructose) undergo rapid acid dehydration forming 5-hydroxymethylfurfural, condensing with resorcinol into a vibrant cherry-red pigment in under 60 seconds.",
+              "clinicalSignificance": "Used to diagnose hereditary fructose intolerance and essential fructosuria.",
+              "stain": "Resorcinol Cherry-Red Chromogen"
+            },
+            {
+              "id": "pin_bio3",
+              "x": 75,
+              "y": 55,
+              "label": "3",
+              "structureName": "Barfoed Acid Copper Acetate Reduction",
+              "histologicalFeatures": "The slightly acidic medium (pH 4.6) retards reduction by disaccharides. Monosaccharides are strong enough reducing agents to precipitate red Cu2O in 2–3 minutes.",
+              "clinicalSignificance": "Differentiates monosaccharides (glucose, fructose) from reducing disaccharides (lactose, maltose).",
+              "stain": "Acidic Cuprous Oxide Precipitate"
+            }
+          ]
+        }
+      ],
+      "identificationPoints": [
+        "MOLISCH TEST: Purple ring at interface = POSITIVE for all carbohydrates.",
+        "IODINE TEST: Deep blue = Starch/Amylose; Red-brown = Glycogen; Yellow/clear = Mono/Disaccharides.",
+        "BENEDICT TEST: Brick-red precipitate = Reducing sugar (Glucose, Fructose, Lactose, Maltose). Negative blue = Sucrose, Starch.",
+        "BARFOED TEST: Red precipitate within 2–3 mins = Monosaccharide. No precipitate at 3 mins = Disaccharide.",
+        "SELIWANOFF TEST: Cherry-red within 60 secs = Ketohexose (Fructose). Negative/slow = Aldohexose (Glucose)."
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Shaking the test tube during Molisch acid layering.",
+          "correction": "Incline tube at 45 degrees and pipette conc. H2SO4 slowly down the glass wall. Do not mix.",
+          "whyItMatters": "Shaking generates sudden heat, charring the carbohydrates and masking the interface ring."
+        },
+        {
+          "mistake": "Boiling Barfoed test beyond 3 minutes.",
+          "correction": "Strictly remove the tube from boiling water bath when 3 minutes elapse.",
+          "whyItMatters": "Boiling acid hydrolyzes disaccharides into monosaccharides, producing false positives."
+        }
+      ],
+      "clinicalCorrelation": {
+        "condition": "Glucosuria & Inborn Errors of Carbohydrate Metabolism",
+        "pathophysiology": "When blood glucose exceeds renal threshold (~180 mg/dL), proximal tubule SGLT2 transporters saturate and glucose spills into urine. In hereditary galactosaemia and fructosuria, abnormal reducing sugars are excreted.",
+        "clinicalPresentation": "Polyuria, polydipsia, and weight loss in diabetic ketoacidosis. Rapid Benedict screening detects reducing substances in pediatric urine.",
+        "diagnosticPearls": "Glucose oxidase test strips (Clinistix) are specific for glucose; Benedict test detects all reducing sugars including galactose, fructose, and lactose."
+      },
+      "safety": {
+        "biosafetyLevel": "BSL-1 (Chemical Safety Level 2)",
+        "hazards": [
+          "Concentrated sulfuric acid and hydrochloric acid caustic burns",
+          "Boiling water bath splashing and steam burns",
+          "Hot glassware shatter hazard"
+        ],
+        "ppeRequired": [
+          "Chemical-resistant laboratory coat",
+          "Nitrile safety gloves",
+          "Certified chemical splash goggles",
+          "Closed-toe chemical-resistant footwear"
+        ],
+        "emergencyProtocol": "In case of acid contact on skin, immediately flood the area with copious flowing water from the safety eyewash/shower for at least 15 minutes. Notify the laboratory instructor immediately."
+      },
+      "references": [
+        {
+          "title": "Harper's Illustrated Biochemistry",
+          "authors": "Victor W. Rodwell, David Bender, Kathleen M. Botham, Peter J. Kennelly, P. Anthony Weil",
+          "editionOrYear": "32nd Edition (2023)",
+          "pages": "pp. 132–156"
+        },
+        {
+          "title": "Practical Clinical Biochemistry: Methods and Interpretations",
+          "authors": "Ranjan Chawla",
+          "editionOrYear": "5th Edition (2021)",
+          "pages": "pp. 45–68"
+        }
+      ],
+      "quizId": "quiz_bio_01",
+      "spotterIds": [
+        "spot_bio_1"
+      ]
+    },
+    {
+      "id": "prac_anat_01",
+      "courseId": "anatomy",
+      "categoryId": "anat_bones",
+      "practicalNumber": 1,
+      "title": "Cranial Osteology & Skull Base Foramina",
+      "subTitle": "Systematic Identification of Neurovascular Openings and Calvarial Landmarks",
+      "estimatedTime": "50 mins",
+      "version": "2.0",
+      "lastUpdated": "Aug 28, 2026",
+      "status": "published",
+      "authorName": "Prof. Marcus Brody, PhD",
+      "authorRole": "Department of Anatomy",
+      "approvedBy": "Prof. Eleanor Hayes, MD",
+      "approvalDate": "Aug 29, 2026",
+      "learningObjectives": [
+        "Identify the three cranial fossae (anterior, middle, posterior) on a dried human skull.",
+        "Locate key foramina including cribriform plate, optic canal, superior orbital fissure, foramen rotundum, ovale, spinosum, and jugular foramen.",
+        "Correlate each foramen with the specific cranial nerves and vascular structures passing through it.",
+        "Examine common skull fractures and signs of base-of-skull injury (Battle sign, raccoon eyes)."
+      ],
+      "beforeTheLab": {
+        "previousKnowledge": [
+          "Gross divisions of the human central nervous system.",
+          "General terminology for cranial bones (frontal, parietal, sphenoid, temporal, occipital)."
+        ],
+        "recommendedReading": [
+          "Moore's Clinically Oriented Anatomy (9th Ed.), Chapter 8: Head, pp. 820-855."
+        ],
+        "preparationChecklist": [
+          {
+            "id": "chk_a1_1",
+            "text": "Review cranial nerve exit pathways from brainstem to periphery"
+          },
+          {
+            "id": "chk_a1_2",
+            "text": "Memorize the contents of the superior orbital fissure"
+          }
+        ],
+        "preLabSummary": "The skull base is divided into three stepped cranial fossae. Each fossa houses specific brain regions and features distinct foramina transmitting cranial nerves and vessels."
+      },
+      "equipment": [
+        {
+          "id": "eq_anat_skull",
+          "name": "Articulated & Disarticulated Adult Human Skulls",
+          "description": "Natural dried adult human specimens with calvaria cut horizontally to expose the endocranial floor."
+        },
+        {
+          "id": "eq_anat_probe",
+          "name": "Flexible Blunt Neurovascular Probes",
+          "description": "Non-metallic probes used to trace foraminal trajectories without damaging fragile bony septa."
+        }
+      ],
+      "procedure": [
+        {
+          "stepNumber": 1,
+          "title": "Anterior Cranial Fossa Inspection",
+          "description": "Locate the crista galli and the surrounding sieve-like cribriform plate of the ethmoid bone transmitting CN I (Olfactory nerve fibers)."
+        },
+        {
+          "stepNumber": 2,
+          "title": "Middle Cranial Fossa & Sphenoid Bone",
+          "description": "Identify the sella turcica, chiasmatic sulcus, and trace CN II through the optic canal. Lateral to the sella, identify the superior orbital fissure, foramen rotundum, foramen ovale, and foramen spinosum (ROS mnemonic)."
+        },
+        {
+          "stepNumber": 3,
+          "title": "Posterior Cranial Fossa & Foramen Magnum",
+          "description": "Identify the internal acoustic meatus (CN VII, VIII), jugular foramen (CN IX, X, XI, internal jugular vein), hypoglossal canal (CN XII), and the foramen magnum transmitting the brainstem and vertebral arteries."
+        }
+      ],
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1530497610245-94d3c16cda28?w=800&auto=format&fit=crop&q=80",
+          "caption": "Superior view of the internal skull base demonstrating the anterior, middle, and posterior cranial fossae with prominent foraminal pathways.",
+          "magnification": "Gross Specimen",
+          "stainOrView": "Endocranial View"
+        }
+      ],
+      "interactiveImages": [],
+      "identificationPoints": [
+        "Cribriform plate transmitting olfactory nerve fascicles.",
+        "Optic canal medially in sphenoid lesser wing transmitting CN II and ophthalmic artery.",
+        "Superior orbital fissure between sphenoid wings transmitting CN III, IV, V1, VI.",
+        "Foramen rotundum transmitting maxillary nerve (CN V2).",
+        "Foramen ovale transmitting mandibular nerve (CN V3) and accessory meningeal artery.",
+        "Foramen spinosum transmitting middle meningeal artery.",
+        "Jugular foramen transmitting CN IX, X, XI and sigmoid-to-IJV junction."
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Confusing Foramen Ovale with Foramen Rotundum on endocranial view.",
+          "correction": "Rotundum is located anteriorly and directs horizontally forward into pterygopalatine fossa; Ovale is posterolateral and directs vertically into infratemporal fossa."
+        }
+      ],
+      "clinicalCorrelation": {
+        "condition": "Basilar Skull Fractures & Pterion Blow",
+        "diagnosticPearls": "Blow to the temple at the pterion ruptures the anterior division of the middle meningeal artery lying deep to it, resulting in epidural (extradural) hematoma. Fractures of cribriform plate lead to CSF rhinorrhea.",
+        "clinicalImages": []
+      },
+      "safety": {
+        "hazardLevel": "low",
+        "mandatoryPPE": [
+          "Lab Coat",
+          "Gloves"
+        ],
+        "handlingRules": [
+          "Dry bone specimens must be supported with both hands; never place probes forcefully into narrow bony canals."
+        ]
+      },
+      "references": [
+        {
+          "title": "Gray's Anatomy for Students",
+          "authors": "Drake, Vogl, Mitchell",
+          "editionOrYear": "4th Edition",
+          "pages": "pp. 810–835"
+        }
+      ]
+    },
+    {
+      "id": "prac_anat_03",
+      "courseId": "anatomy",
+      "categoryId": "anat_bones",
+      "practicalNumber": 3,
+      "title": "Lower Limb Osteology — Femur, Tibia & Pelvic Girdle",
+      "subTitle": "Weight-Bearing Architecture, Biomechanics & Palpable Bony Landmarks",
+      "estimatedTime": "45 mins",
+      "version": "1.9",
+      "lastUpdated": "Aug 27, 2026",
+      "status": "published",
+      "authorName": "Prof. Marcus Brody, PhD",
+      "authorRole": "Department of Anatomy",
+      "approvedBy": "Prof. Eleanor Hayes, MD",
+      "approvalDate": "Aug 28, 2026",
+      "learningObjectives": [
+        "Differentiate the anatomical features of the femur (head, fovea, neck, trochanters, condyles).",
+        "Examine the angle of inclination of the femoral neck and identify coxa vara vs coxa valga.",
+        "Identify proximal and distal tibial landmarks including tibial tuberosity and medial malleolus.",
+        "Trace attachments of major hip and knee stabilizing ligaments (cruciates, collaterals)."
+      ],
+      "beforeTheLab": {
+        "previousKnowledge": [
+          "Basic skeletal classification of long bones."
+        ],
+        "recommendedReading": [
+          "Moore's Clinically Oriented Anatomy, Lower Limb Section, pp. 520-565."
+        ],
+        "preparationChecklist": [
+          {
+            "id": "chk_a3_1",
+            "text": "Review vascular supply to the femoral head (retinacular arteries)"
+          }
+        ],
+        "preLabSummary": "The pelvic girdle and femur form the primary load-bearing axis of the human body. Understanding the neck-shaft angle and vascular supply to the femoral head is essential for fracture management."
+      },
+      "equipment": [
+        {
+          "id": "eq_anat_femur",
+          "name": "Dry Adult Human Femur & Tibia Specimens",
+          "description": "Intact specimens showing muscular lines, intercondylar notches, and articular facets."
+        }
+      ],
+      "procedure": [
+        {
+          "stepNumber": 1,
+          "title": "Femoral Head & Neck Orientation",
+          "description": "Position femur with head directed medially and superiorly, and the smooth patellar groove facing anteriorly."
+        },
+        {
+          "stepNumber": 2,
+          "title": "Greater & Lesser Trochanters",
+          "description": "Palpate greater trochanter laterally (abductor insertions) and lesser trochanter posteromedially (iliopsoas insertion)."
+        },
+        {
+          "stepNumber": 3,
+          "title": "Distal Condylar & Intercondylar Geometry",
+          "description": "Inspect medial and lateral condyles, adductor tubercle on medial epicondyle, and intercondylar fossa for cruciate ligament origins."
+        }
+      ],
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&auto=format&fit=crop&q=80",
+          "caption": "Anterior and posterior osteological views of the human right femur illustrating the femoral head, neck-shaft angle, and distal condyles.",
+          "magnification": "Gross Specimen",
+          "stainOrView": "Dry Bone Anatomy"
+        }
+      ],
+      "interactiveImages": [],
+      "identificationPoints": [
+        "Femoral head with fovea capitis for ligamentum teres.",
+        "Angle of inclination normally 125 degrees in adults.",
+        "Linea aspera on posterior shaft showing medial and lateral lips.",
+        "Tibial plateau with medial and lateral condyles and intercondylar eminence."
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Failing to orient anterior vs posterior surface of the femur.",
+          "correction": "The linea aspera is always posterior; the smooth patellar groove is always anterior."
+        }
+      ],
+      "clinicalCorrelation": {
+        "condition": "Femoral Neck Fracture & Avascular Necrosis (AVN)",
+        "diagnosticPearls": "Subcapital fractures tear the medial circumflex femoral retinacular arteries supplying the head, predisposing to avascular necrosis. Affected limb presents shortened and externally rotated.",
+        "clinicalImages": []
+      },
+      "safety": {
+        "hazardLevel": "low",
+        "mandatoryPPE": [
+          "Lab Coat",
+          "Gloves"
+        ],
+        "handlingRules": [
+          "Support long bones over padded lab benches."
+        ]
+      },
+      "references": [
+        {
+          "title": "Clinically Oriented Anatomy",
+          "authors": "Moore & Dalley",
+          "editionOrYear": "9th Ed.",
+          "pages": "pp. 520–550"
+        }
+      ]
+    },
+    {
+      "id": "prac_anat_04",
+      "courseId": "anatomy",
+      "categoryId": "anat_muscles",
+      "practicalNumber": 4,
+      "title": "Pectoral Region & Brachial Plexus Dissection",
+      "subTitle": "Muscular Layers, Axillary Artery Branches & Root-to-Branch Nerve Mapping",
+      "estimatedTime": "60 mins",
+      "version": "2.1",
+      "lastUpdated": "Aug 29, 2026",
+      "status": "published",
+      "authorName": "Prof. Marcus Brody, PhD",
+      "authorRole": "Department of Anatomy",
+      "approvedBy": "Prof. Eleanor Hayes, MD",
+      "approvalDate": "Aug 30, 2026",
+      "learningObjectives": [
+        "Dissect and identify pectoralis major and minor muscles, clavipectoral fascia, and subclavius.",
+        "Map the roots (C5-T1), trunks, divisions, and cords of the brachial plexus in relation to the axillary artery.",
+        "Identify terminal branches: Musculocutaneous, Axillary, Median, Radial, and Ulnar nerves.",
+        "Correlate Erb-Duchenne palsy (upper trunk C5-C6) with characteristic waiter-tip deformity."
+      ],
+      "beforeTheLab": {
+        "previousKnowledge": [
+          "Spinal nerve root composition and anterior rami."
+        ],
+        "recommendedReading": [
+          "Grant's Dissector (17th Ed.), Chapter 6: Upper Limb & Axilla."
+        ],
+        "preparationChecklist": [
+          {
+            "id": "chk_a4_1",
+            "text": "Memorize the 5-stage schematic of the brachial plexus"
+          }
+        ],
+        "preLabSummary": "The axilla serves as the neurovascular gateway from the neck to the upper extremity. The brachial plexus cords are named strictly according to their relationship with the second part of the axillary artery."
+      },
+      "equipment": [
+        {
+          "id": "eq_anat_cadaver_axilla",
+          "name": "Prosected Human Axilla Specimen",
+          "description": "Cadaveric prosection displaying reflected pectoralis major and exposed axillary sheath."
+        }
+      ],
+      "procedure": [
+        {
+          "stepNumber": 1,
+          "title": "Reflection of Pectoralis Major",
+          "description": "Reflect the clavicular and sternocostal heads laterally to reveal the clavipectoral fascia and pectoralis minor."
+        },
+        {
+          "stepNumber": 2,
+          "title": "Axillary Sheath Exposure & Artery Stages",
+          "description": "Incise the axillary sheath. Identify the 3 parts of the axillary artery relative to pectoralis minor."
+        },
+        {
+          "stepNumber": 3,
+          "title": "Trace Brachial Plexus \"M\" Pattern",
+          "description": "Locate the lateral cord giving off musculocutaneous nerve, medial cord giving off ulnar nerve, and their converging contributions forming the median nerve over the axillary artery."
+        }
+      ],
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800&auto=format&fit=crop&q=80",
+          "caption": "Cadaveric prosection of the right axilla demonstrating the cords of the brachial plexus surrounding the axillary artery and terminal branches.",
+          "magnification": "Gross Dissection",
+          "stainOrView": "Cadaveric Specimen"
+        }
+      ],
+      "interactiveImages": [],
+      "identificationPoints": [
+        "Pectoralis minor as the defining anatomical landmark dividing axillary artery into three parts.",
+        "Musculocutaneous nerve piercing coracobrachialis.",
+        "Median nerve formed by lateral and medial roots anterior to 3rd part of axillary artery.",
+        "Radial nerve exiting posteriorly into radial groove with profunda brachii artery."
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Confusing Ulnar nerve with Median nerve on cadaveric specimens.",
+          "correction": "The median nerve has two roots forming an \"M\" shape over the artery; the ulnar nerve arises solely from the medial cord and descends medially without anterior crossover."
+        }
+      ],
+      "clinicalCorrelation": {
+        "condition": "Erb's Palsy vs Klumpke's Palsy",
+        "diagnosticPearls": "Traction of upper trunk (C5-C6) leads to Erb's palsy (loss of abduction, external rotation, supination -> 'waiter tip' posture). Lower trunk traction (C8-T1) causes Klumpke claw hand.",
+        "clinicalImages": []
+      },
+      "safety": {
+        "hazardLevel": "medium",
+        "mandatoryPPE": [
+          "Lab Coat",
+          "Nitrile Gloves",
+          "Face Shield"
+        ],
+        "handlingRules": [
+          "Keep cadaveric specimens moist with 2% phenoxyethanol moisturizing solution."
+        ]
+      },
+      "references": [
+        {
+          "title": "Grant's Atlas of Anatomy",
+          "authors": "Agur & Dalley",
+          "editionOrYear": "15th Ed.",
+          "pages": "pp. 480–510"
+        }
+      ]
+    },
+    {
+      "id": "prac_anat_05",
+      "courseId": "anatomy",
+      "categoryId": "anat_structures",
+      "practicalNumber": 5,
+      "title": "Thoracic Cavity & Cardiac Dissection",
+      "subTitle": "Mediastinal Divisions, Heart Chambers, Coronary Circulation & Great Vessels",
+      "estimatedTime": "55 mins",
+      "version": "2.0",
+      "lastUpdated": "Aug 30, 2026",
+      "status": "published",
+      "authorName": "Prof. Marcus Brody, PhD",
+      "authorRole": "Department of Anatomy",
+      "approvedBy": "Prof. Eleanor Hayes, MD",
+      "approvalDate": "Aug 31, 2026",
+      "learningObjectives": [
+        "Define boundaries of superior and inferior (anterior, middle, posterior) mediastinum.",
+        "Identify chambers, valves, and specialized conduction structures of the heart on gross specimens.",
+        "Trace the coronary arterial tree (LAD, Circumflex, RCA, Posterior Descending Artery).",
+        "Correlate surface anatomy of cardiac valves with optimal clinical auscultation landmarks."
+      ],
+      "beforeTheLab": {
+        "previousKnowledge": [
+          "Cardiovascular system physiology and pulmonary/systemic blood flow cycles."
+        ],
+        "recommendedReading": [
+          "Gray's Anatomy for Students, Thorax Chapter, pp. 120-175."
+        ],
+        "preparationChecklist": [
+          {
+            "id": "chk_a5_1",
+            "text": "Review cardiac auscultation points (Aortic, Pulmonic, Tricuspid, Mitral)"
+          }
+        ],
+        "preLabSummary": "The heart occupies the middle mediastinum encased within the fibroserous pericardium. The sternal angle of Louis (T4/T5 junction) is the key anatomical landmark dividing superior from inferior mediastinum."
+      },
+      "equipment": [
+        {
+          "id": "eq_anat_heart_plast",
+          "name": "Plastinated Human Heart & Bovine Dissection Specimen",
+          "description": "Plastinated human specimen displaying coronary vasculature, and freshly fixed dissection specimen for valve inspection."
+        }
+      ],
+      "procedure": [
+        {
+          "stepNumber": 1,
+          "title": "Sternocostal Surface & Coronary Sulci",
+          "description": "Orient the apex pointing inferiorly, anteriorly, and to the left. Trace the anterior interventricular sulcus and coronary groove."
+        },
+        {
+          "stepNumber": 2,
+          "title": "Right Atrium Interior Inspection",
+          "description": "Open the right atrium. Identify the smooth sinus venarum, pectinate muscles of the atrium proper, crista terminalis, fossa ovalis, and coronary sinus orifice."
+        },
+        {
+          "stepNumber": 3,
+          "title": "Ventricular Cavities & Atrioventricular Valves",
+          "description": "Examine the thick left ventricular wall (3x thicker than right) and identify papillary muscles and chordae tendineae attached to tricuspid and bicuspid (mitral) leaflets."
+        }
+      ],
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?w=800&auto=format&fit=crop&q=80",
+          "caption": "Anterior gross anatomical view of human heart prosection demonstrating right ventricle, pulmonary trunk, ascending aorta, and left anterior descending artery.",
+          "magnification": "Gross Specimen",
+          "stainOrView": "Gross Prosection"
+        }
+      ],
+      "interactiveImages": [],
+      "identificationPoints": [
+        "Sternal angle marking T4/T5 vertebral boundary and bifurcation of trachea.",
+        "Left Anterior Descending (LAD) artery running in anterior interventricular groove.",
+        "Fossa ovalis on interatrial septum marking remnant of fetal foramen ovale.",
+        "Tricuspid valve on right; Bicuspid (Mitral) valve on left."
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Confusing the anatomical apex of the heart with the base.",
+          "correction": "The apex is formed entirely by the inferolateral part of the left ventricle and points anteroinferiorly; the base is formed mainly by the left atrium and faces posteriorly."
+        }
+      ],
+      "clinicalCorrelation": {
+        "condition": "Myocardial Infarction & Valvular Stenosis",
+        "diagnosticPearls": "The LAD artery is the most commonly occluded vessel in acute coronary syndrome (the \"widow maker\"), causing anterior wall and apical infarction. Mitral stenosis produces an opening snap and diastolic murmur at apex.",
+        "clinicalImages": []
+      },
+      "safety": {
+        "hazardLevel": "medium",
+        "mandatoryPPE": [
+          "Lab Coat",
+          "Nitrile Gloves",
+          "Splash Goggles"
+        ],
+        "handlingRules": [
+          "Rinse specimens before examination to minimize preservative vapor."
+        ]
+      },
+      "references": [
+        {
+          "title": "Gray's Anatomy for Students",
+          "authors": "Drake, Vogl, Mitchell",
+          "editionOrYear": "4th Ed.",
+          "pages": "pp. 140–180"
+        }
+      ]
+    },
+    {
+      "id": "prac_anat_06",
+      "courseId": "anatomy",
+      "categoryId": "anat_structures",
+      "practicalNumber": 6,
+      "title": "Abdominal Viscera & Peritoneal Reflections",
+      "subTitle": "Greater and Lesser Omentum, Mesentery, Foramen of Winslow & Foregut/Midgut/Hindgut Organs",
+      "estimatedTime": "55 mins",
+      "version": "1.0",
+      "lastUpdated": "Sep 02, 2026",
+      "status": "draft",
+      "authorName": "Prof. Marcus Brody, PhD",
+      "authorRole": "Department of Anatomy",
+      "learningObjectives": [
+        "Differentiate intraperitoneal from retroperitoneal abdominal organs.",
+        "Locate the epiploic foramen of Winslow and identify structures within the free edge of the lesser omentum (portal triad).",
+        "Trace blood supply of foregut (celiac trunk), midgut (SMA), and hindgut (IMA).",
+        "Understand peritoneal recesses and pathways of fluid accumulation (Morison pouch)."
+      ],
+      "beforeTheLab": {
+        "previousKnowledge": [
+          "Embryological development of gut tube and rotation of stomach."
+        ],
+        "recommendedReading": [
+          "Moore's Clinically Oriented Anatomy, Abdomen Chapter."
+        ],
+        "preparationChecklist": [
+          {
+            "id": "chk_a6_1",
+            "text": "Review the 3 structures of the portal triad in hepatoduodenal ligament"
+          }
+        ],
+        "preLabSummary": "The peritoneal cavity is a complex potential space. The hepatoduodenal ligament contains the portal vein, proper hepatic artery, and common bile duct."
+      },
+      "equipment": [
+        {
+          "id": "eq_anat_cadaver_abdomen",
+          "name": "Prosected Abdomen Cadaveric Specimen",
+          "description": "Exposed peritoneal cavity with greater omentum reflected superiorly."
+        }
+      ],
+      "procedure": [
+        {
+          "stepNumber": 1,
+          "title": "Reflection of Greater Omentum",
+          "description": "Elevate greater omentum to display coils of jejunum and ileum, and identify the root of the mesentery."
+        },
+        {
+          "stepNumber": 2,
+          "title": "Inspection of the Lesser Omentum & Portal Triad",
+          "description": "Insert index finger into the epiploic foramen (Winslow) behind the free edge of lesser omentum to palpate portal vein, hepatic artery, and bile duct."
+        }
+      ],
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1576086213369-97a306d36557?w=800&auto=format&fit=crop&q=80",
+          "caption": "Cadaveric view of the upper abdominal cavity demonstrating liver, stomach, lesser omentum and the hepatoduodenal ligament.",
+          "magnification": "Gross Specimen",
+          "stainOrView": "Abdominal Prosection"
+        }
+      ],
+      "interactiveImages": [],
+      "identificationPoints": [
+        "Portal triad: Common bile duct anterolateral, Hepatic artery anteromedial, Portal vein posterior.",
+        "Celiac trunk branches: Left gastric, Splenic, Common hepatic arteries.",
+        "Hepatorenal pouch (Morison pouch) as lowest point of peritoneal cavity in supine position."
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Failing to identify the orientation of structures in the portal triad.",
+          "correction": "Remember: Duct is Right, Artery is Left, Vein is Posterior."
+        }
+      ],
+      "clinicalCorrelation": {
+        "condition": "Pringle Maneuver & Peritoneal Abscess",
+        "diagnosticPearls": "Clamping the hepatoduodenal ligament (Pringle maneuver) occludes hepatic arterial and portal venous inflow to control traumatic liver bleeding. Fluid in supine patients pools in Morison pouch.",
+        "clinicalImages": []
+      },
+      "safety": {
+        "hazardLevel": "medium",
+        "mandatoryPPE": [
+          "Lab Coat",
+          "Gloves",
+          "Eye Protection"
+        ],
+        "handlingRules": [
+          "Handle preserved viscera gently to prevent tearing mesenteries."
+        ]
+      },
+      "references": [
+        {
+          "title": "Clinically Oriented Anatomy",
+          "authors": "Moore & Dalley",
+          "editionOrYear": "9th Ed.",
+          "pages": "pp. 230–280"
+        }
+      ]
+    },
+    {
+      "id": "prac_hist_01",
+      "courseId": "histology",
+      "categoryId": "hist_microscope",
+      "practicalNumber": 1,
+      "title": "Light Microscopy, Slide Handling & Staining Techniques",
+      "subTitle": "Koehler Illumination, Resolving Power, H&E Chemistry & Specimen Care",
+      "estimatedTime": "40 mins",
+      "version": "2.2",
+      "lastUpdated": "Aug 20, 2026",
+      "status": "published",
+      "authorName": "Dr. Tariq Vance, MD",
+      "authorRole": "Senior Histology Faculty",
+      "approvedBy": "Prof. Eleanor Hayes, MD",
+      "approvalDate": "Aug 21, 2026",
+      "learningObjectives": [
+        "Master the optical setup of a binocular compound microscope and achieve Koehler illumination.",
+        "Understand the principles of numerical aperture, magnification, and resolving limit (0.2 μm).",
+        "Explain the biochemical mechanism of Hematoxylin (basic dye/basophilia) and Eosin (acidic dye/acidophilia).",
+        "Recognize common histological artifacts (shrinkage, folding, precipitation, chatter)."
+      ],
+      "beforeTheLab": {
+        "previousKnowledge": [
+          "Elementary physics of optics, refraction, and wave theory of light."
+        ],
+        "recommendedReading": [
+          "Junqueira's Basic Histology, Chapter 1: Histology & Its Methods of Study."
+        ],
+        "preparationChecklist": [
+          {
+            "id": "chk_h1_1",
+            "text": "Read the safety manual on optical lens care and immersion oil usage"
+          }
+        ],
+        "preLabSummary": "Histological diagnosis depends on understanding stain chemistry. Hematoxylin stains acidic structures (DNA/RNA in nuclei) dark purple/blue, while Eosin stains basic structures (cytoplasmic proteins) pink/red."
+      },
+      "equipment": [
+        {
+          "id": "eq_hist_micro_cx23",
+          "name": "Olympus CX23 Laboratory Microscope",
+          "description": "Plan achromatic objectives (4x, 10x, 40x, 100x oil) with adjustable condenser."
+        }
+      ],
+      "procedure": [
+        {
+          "stepNumber": 1,
+          "title": "Achieve Koehler Illumination",
+          "description": "Focus specimen under 10x. Close field diaphragm, focus condenser until polygon edges are sharp, center with condenser centering screws, and reopen field diaphragm to field boundary."
+        },
+        {
+          "stepNumber": 2,
+          "title": "Compare Basophilic vs Acidophilic Structures",
+          "description": "Examine an H&E section of human liver. Identify dark blue nuclei (basophilic) and uniformly pink cytoplasm (acidophilic)."
+        }
+      ],
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800&auto=format&fit=crop&q=80",
+          "caption": "Standard laboratory binocular compound light microscope setup configured for Koehler illumination and slide analysis.",
+          "magnification": "Laboratory Apparatus",
+          "stainOrView": "Optical Equipment"
+        }
+      ],
+      "interactiveImages": [],
+      "identificationPoints": [
+        "Basophilic components: Nuclei, nucleoli, rough endoplasmic reticulum (stained blue/purple by Hematoxylin).",
+        "Acidophilic components: Cytoplasm, collagen fibers, mitochondrial proteins (stained pink by Eosin).",
+        "Field iris diaphragm controls glare; aperture diaphragm controls resolution and contrast."
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Using coarse focus adjustment knob at 40x or 100x magnification.",
+          "correction": "Always establish focus at 4x/10x with coarse knob; at 40x and 100x, use fine focus knob ONLY to prevent crushing the slide."
+        }
+      ],
+      "clinicalCorrelation": {
+        "condition": "Frozen Section Biopsy & Pathological Staining",
+        "diagnosticPearls": "Rapid intraoperative frozen sections yield answers in 15 minutes but show more freezing artifacts than formalin-fixed paraffin-embedded (FFPE) sections. Periodic Acid-Schiff (PAS) is key for basement membranes.",
+        "clinicalImages": []
+      },
+      "safety": {
+        "hazardLevel": "low",
+        "mandatoryPPE": [
+          "Lab Coat",
+          "Gloves"
+        ],
+        "handlingRules": [
+          "Wipe oil immersion lens with lens tissue immediately after use."
+        ]
+      },
+      "references": [
+        {
+          "title": "Junqueira's Basic Histology",
+          "authors": "Mescher",
+          "editionOrYear": "16th Ed.",
+          "pages": "pp. 1–22"
+        }
+      ]
+    },
+    {
+      "id": "prac_hist_02",
+      "courseId": "histology",
+      "categoryId": "hist_epithelial",
+      "practicalNumber": 2,
+      "title": "Epithelial Tissue (Simple & Stratified Classification)",
+      "subTitle": "Cellular Junctions, Basement Membrane, Cilia, Microvilli & Glandular Architecture",
+      "estimatedTime": "45 mins",
+      "version": "2.1",
+      "lastUpdated": "Aug 22, 2026",
+      "status": "published",
+      "authorName": "Dr. Tariq Vance, MD",
+      "authorRole": "Senior Histology Faculty",
+      "approvedBy": "Prof. Eleanor Hayes, MD",
+      "approvalDate": "Aug 23, 2026",
+      "learningObjectives": [
+        "Classify epithelia by cell shape (squamous, cuboidal, columnar) and layer count (simple, stratified, pseudostratified).",
+        "Examine simple squamous epithelium in vascular endothelium and renal Bowman capsule.",
+        "Differentiate keratinized vs non-keratinized stratified squamous epithelium.",
+        "Identify transitional epithelium (urothelium) and pseudostratified ciliated columnar epithelium."
+      ],
+      "beforeTheLab": {
+        "previousKnowledge": [
+          "Concept of avascular tissue supported by vascular connective tissue bed."
+        ],
+        "recommendedReading": [
+          "Wheater's Functional Histology, Section 4: Epithelial Tissues."
+        ],
+        "preparationChecklist": [
+          {
+            "id": "chk_h2_1",
+            "text": "Review apical surface modifications: microvilli vs stereocilia vs cilia"
+          }
+        ],
+        "preLabSummary": "Epithelia cover external body surfaces and line internal closed cavities and body tubes. They are characterized by close cellular apposition, polarity (apical, lateral, basal), and attachment to a basal lamina."
+      },
+      "equipment": [
+        {
+          "id": "eq_hist_epith_slides",
+          "name": "Slide Box E-02: Epithelial Tissues",
+          "description": "Slides: Kidney cortex (simple cuboidal/squamous), Esophagus (stratified squamous non-keratinized), Skin (stratified squamous keratinized), Trachea (pseudostratified), Bladder (urothelium)."
+        }
+      ],
+      "procedure": [
+        {
+          "stepNumber": 1,
+          "title": "Simple Epithelia (Kidney Slide)",
+          "description": "Examine renal tubules. Identify simple cuboidal epithelium with central round nuclei lining distal and proximal convoluted tubules."
+        },
+        {
+          "stepNumber": 2,
+          "title": "Pseudostratified Ciliated Columnar (Trachea)",
+          "description": "Observe that all cells rest on the basement membrane, but nuclei lie at variable heights. Locate apical cilia and goblet cells."
+        },
+        {
+          "stepNumber": 3,
+          "title": "Transitional Epithelium / Urothelium (Urinary Bladder)",
+          "description": "Observe dome-shaped or umbrella cells on the surface layer, characteristic of relaxing and stretching bladder wall."
+        }
+      ],
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1579154204601-01588f351e67?w=800&auto=format&fit=crop&q=80",
+          "caption": "High-power light micrograph of pseudostratified ciliated columnar epithelium of the trachea displaying prominent surface cilia and goblet cells (H&E, 400x).",
+          "magnification": "400x",
+          "stainOrView": "H&E Stain"
+        }
+      ],
+      "interactiveImages": [],
+      "identificationPoints": [
+        "Simple squamous: Single layer of flattened cells with bulging nuclei (endothelium, mesothelium).",
+        "Pseudostratified: Single layer resting on basal lamina with staggered nuclei and surface cilia.",
+        "Stratified squamous non-keratinized: Living nucleated cells retained up to the outermost surface layer (esophagus, vagina).",
+        "Urothelium: Multi-layered with large dome-shaped superficial umbrella cells."
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Confusing pseudostratified epithelium with truly stratified columnar epithelium.",
+          "correction": "True stratified columnar epithelium is extremely rare (conjunctiva fornix, large excretory ducts) and has no apical cilia."
+        }
+      ],
+      "clinicalCorrelation": {
+        "condition": "Metaplasia & Carcinoma in Situ",
+        "diagnosticPearls": "In cigarette smokers, ciliated pseudostratified columnar epithelium of the respiratory tract undergoes squamous metaplasia to stratified squamous epithelium, losing mucosal clearance.",
+        "clinicalImages": []
+      },
+      "safety": {
+        "hazardLevel": "low",
+        "mandatoryPPE": [
+          "Lab Coat",
+          "Gloves"
+        ],
+        "handlingRules": [
+          "Standard glass slide handling protocols apply."
+        ]
+      },
+      "references": [
+        {
+          "title": "Wheater's Functional Histology",
+          "authors": "Young, O’Dowd, Woodford",
+          "editionOrYear": "7th Ed.",
+          "pages": "pp. 75–102"
+        }
+      ]
+    },
+    {
+      "id": "prac_hist_03",
+      "courseId": "histology",
+      "categoryId": "hist_connective",
+      "practicalNumber": 3,
+      "title": "Connective Tissue Proper & Cartilage",
+      "subTitle": "Fibroblasts, Collagen, Elastic Fibers, Hyaline vs Elastic vs Fibrocartilage",
+      "estimatedTime": "45 mins",
+      "version": "2.0",
+      "lastUpdated": "Aug 23, 2026",
+      "status": "published",
+      "authorName": "Dr. Tariq Vance, MD",
+      "authorRole": "Senior Histology Faculty",
+      "approvedBy": "Prof. Eleanor Hayes, MD",
+      "approvalDate": "Aug 24, 2026",
+      "learningObjectives": [
+        "Differentiate loose (areolar) from dense regular and dense irregular connective tissue.",
+        "Identify cellular components: Fibroblasts, macrophages, mast cells, plasma cells, and adipocytes.",
+        "Compare histological features of Hyaline cartilage, Elastic cartilage, and Fibrocartilage.",
+        "Identify chondrocytes situated in lacunae, isogenous groups, and territorial vs interterritorial matrix."
+      ],
+      "beforeTheLab": {
+        "previousKnowledge": [
+          "Extracellular matrix composition (glycosaminoglycans, proteoglycans, collagen types)."
+        ],
+        "recommendedReading": [
+          "Junqueira's Basic Histology, Chapters 5 & 7: Connective Tissue and Cartilage."
+        ],
+        "preparationChecklist": [
+          {
+            "id": "chk_h3_1",
+            "text": "Compare Type I collagen (bone/tendon) with Type II collagen (hyaline cartilage)"
+          }
+        ],
+        "preLabSummary": "Connective tissue consists of cells separated by abundant extracellular matrix. Cartilage is an avascular specialized connective tissue with chondrocytes residing in lacunae surrounded by solid matrix."
+      },
+      "equipment": [
+        {
+          "id": "eq_hist_ct_slides",
+          "name": "Slide Box C-03: Connective Tissues",
+          "description": "Slides: Mesentery spread (areolar), Tendon (dense regular), Tracheal ring (hyaline cartilage), Epiglottis (elastic cartilage), Intervertebral disc (fibrocartilage)."
+        }
+      ],
+      "procedure": [
+        {
+          "stepNumber": 1,
+          "title": "Hyaline Cartilage Examination (Trachea Slide)",
+          "description": "Locate C-shaped cartilaginous ring. Identify perichondrium, subperichondrial chondroblasts, mature chondrocytes in lacunae, and glassy basophilic territorial matrix."
+        },
+        {
+          "stepNumber": 2,
+          "title": "Elastic Cartilage (Epiglottis / Weigert Stain)",
+          "description": "Observe dense branched meshwork of dark elastic fibers surrounding chondrocytes."
+        },
+        {
+          "stepNumber": 3,
+          "title": "Fibrocartilage (Intervertebral Disc / Meniscus)",
+          "description": "Observe rows of chondrocytes nestled between dense parallel bundles of Type I collagen fibers. Note absence of a distinct perichondrium."
+        }
+      ],
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1576086213369-97a306d36557?w=800&auto=format&fit=crop&q=80",
+          "caption": "Histological field of hyaline cartilage from the tracheal wall showing chondrocytes in lacunae and glassy basophilic matrix (H&E, 200x).",
+          "magnification": "200x",
+          "stainOrView": "H&E Stain"
+        }
+      ],
+      "interactiveImages": [],
+      "identificationPoints": [
+        "Hyaline cartilage: Glassy, homogeneous matrix containing Type II collagen and basophilic chondroitin sulfate.",
+        "Elastic cartilage: Chondrocytes plus dense dark elastic fibers (orcein or Weigert stain).",
+        "Fibrocartilage: Alternating parallel dense Type I collagen bundles and chondrocyte rows (no perichondrium)."
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Confusing fibrocartilage with dense regular collagenous tendon tissue.",
+          "correction": "Tendon contains flattened inactive fibroblast nuclei (tendinocytes) compressed between fibers; fibrocartilage contains distinct rounded chondrocytes within lacunae."
+        }
+      ],
+      "clinicalCorrelation": {
+        "condition": "Osteoarthritis & Herniated Nucleus Pulposus",
+        "diagnosticPearls": "Hyaline articular cartilage lacks a perichondrium, explaining its extremely limited repair capacity following wear or trauma. Fibrocartilage rings (anulus fibrosus) tear in lumbar disc herniation.",
+        "clinicalImages": []
+      },
+      "safety": {
+        "hazardLevel": "low",
+        "mandatoryPPE": [
+          "Lab Coat",
+          "Gloves"
+        ],
+        "handlingRules": [
+          "Standard microscope and slide handling."
+        ]
+      },
+      "references": [
+        {
+          "title": "Junqueira's Basic Histology",
+          "authors": "Mescher",
+          "editionOrYear": "16th Ed.",
+          "pages": "pp. 120–145"
+        }
+      ]
+    },
+    {
+      "id": "prac_hist_04",
+      "courseId": "histology",
+      "categoryId": "hist_connective",
+      "practicalNumber": 4,
+      "title": "Bone Histology & Compact Osteon System",
+      "subTitle": "Haversian Canals, Volkmann Canals, Concentric Lamellae, Osteocytes & Canaliculi",
+      "estimatedTime": "45 mins",
+      "version": "1.2",
+      "lastUpdated": "Aug 24, 2026",
+      "status": "draft",
+      "authorName": "Dr. Tariq Vance, MD",
+      "authorRole": "Senior Histology Faculty",
+      "learningObjectives": [
+        "Examine the microscopic structure of ground dry bone and decalcified bone.",
+        "Identify osteons (Haversian systems), concentric lamellae, and central canals.",
+        "Locate Volkmann (perforating) canals connecting adjacent Haversian systems.",
+        "Observe osteocyte lacunae and branching canaliculi networks."
+      ],
+      "beforeTheLab": {
+        "previousKnowledge": [
+          "Inorganic hydroxyapatite and organic Type I collagen composition of bone matrix."
+        ],
+        "recommendedReading": [
+          "Junqueira's Basic Histology, Chapter 8: Bone."
+        ],
+        "preparationChecklist": [
+          {
+            "id": "chk_h4_1",
+            "text": "Review differences between intramembranous and endochondral ossification"
+          }
+        ],
+        "preLabSummary": "Compact bone is organized into cylindrical structural units termed osteons or Haversian systems. Canaliculi radiate between lacunae allowing osteocyte gap-junction communication."
+      },
+      "equipment": [
+        {
+          "id": "eq_hist_bone_slides",
+          "name": "Slide Box B-04: Ground Bone Specimen",
+          "description": "Unstained ground compact bone section (transverse section) displaying Haversian architecture."
+        }
+      ],
+      "procedure": [
+        {
+          "stepNumber": 1,
+          "title": "Haversian System Identification (10x)",
+          "description": "Locate circular osteons centered around dark Haversian canals transmitting vessels."
+        },
+        {
+          "stepNumber": 2,
+          "title": "Lamellae and Canaliculi (40x)",
+          "description": "Inspect concentric lamellae, dark spider-like osteocyte lacunae, and delicate radiating canaliculi."
+        }
+      ],
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1530497610245-94d3c16cda28?w=800&auto=format&fit=crop&q=80",
+          "caption": "Ground transverse section of human compact bone demonstrating complete Haversian systems (osteons) with concentric lamellae and central canals (Unstained, 200x).",
+          "magnification": "200x",
+          "stainOrView": "Ground Bone Section"
+        }
+      ],
+      "interactiveImages": [],
+      "identificationPoints": [
+        "Central (Haversian) canal running longitudinally with blood vessels and nerves.",
+        "Perforating (Volkmann) canals running perpendicularly across lamellae without concentric rings.",
+        "Concentric lamellae arranged in 4 to 20 rings around central canal.",
+        "Spider-like canaliculi facilitating metabolic exchange between osteocytes."
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Confusing Haversian canals with Volkmann canals.",
+          "correction": "Haversian canals are surrounded by concentric lamellae; Volkmann canals pierce perpendicularly without concentric lamellae."
+        }
+      ],
+      "clinicalCorrelation": {
+        "condition": "Osteoporosis & Paget's Disease",
+        "diagnosticPearls": "Imbalance between osteoclast bone resorption and osteoblast bone formation leads to thinned trabeculae and porous cortical bone in postmenopausal osteoporosis.",
+        "clinicalImages": []
+      },
+      "safety": {
+        "hazardLevel": "low",
+        "mandatoryPPE": [
+          "Lab Coat",
+          "Gloves"
+        ],
+        "handlingRules": [
+          "Ground bone slides are fragile; avoid excess pressure."
+        ]
+      },
+      "references": [
+        {
+          "title": "Basic Histology",
+          "authors": "Junqueira & Carneiro",
+          "editionOrYear": "16th Ed.",
+          "pages": "pp. 150–175"
+        }
+      ]
+    },
+    {
+      "id": "prac_hist_06",
+      "courseId": "histology",
+      "categoryId": "hist_nervous",
+      "practicalNumber": 6,
+      "title": "Nervous Tissue & Peripheral Ganglia Histology",
+      "subTitle": "Multipolar Neurons, Nissl Substance, Myelinated Axons, Schwann Cells & Glial Cytology",
+      "estimatedTime": "45 mins",
+      "version": "2.0",
+      "lastUpdated": "Aug 25, 2026",
+      "status": "published",
+      "authorName": "Dr. Tariq Vance, MD",
+      "authorRole": "Senior Histology Faculty",
+      "approvedBy": "Prof. Eleanor Hayes, MD",
+      "approvalDate": "Aug 26, 2026",
+      "learningObjectives": [
+        "Identify the parts of a multipolar neuron (soma, axon hillock, dendrites, Nissl bodies) in spinal cord anterior horn.",
+        "Differentiate sensory (dorsal root) ganglia from autonomic (sympathetic/parasympathetic) ganglia.",
+        "Identify myelinated nerve fibers in cross-section (neurokeratin network, Schwann cell nuclei, nodes of Ranvier).",
+        "Distinguish epineurium, perineurium, and endoneurium connective tissue sheaths."
+      ],
+      "beforeTheLab": {
+        "previousKnowledge": [
+          "Action potential conduction and synapse structure."
+        ],
+        "recommendedReading": [
+          "Wheater's Functional Histology, Section 7: Nervous Tissue."
+        ],
+        "preparationChecklist": [
+          {
+            "id": "chk_h6_1",
+            "text": "Review why Nissl substance is absent from the axon hillock"
+          }
+        ],
+        "preLabSummary": "Nervous tissue consists of excitable neurons and supportive neuroglia. Large anterior horn motor neurons show intense basophilic clumps of rough ER (Nissl substance) throughout the perikaryon, excluding the axon hillock."
+      },
+      "equipment": [
+        {
+          "id": "eq_hist_nerve_slides",
+          "name": "Slide Box N-06: Nervous System",
+          "description": "Slides: Spinal cord cross-section (cresyl violet / H&E), Peripheral nerve bundle (H&E / Osmium), Dorsal root ganglion (H&E)."
+        }
+      ],
+      "procedure": [
+        {
+          "stepNumber": 1,
+          "title": "Spinal Cord Anterior Horn Motor Neurons",
+          "description": "Focus on anterior gray horn under 40x. Observe large multipolar neuron cell bodies with pale euchromatic nucleus, prominent nucleolus, and intense purple Nissl bodies."
+        },
+        {
+          "stepNumber": 2,
+          "title": "Peripheral Nerve Bundle Cross-Section",
+          "description": "Inspect nerve fascicles surrounded by perineurium. Inside, observe individual axons surrounded by pale lipid-washed myelin spaces and endoneurium."
+        },
+        {
+          "stepNumber": 3,
+          "title": "Sensory vs Autonomic Ganglion",
+          "description": "Examine dorsal root ganglion: Pseudo-unipolar spherical neurons clustered peripherally with concentric satellite cells and centrally placed nuclei."
+        }
+      ],
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1507668077129-56e32842fceb?w=800&auto=format&fit=crop&q=80",
+          "caption": "High-power histological view of spinal cord anterior horn motor neurons demonstrating prominent Nissl granules, pale nuclei, and dense nucleoli (Cresyl Violet, 400x).",
+          "magnification": "400x",
+          "stainOrView": "Cresyl Violet / H&E"
+        }
+      ],
+      "interactiveImages": [],
+      "identificationPoints": [
+        "Nissl substance (RER clumps) prominent in soma and dendrites, strictly absent at axon hillock.",
+        "Dorsal root ganglion: Large pseudo-unipolar neurons with central nuclei surrounded by complete ring of satellite cells.",
+        "Sympathetic ganglion: Smaller multipolar neurons with eccentric nuclei and scattered satellite cells.",
+        "Connective tissue: Epineurium (entire nerve), Perineurium (fascicle with tight junctions), Endoneurium (individual fibers)."
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Confusing cross-sectioned peripheral nerve with smooth muscle or dense collagen.",
+          "correction": "Cross-sectioned nerve shows empty circular spaces left by extracted myelin lipids and central dot-like axons, unlike dense muscle or tendon."
+        }
+      ],
+      "clinicalCorrelation": {
+        "condition": "Multiple Sclerosis vs Guillain-Barré Syndrome",
+        "diagnosticPearls": "Multiple sclerosis is an autoimmune demyelinating disease of CNS oligodendrocytes; Guillain-Barré syndrome attacks PNS Schwann cell myelin. Nissl bodies disperse in chromatolysis following axonal transection.",
+        "clinicalImages": []
+      },
+      "safety": {
+        "hazardLevel": "low",
+        "mandatoryPPE": [
+          "Lab Coat",
+          "Gloves"
+        ],
+        "handlingRules": [
+          "Standard laboratory microscope procedures."
+        ]
+      },
+      "references": [
+        {
+          "title": "Functional Histology",
+          "authors": "Wheater & Burkitt",
+          "editionOrYear": "7th Ed.",
+          "pages": "pp. 140–165"
+        }
+      ]
+    },
+    {
+      "id": "prac_bio_02",
+      "courseId": "biochemistry",
+      "categoryId": "bio_carbohydrates",
+      "practicalNumber": 2,
+      "title": "Molisch's & Iodine Tests for Polysaccharides",
+      "subTitle": "General Carbohydrate Detection via Furfural Condensation & Amylose Helix Complexation",
+      "estimatedTime": "40 mins",
+      "version": "2.0",
+      "lastUpdated": "Aug 21, 2026",
+      "status": "published",
+      "authorName": "Dr. Soraya Al-Khatib, PhD",
+      "authorRole": "Head of Clinical Biochemistry",
+      "approvedBy": "Prof. Eleanor Hayes, MD",
+      "approvalDate": "Aug 22, 2026",
+      "learningObjectives": [
+        "Explain the chemical mechanism of Molisch's test as a universal screen for carbohydrates.",
+        "Perform acid layering with concentrated H2SO4 to generate a distinct purple/violet interfacial ring.",
+        "Conduct the iodine test to distinguish starch (amylose) from glycogen and non-polysaccharide carbohydrates.",
+        "Demonstrate the effect of heat on the starch-iodine blue complex and understand reversible thermal dissociation."
+      ],
+      "beforeTheLab": {
+        "previousKnowledge": [
+          "Acid dehydration of pentoses and hexoses to furfurals."
+        ],
+        "recommendedReading": [
+          "Harper's Illustrated Biochemistry, Carbohydrates Chapter."
+        ],
+        "preparationChecklist": [
+          {
+            "id": "chk_b2_1",
+            "text": "Wear chemical splash safety goggles before handling concentrated sulfuric acid"
+          }
+        ],
+        "preLabSummary": "Molisch test is a general test for all carbohydrates based on dehydration by conc. H2SO4 to form furfural derivatives which condense with alpha-naphthol. Iodine test forms an inclusion complex with starch helical coils."
+      },
+      "equipment": [
+        {
+          "id": "eq_bio_tubes_rack",
+          "name": "Borosilicate Glass Test Tubes & Rack",
+          "description": "Standard 15 mL glass tubes with chemical resistant drying rack."
+        },
+        {
+          "id": "eq_bio_reagents_molisch",
+          "name": "Molisch's Reagent & Conc. H2SO4",
+          "description": "5% alpha-naphthol in ethanol, and concentrated 98% sulfuric acid."
+        }
+      ],
+      "procedure": [
+        {
+          "stepNumber": 1,
+          "title": "Molisch's Test Procedure",
+          "description": "Add 2 mL of carbohydrate test solution into tube. Add 2 drops of Molisch reagent (alpha-naphthol) and mix thoroughly. Incline tube at 45 degrees and carefully trickle 1 mL conc. H2SO4 down the tube side without shaking. Observe violet ring at junction."
+        },
+        {
+          "stepNumber": 2,
+          "title": "Iodine Test Procedure",
+          "description": "Add 2 mL of test solution (starch, glucose, water). Add 2 drops of iodine solution. Starch turns deep blue-black. Heat the tube: color disappears as helix expands. Cool under running water: deep blue color returns."
+        }
+      ],
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1579154204601-01588f351e67?w=800&auto=format&fit=crop&q=80",
+          "caption": "Positive Molisch reaction tube showing clear violet/purple condensation ring at the liquid-liquid interface between concentrated sulfuric acid and carbohydrate solution.",
+          "magnification": "Macroscopic Colorimetric Reaction",
+          "stainOrView": "Molisch Test Result"
+        }
+      ],
+      "interactiveImages": [],
+      "identificationPoints": [
+        "Positive Molisch: Violet / purple ring at acid-water interface confirms presence of carbohydrate.",
+        "Greenish ring with Molisch: Artifact caused by excess reagent, NOT a positive test.",
+        "Positive Iodine: Deep blue / blue-black with starch; reddish-brown with glycogen; negative (yellow) with mono/disaccharides."
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Mixing or shaking the tube after adding concentrated sulfuric acid in Molisch test.",
+          "correction": "Acid must be layered gently down the inside wall; shaking produces extreme heat, chars the sugar into brown-black sludge, and destroys the interface ring."
+        }
+      ],
+      "clinicalCorrelation": {
+        "condition": "Glycogen Storage Diseases & Starch Digestion",
+        "diagnosticPearls": "Iodine test principle is utilized clinically in Lugol staining of cervical epithelium (Schiller test) and assessing salivary/pancreatic amylase digestion kinetics.",
+        "clinicalImages": []
+      },
+      "safety": {
+        "hazardLevel": "high",
+        "mandatoryPPE": [
+          "Chemical Splash Goggles",
+          "Lab Coat",
+          "Acid-Resistant Nitrile Gloves"
+        ],
+        "handlingRules": [
+          "Conc. H2SO4 is highly corrosive; always add acid to water/solution along wall; dispense under fume hood."
+        ]
+      },
+      "references": [
+        {
+          "title": "Practical Clinical Biochemistry",
+          "authors": "Harold Varley",
+          "editionOrYear": "4th Ed.",
+          "pages": "pp. 60–75"
+        }
+      ]
+    },
+    {
+      "id": "prac_bio_03",
+      "courseId": "biochemistry",
+      "categoryId": "bio_carbohydrates",
+      "practicalNumber": 3,
+      "title": "Benedict's & Fehling's Reducing Sugar Assays",
+      "subTitle": "Reduction of Cupric Ions in Alkaline Medium & Semi-Quantitative Diagnostic Evaluation",
+      "estimatedTime": "45 mins",
+      "version": "2.1",
+      "lastUpdated": "Aug 22, 2026",
+      "status": "published",
+      "authorName": "Dr. Soraya Al-Khatib, PhD",
+      "authorRole": "Head of Clinical Biochemistry",
+      "approvedBy": "Prof. Eleanor Hayes, MD",
+      "approvalDate": "Aug 23, 2026",
+      "learningObjectives": [
+        "Differentiate reducing sugars (glucose, galactose, fructose, maltose, lactose) from non-reducing sugars (sucrose).",
+        "Explain the alkaline reduction of cupric hydroxide (Cu2+) to insoluble cuprous oxide (Cu2O) precipitate upon boiling.",
+        "Interpret the semi-quantitative color scale of Benedict reaction (Green -> Yellow -> Orange -> Brick Red).",
+        "Explain why sucrose requires preliminary acid hydrolysis to yield positive Benedict test."
+      ],
+      "beforeTheLab": {
+        "previousKnowledge": [
+          "Free hemiacetal/hemiketal carbonyl groups in mutarotating sugars."
+        ],
+        "recommendedReading": [
+          "Lippincott Illustrated Reviews: Biochemistry, Chapter 7."
+        ],
+        "preparationChecklist": [
+          {
+            "id": "chk_b3_1",
+            "text": "Set up boiling water bath and ensure boiling chips are present"
+          }
+        ],
+        "preLabSummary": "Benedict reagent contains copper sulfate, sodium citrate, and sodium carbonate. Sugars with free aldehyde or ketone groups enolize in alkaline medium and reduce Cu2+ ions to cuprous oxide precipitate."
+      },
+      "equipment": [
+        {
+          "id": "eq_bio_water_bath",
+          "name": "Thermostatic Boiling Water Bath",
+          "description": "Maintained at 100 degrees Celsius with stainless steel tube rack."
+        },
+        {
+          "id": "eq_bio_benedict_reagent",
+          "name": "Benedict's Qualitative Reagent",
+          "description": "Blue solution of CuSO4, Na2CO3, and sodium citrate."
+        }
+      ],
+      "procedure": [
+        {
+          "stepNumber": 1,
+          "title": "Benedict's Test Execution",
+          "description": "Pipette 5 mL of Benedict reagent into labelled test tubes. Add 8 drops (0.5 mL) of test solution (glucose, fructose, lactose, sucrose, water). Mix and place tubes in vigorously boiling water bath for 3 to 5 minutes."
+        },
+        {
+          "stepNumber": 2,
+          "title": "Colorimetric Interpretation",
+          "description": "Remove tubes and allow cooling. Observe precipitate color: Blue = Negative (0 g%); Green = Trace (+1, <0.5 g%); Yellow = Moderate (+2, 0.5-1 g%); Orange = High (+3, 1-2 g%); Brick Red = Very High (+4, >2 g%)."
+        }
+      ],
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=800&auto=format&fit=crop&q=80",
+          "caption": "Benedict test series showing color gradient: Blue (negative/sucrose) to Green, Orange, and Brick-Red (Cuprous oxide Cu2O precipitate).",
+          "magnification": "Macroscopic Colorimetric Reaction",
+          "stainOrView": "Benedict Reagent Reduction"
+        }
+      ],
+      "interactiveImages": [],
+      "identificationPoints": [
+        "Sucrose is negative because glycosidic bond involves both reducing anomeric carbons (C1 of glucose and C2 of fructose).",
+        "Fructose reduces Benedict reagent rapidly via enediol tautomerization in alkaline solution.",
+        "Brick-red precipitate confirms high concentration of reducing carbohydrates."
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Heating tubes over direct open Bunsen flame without water bath.",
+          "correction": "Direct flaming causes violent liquid bumping and spurting of hot alkaline copper reagent; always use boiling water bath."
+        }
+      ],
+      "clinicalCorrelation": {
+        "condition": "Glucosuria, Diabetes Mellitus & Galactosemia",
+        "diagnosticPearls": "Benedict test was historically the standard test for urine glucose. Unlike enzymatic dipsticks (glucose oxidase), Benedict detects all reducing sugars, critical for screening infants for inborn galactosemia.",
+        "clinicalImages": []
+      },
+      "safety": {
+        "hazardLevel": "medium",
+        "mandatoryPPE": [
+          "Lab Coat",
+          "Safety Glasses",
+          "Heat-Resistant Tube Clamps"
+        ],
+        "handlingRules": [
+          "Always use test tube holder when transferring tubes from boiling water bath."
+        ]
+      },
+      "references": [
+        {
+          "title": "Tietz Textbook of Clinical Chemistry",
+          "authors": "Burtis & Ashwood",
+          "editionOrYear": "6th Ed.",
+          "pages": "pp. 310–335"
+        }
+      ]
+    },
+    {
+      "id": "prac_bio_04",
+      "courseId": "biochemistry",
+      "categoryId": "bio_carbohydrates",
+      "practicalNumber": 4,
+      "title": "Barfoed's & Seliwanoff's Differential Sugar Tests",
+      "subTitle": "Distinguishing Monosaccharides from Disaccharides & Aldoses from Ketoses",
+      "estimatedTime": "45 mins",
+      "version": "1.5",
+      "lastUpdated": "Aug 23, 2026",
+      "status": "draft",
+      "authorName": "Dr. Soraya Al-Khatib, PhD",
+      "authorRole": "Head of Clinical Biochemistry",
+      "learningObjectives": [
+        "Understand Barfoed's test principle (copper reduction in weakly acidic medium) to differentiate monosaccharides from reducing disaccharides.",
+        "Conduct Seliwanoff's test to rapidly identify ketoses (fructose, sucrose) from aldoses.",
+        "Correlate boiling duration strictly (2-3 min for Barfoed; 1 min for Seliwanoff) to avoid false-positive hydrolysis."
+      ],
+      "beforeTheLab": {
+        "previousKnowledge": [
+          "Acid catalysis and rate of condensation of resorcinol with 5-hydroxymethylfurfural."
+        ],
+        "recommendedReading": [
+          "Textbook of Biochemistry for Medical Students (DM Vasudevan), Chapter 5."
+        ],
+        "preparationChecklist": [
+          {
+            "id": "chk_b4_1",
+            "text": "Set digital timer: Barfoed boiling must not exceed 3 minutes"
+          }
+        ],
+        "preLabSummary": "Barfoed reagent contains cupric acetate in dilute acetic acid. Because acid is a weak reducing environment, only monosaccharides can reduce Cu2+ within 2-3 minutes. Seliwanoff test uses resorcinol in dilute HCl."
+      },
+      "equipment": [
+        {
+          "id": "eq_bio_timer",
+          "name": "Digital Laboratory Precision Timer",
+          "description": "Used for strict incubation interval control in boiling water bath."
+        }
+      ],
+      "procedure": [
+        {
+          "stepNumber": 1,
+          "title": "Barfoed's Test",
+          "description": "Add 2 mL Barfoed reagent to tubes. Add 1 mL test solution. Place in boiling water bath for exactly 2.5 minutes. Monosaccharides yield red cuprous oxide at tube bottom."
+        },
+        {
+          "stepNumber": 2,
+          "title": "Seliwanoff's Test",
+          "description": "Add 3 mL Seliwanoff reagent. Add 1 mL test solution. Boil for 1 minute. Ketoses (fructose) produce cherry-red solution."
+        }
+      ],
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=800&auto=format&fit=crop&q=80",
+          "caption": "Seliwanoff test comparison: Cherry-red color development in ketose (fructose) versus pale faint aldose solution after 1 minute boiling.",
+          "magnification": "Macroscopic Colorimetric Reaction",
+          "stainOrView": "Seliwanoff Reaction Tube"
+        }
+      ],
+      "interactiveImages": [],
+      "identificationPoints": [
+        "Barfoed positive in <3 min: Monosaccharide (glucose, fructose, galactose).",
+        "Barfoed positive only after prolonged boiling (>10 min): Disaccharide underwent acid hydrolysis (false positive).",
+        "Seliwanoff positive in 1 min: Ketose (cherry-red color)."
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Boiling Seliwanoff tubes for more than 2 minutes.",
+          "correction": "Overboiling converts aldoses into ketose intermediates by acid enolization, creating false-positive red tint."
+        }
+      ],
+      "clinicalCorrelation": {
+        "condition": "Essential Fructosuria & Hereditary Fructose Intolerance",
+        "diagnosticPearls": "Patients with fructokinase deficiency excrete fructose in urine; positive Seliwanoff and Benedict tests alongside negative glucose oxidase dipstick establishes diagnosis.",
+        "clinicalImages": []
+      },
+      "safety": {
+        "hazardLevel": "medium",
+        "mandatoryPPE": [
+          "Safety Goggles",
+          "Lab Coat",
+          "Gloves"
+        ],
+        "handlingRules": [
+          "Seliwanoff reagent contains hydrochloric acid; handle with care."
+        ]
+      },
+      "references": [
+        {
+          "title": "Biochemistry for Medical Students",
+          "authors": "Vasudevan, Sreekumari, Vaidyanathan",
+          "editionOrYear": "9th Ed.",
+          "pages": "pp. 45–58"
+        }
+      ]
+    },
+    {
+      "id": "prac_bio_05",
+      "courseId": "biochemistry",
+      "categoryId": "bio_carbohydrates",
+      "practicalNumber": 5,
+      "title": "Protein Precipitation & Biuret Color Reaction",
+      "subTitle": "Peptide Bond Coordination with Cupric Ions & Isoelectric Denaturation",
+      "estimatedTime": "45 mins",
+      "version": "2.0",
+      "lastUpdated": "Aug 24, 2026",
+      "status": "published",
+      "authorName": "Dr. Soraya Al-Khatib, PhD",
+      "authorRole": "Head of Clinical Biochemistry",
+      "approvedBy": "Prof. Eleanor Hayes, MD",
+      "approvalDate": "Aug 25, 2026",
+      "learningObjectives": [
+        "Explain the chemical basis of Biuret reaction (coordination of Cu2+ with unshared electron pairs of 4 peptide bond nitrogens).",
+        "Differentiate true protein reactions from single amino acid reactions.",
+        "Demonstrate reversible vs irreversible protein precipitation by heavy metals, heat, and full saturation with ammonium sulfate.",
+        "Understand how heat and acid coagulation underlies diagnostic detection of albuminuria."
+      ],
+      "beforeTheLab": {
+        "previousKnowledge": [
+          "Peptide bond structure, primary through quaternary protein conformation."
+        ],
+        "recommendedReading": [
+          "Harper's Illustrated Biochemistry, Chapter 3: Peptides & Proteins."
+        ],
+        "preparationChecklist": [
+          {
+            "id": "chk_b5_1",
+            "text": "Prepare 1% egg albumin and 1% gelatin stock solutions"
+          }
+        ],
+        "preLabSummary": "The Biuret reaction requires at least two peptide bonds (-CONH-). In alkaline medium, copper(II) forms a violet coordination complex. Proteins precipitate when their hydration shell is stripped or net charge reaches zero (pI)."
+      },
+      "equipment": [
+        {
+          "id": "eq_bio_biuret_reagent",
+          "name": "Biuret Reagent (Alkaline Copper Tartrate)",
+          "description": "Blue solution containing copper sulfate, potassium sodium tartrate, and sodium hydroxide."
+        }
+      ],
+      "procedure": [
+        {
+          "stepNumber": 1,
+          "title": "Biuret Test Procedure",
+          "description": "Add 2 mL of protein solution (albumin/gelatin) into test tube. Add 2 mL of 10% NaOH. Add 2 to 3 drops of 0.5% CuSO4 solution and mix. Observe deep violet/purple color."
+        },
+        {
+          "stepNumber": 2,
+          "title": "Heat Coagulation Test",
+          "description": "Fill test tube 2/3 with albumin solution. Heat only the upper 1/3 over Bunsen flame until turbid. Add 2 drops of 1% acetic acid. If cloudiness persists or intensifies, albumin is confirmed."
+        }
+      ],
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800&auto=format&fit=crop&q=80",
+          "caption": "Positive Biuret reaction showing deep purple/violet coordination complex between peptide bonds and alkaline cupric ions.",
+          "magnification": "Macroscopic Colorimetric Reaction",
+          "stainOrView": "Biuret Reaction Tube"
+        }
+      ],
+      "interactiveImages": [],
+      "identificationPoints": [
+        "Positive Biuret: Violet / purple color indicates at least two peptide linkages.",
+        "Free amino acids do NOT give positive Biuret (except histidine under specialized conditions).",
+        "Precipitation by full saturation with (NH4)2SO4 precipitates albumin; half-saturation precipitates globulin."
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Adding excess copper sulfate in Biuret test.",
+          "correction": "Adding too much CuSO4 creates a blue precipitate of cupric hydroxide Cu(OH)2 which obscures the violet coordination color."
+        }
+      ],
+      "clinicalCorrelation": {
+        "condition": "Nephrotic Syndrome & Multiple Myeloma",
+        "diagnosticPearls": "Proteinuria in nephrotic syndrome (>3.5 g/24h) causes frothy urine and dependent edema. Bence Jones proteins in myeloma precipitate at 50-60°C and redissolve on boiling at 100°C.",
+        "clinicalImages": []
+      },
+      "safety": {
+        "hazardLevel": "medium",
+        "mandatoryPPE": [
+          "Lab Coat",
+          "Safety Glasses",
+          "Nitrile Gloves"
+        ],
+        "handlingRules": [
+          "Sodium hydroxide is caustic; wash skin immediately with water if exposed."
+        ]
+      },
+      "references": [
+        {
+          "title": "Clinical Biochemistry",
+          "authors": "Gaw, Murphy, Cowan",
+          "editionOrYear": "5th Ed.",
+          "pages": "pp. 52–68"
+        }
+      ]
+    },
+    {
+      "id": "prac_bio_06",
+      "courseId": "biochemistry",
+      "categoryId": "bio_carbohydrates",
+      "practicalNumber": 6,
+      "title": "Enzymatic Hydrolysis of Starch by Salivary Amylase",
+      "subTitle": "Enzyme Kinetics, Temperature/pH Optima, Achromic Point & Starch Digestion Stages",
+      "estimatedTime": "50 mins",
+      "version": "1.1",
+      "lastUpdated": "Aug 25, 2026",
+      "status": "draft",
+      "authorName": "Dr. Soraya Al-Khatib, PhD",
+      "authorRole": "Head of Clinical Biochemistry",
+      "learningObjectives": [
+        "Measure salivary alpha-amylase activity by tracking the disappearance of starch and emergence of reducing sugars.",
+        "Determine the achromic point (the exact time point where iodine produces zero color reaction).",
+        "Demonstrate the effect of pH (optimum 6.8) and temperature (optimum 37°C) on salivary amylase rate.",
+        "Demonstrate complete enzyme inactivation by boiling."
+      ],
+      "beforeTheLab": {
+        "previousKnowledge": [
+          "Enzyme-substrate complexes, Michaelis-Menten kinetics, activation energy."
+        ],
+        "recommendedReading": [
+          "Harper's Illustrated Biochemistry, Enzymes: Mechanism of Action."
+        ],
+        "preparationChecklist": [
+          {
+            "id": "chk_b6_1",
+            "text": "Set water baths at 0°C (ice bath), 37°C (body temp), and 100°C (boiling)"
+          }
+        ],
+        "preLabSummary": "Salivary alpha-amylase is an endoamylase that hydrolyzes internal alpha-1,4-glucosidic bonds of starch to yield soluble starch, dextrins (erythrodextrin, achroodextrin), maltose, and isomaltose."
+      },
+      "equipment": [
+        {
+          "id": "eq_bio_spotting_tile",
+          "name": "White Porcelain Cavity Spotting Tile",
+          "description": "Used with iodine drops to sample reaction mixtures every 60 seconds."
+        }
+      ],
+      "procedure": [
+        {
+          "stepNumber": 1,
+          "title": "Spotting Tile Preparation",
+          "description": "Place 1 drop of dilute iodine solution in each depression of the porcelain spot plate."
+        },
+        {
+          "stepNumber": 2,
+          "title": "Digestive Reaction & Interval Sampling",
+          "description": "Mix 5 mL of 1% starch with 1 mL of diluted saliva at 37°C. Immediately withdraw 1 drop and add to spot plate cavity (Time 0). Repeat every 60 seconds until color changes from Blue -> Purple -> Reddish-Brown -> Colorless (Achromic Point)."
+        }
+      ],
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=800&auto=format&fit=crop&q=80",
+          "caption": "Enzyme digestion series on white porcelain spotting plate demonstrating progressive starch hydrolysis from blue-black to achromic point.",
+          "magnification": "Macroscopic Enzymatic Assay",
+          "stainOrView": "Spotting Plate Progression"
+        }
+      ],
+      "interactiveImages": [],
+      "identificationPoints": [
+        "Amylodextrin produces violet/purple color with iodine.",
+        "Erythrodextrin produces reddish-brown color with iodine.",
+        "Achroodextrin and maltose produce no color with iodine (achromic point reached).",
+        "Final digested mixture gives strongly positive Benedict test."
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Failing to maintain 37°C temperature during digestion.",
+          "correction": "Amylase rate slows markedly at room temperature; keep test tube immersed in 37°C water bath throughout."
+        }
+      ],
+      "clinicalCorrelation": {
+        "condition": "Acute Pancreatitis & Serum Amylase Elevation",
+        "diagnosticPearls": "Pancreatic amylase is released into systemic circulation in acute pancreatitis, peaking within 12-24 hours. Urinary amylase remains elevated longer due to renal clearance.",
+        "clinicalImages": []
+      },
+      "safety": {
+        "hazardLevel": "low",
+        "mandatoryPPE": [
+          "Lab Coat",
+          "Gloves"
+        ],
+        "handlingRules": [
+          "Collect and dilute saliva using personal disposable tubes; dispose of biofluids in designated biohazard bins."
+        ]
+      },
+      "references": [
+        {
+          "title": "Principles of Biochemistry",
+          "authors": "Lehninger, Nelson, Cox",
+          "editionOrYear": "8th Ed.",
+          "pages": "pp. 210–240"
         }
       ]
     }

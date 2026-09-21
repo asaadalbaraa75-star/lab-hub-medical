@@ -51,7 +51,9 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
 
   // Role Checks
   const isOwner = currentUser.role === 'owner' || currentUser.role === 'admin';
-  const isAssistant = currentUser.role === 'content_exams' || currentUser.role === 'exams_only' || currentUser.id.startsWith('usr_assistant');
+  const isEditor = currentUser.role === 'content_exams' || currentUser.role === 'editor';
+  const isExamEditor = currentUser.role === 'exams_only' || currentUser.role === 'exam_editor';
+  const isAssistant = isEditor || isExamEditor || currentUser.id.startsWith('usr_assistant') || currentUser.id.startsWith('AST-');
 
   // Filters
   const [searchQuery, setSearchQuery] = useState('');
@@ -74,6 +76,9 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
   // Form State
   const [formLabId, setFormLabId] = useState<LabSubjectId>('anatomy');
   const [formTopic, setFormTopic] = useState('Bones');
+  const [formUnit, setFormUnit] = useState('');
+  const [formLessonTitle, setFormLessonTitle] = useState('');
+  const [formExamTitle, setFormExamTitle] = useState('');
   const [formDifficulty, setFormDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium');
   const [formQuestionType, setFormQuestionType] = useState<ExamType>('multiple_choice');
   const [formQuestionText, setFormQuestionText] = useState('');
@@ -149,6 +154,9 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
         item.correctAnswer?.toLowerCase().includes(q) ||
         item.specimenCategory?.toLowerCase().includes(q) ||
         item.topic?.toLowerCase().includes(q) ||
+        item.unit?.toLowerCase().includes(q) ||
+        item.lessonTitle?.toLowerCase().includes(q) ||
+        item.examTitle?.toLowerCase().includes(q) ||
         item.authorName?.toLowerCase().includes(q)
       );
     }
@@ -185,6 +193,9 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
     setEditingQuestion(null);
     setFormLabId('anatomy');
     setFormTopic('Bones');
+    setFormUnit('');
+    setFormLessonTitle('');
+    setFormExamTitle('');
     setFormDifficulty('medium');
     setFormQuestionType('multiple_choice');
     setFormQuestionText('');
@@ -210,16 +221,19 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
   };
 
   const handleOpenEditModal = (q: ExamQuestion) => {
-    // Check permission to edit:
-    // Owner can edit any question. Assistant can only edit their own questions or drafts.
-    if (!isOwner && q.authorId && q.authorId !== currentUser.id) {
-      alert('يمكنك فقط تعديل الأسئلة التي قمت بإضافتها بنفسك.');
+    // Authorized staff (Owner, Admin, Editor, Exam Editor) can edit shared question bank items
+    const canEdit = isOwner || isEditor || isExamEditor || (q.authorId === currentUser.id);
+    if (!canEdit) {
+      alert('ليس لديك صلاحية لتعديل هذا السؤال.');
       return;
     }
 
     setEditingQuestion(q);
     setFormLabId(q.labId);
     setFormTopic(q.topic || 'General');
+    setFormUnit(q.unit || '');
+    setFormLessonTitle(q.lessonTitle || '');
+    setFormExamTitle(q.examTitle || '');
     setFormDifficulty(q.difficulty || 'medium');
     setFormQuestionType(q.questionType || 'multiple_choice');
     setFormQuestionText(q.questionText || '');
@@ -286,17 +300,18 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
       : undefined;
 
     const existingStatus = editingQuestion?.status;
-    const resolvedStatus: QuestionStatus = isOwner
+    const resolvedStatus: QuestionStatus = (isOwner || isEditor || isExamEditor)
       ? targetStatus
-      : (targetStatus === 'published' || targetStatus === 'approved')
-      ? 'pending_review'
-      : targetStatus;
+      : 'pending_review';
 
     const questionData: ExamQuestion = {
       id: editingQuestion?.id || `q_bank_${Date.now()}`,
       labId: formLabId,
       type: formQuestionType,
       topic: formTopic.trim() || 'General',
+      unit: formUnit.trim() || undefined,
+      lessonTitle: formLessonTitle.trim() || undefined,
+      examTitle: formExamTitle.trim() || undefined,
       difficulty: formDifficulty,
       questionType: formQuestionType,
       questionText: formQuestionText.trim(),
@@ -331,9 +346,9 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
   };
 
   const handleDeleteQuestion = async (id: string) => {
-    const q = questions.find(item => item.id === id);
-    if (!isOwner && q?.authorId && q.authorId !== currentUser.id) {
-      alert('فقط مالكة المنصة أو مؤلف السؤال يمكنه الحذف.');
+    const canDelete = isOwner || isEditor || isExamEditor;
+    if (!canDelete) {
+      alert('ليس لديك صلاحية لحذف هذا السؤال.');
       return;
     }
 
@@ -681,6 +696,21 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
                           {q.topic}
                         </span>
                       )}
+                      {q.unit && (
+                        <span className="font-semibold text-[11px] px-2 py-0.5 rounded-md bg-purple-50 text-purple-700 border border-purple-200">
+                          الوحدة: {q.unit}
+                        </span>
+                      )}
+                      {q.lessonTitle && (
+                        <span className="text-[11px] px-2 py-0.5 rounded-md bg-sky-50 text-sky-700 border border-sky-200">
+                          الدرس: {q.lessonTitle}
+                        </span>
+                      )}
+                      {q.examTitle && (
+                        <span className="text-[11px] px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200">
+                          الامتحان: {q.examTitle}
+                        </span>
+                      )}
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
                         q.difficulty === 'easy' ? 'bg-emerald-50 text-emerald-700' :
                         q.difficulty === 'hard' ? 'bg-rose-50 text-rose-700' : 'bg-amber-50 text-amber-700'
@@ -857,6 +887,40 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
                     <option value="medium">متوسط (Medium)</option>
                     <option value="hard">متقدم (Hard)</option>
                   </select>
+                </div>
+              </div>
+
+              {/* Hierarchy: Unit, Lesson, Exam */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3 bg-indigo-50/50 rounded-2xl border border-indigo-100">
+                <div>
+                  <label className="block text-indigo-900 mb-1 font-bold">الوحدة (Unit)</label>
+                  <input
+                    type="text"
+                    value={formUnit}
+                    onChange={e => setFormUnit(e.target.value)}
+                    placeholder="مثال: Upper Limb, Thorax..."
+                    className="w-full py-2 px-3 rounded-xl border border-indigo-200 bg-white text-slate-800"
+                  />
+                </div>
+                <div>
+                  <label className="block text-indigo-900 mb-1 font-bold">الدرس العملي المرتبط (Lesson)</label>
+                  <input
+                    type="text"
+                    value={formLessonTitle}
+                    onChange={e => setFormLessonTitle(e.target.value)}
+                    placeholder="مثال: Practical 1 - Bones of Arm"
+                    className="w-full py-2 px-3 rounded-xl border border-indigo-200 bg-white text-slate-800"
+                  />
+                </div>
+                <div>
+                  <label className="block text-indigo-900 mb-1 font-bold">الامتحان المرتبط (Exam)</label>
+                  <input
+                    type="text"
+                    value={formExamTitle}
+                    onChange={e => setFormExamTitle(e.target.value)}
+                    placeholder="مثال: Midterm Spotter Exam"
+                    className="w-full py-2 px-3 rounded-xl border border-indigo-200 bg-white text-slate-800"
+                  />
                 </div>
               </div>
 

@@ -1,10 +1,12 @@
 export type UserRole = 
   | 'owner'            // Platform Owner (سكينة أسعد) - Full system control
-  | 'content_exams'    // Assistant 1 (Content + Exams) - Lessons, images, questions, exams
+  | 'admin'            // Admin / Manager - Full administrative access
+  | 'content_exams'    // Assistant 1 / Editor (Content + Exams) - Lessons, images, questions, exams
+  | 'editor'           // Editor role alias
   | 'exams_only'       // Assistant 2 & 3 (Exams Only) - Questions, exams, exam images
+  | 'exam_editor'      // Exam Editor role alias
   | 'student'          // Open public visitor / student (no login required)
-  | 'instructor'       // Legacy faculty tier
-  | 'admin';           // Legacy admin tier alias for owner
+  | 'instructor';      // Faculty tier
 
 export type LabSubjectId = 'anatomy' | 'histology' | 'biochemistry';
 
@@ -234,7 +236,7 @@ export interface InteractiveImage {
 export interface EquipmentItem {
   id: string;
   name: string;
-  image: string;
+  image?: string;
   description: string;
   safetyNotes?: string;
 }
@@ -251,21 +253,25 @@ export interface ProcedureStep {
 export interface CommonMistake {
   mistake: string;
   correction: string;
-  whyItMatters: string;
+  whyItMatters?: string;
 }
 
 export interface ClinicalCorrelation {
   condition: string;
-  pathophysiology: string;
-  clinicalPresentation: string;
+  pathophysiology?: string;
+  clinicalPresentation?: string;
   diagnosticPearls: string;
+  clinicalImages?: string[];
 }
 
 export interface SafetyProtocol {
-  biosafetyLevel: string;
-  hazards: string[];
-  ppeRequired: string[];
-  emergencyProtocol: string;
+  biosafetyLevel?: string;
+  hazards?: string[];
+  ppeRequired?: string[];
+  emergencyProtocol?: string;
+  hazardLevel?: string;
+  mandatoryPPE?: string[];
+  handlingRules?: string[];
 }
 
 export interface AcademicReference {
@@ -524,6 +530,11 @@ export interface ExamQuestion {
   explanation: string;
   clinicalNote?: string;
   topic?: string; // Bones, Muscles, Joints, Movements, Anatomical Terms, Skeletal System, Organ Systems
+  unit?: string; // e.g. "Upper Limb", "Lower Limb", "Thorax", "General Histology"
+  lessonId?: string; // linked practical lesson ID
+  lessonTitle?: string; // linked practical lesson title
+  examId?: string; // linked exam ID
+  examTitle?: string; // linked exam title
   difficulty?: 'easy' | 'medium' | 'hard';
   language?: 'en' | 'ar' | 'bilingual';
   timeSeconds: number; // e.g. 30, 45, 60

@@ -153,7 +153,7 @@ class StorageService {
 
   savePractical(practical: Practical, caller?: User): boolean {
     const user = this.getEffectiveUser(caller);
-    if (!user || !securityService.hasPermission(user.role, 'edit_questions')) {
+    if (!user || !securityService.hasPermission(user.role, 'edit_content')) {
       console.warn(`[SECURITY] Access denied: User ${user?.name || 'Visitor'} (${user?.role || 'none'}) cannot edit practical content.`);
       return false;
     }
@@ -166,6 +166,12 @@ class StorageService {
       list.push(practical);
     }
     this.set(STORAGE_KEYS.PRACTICALS, list);
+    // Sync to shared backend database
+    fetch('/api/practicals', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(practical)
+    }).catch(e => console.warn('Could not sync practical to server:', e));
     return true;
   }
 
@@ -175,13 +181,15 @@ class StorageService {
 
   deletePractical(id: string, caller?: User): boolean {
     const user = this.getEffectiveUser(caller);
-    if (!user || (user.role !== 'admin' && user.role !== 'owner')) {
+    if (!user || (!securityService.isAdmin(user) && !securityService.hasPermission(user.role, 'edit_content'))) {
       console.warn(`[SECURITY] Access denied: User ${user?.name || 'Visitor'} (${user?.role || 'none'}) cannot delete practical content.`);
       return false;
     }
     const list = this.getPracticals();
     const filtered = list.filter(p => p.id !== id);
     this.set(STORAGE_KEYS.PRACTICALS, filtered);
+    // Sync deletion to shared backend database
+    fetch(`/api/practicals/${id}`, { method: 'DELETE' }).catch(e => console.warn('Could not sync practical deletion to server:', e));
     return true;
   }
 
@@ -542,11 +550,18 @@ class StorageService {
   // --- Sync with Server DB ---
   async syncDataWithServer(): Promise<void> {
     try {
-      const [examsRes, questionsRes, notifsRes] = await Promise.all([
+      const [practicalsRes, examsRes, questionsRes, notifsRes] = await Promise.all([
+        fetch('/api/practicals').catch(() => null),
         fetch('/api/exams').catch(() => null),
         fetch('/api/questions').catch(() => null),
         fetch('/api/notifications').catch(() => null)
       ]);
+      if (practicalsRes && practicalsRes.ok) {
+        const practicals = await practicalsRes.json();
+        if (Array.isArray(practicals) && practicals.length > 0) {
+          this.set(STORAGE_KEYS.PRACTICALS, practicals);
+        }
+      }
       if (examsRes && examsRes.ok) {
         const exams = await examsRes.json();
         if (Array.isArray(exams) && exams.length > 0) {

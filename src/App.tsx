@@ -96,20 +96,46 @@ export default function App() {
   const [announcements, setAnnouncements] = useState(() => storageService.getAnnouncements());
   const [notifications, setNotifications] = useState(() => storageService.getNotifications());
 
-  // Resolve session on initial load
+  // Resolve session and synchronize with shared production database
   useEffect(() => {
+    let isMounted = true;
+
+    const performSync = async () => {
+      try {
+        await storageService.syncDataWithServer();
+        if (isMounted) {
+          setPracticals(storageService.getPracticals());
+          setNotifications(storageService.getNotifications());
+        }
+      } catch (err) {
+        console.warn('Sync attempt failed:', err);
+      }
+    };
+
     try {
       const user = authService.getCurrentUser();
       setCurrentUser(user);
       if (user?.id) {
         setProgress(storageService.getStudentProgress(user.id));
       }
+      performSync();
     } catch (e) {
       console.warn('Session verification fallback:', e);
       setCurrentUser(null);
     } finally {
       setIsAuthLoading(false);
     }
+
+    // Periodic background sync for live shared updates across admin sessions
+    const interval = setInterval(performSync, 20000);
+    const handleFocus = () => { performSync(); };
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+      window.removeEventListener('focus', handleFocus);
+    };
   }, []);
 
   // Parse initial tab from URL hash or path
