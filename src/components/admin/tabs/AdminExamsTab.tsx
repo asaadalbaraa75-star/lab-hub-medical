@@ -202,8 +202,69 @@ export const AdminExamsTab: React.FC<Props> = ({ currentUser, onPreviewExam }) =
   };
 
   const handleSaveExam = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaveError(null);
+  e.preventDefault();
+  setSaveError(null);
+
+  // 1. التحقق من مدخلات النموذج
+  if (!formTitle.trim()) {
+    setSaveError('يرجى إدخال عنوان الاختبار.');
+    return;
+  }
+
+  if (formSelectedQuestionIds.length === 0) {
+    setSaveError('يرجى تحديد سؤال واحد على الأقل للاختبار.');
+    return;
+  }
+
+  setIsSaving(true);
+
+  try {
+    // 2. تجميع الأسئلة المختارة للاختبار
+    const selectedQuestions = allQuestions.filter(q => 
+      formSelectedQuestionIds.includes(q.id)
+    );
+
+    // 3. تجهيز بيانات كائن الاختبار
+    const examData: MedicalExam = {
+      id: editingExam?.id || `exam_${formLabId}_${Date.now()}`,
+      title: formTitle.trim(),
+      titleArabic: formTitleArabic.trim() || formTitle.trim(),
+      description: formDescription.trim() || '',
+      labId: formLabId,
+      examType: editingExam?.examType || 'identification',
+      timeLimitMinutes: Number(formTimeLimitMinutes) || 15,
+      passingScorePercent: Number(formPassingScorePercent) || 70,
+      totalMarks: selectedQuestions.reduce((acc, q) => acc + (q.points || 1), 0),
+      questions: selectedQuestions,
+      updatedAt: new Date().toISOString()
+    };
+
+    let savedExam: MedicalExam;
+
+    // 4. الحفظ عبر السيرفر وقاعدة البيانات (بدلاً من التخزين المحلي)
+    if (editingExam) {
+      // في حالة تعديل اختبار حالي
+      savedExam = await apiService.updateExam(editingExam.id, examData);
+      setExams(prev => prev.map(item => item.id === editingExam.id ? savedExam : item));
+    } else {
+      // في حالة إنشاء اختبار جديد
+      savedExam = await apiService.saveExam(examData);
+      setExams(prev => [savedExam, ...prev]);
+    }
+
+    // 5. إغلاق النافذة وإعادة ضبط الحقول عند النجاح
+    setIsEditorOpen(false);
+    setEditingExam(null);
+  } catch (err: any) {
+    console.error('فشل التزامن مع قاعدة البيانات:', err);
+    setSaveError(
+      err?.message || 'فشل حفظ الاختبار على السيرفر. تأكدي من الاتصال بالشبكة وقواعد Firebase/Supabase.'
+    );
+  } finally {
+    setIsSaving(false);
+  }
+};
+
 
     if (!formTitle.trim()) {
       setSaveError('يرجى إدخال عنوان الاختبار.');
