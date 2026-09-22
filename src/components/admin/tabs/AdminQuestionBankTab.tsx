@@ -97,6 +97,8 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
   const [formMarkerY, setFormMarkerY] = useState<number>(50);
   const [formMarkerLabel, setFormMarkerLabel] = useState('①');
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -104,7 +106,7 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
     setIsLoading(true);
     try {
       const serverData = await apiService.fetchQuestions();
-      if (serverData && serverData.length > 0) {
+      if (Array.isArray(serverData) && serverData.length > 0) {
         setQuestions(serverData);
       } else {
         const localData = storageService.getExamQuestions();
@@ -120,6 +122,34 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
 
   useEffect(() => {
     loadQuestions();
+
+    const handleSync = (e: any) => {
+      if (!e.detail?.type || e.detail.type === 'questions' || e.detail.type === 'all') {
+        loadQuestions();
+      }
+    };
+    window.addEventListener('labhub_production_sync', handleSync);
+    window.addEventListener('focus', loadQuestions);
+
+    let bc: BroadcastChannel | null = null;
+    try {
+      if ('BroadcastChannel' in window) {
+        bc = new BroadcastChannel('labhub_sync_channel');
+        bc.onmessage = (msg) => {
+          if (!msg.data?.type || msg.data.type === 'questions' || msg.data.type === 'all') {
+            loadQuestions();
+          }
+        };
+      }
+    } catch {}
+
+    return () => {
+      window.removeEventListener('labhub_production_sync', handleSync);
+      window.removeEventListener('focus', loadQuestions);
+      if (bc) {
+        try { bc.close(); } catch {}
+      }
+    };
   }, []);
 
   // Filter logic
@@ -285,64 +315,75 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
 
   // Save Question Handler with Target Status
   const handleSaveQuestionWithStatus = async (targetStatus: QuestionStatus) => {
+    setSaveError(null);
+
     if (!formQuestionText.trim() || !formCorrectAnswer.trim() || !formImageUrl.trim()) {
-      alert('يرجى كتابة نص السؤال، الإجابة الصحيحة، وصورة العينة.');
+      setSaveError('يرجى كتابة نص السؤال، الإجابة الصحيحة، وصورة العينة.');
       return;
     }
 
-    const cleanOptions = formOptions.map(o => o.trim()).filter(Boolean);
-    if (formQuestionType === 'multiple_choice' && !cleanOptions.includes(formCorrectAnswer.trim())) {
-      cleanOptions.unshift(formCorrectAnswer.trim());
+    setIsSaving(true);
+    try {
+      const cleanOptions = formOptions.map(o => o.trim()).filter(Boolean);
+      if (formQuestionType === 'multiple_choice' && !cleanOptions.includes(formCorrectAnswer.trim())) {
+        cleanOptions.unshift(formCorrectAnswer.trim());
+      }
+
+      const altAnswersList = formAlternativeAnswers
+        ? formAlternativeAnswers.split(',').map(s => s.trim()).filter(Boolean)
+        : undefined;
+
+      const resolvedStatus: QuestionStatus = (isOwner || isEditor || isExamEditor)
+        ? targetStatus
+        : 'pending_review';
+
+      const questionData: ExamQuestion = {
+        id: editingQuestion?.id || `q_bank_${Date.now()}`,
+        labId: formLabId,
+        type: formQuestionType,
+        topic: formTopic.trim() || 'General',
+        unit: formUnit.trim() || undefined,
+        lessonTitle: formLessonTitle.trim() || undefined,
+        examTitle: formExamTitle.trim() || undefined,
+        difficulty: formDifficulty,
+        questionType: formQuestionType,
+        questionText: formQuestionText.trim(),
+        questionTextArabic: formQuestionTextArabic.trim() || undefined,
+        imageUrl: formImageUrl.trim(),
+        specimenCategory: formSpecimenCategory.trim() || undefined,
+        magnificationOrView: formMagnification.trim() || undefined,
+        options: cleanOptions.length > 0 ? cleanOptions : [formCorrectAnswer.trim()],
+        correctAnswer: formCorrectAnswer.trim(),
+        alternativeAnswers: altAnswersList,
+        explanation: formExplanation.trim() || undefined,
+        clinicalNote: formClinicalNote.trim() || undefined,
+        timeSeconds: Number(formTimeSeconds) || 30,
+        marks: Number(formMarks) || 1,
+        markerPosition: { x: Number(formMarkerX), y: Number(formMarkerY) },
+        markerLabel: formMarkerLabel.trim() || '①',
+        status: resolvedStatus,
+        authorId: editingQuestion?.authorId || currentUser.id,
+        authorName: editingQuestion?.authorName || currentUser.name,
+        authorRole: editingQuestion?.authorRole || currentUser.role,
+        submittedAt: editingQuestion?.submittedAt || new Date().toISOString()
+      };
+
+      // 1. Direct write to shared production database and await confirmation
+      const saveRes = await storageService.saveExamQuestion(questionData, currentUser);
+      if (!saveRes.success) {
+        setSaveError(saveRes.error || 'فشل حفظ السؤال في قاعدة البيانات المركزية. يرجى إعادة المحاولة.');
+        return;
+      }
+
+      // 2. Production save confirmed
+      setIsEditorOpen(false);
+      resetForm();
+      await loadQuestions();
+    } catch (e: any) {
+      setSaveError(e.message || 'حدث خطأ أثناء حفظ السؤال في الخادم.');
+    } finally {
+      setIsSaving(false);
     }
-
-    const altAnswersList = formAlternativeAnswers
-      ? formAlternativeAnswers.split(',').map(s => s.trim()).filter(Boolean)
-      : undefined;
-
-    const existingStatus = editingQuestion?.status;
-    const resolvedStatus: QuestionStatus = (isOwner || isEditor || isExamEditor)
-      ? targetStatus
-      : 'pending_review';
-
-    const questionData: ExamQuestion = {
-      id: editingQuestion?.id || `q_bank_${Date.now()}`,
-      labId: formLabId,
-      type: formQuestionType,
-      topic: formTopic.trim() || 'General',
-      unit: formUnit.trim() || undefined,
-      lessonTitle: formLessonTitle.trim() || undefined,
-      examTitle: formExamTitle.trim() || undefined,
-      difficulty: formDifficulty,
-      questionType: formQuestionType,
-      questionText: formQuestionText.trim(),
-      questionTextArabic: formQuestionTextArabic.trim() || undefined,
-      imageUrl: formImageUrl.trim(),
-      specimenCategory: formSpecimenCategory.trim() || undefined,
-      magnificationOrView: formMagnification.trim() || undefined,
-      options: cleanOptions.length > 0 ? cleanOptions : [formCorrectAnswer.trim()],
-      correctAnswer: formCorrectAnswer.trim(),
-      alternativeAnswers: altAnswersList,
-      explanation: formExplanation.trim() || undefined,
-      clinicalNote: formClinicalNote.trim() || undefined,
-      timeSeconds: Number(formTimeSeconds) || 30,
-      marks: Number(formMarks) || 1,
-      markerPosition: { x: Number(formMarkerX), y: Number(formMarkerY) },
-      markerLabel: formMarkerLabel.trim() || '①',
-      status: resolvedStatus,
-      authorId: editingQuestion?.authorId || currentUser.id,
-      authorName: editingQuestion?.authorName || currentUser.name,
-      authorRole: editingQuestion?.authorRole || currentUser.role,
-      submittedAt: editingQuestion?.submittedAt || new Date().toISOString()
-    };
-
-    // Save locally
-    storageService.saveExamQuestion(questionData, currentUser);
-    // Save to server
-    await apiService.saveQuestion(questionData);
-
-    setIsEditorOpen(false);
-    resetForm();
-    await loadQuestions();
   };
 
   const handleDeleteQuestion = async (id: string) => {
@@ -352,10 +393,17 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
       return;
     }
 
-    storageService.deleteExamQuestion(id, currentUser);
-    await apiService.deleteQuestion(id);
-    setDeleteConfirmId(null);
-    await loadQuestions();
+    try {
+      const res = await storageService.deleteExamQuestion(id, currentUser);
+      if (!res.success) {
+        alert(res.error || 'فشل حذف السؤال من الخادم.');
+        return;
+      }
+      setDeleteConfirmId(null);
+      await loadQuestions();
+    } catch (e: any) {
+      alert(e.message || 'حدث خطأ أثناء حذف السؤال.');
+    }
   };
 
   const handleDuplicateQuestion = async (id: string) => {
@@ -1147,34 +1195,45 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
                 />
               </div>
 
+              {/* Save Error Feedback Alert */}
+              {saveError && (
+                <div className="p-3.5 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2">
+                  <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0" />
+                  <span className="flex-1">{saveError}</span>
+                </div>
+              )}
+
               {/* Role-Specific Submission Actions */}
               <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-slate-100">
                 <button
                   type="button"
+                  disabled={isSaving}
                   onClick={() => setIsEditorOpen(false)}
-                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-slate-200 text-slate-700 font-bold hover:bg-slate-50 transition-colors"
+                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-slate-200 text-slate-700 font-bold hover:bg-slate-50 transition-colors disabled:opacity-50"
                 >
                   إلغاء
                 </button>
 
-                <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
                   {/* Assistant Actions */}
                   {isAssistant && !isOwner && (
                     <>
                       <button
                         type="button"
+                        disabled={isSaving}
                         onClick={() => handleSaveQuestionWithStatus('draft')}
-                        className="px-4 py-2.5 rounded-xl border border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold transition flex items-center gap-1.5"
+                        className="px-4 py-2.5 rounded-xl border border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold transition flex items-center gap-1.5 disabled:opacity-60 disabled:cursor-not-allowed"
                       >
-                        <FileText className="w-4 h-4" />
+                        {isSaving ? <RefreshCw className="w-4 h-4 animate-spin text-slate-600" /> : <FileText className="w-4 h-4" />}
                         <span>حفظ كمسودة (Save Draft)</span>
                       </button>
                       <button
                         type="button"
+                        disabled={isSaving}
                         onClick={() => handleSaveQuestionWithStatus('pending_review')}
-                        className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-black shadow-md transition flex items-center gap-1.5"
+                        className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-black shadow-md transition flex items-center gap-1.5 disabled:opacity-60 disabled:cursor-not-allowed"
                       >
-                        <Send className="w-4 h-4" />
+                        {isSaving ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                         <span>إرسال للمراجعة والاعتماد (Submit)</span>
                       </button>
                     </>
@@ -1185,28 +1244,45 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
                     <>
                       <button
                         type="button"
+                        disabled={isSaving}
                         onClick={() => handleSaveQuestionWithStatus('draft')}
-                        className="px-3.5 py-2.5 rounded-xl border border-slate-300 text-slate-700 font-bold hover:bg-slate-50 transition"
+                        className="px-3.5 py-2.5 rounded-xl border border-slate-300 text-slate-700 font-bold hover:bg-slate-50 transition disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-1.5"
                       >
-                        حفظ كمسودة
+                        {isSaving && <RefreshCw className="w-4 h-4 animate-spin text-slate-600" />}
+                        <span>حفظ كمسودة</span>
                       </button>
                       <button
                         type="button"
+                        disabled={isSaving}
                         onClick={() => handleSaveQuestionWithStatus('approved')}
-                        className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition flex items-center gap-1.5 shadow-xs"
+                        className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition flex items-center gap-1.5 shadow-xs disabled:opacity-60 disabled:cursor-not-allowed"
                       >
-                        <Check className="w-4 h-4" />
+                        {isSaving ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
                         <span>حفظ كمعتمد</span>
                       </button>
                       <button
                         type="button"
+                        disabled={isSaving}
                         onClick={() => handleSaveQuestionWithStatus('published')}
-                        className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-black shadow-md transition flex items-center gap-1.5"
+                        className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-black shadow-md transition flex items-center gap-1.5 disabled:opacity-60 disabled:cursor-not-allowed"
                       >
-                        <Sparkles className="w-4 h-4" />
+                        {isSaving ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
                         <span>حفظ ونشر في الاختبارات</span>
                       </button>
                     </>
+                  )}
+
+                  {/* Fallback for other authorized roles */}
+                  {!isOwner && !isAssistant && (
+                    <button
+                      type="button"
+                      disabled={isSaving}
+                      onClick={() => handleSaveQuestionWithStatus('approved')}
+                      className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-black shadow-md transition flex items-center gap-1.5 disabled:opacity-60 disabled:cursor-not-allowed"
+                    >
+                      {isSaving ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                      <span>حفظ السؤال في بنك الأسئلة</span>
+                    </button>
                   )}
                 </div>
               </div>

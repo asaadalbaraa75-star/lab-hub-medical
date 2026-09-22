@@ -124,15 +124,47 @@ export default function App() {
       setIsAuthLoading(false);
     }
 
-    // Periodic background sync for live shared updates across admin sessions
-    const interval = setInterval(performSync, 20000);
+    // High-responsiveness sync for live cross-device and multi-account updates
+    const interval = setInterval(performSync, 10000);
     const handleFocus = () => { performSync(); };
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        performSync();
+      }
+    };
+    const handleProductionSync = () => {
+      if (isMounted) {
+        setPracticals(storageService.getPracticals());
+        setNotifications(storageService.getNotifications());
+      }
+    };
+
     window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('labhub_production_sync', handleProductionSync);
+
+    let bc: BroadcastChannel | null = null;
+    try {
+      if ('BroadcastChannel' in window) {
+        bc = new BroadcastChannel('labhub_sync_channel');
+        bc.onmessage = () => {
+          if (isMounted) {
+            setPracticals(storageService.getPracticals());
+            setNotifications(storageService.getNotifications());
+          }
+        };
+      }
+    } catch {}
 
     return () => {
       isMounted = false;
       clearInterval(interval);
       window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('labhub_production_sync', handleProductionSync);
+      if (bc) {
+        try { bc.close(); } catch {}
+      }
     };
   }, []);
 

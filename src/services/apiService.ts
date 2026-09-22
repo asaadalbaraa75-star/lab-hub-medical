@@ -45,6 +45,23 @@ export async function askLabHubTutor(
   }
 }
 
+export interface ApiSaveResult<T> {
+  success: boolean;
+  data?: T;
+  error?: string;
+}
+
+// --- Global Sync API ---
+export async function apiFetchAllSync(): Promise<any | null> {
+  try {
+    const res = await fetch('/api/sync/all');
+    if (res.ok) return await res.json();
+  } catch (e) {
+    console.warn('Sync all API failed:', e);
+  }
+  return null;
+}
+
 // --- Exams API ---
 export async function apiFetchExams(): Promise<MedicalExam[]> {
   try {
@@ -56,27 +73,35 @@ export async function apiFetchExams(): Promise<MedicalExam[]> {
   return [];
 }
 
-export async function apiSaveExam(exam: MedicalExam): Promise<boolean> {
+export async function apiSaveExam(exam: MedicalExam): Promise<ApiSaveResult<MedicalExam>> {
   try {
     const res = await fetch('/api/exams', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(exam)
     });
-    return res.ok;
-  } catch (e) {
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      return { success: false, error: json.error || `Server returned error ${res.status}` };
+    }
+    return { success: true, data: json.exam || exam };
+  } catch (e: any) {
     console.error('Failed to save exam to API:', e);
-    return false;
+    return { success: false, error: e.message || 'فشل الاتصال بالخادم لحفظ الاختبار في قاعدة البيانات.' };
   }
 }
 
-export async function apiDeleteExam(examId: string): Promise<boolean> {
+export async function apiDeleteExam(examId: string): Promise<{ success: boolean; error?: string }> {
   try {
     const res = await fetch(`/api/exams/${examId}`, { method: 'DELETE' });
-    return res.ok;
-  } catch (e) {
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      return { success: false, error: json.error || `Server error ${res.status}` };
+    }
+    return { success: true };
+  } catch (e: any) {
     console.error('Failed to delete exam via API:', e);
-    return false;
+    return { success: false, error: e.message || 'فشل الاتصال بالخادم لحذف الاختبار.' };
   }
 }
 
@@ -91,27 +116,35 @@ export async function apiFetchQuestions(): Promise<ExamQuestion[]> {
   return [];
 }
 
-export async function apiSaveQuestion(question: ExamQuestion): Promise<boolean> {
+export async function apiSaveQuestion(question: ExamQuestion): Promise<ApiSaveResult<ExamQuestion>> {
   try {
     const res = await fetch('/api/questions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(question)
     });
-    return res.ok;
-  } catch (e) {
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      return { success: false, error: json.error || `Server error ${res.status}` };
+    }
+    return { success: true, data: json.question || question };
+  } catch (e: any) {
     console.error('Failed to save question to API:', e);
-    return false;
+    return { success: false, error: e.message || 'فشل الاتصال بالخادم لحفظ السؤال في قاعدة البيانات.' };
   }
 }
 
-export async function apiDeleteQuestion(questionId: string): Promise<boolean> {
+export async function apiDeleteQuestion(questionId: string): Promise<{ success: boolean; error?: string }> {
   try {
     const res = await fetch(`/api/questions/${questionId}`, { method: 'DELETE' });
-    return res.ok;
-  } catch (e) {
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      return { success: false, error: json.error || `Server error ${res.status}` };
+    }
+    return { success: true };
+  } catch (e: any) {
     console.error('Failed to delete question via API:', e);
-    return false;
+    return { success: false, error: e.message || 'فشل الاتصال بالخادم لحذف السؤال.' };
   }
 }
 
@@ -435,6 +468,7 @@ export async function apiAssignImage(payload: {
 }
 
 export const apiService = {
+  fetchAllSync: apiFetchAllSync,
   askAiTutor: askLabHubTutor,
   askLabHubTutor,
   fetchPracticals: apiFetchPracticals,

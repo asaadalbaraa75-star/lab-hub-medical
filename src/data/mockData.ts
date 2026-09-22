@@ -12,6 +12,7 @@ import {
   BiochemistryTestItem
 } from '../types';
 import { ADDITIONAL_PRACTICALS } from './curriculumPracticals';
+import { sortPracticalsCurriculum } from '../utils/curriculumSort';
 
 export const DEMO_USERS: User[] = [
   {
@@ -1047,10 +1048,10 @@ const BASE_INITIAL_PRACTICALS: Practical[] = [
   }
 ];
 
-export const INITIAL_PRACTICALS: Practical[] = [
+export const INITIAL_PRACTICALS: Practical[] = sortPracticalsCurriculum([
   ...BASE_INITIAL_PRACTICALS,
   ...ADDITIONAL_PRACTICALS
-];
+]);
 
 export const SPOTTER_ITEMS: SpotterItem[] = [
   {

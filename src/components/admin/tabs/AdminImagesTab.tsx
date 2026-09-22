@@ -24,6 +24,7 @@ import {
 import { User, LabSubjectId, ManagedImage, Practical } from '../../../types';
 import { apiService } from '../../../services/apiService';
 import { securityService } from '../../../services/securityService';
+import { sortImagesCurriculum, sortPracticalsCurriculum } from '../../../utils/curriculumSort';
 
 interface Props {
   currentUser: User;
@@ -75,8 +76,10 @@ export const AdminImagesTab: React.FC<Props> = ({ currentUser }) => {
         apiService.fetchImages(),
         apiService.fetchPracticals()
       ]);
-      setImages(fetchedImages || []);
-      setPracticals(fetchedPracticals || []);
+      const sortedPracticals = sortPracticalsCurriculum(fetchedPracticals || []);
+      const sortedImages = sortImagesCurriculum(fetchedImages || [], sortedPracticals);
+      setPracticals(sortedPracticals);
+      setImages(sortedImages);
     } catch (e) {
       console.error('Failed to load images tab data:', e);
       setFeedback({ type: 'error', message: 'تعذر تحميل بيانات الصور من الخادم المشترك.' });
@@ -91,7 +94,7 @@ export const AdminImagesTab: React.FC<Props> = ({ currentUser }) => {
 
   // Filtered practicals according to form subject
   const availableLessonsForForm = useMemo(() => {
-    return practicals.filter(p => p.courseId === formSubject);
+    return sortPracticalsCurriculum(practicals.filter(p => p.courseId === formSubject));
   }, [practicals, formSubject]);
 
   // Handle open Add Modal
@@ -296,7 +299,7 @@ export const AdminImagesTab: React.FC<Props> = ({ currentUser }) => {
 
   // Filtered images
   const filteredImages = useMemo(() => {
-    return images.filter(img => {
+    const list = images.filter(img => {
       // Search
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
@@ -325,7 +328,9 @@ export const AdminImagesTab: React.FC<Props> = ({ currentUser }) => {
 
       return true;
     });
-  }, [images, searchQuery, selectedSubject, selectedAssignment, selectedCategory]);
+
+    return sortImagesCurriculum(list, practicals);
+  }, [images, practicals, searchQuery, selectedSubject, selectedAssignment, selectedCategory]);
 
   // Subject colors helper
   const getSubjectBadge = (subject: LabSubjectId) => {

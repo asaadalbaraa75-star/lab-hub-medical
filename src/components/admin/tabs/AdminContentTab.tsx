@@ -21,6 +21,7 @@ import {
 import { Practical, PracticalStatus, User, LabSubjectId, PracticalMedia } from '../../../types';
 import { storageService } from '../../../services/storageService';
 import { apiService, apiFetchPracticals, apiSavePractical, apiDeletePractical } from '../../../services/apiService';
+import { sortPracticalsCurriculum } from '../../../utils/curriculumSort';
 
 interface Props {
   currentUser: User;
@@ -80,26 +81,24 @@ export const AdminContentTab: React.FC<Props> = ({
   const publishedCount = practicals.filter(p => p.status === 'published' || p.status === 'approved').length;
   const draftCount = practicals.filter(p => p.status !== 'published' && p.status !== 'approved').length;
 
-  const filteredPracticals = practicals.filter(p => {
-    const matchesSubject = selectedSubject === 'all' || p.courseId === selectedSubject;
-    const isPublished = p.status === 'published' || p.status === 'approved';
-    const matchesStatus =
-      statusFilter === 'all' ||
-      (statusFilter === 'published' && isPublished) ||
-      (statusFilter === 'draft' && !isPublished);
+  const filteredPracticals = sortPracticalsCurriculum(
+    practicals.filter(p => {
+      const matchesSubject = selectedSubject === 'all' || p.courseId === selectedSubject;
+      const isPublished = p.status === 'published' || p.status === 'approved';
+      const matchesStatus =
+        statusFilter === 'all' ||
+        (statusFilter === 'published' && isPublished) ||
+        (statusFilter === 'draft' && !isPublished);
 
-    const q = searchQuery.toLowerCase().trim();
-    const matchesSearch =
-      !q ||
-      p.title.toLowerCase().includes(q) ||
-      (p.subTitle && p.subTitle.toLowerCase().includes(q)) ||
-      (p.learningObjectives && p.learningObjectives.some(o => o.toLowerCase().includes(q)));
-    return matchesSubject && matchesStatus && matchesSearch;
-  }).sort((a, b) => {
-    const timeA = new Date(a.lastUpdated || '2026-01-01').getTime();
-    const timeB = new Date(b.lastUpdated || '2026-01-01').getTime();
-    return timeB - timeA;
-  });
+      const q = searchQuery.toLowerCase().trim();
+      const matchesSearch =
+        !q ||
+        p.title.toLowerCase().includes(q) ||
+        (p.subTitle && p.subTitle.toLowerCase().includes(q)) ||
+        (p.learningObjectives && p.learningObjectives.some(o => o.toLowerCase().includes(q)));
+      return matchesSubject && matchesStatus && matchesSearch;
+    })
+  );
 
   const handleTogglePublish = async (p: Practical) => {
     const newStatus: PracticalStatus = (p.status === 'published' || p.status === 'approved') ? 'draft' : 'published';

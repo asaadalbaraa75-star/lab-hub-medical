@@ -25,7 +25,9 @@ import {
   Lightbulb,
   ArrowRight,
   BrainCircuit,
-  Eye
+  Eye,
+  Maximize2,
+  X
 } from 'lucide-react';
 
 interface PracticalDetailPageProps {
@@ -65,6 +67,9 @@ export const PracticalDetailPage: React.FC<PracticalDetailPageProps> = ({
   // Mini Quiz state for Step 6
   const [userAnswers, setUserAnswers] = useState<Record<number, number>>({});
   const [submittedQuiz, setSubmittedQuiz] = useState(false);
+
+  // Enlarged image viewer modal
+  const [selectedImageModal, setSelectedImageModal] = useState<{ url: string; caption: string; tag?: string } | null>(null);
 
   const courseNames: Record<string, string> = {
     anatomy: 'Anatomy Lab',
@@ -421,47 +426,72 @@ export const PracticalDetailPage: React.FC<PracticalDetailPageProps> = ({
             </div>
           </div>
 
-          {/* Interactive Slide Viewer */}
-          {practical.interactiveImages && practical.interactiveImages.length > 0 ? (
-            <div className="space-y-4">
+          {/* Interactive Slide Viewer (if available) */}
+          {practical.interactiveImages && practical.interactiveImages.length > 0 && (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-cyan-950 text-cyan-400 border border-cyan-800">
+                  شريحة تفاعلية مجهرية (Interactive Pin Explorer)
+                </span>
+              </div>
               <InteractiveSlideViewer interactiveImage={practical.interactiveImages[0]} />
             </div>
-          ) : (
-            practical.images && practical.images.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {practical.images.map((img, idx) => (
-                  <div key={idx} className="bg-slate-950 rounded-2xl overflow-hidden border border-slate-800">
-                    <div className="relative h-56 bg-slate-950">
-                      <img src={img.url} alt={img.caption} className="w-full h-full object-cover" />
-                      <div className="absolute top-2 right-2 px-2 py-0.5 rounded-lg bg-slate-900/90 text-cyan-300 font-mono text-[10px] border border-slate-700">
-                        {img.magnification || img.stainOrView}
-                      </div>
-                    </div>
-                    <div className="p-3 text-xs text-slate-300">{img.caption}</div>
-                  </div>
-                ))}
-              </div>
-            )
           )}
 
-          {/* Additional Slides if available */}
-          {practical.images && practical.images.length > 1 && (
-            <div className="pt-2 space-y-2">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
-                Additional Reference Stains:
-              </span>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {practical.images.slice(1).map((img, i) => (
-                  <div key={i} className="flex gap-3 p-3 rounded-xl bg-slate-800/40 border border-slate-700/60">
-                    <img src={img.url} alt={img.caption} className="w-20 h-16 rounded-lg object-cover shrink-0" />
-                    <div className="text-xs space-y-1">
-                      <span className="font-mono text-[10px] text-cyan-400 font-bold">{img.magnification || img.stainOrView}</span>
-                      <p className="text-slate-300 line-clamp-2">{img.caption}</p>
+          {/* Lesson Visual Slides / Plates in Sequence */}
+          {practical.images && practical.images.length > 0 ? (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <span className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+                  <span>لوحات ومجاهر الدرس المعملي (Lesson Slides & Plates)</span>
+                  <span className="px-2 py-0.5 rounded-md bg-slate-800 text-cyan-400 text-[10px] font-mono font-bold">
+                    {practical.images.length} {practical.images.length === 1 ? 'Plate' : 'Plates'}
+                  </span>
+                </span>
+                <span className="text-[11px] text-slate-400">انقر على أي صورة للتكبير والمعاينة عالية الدقة</span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {practical.images.map((img, idx) => (
+                  <div
+                    key={idx}
+                    onClick={() => setSelectedImageModal({ url: img.url, caption: img.caption, tag: img.magnification || img.stainOrView })}
+                    className="bg-slate-950 rounded-2xl overflow-hidden border border-slate-800 hover:border-cyan-500/50 transition-all cursor-pointer group flex flex-col shadow-sm"
+                  >
+                    <div className="relative h-60 bg-slate-950 overflow-hidden">
+                      <img
+                        src={img.url}
+                        alt={img.caption}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        loading="lazy"
+                      />
+                      <div className="absolute top-2 right-2 flex items-center gap-1.5 flex-wrap">
+                        <span className="px-2 py-0.5 rounded-lg bg-slate-900/90 text-cyan-300 font-mono text-[10px] border border-slate-700 font-bold">
+                          لوحة {idx + 1}
+                        </span>
+                        {(img.magnification || img.stainOrView) && (
+                          <span className="px-2 py-0.5 rounded-lg bg-slate-900/90 text-slate-200 font-mono text-[10px] border border-slate-700">
+                            {img.magnification || img.stainOrView}
+                          </span>
+                        )}
+                      </div>
+                      <div className="absolute bottom-2 left-2 p-1.5 rounded-lg bg-slate-900/80 text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Maximize2 className="w-4 h-4" />
+                      </div>
+                    </div>
+                    <div className="p-3 text-xs text-slate-300 border-t border-slate-800/80 bg-slate-900/50 flex-1">
+                      <p className="line-clamp-2 leading-relaxed">{img.caption}</p>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
+          ) : (
+            !practical.interactiveImages?.length && (
+              <div className="p-8 text-center bg-slate-950 rounded-2xl border border-slate-800 text-slate-400 text-sm">
+                لا توجد صور معملية مسجلة لهذا الدرس حالياً.
+              </div>
+            )
           )}
 
           <div className="pt-4 border-t border-slate-800 flex items-center justify-between">
@@ -852,6 +882,47 @@ export const PracticalDetailPage: React.FC<PracticalDetailPageProps> = ({
       <div className="pt-2 flex justify-center">
         <OwnershipWatermark variant="minimal" />
       </div>
+
+      {/* Enlarged Image Zoom Modal */}
+      {selectedImageModal && (
+        <div
+          className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-6"
+          onClick={() => setSelectedImageModal(null)}
+        >
+          <div
+            className="bg-slate-900 border border-slate-700 max-w-4xl w-full rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="p-4 border-b border-slate-800 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-bold text-white">معاينة الشريحة المعملية بدقة عالية</span>
+                {selectedImageModal.tag && (
+                  <span className="px-2 py-0.5 rounded-lg bg-cyan-950 text-cyan-400 border border-cyan-800 text-xs font-mono">
+                    {selectedImageModal.tag}
+                  </span>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedImageModal(null)}
+                className="p-1.5 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-2 sm:p-4 bg-slate-950 flex items-center justify-center overflow-auto flex-1">
+              <img
+                src={selectedImageModal.url}
+                alt={selectedImageModal.caption}
+                className="max-h-[65vh] w-auto object-contain rounded-xl shadow-lg"
+              />
+            </div>
+            <div className="p-4 bg-slate-900 border-t border-slate-800 text-xs text-slate-300 leading-relaxed">
+              {selectedImageModal.caption}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

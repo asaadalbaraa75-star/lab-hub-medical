@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Practical, LabSubjectId, StudentProgress } from '../../types';
 import { Search, BookOpen, Clock, CheckCircle2, ArrowRight, Filter, Target } from 'lucide-react';
+import { sortPracticalsCurriculum } from '../../utils/curriculumSort';
 
 interface PracticalsListPageProps {
   practicals: Practical[];
@@ -27,6 +28,8 @@ export const PracticalsListPage: React.FC<PracticalsListPageProps> = ({
     const matchesPoints = Array.isArray(p.identificationPoints) && p.identificationPoints.some(pt => pt.toLowerCase().includes(q));
     return matchesTitle || matchesSub || matchesPoints;
   });
+
+  const sortedPracticals = sortPracticalsCurriculum(filtered);
 
   return (
     <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-300" id="practicals-directory-page">
@@ -76,7 +79,7 @@ export const PracticalsListPage: React.FC<PracticalsListPageProps> = ({
 
       {/* Grid of Practicals */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {filtered.map(p => {
+        {sortedPracticals.map(p => {
           const isDone = progress.completedPracticals.includes(p.id);
 
           return (

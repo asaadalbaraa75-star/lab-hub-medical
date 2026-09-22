@@ -44,6 +44,7 @@ import {
 } from '../data/medicalExamData';
 
 import { securityService } from './securityService';
+import { apiService } from './apiService';
 
 const STORAGE_KEYS = {
   CURRENT_USER: 'labhub_current_user',
@@ -59,7 +60,9 @@ const STORAGE_KEYS = {
   DEFAULT_PROGRESS: 'labhub_progress',
   MEDICAL_EXAMS: 'labhub_medical_exams',
   EXAM_QUESTIONS: 'labhub_exam_questions',
-  EXAM_ATTEMPTS: 'labhub_exam_attempts'
+  EXAM_ATTEMPTS: 'labhub_exam_attempts',
+  CUSTOM_IMAGES: 'labhub_custom_images',
+  CUSTOM_VIDEOS: 'labhub_custom_videos'
 };
 
 class StorageService {
@@ -460,41 +463,71 @@ class StorageService {
     return exams.find(e => e.id === id);
   }
 
-  saveMedicalExam(exam: MedicalExam, caller?: User): boolean {
-    const user = this.getEffectiveUser(caller);
-    if (!securityService.hasPermission(user.role, 'create_exams')) {
-      console.warn(`[SECURITY] Access denied: User ${user.name} (${user.role}) is unauthorized to create or edit medical exams.`);
-      return false;
+  // Multi-Device & Tab Realtime Event Broadcaster
+  notifyProductionSync(type: 'questions' | 'exams' | 'practicals' | 'images' | 'videos' | 'all', data?: any): void {
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('labhub_production_sync', { detail: { type, data, timestamp: Date.now() } }));
+      try {
+        if ('BroadcastChannel' in window) {
+          const bc = new BroadcastChannel('labhub_sync_channel');
+          bc.postMessage({ type, data, timestamp: Date.now() });
+          bc.close();
+        }
+      } catch {}
     }
-    const list = this.get<MedicalExam[]>(STORAGE_KEYS.MEDICAL_EXAMS, MEDICAL_PRACTICAL_EXAMS);
-    const index = list.findIndex(e => e.id === exam.id);
-    if (index >= 0) {
-      list[index] = exam;
-    } else {
-      list.unshift(exam);
-    }
-    this.set(STORAGE_KEYS.MEDICAL_EXAMS, list);
-    // Background sync to server API
-    fetch('/api/exams', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(exam)
-    }).catch(e => console.warn('Could not sync exam to server:', e));
-    return true;
   }
 
-  deleteMedicalExam(id: string, caller?: User): boolean {
+  async saveMedicalExam(exam: MedicalExam, caller?: User): Promise<{ success: boolean; exam?: MedicalExam; error?: string }> {
+    const user = this.getEffectiveUser(caller);
+    if (!securityService.hasPermission(user.role, 'create_exams')) {
+      const err = `[SECURITY] Access denied: User ${user.name} (${user.role}) is unauthorized to create or edit medical exams.`;
+      console.warn(err);
+      return { success: false, error: 'ليس لديك الصلاحيات الكافية لإنشاء أو تعديل الامتحانات.' };
+    }
+
+    // Direct write to Production Database first — Wait for backend confirmation
+    const apiResult = await apiService.saveExam(exam);
+    if (!apiResult.success) {
+      console.error('[STORAGE] Production database save failed for exam:', apiResult.error);
+      return { success: false, error: apiResult.error || 'فشل حفظ الامتحان في قاعدة البيانات المركزية.' };
+    }
+
+    const savedExam = apiResult.data || exam;
+
+    // Authoritative update of local cache
+    const list = this.get<MedicalExam[]>(STORAGE_KEYS.MEDICAL_EXAMS, MEDICAL_PRACTICAL_EXAMS);
+    const index = list.findIndex(e => e.id === savedExam.id);
+    if (index >= 0) {
+      list[index] = savedExam;
+    } else {
+      list.unshift(savedExam);
+    }
+    this.set(STORAGE_KEYS.MEDICAL_EXAMS, list);
+
+    // Notify all active tabs and views on this device
+    this.notifyProductionSync('exams', savedExam);
+
+    return { success: true, exam: savedExam };
+  }
+
+  async deleteMedicalExam(id: string, caller?: User): Promise<{ success: boolean; error?: string }> {
     const user = this.getEffectiveUser(caller);
     if (!user || !securityService.hasPermission(user.role, 'delete_exams')) {
-      console.warn(`[SECURITY] Access denied: User ${user?.name || 'Visitor'} (${user?.role || 'none'}) cannot delete exams.`);
-      return false;
+      return { success: false, error: 'ليس لديك صلاحية حذف الامتحانات.' };
     }
+
+    // Delete from production first
+    const apiResult = await apiService.deleteExam(id);
+    if (!apiResult.success) {
+      return { success: false, error: apiResult.error || 'فشل حذف الامتحان من الخادم.' };
+    }
+
     const list = this.get<MedicalExam[]>(STORAGE_KEYS.MEDICAL_EXAMS, MEDICAL_PRACTICAL_EXAMS);
     const updated = list.filter(e => e.id !== id);
     this.set(STORAGE_KEYS.MEDICAL_EXAMS, updated);
-    // Background sync to server API
-    fetch(`/api/exams/${id}`, { method: 'DELETE' }).catch(e => console.warn('Could not sync exam deletion to server:', e));
-    return true;
+
+    this.notifyProductionSync('exams', { deletedId: id });
+    return { success: true };
   }
 
   // --- Exam Questions Bank (Teacher & System) ---
@@ -510,46 +543,91 @@ class StorageService {
     return this.getExamQuestions().find(q => q.id === id);
   }
 
-  saveExamQuestion(question: ExamQuestion, caller?: User): boolean {
+  async saveExamQuestion(question: ExamQuestion, caller?: User): Promise<{ success: boolean; question?: ExamQuestion; error?: string }> {
     const user = this.getEffectiveUser(caller);
     if (!user || !securityService.hasPermission(user.role, 'edit_questions')) {
-      console.warn(`[SECURITY] Access denied: User ${user?.name || 'Visitor'} (${user?.role || 'none'}) cannot modify question banks.`);
-      return false;
+      const err = `[SECURITY] Access denied: User ${user?.name || 'Visitor'} (${user?.role || 'none'}) cannot modify question banks.`;
+      console.warn(err);
+      return { success: false, error: 'ليس لديك الصلاحيات الكافية لإضافة أو تعديل الأسئلة.' };
     }
+
+    // Direct write to Production Database first — Wait for backend confirmation
+    const apiResult = await apiService.saveQuestion(question);
+    if (!apiResult.success) {
+      console.error('[STORAGE] Production database save failed for question:', apiResult.error);
+      return { success: false, error: apiResult.error || 'فشل حفظ السؤال في قاعدة البيانات المركزية.' };
+    }
+
+    const savedQuestion = apiResult.data || question;
+
+    // Authoritative update of local cache
     const list = this.get<ExamQuestion[]>(STORAGE_KEYS.EXAM_QUESTIONS, PRACTICAL_EXAM_QUESTIONS);
-    const index = list.findIndex(q => q.id === question.id);
+    const index = list.findIndex(q => q.id === savedQuestion.id);
     if (index >= 0) {
-      list[index] = question;
+      list[index] = savedQuestion;
     } else {
-      list.unshift(question);
+      list.unshift(savedQuestion);
     }
     this.set(STORAGE_KEYS.EXAM_QUESTIONS, list);
-    // Background sync to server API
-    fetch('/api/questions', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(question)
-    }).catch(e => console.warn('Could not sync question to server:', e));
-    return true;
+
+    // Notify all active tabs and views on this device
+    this.notifyProductionSync('questions', savedQuestion);
+
+    return { success: true, question: savedQuestion };
   }
 
-  deleteExamQuestion(id: string, caller?: User): boolean {
+  async deleteExamQuestion(id: string, caller?: User): Promise<{ success: boolean; error?: string }> {
     const user = this.getEffectiveUser(caller);
     if (!user || !securityService.hasPermission(user.role, 'delete_questions')) {
-      console.warn(`[SECURITY] Access denied: User ${user?.name || 'Visitor'} (${user?.role || 'none'}) cannot delete questions.`);
-      return false;
+      return { success: false, error: 'ليس لديك صلاحية حذف الأسئلة.' };
     }
+
+    // Delete from production first
+    const apiResult = await apiService.deleteQuestion(id);
+    if (!apiResult.success) {
+      return { success: false, error: apiResult.error || 'فشل حذف السؤال من الخادم.' };
+    }
+
     const list = this.get<ExamQuestion[]>(STORAGE_KEYS.EXAM_QUESTIONS, PRACTICAL_EXAM_QUESTIONS);
     const updated = list.filter(q => q.id !== id);
     this.set(STORAGE_KEYS.EXAM_QUESTIONS, updated);
-    // Background sync to server API
-    fetch(`/api/questions/${id}`, { method: 'DELETE' }).catch(e => console.warn('Could not sync question deletion to server:', e));
-    return true;
+
+    this.notifyProductionSync('questions', { deletedId: id });
+    return { success: true };
   }
 
-  // --- Sync with Server DB ---
+  // --- Sync with Server DB (Production Source of Truth) ---
   async syncDataWithServer(): Promise<void> {
     try {
+      // 1. Try unified sync endpoint first
+      const syncRes = await fetch('/api/sync/all').catch(() => null);
+      if (syncRes && syncRes.ok) {
+        const data = await syncRes.json();
+        if (data.success) {
+          if (Array.isArray(data.practicals) && data.practicals.length > 0) {
+            this.set(STORAGE_KEYS.PRACTICALS, data.practicals);
+          }
+          if (Array.isArray(data.exams) && data.exams.length > 0) {
+            this.set(STORAGE_KEYS.MEDICAL_EXAMS, data.exams);
+          }
+          if (Array.isArray(data.questions) && data.questions.length > 0) {
+            this.set(STORAGE_KEYS.EXAM_QUESTIONS, data.questions);
+          }
+          if (Array.isArray(data.customImages)) {
+            this.set(STORAGE_KEYS.CUSTOM_IMAGES, data.customImages);
+          }
+          if (Array.isArray(data.customVideos)) {
+            this.set(STORAGE_KEYS.CUSTOM_VIDEOS, data.customVideos);
+          }
+          if (Array.isArray(data.notifications) && data.notifications.length > 0) {
+            this.set(STORAGE_KEYS.NOTIFICATIONS, data.notifications);
+          }
+          this.notifyProductionSync('all');
+          return;
+        }
+      }
+
+      // 2. Fallback to individual endpoints if needed
       const [practicalsRes, examsRes, questionsRes, notifsRes] = await Promise.all([
         fetch('/api/practicals').catch(() => null),
         fetch('/api/exams').catch(() => null),
@@ -580,6 +658,7 @@ class StorageService {
           this.set(STORAGE_KEYS.NOTIFICATIONS, notifs);
         }
       }
+      this.notifyProductionSync('all');
     } catch (e) {
       console.warn('Server background sync failed, using local cache:', e);
     }

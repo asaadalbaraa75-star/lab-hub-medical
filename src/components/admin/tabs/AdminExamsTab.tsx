@@ -58,6 +58,8 @@ export const AdminExamsTab: React.FC<Props> = ({ currentUser, onPreviewExam }) =
   const [formStatus, setFormStatus] = useState<'available' | 'completed' | 'locked' | 'draft' | 'published' | 'archived'>('published');
   const [formSelectedQuestionIds, setFormSelectedQuestionIds] = useState<string[]>([]);
   const [questionSearchQuery, setQuestionSearchQuery] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const loadData = async () => {
     setIsLoading(true);
@@ -67,13 +69,13 @@ export const AdminExamsTab: React.FC<Props> = ({ currentUser, onPreviewExam }) =
         apiService.fetchQuestions()
       ]);
 
-      if (fetchedExams && fetchedExams.length > 0) {
+      if (Array.isArray(fetchedExams) && fetchedExams.length > 0) {
         setExams(fetchedExams);
       } else {
         setExams(storageService.getMedicalExams());
       }
 
-      if (fetchedQuestions && fetchedQuestions.length > 0) {
+      if (Array.isArray(fetchedQuestions) && fetchedQuestions.length > 0) {
         setAllQuestions(fetchedQuestions);
       } else {
         setAllQuestions(storageService.getExamQuestions());
@@ -88,6 +90,34 @@ export const AdminExamsTab: React.FC<Props> = ({ currentUser, onPreviewExam }) =
 
   useEffect(() => {
     loadData();
+
+    const handleSync = (e: any) => {
+      if (!e.detail?.type || e.detail.type === 'exams' || e.detail.type === 'all' || e.detail.type === 'questions') {
+        loadData();
+      }
+    };
+    window.addEventListener('labhub_production_sync', handleSync);
+    window.addEventListener('focus', loadData);
+
+    let bc: BroadcastChannel | null = null;
+    try {
+      if ('BroadcastChannel' in window) {
+        bc = new BroadcastChannel('labhub_sync_channel');
+        bc.onmessage = (msg) => {
+          if (!msg.data?.type || msg.data.type === 'exams' || msg.data.type === 'all' || msg.data.type === 'questions') {
+            loadData();
+          }
+        };
+      }
+    } catch {}
+
+    return () => {
+      window.removeEventListener('labhub_production_sync', handleSync);
+      window.removeEventListener('focus', loadData);
+      if (bc) {
+        try { bc.close(); } catch {}
+      }
+    };
   }, []);
 
   // Filter exams
@@ -173,58 +203,76 @@ export const AdminExamsTab: React.FC<Props> = ({ currentUser, onPreviewExam }) =
 
   const handleSaveExam = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSaveError(null);
+
     if (!formTitle.trim()) {
-      alert('يرجى إدخال عنوان الاختبار.');
+      setSaveError('يرجى إدخال عنوان الاختبار.');
       return;
     }
 
     if (formSelectedQuestionIds.length === 0) {
-      alert('يرجى تحديد سؤال واحد على الأقل للاختبار.');
+      setSaveError('يرجى تحديد سؤال واحد على الأقل للاختبار.');
       return;
     }
 
-    // Assemble questions
-    const selectedQuestions = allQuestions.filter(q => formSelectedQuestionIds.includes(q.id));
+    setIsSaving(true);
+    try {
+      // Assemble questions
+      const selectedQuestions = allQuestions.filter(q => formSelectedQuestionIds.includes(q.id));
 
-    const examData: MedicalExam = {
-      id: editingExam?.id || `exam_${formLabId}_${Date.now()}`,
-      title: formTitle.trim(),
-      titleArabic: formTitleArabic.trim() || formTitle.trim(),
-      description: formDescription.trim() || '',
-      labId: formLabId,
-      examType: editingExam?.examType || 'identification',
-      timeLimitMinutes: Number(formTimeLimitMinutes) || 15,
-      passingScorePercent: Number(formPassingScorePercent) || 70,
-      totalMarks: selectedQuestions.reduce((acc, q) => acc + (q.marks || 1), 0),
-      difficulty: editingExam?.difficulty || 'intermediate',
-      isPublished: formStatus === 'published' || formStatus === 'available',
-      questionIds: selectedQuestions.map(q => q.id),
-      totalQuestions: selectedQuestions.length,
-      questions: selectedQuestions,
-      randomizeQuestions: formRandomizeQuestions,
-      randomizeAnswers: formRandomizeAnswers,
-      allowRetake: formAllowRetake,
-      showAnswersAfterExam: formShowAnswersAfterExam,
-      status: formStatus,
-      createdAt: editingExam?.createdAt || new Date().toISOString(),
-      authorName: editingExam?.authorName || currentUser.name
-    };
+      const examData: MedicalExam = {
+        id: editingExam?.id || `exam_${formLabId}_${Date.now()}`,
+        title: formTitle.trim(),
+        titleArabic: formTitleArabic.trim() || formTitle.trim(),
+        description: formDescription.trim() || '',
+        labId: formLabId,
+        examType: editingExam?.examType || 'identification',
+        timeLimitMinutes: Number(formTimeLimitMinutes) || 15,
+        passingScorePercent: Number(formPassingScorePercent) || 70,
+        totalMarks: selectedQuestions.reduce((acc, q) => acc + (q.marks || 1), 0),
+        difficulty: editingExam?.difficulty || 'intermediate',
+        isPublished: formStatus === 'published' || formStatus === 'available',
+        questionIds: selectedQuestions.map(q => q.id),
+        totalQuestions: selectedQuestions.length,
+        questions: selectedQuestions,
+        randomizeQuestions: formRandomizeQuestions,
+        randomizeAnswers: formRandomizeAnswers,
+        allowRetake: formAllowRetake,
+        showAnswersAfterExam: formShowAnswersAfterExam,
+        status: formStatus,
+        createdAt: editingExam?.createdAt || new Date().toISOString(),
+        authorName: editingExam?.authorName || currentUser.name
+      };
 
-    // Save locally
-    storageService.saveMedicalExam(examData, currentUser);
-    // Save to server
-    await apiService.saveExam(examData);
+      // Direct write to shared production database and await confirmation
+      const res = await storageService.saveMedicalExam(examData, currentUser);
+      if (!res.success) {
+        setSaveError(res.error || 'فشل حفظ الاختبار في قاعدة البيانات المركزية. يرجى إعادة المحاولة.');
+        return;
+      }
 
-    setIsEditorOpen(false);
-    resetForm();
-    await loadData();
+      setIsEditorOpen(false);
+      resetForm();
+      await loadData();
+    } catch (err: any) {
+      setSaveError(err.message || 'حدث خطأ أثناء حفظ الاختبار في الخادم.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleDeleteExam = async (id: string) => {
-    storageService.deleteMedicalExam(id, currentUser);
-    await apiService.deleteExam(id);
-    setDeleteConfirmId(null);
-    await loadData();
+    try {
+      const res = await storageService.deleteMedicalExam(id, currentUser);
+      if (!res.success) {
+        alert(res.error || 'فشل حذف الاختبار من الخادم.');
+        return;
+      }
+      setDeleteConfirmId(null);
+      await loadData();
+    } catch (e: any) {
+      alert(e.message || 'حدث خطأ أثناء حذف الاختبار.');
+    }
   };
 
   const availableQuestionsForForm = allQuestions
@@ -644,20 +692,31 @@ export const AdminExamsTab: React.FC<Props> = ({ currentUser, onPreviewExam }) =
                 </div>
               </div>
 
+              {/* Save Error Feedback Alert */}
+              {saveError && (
+                <div className="p-3.5 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2">
+                  <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0" />
+                  <span className="flex-1">{saveError}</span>
+                </div>
+              )}
+
               {/* Form Buttons */}
               <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
                 <button
                   type="button"
+                  disabled={isSaving}
                   onClick={() => setIsEditorOpen(false)}
-                  className="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-700 font-bold hover:bg-slate-50 transition-colors"
+                  className="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-700 font-bold hover:bg-slate-50 transition-colors disabled:opacity-50"
                 >
                   إلغاء
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-black shadow-md transition-all active:scale-95"
+                  disabled={isSaving}
+                  className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-black shadow-md transition-all active:scale-95 flex items-center gap-2"
                 >
-                  {editingExam ? 'حفظ تعديلات الامتحان' : 'إنشاء الامتحان'}
+                  {isSaving && <RefreshCw className="w-4 h-4 animate-spin text-white" />}
+                  <span>{isSaving ? 'جارٍ الحفظ والتأكيد...' : (editingExam ? 'حفظ تعديلات الامتحان' : 'إنشاء الامتحان')}</span>
                 </button>
               </div>
             </form>

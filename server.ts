@@ -15,6 +15,7 @@ import { GoogleGenAI } from '@google/genai';
 import dotenv from 'dotenv';
 import { MEDICAL_PRACTICAL_EXAMS, PRACTICAL_EXAM_QUESTIONS } from './src/data/medicalExamData';
 import { INITIAL_PRACTICALS } from './src/data/mockData';
+import { sortPracticalsCurriculum, sortImagesCurriculum, reconcileImageLessonAssociations } from './src/utils/curriculumSort';
 
 dotenv.config();
 
@@ -422,9 +423,11 @@ async function startServer() {
   let serverQuestions: any[] = initialData.questions;
   let serverNotifications: any[] = initialData.notifications;
   let serverCustomVideos: any[] = initialData.customVideos;
-  let serverPracticals: any[] = (initialData.practicals && initialData.practicals.length > 0)
-    ? initialData.practicals
-    : INITIAL_PRACTICALS;
+  let serverPracticals: any[] = sortPracticalsCurriculum(
+    (initialData.practicals && initialData.practicals.length > 0)
+      ? initialData.practicals
+      : INITIAL_PRACTICALS
+  );
   let serverCustomImages: any[] = initialData.customImages || [];
 
   // If no custom images exist yet in persistent storage, index all existing practical lesson images
@@ -453,6 +456,9 @@ async function startServer() {
       }
     });
   }
+
+  // Strictly reconcile and sort images according to curriculum structure: Subject -> Unit/Module -> Lesson -> Sequence
+  serverCustomImages = sortImagesCurriculum(serverCustomImages, serverPracticals);
 
   const saveDb = () => {
     try {
@@ -1910,7 +1916,7 @@ async function startServer() {
 
   // ==================== PRACTICAL LESSONS API ====================
   app.get('/api/practicals', (req: Request, res: Response) => {
-    res.json(serverPracticals);
+    res.json(sortPracticalsCurriculum(serverPracticals));
   });
 
   app.post('/api/practicals', (req: Request, res: Response) => {
@@ -1928,8 +1934,9 @@ async function startServer() {
     if (existingIndex >= 0) {
       serverPracticals[existingIndex] = newPractical;
     } else {
-      serverPracticals.unshift(newPractical);
+      serverPracticals.push(newPractical);
     }
+    serverPracticals = sortPracticalsCurriculum(serverPracticals);
     saveDb();
     res.json({ success: true, practical: newPractical });
   });
@@ -1980,11 +1987,47 @@ async function startServer() {
     res.json({ success: true, exam: newExam });
   });
 
+  app.put('/api/exams/:id', (req: Request, res: Response) => {
+    const { id } = req.params;
+    const exam = req.body;
+    if (!exam || !exam.title) {
+      return res.status(400).json({ error: 'Exam title is required' });
+    }
+    const existingIndex = serverExams.findIndex(e => e.id === id);
+    const updatedExam = {
+      ...(existingIndex >= 0 ? serverExams[existingIndex] : {}),
+      ...exam,
+      id,
+      updatedAt: new Date().toISOString()
+    };
+    if (existingIndex >= 0) {
+      serverExams[existingIndex] = updatedExam;
+    } else {
+      serverExams.push(updatedExam);
+    }
+    saveDb();
+    res.json({ success: true, exam: updatedExam });
+  });
+
   app.delete('/api/exams/:id', (req: Request, res: Response) => {
     const { id } = req.params;
     serverExams = serverExams.filter(e => e.id !== id);
     saveDb();
     res.json({ success: true });
+  });
+
+  // Global Multi-Device Sync Endpoint
+  app.get('/api/sync/all', (req: Request, res: Response) => {
+    res.json({
+      success: true,
+      timestamp: Date.now(),
+      practicals: sortPracticalsCurriculum(serverPracticals),
+      exams: serverExams,
+      questions: serverQuestions,
+      customImages: sortImagesCurriculum(serverCustomImages, serverPracticals),
+      customVideos: serverCustomVideos,
+      notifications: serverNotifications
+    });
   });
 
   // ==================== QUESTION BANK API ====================
@@ -2032,6 +2075,30 @@ async function startServer() {
     }
     saveDb();
     res.json({ success: true, question: newQuestion });
+  });
+
+  app.put('/api/questions/:id', (req: Request, res: Response) => {
+    const { id } = req.params;
+    const q = req.body;
+    if (!q || !q.questionText || !q.correctAnswer) {
+      return res.status(400).json({ error: 'Question text and correct answer are required.' });
+    }
+    const existingIndex = serverQuestions.findIndex(item => item.id === id);
+    const updatedQuestion = {
+      ...(existingIndex >= 0 ? serverQuestions[existingIndex] : {}),
+      ...q,
+      id,
+      timeSeconds: q.timeSeconds || 30,
+      marks: q.marks || 1,
+      updatedAt: new Date().toISOString()
+    };
+    if (existingIndex >= 0) {
+      serverQuestions[existingIndex] = updatedQuestion;
+    } else {
+      serverQuestions.push(updatedQuestion);
+    }
+    saveDb();
+    res.json({ success: true, question: updatedQuestion });
   });
 
   app.delete('/api/questions/:id', (req: Request, res: Response) => {
@@ -2171,7 +2238,7 @@ async function startServer() {
 
   // ==================== IMAGES MANAGER API ====================
   app.get('/api/images', (req: Request, res: Response) => {
-    res.json(serverCustomImages);
+    res.json(sortImagesCurriculum(serverCustomImages, serverPracticals));
   });
 
   app.post('/api/images', (req: Request, res: Response) => {

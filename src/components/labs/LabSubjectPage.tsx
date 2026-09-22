@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { sortPracticalsCurriculum } from '../../utils/curriculumSort';
 import {
   Search,
   BookOpen,
@@ -108,7 +109,9 @@ export const LabSubjectPage: React.FC<LabSubjectPageProps> = ({
     );
   });
 
-  const labPracticals = safePracticals.filter(p => p.courseId === labInfo?.id && p.status === 'published');
+  const labPracticals = sortPracticalsCurriculum(
+    safePracticals.filter(p => p.courseId === labInfo?.id && p.status === 'published')
+  );
 
   const handleCategoryClick = (category: LabCategory) => {
     if (category.title === 'SPOTTER') {
@@ -352,7 +355,7 @@ export const LabSubjectPage: React.FC<LabSubjectPageProps> = ({
       )}
 
       {/* Practical Sessions in this Laboratory */}
-      {!isBiochemistry && (activeFilter === 'all' || activeFilter === 'practicals') && (
+      {(activeFilter === 'all' || activeFilter === 'practicals') && labPracticals.length > 0 && (
         <div className="space-y-4 pt-2">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-slate-900 tracking-tight">
