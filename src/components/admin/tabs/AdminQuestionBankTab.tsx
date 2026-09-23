@@ -264,7 +264,10 @@ export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
     setFormUnit(q.unit || '');
     setFormLessonTitle(q.lessonTitle || '');
     setFormExamTitle(q.examTitle || '');
-    setFormDifficulty(q.difficulty || 'medium');
+    const mappedDiff: 'easy' | 'medium' | 'hard' = 
+      q.difficulty === 'basic' || q.difficulty === 'easy' ? 'easy' :
+      q.difficulty === 'hard' || q.difficulty === 'advanced' ? 'hard' : 'medium';
+    setFormDifficulty(mappedDiff);
     setFormQuestionType(q.questionType || 'multiple_choice');
     setFormQuestionText(q.questionText || '');
     setFormQuestionTextArabic(q.questionTextArabic || '');

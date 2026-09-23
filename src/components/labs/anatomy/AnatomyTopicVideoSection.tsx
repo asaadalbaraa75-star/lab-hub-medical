@@ -253,8 +253,8 @@ export const AnatomyTopicVideoSection: React.FC<AnatomyTopicVideoSectionProps> =
     setActiveChapterIndex(index);
     setIsPlayingEmbed(true);
     if (iframeRef.current && video) {
-      // Reload iframe with start timestamp and autoplay
-      iframeRef.current.src = `https://www.youtube-nocookie.com/embed/${video.youtubeId}?autoplay=1&start=${chapter.seconds}&rel=0&modestbranding=1`;
+      // Reload iframe with start timestamp and autoplay using standard embed
+      iframeRef.current.src = `https://www.youtube.com/embed/${video.youtubeId}?autoplay=1&start=${chapter.seconds}&rel=0&modestbranding=1`;
     }
   };
 
@@ -309,7 +309,7 @@ export const AnatomyTopicVideoSection: React.FC<AnatomyTopicVideoSectionProps> =
             {isPlayingEmbed ? (
               <iframe
                 ref={iframeRef}
-                src={`https://www.youtube-nocookie.com/embed/${activeLectureYoutubeId || video.youtubeId}?autoplay=1&rel=0&modestbranding=1`}
+                src={`https://www.youtube.com/embed/${activeLectureYoutubeId || video.youtubeId}?autoplay=1&rel=0&modestbranding=1`}
                 title={activeLectureTitle || video.titleEn}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
@@ -413,10 +413,12 @@ export const AnatomyTopicVideoSection: React.FC<AnatomyTopicVideoSectionProps> =
                   href={`https://www.youtube.com/watch?v=${activeLectureYoutubeId || video.youtubeId}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white text-xs font-bold transition-all border border-slate-700"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold transition-all border border-red-500/40 shadow-md shadow-red-600/25"
+                  title="مشاهدة على يوتيوب في حال تعذر تشغيل الفيديو داخل المنصة"
                 >
+                  <Youtube className="w-4 h-4" />
+                  <span>مشاهدة على يوتيوب (Watch on YouTube)</span>
                   <ExternalLink className="w-3.5 h-3.5" />
-                  <span>Open on YouTube</span>
                 </a>
 
                 <button

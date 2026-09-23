@@ -253,12 +253,26 @@ export const AnatomyVideosSection: React.FC<AnatomyVideosSectionProps> = ({
 
           <div className="aspect-video w-full rounded-xl overflow-hidden bg-black border border-slate-800">
             <iframe
-              src={`https://www.youtube-nocookie.com/embed/${activeVideo.youtubeId}?autoplay=1&rel=0`}
+              src={`https://www.youtube.com/embed/${activeVideo.youtubeId}?autoplay=1&rel=0`}
               title={activeVideo.title}
               className="w-full h-full"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             />
+          </div>
+
+          {/* Quick YouTube Fallback Bar */}
+          <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs">
+            <span className="text-slate-400">إذا واجهت رسالة &quot;Video unavailable&quot; داخل المنصة:</span>
+            <a
+              href={`https://www.youtube.com/watch?v=${activeVideo.youtubeId}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-red-600 hover:bg-red-500 text-white font-bold text-xs transition-all shadow-md shadow-red-600/20"
+            >
+              <span>مشاهدة على يوتيوب (Watch on YouTube)</span>
+              <Globe className="w-3.5 h-3.5" />
+            </a>
           </div>
         </div>
       )}

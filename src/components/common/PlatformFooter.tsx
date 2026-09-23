@@ -2,7 +2,7 @@
  * © LAB HUB · Developed by Sokinah Asaad
  * تطوير وإشراف: سكينة أسعد
  * إهداء إلى الدفعة 44 – طب بشري – جامعة صنعاء
- * تمت مراجعة المنصة من قبل الدكاترة: ثابت الذيفاني، حمزه الوصابي، عبدالله الجلال
+ * تمت مراجعة المنصة من قبل الدكاترة: ثابت الذيفاني، عبدالله الجلال، حمزه الوصابي، ندى البرطي، محمد بدر محمد
  */
 
 import React from 'react';
@@ -63,7 +63,7 @@ export const PlatformFooter: React.FC<PlatformFooterProps> = ({
           <div className="text-[11px] text-slate-300 bg-black/30 px-3 py-1.5 rounded-xl border border-white/10 shrink-0 text-center sm:text-right">
             <span className="text-purple-300 font-bold">تمت مراجعة المنصة من قِبل الدكاترة الأفاضل:</span>
             <div className="text-white font-medium text-[11px] mt-0.5">
-              ندى البريطي • محمد بدر محمد علي • د. ثابت الذيفاني • د. حمزه الوصابي • د. عبدالله الجلال
+              د. ثابت الذيفاني • د. عبدالله الجلال • د. حمزه الوصابي • د. ندى البرطي • د. محمد بدر محمد
             </div>
           </div>
         </div>

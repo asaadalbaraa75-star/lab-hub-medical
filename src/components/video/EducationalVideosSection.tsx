@@ -32,7 +32,7 @@ import {
 } from 'lucide-react';
 import { collection, onSnapshot, doc, setDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
-import { extractYouTubeVideoId, getYouTubeEmbedUrl } from '../../utils/youtubeUtils';
+import { extractYouTubeVideoId, getYouTubeEmbedUrl, getYouTubeWatchUrl } from '../../utils/youtubeUtils';
 
 const STORAGE_CUSTOM_VIDEOS_KEY = 'labhub_custom_educational_videos_v3';
 const STORAGE_COMPLETED_KEY = 'labhub_completed_videos';
@@ -561,6 +561,24 @@ export const EducationalVideosSection: React.FC<Props> = ({ onVideoCompleted }) 
               />
             </div>
 
+            {/* Quick YouTube Direct Watch & Fallback Bar */}
+            <div className="bg-slate-900/90 border-b border-slate-800 px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs">
+              <div className="flex items-center gap-2 text-slate-300">
+                <Youtube className="w-4 h-4 text-red-500 shrink-0" />
+                <span>إذا ظهر خطأ &quot;Video unavailable&quot; أو واجهت مشكلة في التضمين:</span>
+              </div>
+              <a
+                href={getYouTubeWatchUrl(rawYt)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs transition-all shadow-md shadow-red-600/20"
+              >
+                <Youtube className="w-3.5 h-3.5" />
+                <span>مشاهدة على يوتيوب (Watch on YouTube)</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
+
             {/* Video Header & Meta */}
             <div className="p-6 space-y-4">
               <div className="flex flex-wrap items-start justify-between gap-3">
@@ -608,13 +626,13 @@ export const EducationalVideosSection: React.FC<Props> = ({ onVideoCompleted }) 
                   </button>
 
                   <a
-                    href={selectedVideo.youtubeUrl || `https://www.youtube.com/watch?v=${selectedVideo.youtubeVideoId || selectedVideo.youtubeId}`}
+                    href={getYouTubeWatchUrl(rawYt)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-3 py-2 rounded-xl bg-red-600/20 hover:bg-red-600/30 text-red-300 border border-red-500/30 text-xs font-semibold transition flex items-center space-x-1.5 rtl:space-x-reverse"
+                    className="px-3.5 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white border border-red-500/40 text-xs font-bold transition flex items-center space-x-1.5 rtl:space-x-reverse shadow-md shadow-red-600/20"
                   >
                     <Youtube className="w-4 h-4" />
-                    <span>Watch on YouTube</span>
+                    <span>مشاهدة على يوتيوب</span>
                     <ExternalLink className="w-3 h-3" />
                   </a>
 

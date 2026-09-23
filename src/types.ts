@@ -526,7 +526,8 @@ export type ExamType =
   | 'bone_id'
   | 'muscle_id'
   | 'joint_id'
-  | 'spotter';
+  | 'spotter'
+  | 'opse_spotter';
 
 export type QuestionStatus = 'draft' | 'pending_review' | 'approved' | 'published' | 'rejected';
 
@@ -554,7 +555,7 @@ export interface ExamQuestion {
   lessonTitle?: string; // linked practical lesson title
   examId?: string; // linked exam ID
   examTitle?: string; // linked exam title
-  difficulty?: 'easy' | 'medium' | 'hard';
+  difficulty?: 'easy' | 'medium' | 'hard' | 'basic' | 'intermediate' | 'advanced';
   language?: 'en' | 'ar' | 'bilingual';
   timeSeconds: number; // e.g. 30, 45, 60
   marks: number; // e.g. 1, 2

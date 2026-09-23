@@ -18,6 +18,7 @@ import { db, storage } from '../firebase';
 import { ExamQuestion, MedicalExam, NotificationItem, Practical, ManagedImage } from '../types';
 import { storageService } from './storageService';
 import { extractYouTubeVideoId, getYouTubeEmbedUrl } from '../utils/youtubeUtils';
+import { PRACTICAL_EXAM_QUESTIONS, MEDICAL_PRACTICAL_EXAMS } from '../data/medicalExamData';
 
 export interface AskTutorResponse {
   answer: string;
@@ -87,6 +88,15 @@ export async function apiFetchExams(): Promise<MedicalExam[]> {
     snap.forEach((d) => {
       list.push({ id: d.id, ...d.data() } as MedicalExam);
     });
+
+    const existingIds = new Set(list.map((e) => e.id));
+    for (const pe of MEDICAL_PRACTICAL_EXAMS) {
+      if (!existingIds.has(pe.id)) {
+        list.push(pe);
+        setDoc(doc(db, 'exams', pe.id), pe, { merge: true }).catch(() => {});
+      }
+    }
+
     if (list.length > 0) {
       try {
         localStorage.setItem('labhub_medical_exams', JSON.stringify(list));
@@ -153,6 +163,15 @@ export async function apiFetchQuestions(): Promise<ExamQuestion[]> {
     snap.forEach((d) => {
       list.push({ id: d.id, ...d.data() } as ExamQuestion);
     });
+
+    const existingIds = new Set(list.map((q) => q.id));
+    for (const pq of PRACTICAL_EXAM_QUESTIONS) {
+      if (!existingIds.has(pq.id)) {
+        list.push(pq);
+        setDoc(doc(db, 'questions', pq.id), pq, { merge: true }).catch(() => {});
+      }
+    }
+
     if (list.length > 0) {
       try {
         localStorage.setItem('labhub_exam_questions', JSON.stringify(list));

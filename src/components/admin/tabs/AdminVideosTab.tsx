@@ -889,7 +889,7 @@ export const AdminVideosTab: React.FC<Props> = ({ currentUser }) => {
 
             <div className="relative aspect-video rounded-2xl overflow-hidden bg-black shadow-md">
               <iframe
-                src={`https://www.youtube-nocookie.com/embed/${previewVideo.youtubeVideoId || previewVideo.youtubeId}?autoplay=1`}
+                src={`https://www.youtube.com/embed/${previewVideo.youtubeVideoId || previewVideo.youtubeId}?autoplay=1`}
                 title={previewVideo.title}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
@@ -897,7 +897,16 @@ export const AdminVideosTab: React.FC<Props> = ({ currentUser }) => {
               />
             </div>
 
-            <div className="flex justify-end pt-2">
+            <div className="flex items-center justify-between pt-2">
+              <a
+                href={`https://www.youtube.com/watch?v=${previewVideo.youtubeVideoId || previewVideo.youtubeId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs transition-colors"
+              >
+                <span>مشاهدة على يوتيوب</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
               <button
                 type="button"
                 onClick={() => setPreviewVideo(null)}

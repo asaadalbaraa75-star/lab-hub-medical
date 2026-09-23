@@ -447,6 +447,17 @@ class StorageService {
   // --- Medical Practical Examination System ---
   getMedicalExams(): MedicalExam[] {
     const exams = this.get<MedicalExam[]>(STORAGE_KEYS.MEDICAL_EXAMS, MEDICAL_PRACTICAL_EXAMS);
+    const existingIds = new Set(exams.map(e => e.id));
+    let hasNewExam = false;
+    MEDICAL_PRACTICAL_EXAMS.forEach(pe => {
+      if (!existingIds.has(pe.id)) {
+        exams.push(pe);
+        hasNewExam = true;
+      }
+    });
+    if (hasNewExam) {
+      this.set(STORAGE_KEYS.MEDICAL_EXAMS, exams);
+    }
     const questions = this.getExamQuestions();
     return exams.map(exam => ({
       ...exam,
@@ -529,6 +540,17 @@ class StorageService {
   // --- Exam Questions Bank (Teacher & System) ---
   getExamQuestions(labId?: LabSubjectId): ExamQuestion[] {
     const list = this.get<ExamQuestion[]>(STORAGE_KEYS.EXAM_QUESTIONS, PRACTICAL_EXAM_QUESTIONS);
+    const existingIds = new Set(list.map(q => q.id));
+    let hasNewQuestion = false;
+    PRACTICAL_EXAM_QUESTIONS.forEach(pq => {
+      if (!existingIds.has(pq.id)) {
+        list.push(pq);
+        hasNewQuestion = true;
+      }
+    });
+    if (hasNewQuestion) {
+      this.set(STORAGE_KEYS.EXAM_QUESTIONS, list);
+    }
     if (labId) {
       return list.filter(q => q.labId === labId);
     }

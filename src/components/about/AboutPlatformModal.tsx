@@ -165,24 +165,24 @@ export const AboutPlatformModal: React.FC<AboutPlatformModalProps> = ({
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 pt-1">
               <div className="bg-black/30 p-3 rounded-xl border border-white/10 text-center space-y-1">
-                <div className="font-bold text-white text-xs">ندى البريطي</div>
-                <div className="text-[10px] text-purple-300">مراجعة أكاديمية وطبية</div>
-              </div>
-              <div className="bg-black/30 p-3 rounded-xl border border-white/10 text-center space-y-1">
-                <div className="font-bold text-white text-xs">محمد بدر محمد علي</div>
-                <div className="text-[10px] text-purple-300">مراجعة أكاديمية وطبية</div>
-              </div>
-              <div className="bg-black/30 p-3 rounded-xl border border-white/10 text-center space-y-1">
                 <div className="font-bold text-white text-xs">د. ثابت الذيفاني</div>
-                <div className="text-[10px] text-purple-300">مراجعة أكاديمية وطبية</div>
-              </div>
-              <div className="bg-black/30 p-3 rounded-xl border border-white/10 text-center space-y-1">
-                <div className="font-bold text-white text-xs">د. حمزه الوصابي</div>
-                <div className="text-[10px] text-purple-300">مراجعة أكاديمية وطبية</div>
+                <div className="text-[10px] text-purple-300">أستاذ التشريح والأجنة السريري</div>
               </div>
               <div className="bg-black/30 p-3 rounded-xl border border-white/10 text-center space-y-1">
                 <div className="font-bold text-white text-xs">د. عبدالله الجلال</div>
-                <div className="text-[10px] text-purple-300">مراجعة أكاديمية وطبية</div>
+                <div className="text-[10px] text-purple-300">استشاري التشريح وعلم الأنسجة</div>
+              </div>
+              <div className="bg-black/30 p-3 rounded-xl border border-white/10 text-center space-y-1">
+                <div className="font-bold text-white text-xs">د. حمزه الوصابي</div>
+                <div className="text-[10px] text-purple-300">أخصائي علم الأمراض والأنسجة الطبية</div>
+              </div>
+              <div className="bg-black/30 p-3 rounded-xl border border-white/10 text-center space-y-1">
+                <div className="font-bold text-white text-xs">د. ندى البرطي</div>
+                <div className="text-[10px] text-purple-300">أستاذة الكيمياء الحيوية الطبية والسريرية</div>
+              </div>
+              <div className="bg-black/30 p-3 rounded-xl border border-white/10 text-center space-y-1">
+                <div className="font-bold text-white text-xs">د. محمد بدر محمد</div>
+                <div className="text-[10px] text-purple-300">استشاري تقييم الامتحانات الطبية والـ OSPE</div>
               </div>
             </div>
           </div>

@@ -136,15 +136,19 @@ export const AdminExamsTab: React.FC<Props> = ({ currentUser, onPreviewExam }) =
           snapshot.forEach((docSnap) => {
             fetched.push({ id: docSnap.id, ...docSnap.data() } as MedicalExam);
           });
-          if (fetched.length > 0) {
-            setExams(fetched);
-            try {
-              localStorage.setItem('labhub_medical_exams', JSON.stringify(fetched));
-            } catch {}
-          } else {
-            // Local fallback if collection is fresh
-            setExams(storageService.getMedicalExams());
-          }
+          const mergedExams = [...fetched];
+          const existingExamIds = new Set(fetched.map((e) => e.id));
+          const defaultExams = storageService.getMedicalExams();
+          defaultExams.forEach((de) => {
+            if (!existingExamIds.has(de.id)) {
+              mergedExams.push(de);
+              setDoc(doc(db, 'exams', de.id), de, { merge: true }).catch(() => {});
+            }
+          });
+          setExams(mergedExams);
+          try {
+            localStorage.setItem('labhub_medical_exams', JSON.stringify(mergedExams));
+          } catch {}
           setIsLoading(false);
         },
         (error) => {
@@ -163,14 +167,19 @@ export const AdminExamsTab: React.FC<Props> = ({ currentUser, onPreviewExam }) =
           snapshot.forEach((docSnap) => {
             fetchedQ.push({ id: docSnap.id, ...docSnap.data() } as ExamQuestion);
           });
-          if (fetchedQ.length > 0) {
-            setAllQuestions(fetchedQ);
-            try {
-              localStorage.setItem('labhub_exam_questions', JSON.stringify(fetchedQ));
-            } catch {}
-          } else {
-            setAllQuestions(storageService.getExamQuestions());
-          }
+          const mergedQ = [...fetchedQ];
+          const existingQIds = new Set(fetchedQ.map((q) => q.id));
+          const defaultQ = storageService.getExamQuestions();
+          defaultQ.forEach((dq) => {
+            if (!existingQIds.has(dq.id)) {
+              mergedQ.push(dq);
+              setDoc(doc(db, 'questions', dq.id), dq, { merge: true }).catch(() => {});
+            }
+          });
+          setAllQuestions(mergedQ);
+          try {
+            localStorage.setItem('labhub_exam_questions', JSON.stringify(mergedQ));
+          } catch {}
         },
         (error) => {
           console.warn('[FIRESTORE] Realtime sync error for questions, using local cache:', error);

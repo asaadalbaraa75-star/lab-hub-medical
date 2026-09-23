@@ -318,6 +318,12 @@ export const ExamResultReviewPage: React.FC<ExamResultReviewPageProps> = ({
                           <CheckCircle2 className="w-4 h-4 text-indigo-600 shrink-0" />
                           <span>{question.correctAnswer}</span>
                         </div>
+                        {question.alternativeAnswers && question.alternativeAnswers.length > 0 && (
+                          <div className="text-[11px] text-slate-500 mt-1 font-medium">
+                            <span className="text-slate-400">الإجابات المقبولة: </span>
+                            {question.alternativeAnswers.join(' • ')}
+                          </div>
+                        )}
                       </div>
                     </div>
 

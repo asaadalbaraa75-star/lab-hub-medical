@@ -162,8 +162,16 @@ export const PracticalExamRunner: React.FC<PracticalExamRunnerProps> = ({
 
     let calculatedScore = 0;
     const answerRecords: ExamAnswerRecord[] = questions.map(q => {
-      const studentAns = answers[q.id] || '';
-      const isCorrect = studentAns.trim().toLowerCase() === q.correctAnswer.trim().toLowerCase();
+      const studentAns = (answers[q.id] || '').trim();
+      const normStudent = studentAns.toLowerCase();
+      const normCorrect = (q.correctAnswer || '').trim().toLowerCase();
+      const normAlternatives = (q.alternativeAnswers || []).map(a => a.trim().toLowerCase());
+
+      const isCorrect = normStudent !== '' && (
+        normStudent === normCorrect ||
+        normAlternatives.includes(normStudent)
+      );
+
       if (isCorrect) {
         calculatedScore += q.marks || 1;
       }

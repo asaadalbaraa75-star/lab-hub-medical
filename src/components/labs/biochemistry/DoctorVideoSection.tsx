@@ -50,7 +50,7 @@ export const DoctorVideoSection: React.FC<DoctorVideoProps> = ({
   const isAvailable = status === 'active' && effectiveVideoId;
   const directUrl = youtubeUrl || (effectiveVideoId ? `https://www.youtube.com/watch?v=${effectiveVideoId}` : '#');
   const embedUrl = effectiveVideoId
-    ? `https://www.youtube-nocookie.com/embed/${effectiveVideoId}?autoplay=1&rel=0&modestbranding=1`
+    ? `https://www.youtube.com/embed/${effectiveVideoId}?autoplay=1&rel=0&modestbranding=1`
     : '';
   const thumbnail = effectiveVideoId
     ? `https://img.youtube.com/vi/${effectiveVideoId}/hqdefault.jpg`
@@ -118,9 +118,10 @@ export const DoctorVideoSection: React.FC<DoctorVideoProps> = ({
               href={directUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-600/20 hover:bg-red-600/30 text-red-300 border border-red-500/40 text-xs font-bold transition-colors"
+              className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-red-600 hover:bg-red-500 text-white border border-red-500/50 text-xs font-bold transition-all shadow-md shadow-red-600/20"
+              title="مشاهدة على يوتيوب في حال تعذر تشغيل الفيديو داخل المنصة"
             >
-              <span>YouTube</span>
+              <span>مشاهدة على يوتيوب</span>
               <ExternalLink className="w-3.5 h-3.5" />
             </a>
           )}
@@ -130,54 +131,70 @@ export const DoctorVideoSection: React.FC<DoctorVideoProps> = ({
       {/* Main Video Stage Area */}
       <div className="p-4 sm:p-5 space-y-4">
         {isAvailable ? (
-          <div className="relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 shadow-2xl aspect-video w-full group">
-            {isPlaying ? (
-              <iframe
-                src={embedUrl}
-                title={title}
-                className="w-full h-full border-0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-              />
-            ) : (
-              <div
-                onClick={() => setIsPlaying(true)}
-                className="relative w-full h-full cursor-pointer overflow-hidden flex items-center justify-center group/stage"
-              >
-                {/* Video High-Res Thumbnail */}
-                <img
-                  src={thumbnail}
-                  alt={title}
-                  className="w-full h-full object-cover filter brightness-90 group-hover/stage:brightness-100 group-hover/stage:scale-105 transition-all duration-500"
-                  loading="lazy"
+          <>
+            <div className="relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 shadow-2xl aspect-video w-full group">
+              {isPlaying ? (
+                <iframe
+                  src={embedUrl}
+                  title={title}
+                  className="w-full h-full border-0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
                 />
+              ) : (
+                <div
+                  onClick={() => setIsPlaying(true)}
+                  className="relative w-full h-full cursor-pointer overflow-hidden flex items-center justify-center group/stage"
+                >
+                  {/* Video High-Res Thumbnail */}
+                  <img
+                    src={thumbnail}
+                    alt={title}
+                    className="w-full h-full object-cover filter brightness-90 group-hover/stage:brightness-100 group-hover/stage:scale-105 transition-all duration-500"
+                    loading="lazy"
+                  />
 
-                {/* Dark Vignette Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+                  {/* Dark Vignette Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
 
-                {/* Pulsing Play Button */}
-                <div className="relative z-10 flex flex-col items-center gap-3">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-amber-500 hover:bg-amber-400 text-slate-950 flex items-center justify-center shadow-[0_0_35px_rgba(245,158,11,0.5)] group-hover/stage:scale-110 transition-transform duration-300">
-                    <Play className="w-7 h-7 sm:w-9 sm:h-9 fill-current translate-x-0.5" />
+                  {/* Pulsing Play Button */}
+                  <div className="relative z-10 flex flex-col items-center gap-3">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-amber-500 hover:bg-amber-400 text-slate-950 flex items-center justify-center shadow-[0_0_35px_rgba(245,158,11,0.5)] group-hover/stage:scale-110 transition-transform duration-300">
+                      <Play className="w-7 h-7 sm:w-9 sm:h-9 fill-current translate-x-0.5" />
+                    </div>
+                    <div className="bg-[#0F172A]/90 px-3.5 py-1.5 rounded-full border border-amber-500/40 backdrop-blur-md text-xs font-bold text-amber-300 shadow-lg flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                      <span>انقر للمشاهدة والشرح العملي (Click to Play)</span>
+                    </div>
                   </div>
-                  <div className="bg-[#0F172A]/90 px-3.5 py-1.5 rounded-full border border-amber-500/40 backdrop-blur-md text-xs font-bold text-amber-300 shadow-lg flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                    <span>انقر للمشاهدة والشرح العملي (Click to Play)</span>
+
+                  {/* Bottom Overlay Info Tag */}
+                  <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-[11px] text-slate-300 pointer-events-none">
+                    <span className="font-mono bg-slate-950/80 px-2.5 py-1 rounded-md border border-slate-800">
+                      {doctorName}
+                    </span>
+                    <span className="font-mono bg-amber-950/80 text-amber-300 px-2.5 py-1 rounded-md border border-amber-800">
+                      High Definition 1080p
+                    </span>
                   </div>
                 </div>
+              )}
+            </div>
 
-                {/* Bottom Overlay Info Tag */}
-                <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-[11px] text-slate-300 pointer-events-none">
-                  <span className="font-mono bg-slate-950/80 px-2.5 py-1 rounded-md border border-slate-800">
-                    {doctorName}
-                  </span>
-                  <span className="font-mono bg-amber-950/80 text-amber-300 px-2.5 py-1 rounded-md border border-amber-800">
-                    High Definition 1080p
-                  </span>
-                </div>
-              </div>
-            )}
-          </div>
+            {/* Quick YouTube Fallback Bar */}
+            <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-950/90 p-3 rounded-xl border border-slate-800 text-xs">
+              <span className="text-slate-400">إذا ظهرت رسالة &quot;Video unavailable&quot; أو تعذر التشغيل:</span>
+              <a
+                href={directUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-red-600 hover:bg-red-500 text-white font-bold text-xs transition-all shadow-md shadow-red-600/20"
+              >
+                <span>مشاهدة على يوتيوب (Watch on YouTube)</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            </div>
+          </>
         ) : (
           /* Verified Placeholder if Video Pending Faculty Approval */
           <div className="p-6 rounded-2xl bg-[#0F172A] border border-slate-700/80 flex flex-col sm:flex-row items-center gap-4 text-center sm:text-right">

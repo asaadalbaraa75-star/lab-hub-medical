@@ -61,7 +61,14 @@ export function getYouTubeEmbedUrl(
     params.set('start', String(Math.floor(options.start)));
   }
 
-  return `https://www.youtube-nocookie.com/embed/${videoId}?${params.toString()}`;
+  const query = params.toString();
+  return query ? `https://www.youtube.com/embed/${videoId}?${query}` : `https://www.youtube.com/embed/${videoId}`;
+}
+
+export function getYouTubeWatchUrl(input: string | undefined | null): string {
+  const videoId = extractYouTubeVideoId(input);
+  if (!videoId) return 'https://www.youtube.com';
+  return `https://www.youtube.com/watch?v=${videoId}`;
 }
 
 export function getYouTubeThumbnailUrl(input: string | undefined | null): string {

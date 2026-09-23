@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { db } from '../../firebase';
 import { MedicalExam, LabSubjectId } from '../../types';
 import { storageService } from '../../services/storageService';
 import { apiService } from '../../services/apiService';
@@ -45,29 +47,58 @@ export const AvailableExamsPage: React.FC<AvailableExamsPageProps> = ({
       return;
     }
 
-    const fetchAllExams = async () => {
-      setIsLoading(true);
-      try {
-        const serverExams = await apiService.fetchExams();
-        if (serverExams && serverExams.length > 0) {
-          setExams(serverExams);
-        } else {
+    setIsLoading(true);
+    let unsubscribe: (() => void) | null = null;
+
+    try {
+      const examsQuery = query(collection(db, 'exams'), orderBy('createdAt', 'desc'));
+      unsubscribe = onSnapshot(
+        examsQuery,
+        (snapshot) => {
+          const list: MedicalExam[] = [];
+          snapshot.forEach((d) => {
+            list.push({ id: d.id, ...d.data() } as MedicalExam);
+          });
+          const merged = [...list];
+          const existingIds = new Set(list.map((e) => e.id));
+          const defaultExams = storageService.getMedicalExams();
+          defaultExams.forEach((de) => {
+            if (!existingIds.has(de.id)) {
+              merged.push(de);
+            }
+          });
+          setExams(merged);
+          setIsLoading(false);
+        },
+        (error) => {
+          console.warn('[FIRESTORE] Realtime exams listener error, using local fallback:', error);
           setExams(storageService.getMedicalExams());
+          setIsLoading(false);
         }
-      } catch {
+      );
+    } catch {
+      setExams(storageService.getMedicalExams());
+      setIsLoading(false);
+    }
+
+    const handleSync = (e: any) => {
+      if (!e.detail?.type || e.detail.type === 'exams' || e.detail.type === 'all') {
         setExams(storageService.getMedicalExams());
-      } finally {
-        setIsLoading(false);
       }
     };
+    window.addEventListener('labhub_production_sync', handleSync);
 
-    fetchAllExams();
+    return () => {
+      if (unsubscribe) unsubscribe();
+      window.removeEventListener('labhub_production_sync', handleSync);
+    };
   }, [passedExams]);
 
   const filteredExams = exams.filter(exam => {
     let matchesCategory = true;
     if (selectedCategory === 'all') matchesCategory = true;
     else if (selectedCategory === 'anatomy') matchesCategory = exam.labId === 'anatomy';
+    else if (selectedCategory === 'opse') matchesCategory = exam.examType === 'opse_spotter' || exam.examType === 'spotter' || exam.title.toLowerCase().includes('opse') || (exam.titleArabic ? exam.titleArabic.includes('OPSE') : false);
     else if (selectedCategory === 'bones') matchesCategory = exam.title.toLowerCase().includes('bone') || exam.titleArabic?.includes('عظام');
     else if (selectedCategory === 'muscles') matchesCategory = exam.title.toLowerCase().includes('muscle') || exam.titleArabic?.includes('عضلات');
     else if (selectedCategory === 'movements') matchesCategory = exam.title.toLowerCase().includes('movement') || exam.titleArabic?.includes('حركات');
@@ -157,6 +188,18 @@ export const AvailableExamsPage: React.FC<AvailableExamsPageProps> = ({
           >
             <Bone className="w-3.5 h-3.5" />
             <span>Anatomy</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setSelectedCategory('opse')}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors whitespace-nowrap flex items-center gap-1.5 ${
+              selectedCategory === 'opse'
+                ? 'bg-purple-600 text-white shadow-xs'
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+            }`}
+          >
+            <Clock className="w-3.5 h-3.5" />
+            <span>OPSE عملي (30s)</span>
           </button>
           <button
             type="button"
