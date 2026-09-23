@@ -334,7 +334,7 @@ export const AdminExamsTab: React.FC<Props> = ({ currentUser, onPreviewExam }) =
     } catch (e: any) {
       alert(e.message || 'حدث خطأ أثناء حذف الاختبار.');
     }
-  };
+  }
 
   const availableQuestionsForForm = allQuestions
     .filter(q => {
