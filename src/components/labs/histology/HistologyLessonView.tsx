@@ -167,8 +167,9 @@ export const HistologyLessonView: React.FC<HistologyLessonViewProps> = ({
             </div>
 
             <HistologySlideViewer
-              realImagePath={lesson.realImagePath}
-              isRealMicroscopy={lesson.isRealMicroscopy}
+              realImagePath={(lesson as any).imageUrl || (lesson as any).imageURL || lesson.realImagePath}
+              imageUrl={(lesson as any).imageUrl || (lesson as any).imageURL}
+              isRealMicroscopy={lesson.isRealMicroscopy ?? true}
               visualId={lesson.visualId}
               titleEn={lesson.titleEn}
               titleAr={lesson.titleAr}

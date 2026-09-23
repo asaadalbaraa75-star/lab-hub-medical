@@ -8,6 +8,8 @@
 
 import { User, UserRole, UserActivityRecord, AdminAnalyticsMetrics, AdminAnalyticsBreakdown, AuthSession, AdminSecurityStatus, AdminInvite, ActivityLogRecord } from '../types';
 import { securityService } from './securityService';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../firebase';
 
 const AUTH_STORAGE_KEY = 'labhub_auth_session';
 const USERS_STORAGE_KEY = 'labhub_registered_users';
@@ -623,25 +625,25 @@ adminAcc.passwordHash = this.hashPassword('admin123');
    * Admin-Only: Fetch all registered users
    */
   public async getAllUsers(caller: User): Promise<User[]> {
-if (caller.role !== 'owner' && caller.role !== 'admin') {
+    if (caller.role !== 'owner' && caller.role !== 'admin') {
       console.warn('[SECURITY] Non-admin attempted to access users directory.');
       return [];
     }
 
-    // Try server first
-    const session = this.getSession();
-    if (session && session.token) {
-      try {
-        const res = await fetch('/api/admin/users', {
-          headers: { 'Authorization': `Bearer ${session.token}` }
+    // Try central Firestore /users collection first
+    try {
+      const snap = await getDocs(collection(db, 'users'));
+      if (!snap.empty) {
+        const firestoreUsers: User[] = [];
+        snap.forEach((d) => {
+          firestoreUsers.push({ id: d.id, ...d.data() } as User);
         });
-        if (res.ok) {
-          const data = await res.json();
-          if (data.users && Array.isArray(data.users)) {
-            return data.users;
-          }
+        if (firestoreUsers.length > 0) {
+          return firestoreUsers;
         }
-      } catch {}
+      }
+    } catch (e) {
+      console.warn('Firestore users fetch failed, falling back:', e);
     }
 
     // Fallback to local stored users

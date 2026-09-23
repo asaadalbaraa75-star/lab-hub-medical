@@ -25,6 +25,8 @@ import { User, LabSubjectId, ManagedImage, Practical } from '../../../types';
 import { apiService } from '../../../services/apiService';
 import { securityService } from '../../../services/securityService';
 import { sortImagesCurriculum, sortPracticalsCurriculum } from '../../../utils/curriculumSort';
+import { collection, onSnapshot } from 'firebase/firestore';
+import { db } from '../../../firebase';
 
 interface Props {
   currentUser: User;
@@ -89,7 +91,54 @@ export const AdminImagesTab: React.FC<Props> = ({ currentUser }) => {
   };
 
   useEffect(() => {
-    loadData();
+    setIsLoading(true);
+    let isMounted = true;
+
+    // Direct real-time sync with root collections
+    const unsubSlides = onSnapshot(
+      collection(db, 'slides'),
+      (snap) => {
+        if (!isMounted) return;
+        const list: ManagedImage[] = [];
+        snap.forEach((d) => {
+          list.push({ id: d.id, ...d.data() } as ManagedImage);
+        });
+        setImages((prev) => {
+          const combined = list.length > 0 ? list : prev;
+          return sortImagesCurriculum(combined, practicals);
+        });
+        setIsLoading(false);
+      },
+      (err) => {
+        console.warn('Realtime slides listener fallback:', err);
+        loadData();
+      }
+    );
+
+    const unsubLessons = onSnapshot(
+      collection(db, 'lessons'),
+      (snap) => {
+        if (!isMounted) return;
+        const list: Practical[] = [];
+        snap.forEach((d) => {
+          list.push({ id: d.id, ...d.data() } as Practical);
+        });
+        if (list.length > 0) {
+          const sorted = sortPracticalsCurriculum(list);
+          setPracticals(sorted);
+          setImages((prev) => sortImagesCurriculum(prev, sorted));
+        }
+      },
+      (err) => {
+        console.warn('Realtime lessons listener fallback:', err);
+      }
+    );
+
+    return () => {
+      isMounted = false;
+      unsubSlides();
+      unsubLessons();
+    };
   }, []);
 
   // Filtered practicals according to form subject

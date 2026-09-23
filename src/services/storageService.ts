@@ -169,12 +169,8 @@ class StorageService {
       list.push(practical);
     }
     this.set(STORAGE_KEYS.PRACTICALS, list);
-    // Sync to shared backend database
-    fetch('/api/practicals', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(practical)
-    }).catch(e => console.warn('Could not sync practical to server:', e));
+    // Sync to shared Firestore database
+    apiService.savePractical(practical).catch(e => console.warn('Could not sync practical to Firestore:', e));
     return true;
   }
 
@@ -596,71 +592,36 @@ class StorageService {
     return { success: true };
   }
 
-  // --- Sync with Server DB (Production Source of Truth) ---
+  // --- Sync with Central Firestore DB (Production Source of Truth) ---
   async syncDataWithServer(): Promise<void> {
     try {
-      // 1. Try unified sync endpoint first
-      const syncRes = await fetch('/api/sync/all').catch(() => null);
-      if (syncRes && syncRes.ok) {
-        const data = await syncRes.json();
-        if (data.success) {
-          if (Array.isArray(data.practicals) && data.practicals.length > 0) {
-            this.set(STORAGE_KEYS.PRACTICALS, data.practicals);
-          }
-          if (Array.isArray(data.exams) && data.exams.length > 0) {
-            this.set(STORAGE_KEYS.MEDICAL_EXAMS, data.exams);
-          }
-          if (Array.isArray(data.questions) && data.questions.length > 0) {
-            this.set(STORAGE_KEYS.EXAM_QUESTIONS, data.questions);
-          }
-          if (Array.isArray(data.customImages)) {
-            this.set(STORAGE_KEYS.CUSTOM_IMAGES, data.customImages);
-          }
-          if (Array.isArray(data.customVideos)) {
-            this.set(STORAGE_KEYS.CUSTOM_VIDEOS, data.customVideos);
-          }
-          if (Array.isArray(data.notifications) && data.notifications.length > 0) {
-            this.set(STORAGE_KEYS.NOTIFICATIONS, data.notifications);
-          }
-          this.notifyProductionSync('all');
-          return;
-        }
+      const [practicals, exams, questions, images, videos] = await Promise.all([
+        apiService.fetchPracticals().catch(() => []),
+        apiService.fetchExams().catch(() => []),
+        apiService.fetchQuestions().catch(() => []),
+        apiService.fetchImages().catch(() => []),
+        apiService.fetchVideos().catch(() => [])
+      ]);
+
+      if (Array.isArray(practicals) && practicals.length > 0) {
+        this.set(STORAGE_KEYS.PRACTICALS, practicals);
+      }
+      if (Array.isArray(exams) && exams.length > 0) {
+        this.set(STORAGE_KEYS.MEDICAL_EXAMS, exams);
+      }
+      if (Array.isArray(questions) && questions.length > 0) {
+        this.set(STORAGE_KEYS.EXAM_QUESTIONS, questions);
+      }
+      if (Array.isArray(images) && images.length > 0) {
+        this.set(STORAGE_KEYS.CUSTOM_IMAGES, images);
+      }
+      if (Array.isArray(videos) && videos.length > 0) {
+        this.set(STORAGE_KEYS.CUSTOM_VIDEOS, videos);
       }
 
-      // 2. Fallback to individual endpoints if needed
-      const [practicalsRes, examsRes, questionsRes, notifsRes] = await Promise.all([
-        fetch('/api/practicals').catch(() => null),
-        fetch('/api/exams').catch(() => null),
-        fetch('/api/questions').catch(() => null),
-        fetch('/api/notifications').catch(() => null)
-      ]);
-      if (practicalsRes && practicalsRes.ok) {
-        const practicals = await practicalsRes.json();
-        if (Array.isArray(practicals) && practicals.length > 0) {
-          this.set(STORAGE_KEYS.PRACTICALS, practicals);
-        }
-      }
-      if (examsRes && examsRes.ok) {
-        const exams = await examsRes.json();
-        if (Array.isArray(exams) && exams.length > 0) {
-          this.set(STORAGE_KEYS.MEDICAL_EXAMS, exams);
-        }
-      }
-      if (questionsRes && questionsRes.ok) {
-        const questions = await questionsRes.json();
-        if (Array.isArray(questions) && questions.length > 0) {
-          this.set(STORAGE_KEYS.EXAM_QUESTIONS, questions);
-        }
-      }
-      if (notifsRes && notifsRes.ok) {
-        const notifs = await notifsRes.json();
-        if (Array.isArray(notifs) && notifs.length > 0) {
-          this.set(STORAGE_KEYS.NOTIFICATIONS, notifs);
-        }
-      }
       this.notifyProductionSync('all');
     } catch (e) {
-      console.warn('Server background sync failed, using local cache:', e);
+      console.warn('Firestore background sync failed, using cached state:', e);
     }
   }
 
@@ -707,11 +668,6 @@ class StorageService {
     };
     list.unshift(newNotif);
     this.set(STORAGE_KEYS.NOTIFICATIONS, list);
-    fetch('/api/notifications', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(item)
-    }).catch(() => {});
     return newNotif;
   }
 
@@ -721,7 +677,6 @@ class StorageService {
     if (target) {
       target.isRead = true;
       this.set(STORAGE_KEYS.NOTIFICATIONS, list);
-      fetch(`/api/notifications/${id}/read`, { method: 'PUT' }).catch(() => {});
     }
   }
 
@@ -729,7 +684,6 @@ class StorageService {
     const list = this.getNotificationItems();
     list.forEach(n => { n.isRead = true; });
     this.set(STORAGE_KEYS.NOTIFICATIONS, list);
-    fetch('/api/notifications/read-all', { method: 'POST' }).catch(() => {});
   }
 
   // --- Exam Attempts & Results History (Partitioned by user) ---

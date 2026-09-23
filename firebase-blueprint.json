@@ -1,0 +1,118 @@
+{
+  "entities": {
+    "MedicalExam": {
+      "title": "MedicalExam",
+      "description": "Shared production medical and OSPE examination",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "titleArabic": { "type": "string" },
+        "description": { "type": "string" },
+        "labId": { "type": "string" },
+        "examType": { "type": "string" },
+        "timeLimitMinutes": { "type": "number" },
+        "timePerQuestionSeconds": { "type": "number" },
+        "passingScorePercent": { "type": "number" },
+        "totalMarks": { "type": "number" },
+        "isPublished": { "type": "boolean" },
+        "questionIds": { "type": "array" }
+      },
+      "required": ["id", "title", "labId"]
+    },
+    "ExamQuestion": {
+      "title": "ExamQuestion",
+      "description": "Practical and written OSPE question",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "labId": { "type": "string" },
+        "questionText": { "type": "string" },
+        "type": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "correctAnswer": { "type": "string" },
+        "alternativeAnswers": { "type": "array" },
+        "timeSeconds": { "type": "number" }
+      },
+      "required": ["id", "labId", "questionText", "correctAnswer"]
+    },
+    "PracticalLesson": {
+      "title": "PracticalLesson",
+      "description": "Practical laboratory curriculum lesson",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "courseId": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "realImagePath": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["id", "title", "courseId"]
+    },
+    "ManagedSlide": {
+      "title": "ManagedSlide",
+      "description": "Educational slide or anatomical illustration",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "image": { "type": "string" },
+        "subject": { "type": "string" },
+        "lessonId": { "type": "string" }
+      },
+      "required": ["id", "title", "image"]
+    },
+    "EducationalVideo": {
+      "title": "EducationalVideo",
+      "description": "Educational video lecture with verified embed URL",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "youtubeId": { "type": "string" },
+        "embedUrl": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["id", "title"]
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile with role-based access",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "role": { "type": "string" }
+      },
+      "required": ["id", "name", "role"]
+    }
+  },
+  "firestore": {
+    "/exams/{examId}": {
+      "schema": { "$ref": "#/entities/MedicalExam" },
+      "description": "Central collection of shared medical and OSPE exams"
+    },
+    "/questions/{questionId}": {
+      "schema": { "$ref": "#/entities/ExamQuestion" },
+      "description": "Central bank of practical and OSPE questions"
+    },
+    "/lessons/{lessonId}": {
+      "schema": { "$ref": "#/entities/PracticalLesson" },
+      "description": "Curriculum practical lessons across anatomy, histology, and biochemistry"
+    },
+    "/slides/{slideId}": {
+      "schema": { "$ref": "#/entities/ManagedSlide" },
+      "description": "High resolution slides and micrographs"
+    },
+    "/videos/{videoId}": {
+      "schema": { "$ref": "#/entities/EducationalVideo" },
+      "description": "Educational lectures and practical video guides"
+    },
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "User accounts and student directory"
+    }
+  }
+}

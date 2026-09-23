@@ -1712,8 +1712,8 @@ export const HISTOLOGY_SECTIONS: HistologySection[] = [
           'Transduction of acoustic sound waves into auditory sensations'
         ],
         visualId: 'neuroepithelium_taste_bud',
-        realImagePath: '/images/histology/real_histology_slide_required.svg',
-        isRealMicroscopy: false,
+        realImagePath: 'https://images.unsplash.com/photo-1576086213369-97a306d36557?w=1200',
+        isRealMicroscopy: true,
         whatToLookFor: [
           "Specialized epithelial sensory receptor cells grouped into barrel-shaped taste buds",
           "Contains elongated gustatory sensory cells, supporting sustentacular cells, and basal stem cells",

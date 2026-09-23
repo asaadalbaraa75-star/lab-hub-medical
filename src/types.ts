@@ -325,6 +325,7 @@ export interface Practical {
   estimatedTime: string;
   version: string;
   lastUpdated: string;
+  updatedAt?: string;
   status: PracticalStatus;
   authorName: string;
   authorRole: string;
@@ -583,6 +584,7 @@ export interface MedicalExam {
   questions?: ExamQuestion[];
   totalQuestions?: number;
   createdAt: string;
+  updatedAt?: string;
   authorName: string;
   randomizeQuestions?: boolean;
   randomizeAnswers?: boolean;

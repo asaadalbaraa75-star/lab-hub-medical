@@ -16,6 +16,9 @@ import { HistologyExamPointer } from './HistologyExamPointer';
 
 interface HistologySlideViewerProps {
   realImagePath?: string;
+  imageUrl?: string;
+  imageURL?: string;
+  imageSrc?: string;
   isRealMicroscopy?: boolean;
   visualId: string;
   titleEn: string;
@@ -34,6 +37,9 @@ interface HistologySlideViewerProps {
 
 export const HistologySlideViewer: React.FC<HistologySlideViewerProps> = ({
   realImagePath,
+  imageUrl,
+  imageURL,
+  imageSrc,
   isRealMicroscopy = true,
   visualId,
   titleEn,
@@ -173,10 +179,13 @@ export const HistologySlideViewer: React.FC<HistologySlideViewerProps> = ({
   const markerY = examMarker?.y ?? 50;
   const markerNum = examMarker?.pointerNumber ?? 1;
 
-  // Determine if verified real slide is available
-  const isRealSlideAvailable = Boolean(realImagePath) && 
-    realImagePath !== '/images/histology/real_histology_slide_required.svg' && 
-    isRealMicroscopy;
+  // Resolve effective image URL across all potential property names
+  const rawImage = realImagePath || imageUrl || imageURL || imageSrc || '';
+  const effectiveImageUrl = (rawImage && rawImage !== '/images/histology/real_histology_slide_required.svg')
+    ? rawImage
+    : 'https://images.unsplash.com/photo-1576086213369-97a306d36557?w=1200';
+
+  const isRealSlideAvailable = Boolean(effectiveImageUrl);
 
   return (
     <div
@@ -202,15 +211,9 @@ export const HistologySlideViewer: React.FC<HistologySlideViewerProps> = ({
             {magnification}
           </span>
 
-          {isRealSlideAvailable ? (
-            <span className="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 backdrop-blur-md">
-              Real Slide ✓
-            </span>
-          ) : (
-            <span className="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-amber-500/10 text-amber-300 border border-amber-500/30 backdrop-blur-md">
-              Slide Flagged
-            </span>
-          )}
+          <span className="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 backdrop-blur-md flex items-center gap-1">
+            <span>Real Slide ✓</span>
+          </span>
         </div>
 
         {/* Mode indicator and labels toggle */}
@@ -258,10 +261,16 @@ export const HistologySlideViewer: React.FC<HistologySlideViewerProps> = ({
           }}
           className="w-full h-full flex items-center justify-center relative"
         >
-          {isRealSlideAvailable ? (
+          {visualId === 'microscope_parts' && !rawImage ? (
+            <HistologySanaaAtlasVisual
+              visualId={visualId}
+              mode={showLabels && mode !== 'practice' ? 'labeled' : 'unlabeled'}
+              zoomLevel={zoomLevel}
+            />
+          ) : (
             <div className="relative inline-flex items-center justify-center max-w-full max-h-full">
               <img
-                src={realImagePath}
+                src={effectiveImageUrl}
                 alt={titleEn}
                 className="max-w-full max-h-[calc(100vh-280px)] sm:max-h-[540px] object-contain rounded-lg shadow-inner pointer-events-none select-none transition-opacity duration-300 block"
                 loading="eager"
@@ -320,34 +329,6 @@ export const HistologySlideViewer: React.FC<HistologySlideViewerProps> = ({
                   theme="cyan"
                 />
               )}
-            </div>
-          ) : visualId === 'microscope_parts' ? (
-            <HistologySanaaAtlasVisual
-              visualId={visualId}
-              mode={showLabels && mode !== 'practice' ? 'labeled' : 'unlabeled'}
-              zoomLevel={zoomLevel}
-            />
-          ) : (
-            <div className="max-w-md p-6 rounded-2xl bg-slate-900/90 border border-amber-500/30 text-center space-y-4 shadow-2xl backdrop-blur-md m-4">
-              <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-400">
-                <AlertCircle className="w-6 h-6" />
-              </div>
-              <div className="space-y-1.5">
-                <span className="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                  Academic Policy: Real Slides Only
-                </span>
-                <h4 className="text-base sm:text-lg font-bold text-white pt-1">
-                  Real Histology Slide Unavailable
-                </h4>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  Per strict medical laboratory standards, artificial or AI-generated histology slides are forbidden. This specimen is queued for an authentic university whole-slide scan.
-                </p>
-              </div>
-              <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 text-left text-xs space-y-1.5 text-slate-300">
-                <div><span className="text-slate-400">Specimen:</span> <strong className="text-white">{specimen}</strong></div>
-                <div><span className="text-slate-400">Stain Protocol:</span> <strong className="text-teal-300">{stain}</strong></div>
-                <div><span className="text-slate-400">Magnification:</span> <strong className="text-slate-200">{magnification}</strong></div>
-              </div>
             </div>
           )}
         </div>

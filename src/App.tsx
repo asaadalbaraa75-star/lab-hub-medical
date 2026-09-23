@@ -972,8 +972,10 @@ export default function App() {
               setCurrentUser(user);
               storageService.setCurrentUser(user);
               setIsAuthModalOpen(false);
-              setCurrentTab('admin');
-              updateTabWithHash('admin');
+              const isStaffMember = securityService.isStaff(user) || user.role === 'owner' || user.role === 'admin';
+              const targetTab = isStaffMember ? 'admin' : 'dashboard';
+              setCurrentTab(targetTab);
+              updateTabWithHash(targetTab);
             }}
             onCancel={() => setIsAuthModalOpen(false)}
             initialReturnTab="admin"

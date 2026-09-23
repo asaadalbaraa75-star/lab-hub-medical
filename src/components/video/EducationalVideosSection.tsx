@@ -30,6 +30,9 @@ import {
   X,
   Youtube
 } from 'lucide-react';
+import { collection, onSnapshot, doc, setDoc, deleteDoc } from 'firebase/firestore';
+import { db } from '../../firebase';
+import { extractYouTubeVideoId, getYouTubeEmbedUrl } from '../../utils/youtubeUtils';
 
 const STORAGE_CUSTOM_VIDEOS_KEY = 'labhub_custom_educational_videos_v3';
 const STORAGE_COMPLETED_KEY = 'labhub_completed_videos';
@@ -39,21 +42,39 @@ interface Props {
 }
 
 export const EducationalVideosSection: React.FC<Props> = ({ onVideoCompleted }) => {
-  // Load custom stored video collection or initialize with defaults
-  const [videoList, setVideoList] = useState<EducationalVideo[]>(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_CUSTOM_VIDEOS_KEY);
-      if (saved) {
-        const parsed: EducationalVideo[] = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed;
+  // Load videos with defaults
+  const [videoList, setVideoList] = useState<EducationalVideo[]>(EDUCATIONAL_VIDEOS);
+
+  // Real-time Firestore sync with shared root collection /videos
+  useEffect(() => {
+    let isMounted = true;
+    const unsub = onSnapshot(
+      collection(db, 'videos'),
+      (snapshot) => {
+        if (!isMounted) return;
+        const list: EducationalVideo[] = [];
+        snapshot.forEach((d) => {
+          list.push({ id: d.id, ...d.data() } as EducationalVideo);
+        });
+        if (list.length > 0) {
+          setVideoList(list);
+          setSelectedVideo((prev) => {
+            if (!prev) return list[0];
+            const found = list.find((v) => v.id === prev.id);
+            return found || list[0];
+          });
         }
+      },
+      (err) => {
+        console.warn('Realtime videos listener error:', err);
       }
-    } catch {
-      // ignore
-    }
-    return EDUCATIONAL_VIDEOS;
-  });
+    );
+
+    return () => {
+      isMounted = false;
+      unsub();
+    };
+  }, []);
 
   const currentUser = authService.getCurrentUser() || { role: 'student' as const };
   const isTeacherOrAdmin = currentUser?.role === 'admin' || currentUser?.role === 'instructor' || currentUser?.role === 'owner';
@@ -351,11 +372,12 @@ export const EducationalVideosSection: React.FC<Props> = ({ onVideoCompleted }) 
 
     setVideoList(updatedList);
     setSelectedVideo(newVideoRecord);
-    try {
-      localStorage.setItem(STORAGE_CUSTOM_VIDEOS_KEY, JSON.stringify(updatedList));
-    } catch {
-      // ignore
-    }
+
+    // Save directly to Firestore /videos collection
+    setDoc(doc(db, 'videos', newVideoRecord.id), newVideoRecord).catch(err => {
+      console.error('Failed to sync video to Firestore:', err);
+    });
+
     setIsAdminModalOpen(false);
   };
 
@@ -367,11 +389,9 @@ export const EducationalVideosSection: React.FC<Props> = ({ onVideoCompleted }) 
     if (selectedVideo.id === vid.id) {
       setSelectedVideo({ ...selectedVideo, status: nextStatus as any });
     }
-    try {
-      localStorage.setItem(STORAGE_CUSTOM_VIDEOS_KEY, JSON.stringify(updated));
-    } catch {
-      // ignore
-    }
+    setDoc(doc(db, 'videos', vid.id), { status: nextStatus }, { merge: true }).catch(err => {
+      console.error('Failed to update video status in Firestore:', err);
+    });
   };
 
   // Delete / Remove Video
@@ -382,29 +402,26 @@ export const EducationalVideosSection: React.FC<Props> = ({ onVideoCompleted }) 
       if (selectedVideo.id === id && updated.length > 0) {
         setSelectedVideo(updated[0]);
       }
-      try {
-        localStorage.setItem(STORAGE_CUSTOM_VIDEOS_KEY, JSON.stringify(updated));
-      } catch {
-        // ignore
-      }
+      deleteDoc(doc(db, 'videos', id)).catch(err => {
+        console.error('Failed to delete video from Firestore:', err);
+      });
     }
   };
 
   // Reset to original default academic lectures
-  const handleRestoreDefaults = () => {
+  const handleRestoreDefaults = async () => {
     if (confirm('Reset all videos to verified academic defaults? Custom additions will be replaced.')) {
       setVideoList(EDUCATIONAL_VIDEOS);
       setSelectedVideo(EDUCATIONAL_VIDEOS[0]);
-      try {
-        localStorage.removeItem(STORAGE_CUSTOM_VIDEOS_KEY);
-      } catch {
-        // ignore
+      for (const vid of EDUCATIONAL_VIDEOS) {
+        await setDoc(doc(db, 'videos', vid.id), vid).catch(() => {});
       }
     }
   };
 
-  const activeVideoId = extractCleanYoutubeId(selectedVideo?.youtubeVideoId || selectedVideo?.youtubeId || selectedVideo?.youtubeUrl || 'heSsAreO_y0');
-  const iframeSrc = `https://www.youtube-nocookie.com/embed/${activeVideoId}?rel=0&modestbranding=1&playsinline=1${activeChapterSeconds > 0 ? `&start=${activeChapterSeconds}` : ''}`;
+  const rawYt = selectedVideo?.youtubeVideoId || selectedVideo?.youtubeId || selectedVideo?.youtubeUrl || 'heSsAreO_y0';
+  const activeVideoId = extractYouTubeVideoId(rawYt) || extractCleanYoutubeId(rawYt) || 'heSsAreO_y0';
+  const iframeSrc = getYouTubeEmbedUrl(activeVideoId, activeChapterSeconds > 0 ? { start: activeChapterSeconds } : undefined);
 
   return (
     <div id="educational-videos-section" className="space-y-6 max-w-7xl mx-auto pb-12">
