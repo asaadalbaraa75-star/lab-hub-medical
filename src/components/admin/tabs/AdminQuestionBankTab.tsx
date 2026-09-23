@@ -8,52 +8,158 @@
  * - Owner (سكينة أسعد) & Admins: Full control, Review, Approve, Reject, Publish
  * - Assistants (1, 2, 3): Add, Upload Images, Edit Own, Save Draft, Submit for Review
  */
-
-import React, { useState, useEffect, useRef } from 'react';
-import {
-  HelpCircle,
-  Plus,
-  Search,
-  Filter,
-  Trash2,
-  Edit2,
-  Copy,
-  Eye,
-  CheckCircle2,
-  AlertTriangle,
-  Image as ImageIcon,
-  RefreshCw,
-  X,
-  Clock,
-  ChevronDown,
-  Upload,
-  Send,
-  Check,
-  FileText,
-  MessageSquare,
-  User,
-  ShieldCheck,
-  Sparkles
-} from 'lucide-react';
-import { ExamQuestion, LabSubjectId, User as UserType, ExamType, QuestionStatus } from '../../../types';
-import { storageService } from '../../../services/storageService';
-import { apiService } from '../../../services/apiService';
-import { authService } from '../../../services/authService';
+import React, { useState, useRef } from 'react';
+import { X, Upload, RefreshCw, CheckCircle2, AlertTriangle, Image as ImageIcon } from 'lucide-react';
+import { collection, addDoc, updateDoc, doc, serverTimestamp } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { db, storage } from '../../../firebase';
 
 interface Props {
-  currentUser: UserType;
+  isOpen: boolean;
+  onClose: () => void;
+  examId: string;
+  subject: string;
+  currentUser: any;
 }
 
-export const AdminQuestionBankTab: React.FC<Props> = ({ currentUser }) => {
-  const [questions, setQuestions] = useState<ExamQuestion[]>([]);
-  const [filteredQuestions, setFilteredQuestions] = useState<ExamQuestion[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+export const QuestionModal: React.FC<Props> = ({ isOpen, onClose, examId, subject, currentUser }) => {
+  const [questionEn, setQuestionEn] = useState('Identify the indicated structure:');
+  const [questionAr, setQuestionAr] = useState('تعرّف على التركيب المشار إليه:');
+  const [correctAnswer, setCorrectAnswer] = useState('');
+  const [acceptableAnswers, setAcceptableAnswers] = useState('');
+  const [seconds, setSeconds] = useState(30);
+  const [marks, setMarks] = useState(1);
+  const [clinicalNotes, setClinicalNotes] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
 
-  // Role Checks
-  const isOwner = currentUser.role === 'owner' || currentUser.role === 'admin';
-  const isEditor = currentUser.role === 'content_exams' || currentUser.role === 'editor';
-  const isExamEditor = currentUser.role === 'exams_only' || currentUser.role === 'exam_editor';
-  const isAssistant = isEditor || isExamEditor || currentUser.id.startsWith('usr_assistant') || currentUser.id.startsWith('AST-');
+  if (!isOpen) return null;
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      const reader = new FileReader();
+      reader.onload = (ev) => setImageUrl(ev.target?.result as string);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!correctAnswer.trim()) {
+      setError('يرجى إدخال الإجابة الصحيحة المقبولة للتصحيح التلقائي.');
+      return;
+    }
+
+    setIsSaving(true);
+    setError(null);
+
+    try {
+      let finalUrl = imageUrl;
+      if (selectedFile) {
+        const storageRef = ref(storage, `questions/${Date.now()}_${selectedFile.name}`);
+        const uploadRes = await uploadBytes(storageRef, selectedFile);
+        finalUrl = await getDownloadURL(uploadRes.ref);
+      }
+
+      const answersArr = (acceptableAnswers ? `${correctAnswer}, ${acceptableAnswers}` : correctAnswer)
+        .split(',')
+        .map((a) => a.trim().toLowerCase())
+        .filter((a) => a.length > 0);
+
+      await addDoc(collection(db, 'questions'), {
+        examId,
+        subject,
+        type: 'written_opse',
+        questionEn,
+        questionAr,
+        imageUrl: finalUrl,
+        correctAnswer: correctAnswer.trim(),
+        acceptableAnswers: answersArr,
+        timeSeconds: Number(seconds),
+        marks: Number(marks),
+        clinicalNotes,
+        createdAt: serverTimestamp(),
+        createdBy: currentUser?.name || 'Admin'
+      });
+
+      setIsSaving(false);
+      onClose();
+    } catch (err: any) {
+      setError('حدث خطأ أثناء الحفظ: ' + err.message);
+      setIsSaving(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto" dir="rtl">
+      <div className="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl border">
+        <div className="flex items-center justify-between border-b pb-3">
+          <h3 className="text-sm font-black text-slate-900">إضافة سؤال عملي كتابي (OPSE)</h3>
+          <button type="button" onClick={onClose}><X className="w-5 h-5 text-slate-400" /></button>
+        </div>
+
+        {error && <div className="p-3 bg-rose-50 text-rose-700 text-xs rounded-xl font-bold">{error}</div>}
+
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <div>
+            <label className="block text-xs font-bold mb-1">صورة الشريحة / العينة *</label>
+            <input type="file" ref={fileRef} onChange={handleFileChange} accept="image/*" className="hidden" />
+            <div onClick={() => fileRef.current?.click()} className="border-2 border-dashed border-indigo-200 rounded-2xl p-4 text-center cursor-pointer bg-indigo-50/50">
+              <Upload className="w-6 h-6 text-indigo-500 mx-auto mb-1" />
+              <p className="text-xs font-bold text-indigo-900">اضغطي لاختيار الصورة من جوالكِ</p>
+            </div>
+          </div>
+
+          {imageUrl && (
+            <div className="aspect-video rounded-xl overflow-hidden bg-slate-900 border">
+              <img src={imageUrl} alt="Slide" className="w-full h-full object-contain" />
+            </div>
+          )}
+
+          <div>
+            <label className="block text-xs font-bold mb-1">السؤال (English) *</label>
+            <input type="text" required value={questionEn} onChange={(e) => setQuestionEn(e.target.value)} className="w-full px-3 py-2 text-xs border rounded-xl bg-slate-50" />
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold mb-1 text-emerald-700">الإجابة الصحيحة النموذجية *</label>
+            <input type="text" required value={correctAnswer} onChange={(e) => setCorrectAnswer(e.target.value)} placeholder="مثال: Femur" className="w-full px-3 py-2 text-xs border border-emerald-300 rounded-xl bg-emerald-50 font-bold" />
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold mb-1">بدائل مقبولة أخرى (مفصولة بفاصلة)</label>
+            <input type="text" value={acceptableAnswers} onChange={(e) => setAcceptableAnswers(e.target.value)} placeholder="مثال: Right femur, Femur bone, عظم الفخذ" className="w-full px-3 py-2 text-xs border rounded-xl bg-slate-50" />
+          </div>
+
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <label className="block text-xs font-bold mb-1">زمن المحطة (ثواني)</label>
+              <input type="number" value={seconds} onChange={(e) => setSeconds(Number(e.target.value))} className="w-full px-3 py-2 text-xs border rounded-xl bg-slate-50 font-bold" />
+            </div>
+            <div>
+              <label className="block text-xs font-bold mb-1">الدرجة المخصصة</label>
+              <input type="number" value={marks} onChange={(e) => setMarks(Number(e.target.value))} className="w-full px-3 py-2 text-xs border rounded-xl bg-slate-50 font-bold" />
+            </div>
+          </div>
+
+          <div className="pt-3 border-t flex justify-end gap-2">
+            <button type="button" onClick={onClose} className="px-4 py-2 text-xs font-bold text-slate-600">إلغاء</button>
+            <button type="submit" disabled={isSaving} className="px-5 py-2 text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl flex items-center gap-1">
+              {isSaving && <RefreshCw className="w-3.5 h-3.5 animate-spin" />}
+              <span>حفظ السؤال في الاختبار</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
 
   // Filters
   const [searchQuery, setSearchQuery] = useState('');
