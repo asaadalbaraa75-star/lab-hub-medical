@@ -270,7 +270,7 @@ export const AnatomyPracticalExamModal: React.FC<AnatomyPracticalExamModalProps>
                 </h3>
               </div>
               <p className="text-[11px] text-slate-400 font-mono">
-                {activeExam.titleEn}
+                {activeExam.titleEn} • <span className="text-teal-400 font-semibold font-arabic">المراجع المعتمد: الدكتور ثابت الذيفاني</span>
               </p>
             </div>
           </div>
@@ -471,65 +471,40 @@ export const AnatomyPracticalExamModal: React.FC<AnatomyPracticalExamModalProps>
                     </p>
                   </div>
 
-                  {/* Input Mode: Multiple Choice */}
-                  {currentQuestion.options && currentQuestion.options.length > 0 ? (
-                    <div className="space-y-2 pt-2">
-                      <span className="text-[11px] font-bold text-slate-400 block">
-                        اختر الإجابة الصحيحة:
-                      </span>
-                      <div className="space-y-2">
-                        {currentQuestion.options.map((opt, idx) => {
-                          const isSelected = userAnswers[currentQuestion.id] === opt;
-                          return (
-                            <button
-                              key={idx}
-                              type="button"
-                              onClick={() => handleSelectOption(opt)}
-                              className={`w-full p-3 rounded-xl text-right text-xs font-semibold transition-all border flex items-center justify-between cursor-pointer ${
-                                isSelected
-                                  ? 'bg-indigo-600 border-indigo-400 text-white shadow-md'
-                                  : 'bg-slate-950/70 border-slate-800 text-slate-300 hover:text-white hover:border-slate-700'
-                              }`}
-                            >
-                              <div className="flex items-center gap-2">
-                                <span className="w-5 h-5 rounded-md bg-slate-800 text-slate-300 font-mono text-[10px] flex items-center justify-center font-bold">
-                                  {idx + 1}
-                                </span>
-                                <span>{opt}</span>
-                              </div>
-                              {isSelected && <Check className="w-4 h-4 text-white shrink-0" />}
-                            </button>
-                          );
-                        })}
-                      </div>
+                  {/* OSPE Written Spotter Station Text Input (Multiple Choice Removed) */}
+                  <form onSubmit={handleTextSubmit} className="space-y-3 pt-2">
+                    <div className="flex items-center justify-between text-[11px] font-bold text-indigo-300 bg-indigo-950/60 border border-indigo-500/40 px-3 py-1.5 rounded-lg">
+                      <span>محطة كتابية عملية (OPSE Written Spotter)</span>
+                      <span className="font-mono text-indigo-400">30 ثانية لكل شريحة</span>
                     </div>
-                  ) : (
-                    /* Input Mode: Type In */
-                    <form onSubmit={handleTextSubmit} className="space-y-3 pt-2">
-                      <label className="text-[11px] font-bold text-slate-400 block">
-                        {currentQuestion.promptAr || 'اكتب اسم التركيب باللغة الإنجليزية أو العربية:'}
-                      </label>
-                      <div className="relative">
-                        <input
-                          type="text"
-                          value={textInputVal}
-                          onChange={e => setTextInputVal(e.target.value)}
-                          placeholder="مثال: Femur, Tibia, Biceps..."
-                          className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-xl px-4 py-3 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none transition-colors"
-                          autoFocus
-                        />
-                        <button
-                          type="submit"
-                          className="absolute left-2 top-1/2 -translate-y-1/2 p-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-colors cursor-pointer"
-                        >
-                          <Send className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                      <p className="text-[10px] text-slate-500">
-                        * يتم قبول المسميات اللاتينية، الإنجليزية، أو العربية المعربة.
-                      </p>
-                    </form>
-                  )}
+
+                    <label className="text-[11px] font-bold text-slate-400 block">
+                      {currentQuestion.promptAr || 'اكتب اسم التركيب باللغة الإنجليزية أو العربية:'}
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={textInputVal}
+                        onChange={e => setTextInputVal(e.target.value)}
+                        placeholder="اكتب الإجابة هنا (مثال: Femur, Tibia, Biceps...)"
+                        className="w-full bg-slate-950 border border-slate-700 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20 rounded-xl px-4 py-3 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none transition-colors font-semibold"
+                        autoFocus
+                        autoComplete="off"
+                        spellCheck="false"
+                      />
+                      <button
+                        type="submit"
+                        className="absolute left-2 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-colors cursor-pointer flex items-center gap-1 shadow-md"
+                      >
+                        <span>تأكيد</span>
+                        <Send className="w-3 h-3" />
+                      </button>
+                    </div>
+                    <div className="flex items-center justify-between text-[10px] text-slate-500">
+                      <span>* مطابقة وتصحيح آلي مع مصفوفة الإجابات المقبولة (acceptableAnswers).</span>
+                      <span className="text-slate-400 font-bold">المراجع: الدكتور ثابت الذيفاني</span>
+                    </div>
+                  </form>
 
                   {/* Instant Feedback Panel if activated */}
                   {showInstantResult && (

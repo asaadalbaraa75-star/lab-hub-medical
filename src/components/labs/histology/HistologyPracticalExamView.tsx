@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import {
   ArrowLeft,
   CheckCircle2,
@@ -8,7 +8,9 @@ import {
   Award,
   ArrowRight,
   Eye,
-  Shuffle
+  Clock,
+  ShieldCheck,
+  Send
 } from 'lucide-react';
 import { HistologySlideViewer } from './HistologySlideViewer';
 import { ALL_HISTOLOGY_LESSONS, HistologyLessonItem, getSlideMetadata } from './HistologyCurriculumData';
@@ -18,8 +20,9 @@ interface ExamQuestionItem {
   id: string;
   lesson: HistologyLessonItem;
   prompt: string;
-  options: string[];
-  correctIndex: number;
+  promptAr: string;
+  correctAnswer: string;
+  acceptableAnswers: string[];
   explanation: string;
 }
 
@@ -30,50 +33,97 @@ interface HistologyPracticalExamViewProps {
 export const HistologyPracticalExamView: React.FC<HistologyPracticalExamViewProps> = ({
   onBackToHome
 }) => {
-  // Generate practical identification questions from all histology lessons with visual slides
+  // Generate OPSE written spotter identification questions from all histology lessons with visual slides
   const examQuestions: ExamQuestionItem[] = useMemo(() => {
-    // Collect lessons that have slides
-    const slideLessons = ALL_HISTOLOGY_LESSONS.filter(l => l.sectionId !== 'sec_intro_microscopes' || l.id === 'lesson_compound_microscope');
+    const slideLessons = ALL_HISTOLOGY_LESSONS.filter(
+      l => l.sectionId !== 'sec_intro_microscopes' || l.id === 'lesson_compound_microscope'
+    );
 
     return slideLessons.map((lesson, idx) => {
-      // Create distractors from other lesson titles
-      const otherLessons = slideLessons.filter(l => l.id !== lesson.id);
-      const shuffledOthers = [...otherLessons].sort(() => 0.5 - Math.random()).slice(0, 3);
-      const rawOptions = [lesson.titleEn, ...shuffledOthers.map(o => o.titleEn)];
-      
-      // Shuffle options and remember correct index
-      const shuffledOptions = [...rawOptions].sort(() => 0.5 - Math.random());
-      const correctIdx = shuffledOptions.indexOf(lesson.titleEn);
+      // Build comprehensive acceptableAnswers list (lesson title, specimen, clean synonyms, Arabic title)
+      const acceptable = Array.from(new Set([
+        lesson.titleEn.trim().toLowerCase(),
+        lesson.titleAr.trim().toLowerCase(),
+        (lesson.specimen || '').trim().toLowerCase(),
+        ...lesson.labels.map(l => l.label.trim().toLowerCase()),
+        lesson.titleEn.toLowerCase().replace(/epithelium|tissue|stain|slide/gi, '').trim()
+      ])).filter(Boolean);
 
-        return {
-        id: `exam_${idx}`,
+      return {
+        id: `opse_histology_${idx}`,
         lesson,
-        prompt: 'Identify the tissue or structure indicated by ① under the microscope:',
-        options: shuffledOptions,
-        correctIndex: correctIdx,
-        explanation: `${lesson.titleEn}: ${lesson.quickExplanation} Diagnostic features: ${lesson.labels.map(l => l.label).join(', ')}.`
+        prompt: 'Identify the tissue, organ, or cellular layer indicated under the microscope:',
+        promptAr: 'حدد نوع النسيج أو العضو أو الطبقة الخلوية المشار إليها تحت المجهر:',
+        correctAnswer: lesson.titleEn,
+        acceptableAnswers: acceptable,
+        explanation: `${lesson.titleEn} (${lesson.titleAr}): ${lesson.quickExplanation}. Diagnostic key features: ${lesson.labels.map(l => l.label).join(', ')}.`
       };
     }).sort(() => 0.5 - Math.random());
   }, []);
 
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const [selectedOption, setSelectedOption] = useState<number | null>(null);
+  const [studentAnswer, setStudentAnswer] = useState<string>('');
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const [score, setScore] = useState<number>(0);
+  const [timeLeft, setTimeLeft] = useState<number>(30);
+  const [isFinished, setIsFinished] = useState<boolean>(false);
 
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
   const currentQ = examQuestions[currentIndex];
   const totalQ = examQuestions.length;
-  const isCorrect = selectedOption === currentQ.correctIndex;
 
-  const handleSelectOption = (idx: number) => {
-    if (isSubmitted) return;
-    setSelectedOption(idx);
+  // 30-Second timer countdown per slide
+  useEffect(() => {
+    if (isSubmitted || isFinished || !currentQ) {
+      if (timerRef.current) clearInterval(timerRef.current);
+      return;
+    }
+
+    setTimeLeft(30);
+
+    timerRef.current = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev <= 1) {
+          // Time expired for this station: auto-submit with current or empty answer
+          clearInterval(timerRef.current!);
+          handleAutoSubmitOnTimeExpired();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [currentIndex, isSubmitted, isFinished]);
+
+  const checkIsCorrect = (userAns: string, q: ExamQuestionItem): boolean => {
+    const clean = userAns.trim().toLowerCase();
+    if (!clean) return false;
+    const cleanCorrect = q.correctAnswer.trim().toLowerCase();
+    if (clean === cleanCorrect) return true;
+    return q.acceptableAnswers.some(acc => {
+      const cleanAcc = acc.trim().toLowerCase();
+      return clean === cleanAcc || (cleanAcc.length > 3 && (clean.includes(cleanAcc) || cleanAcc.includes(clean)));
+    });
   };
 
-  const handleSubmit = () => {
-    if (selectedOption === null) return;
+  const isCorrect = currentQ ? checkIsCorrect(studentAnswer, currentQ) : false;
+
+  const handleAutoSubmitOnTimeExpired = () => {
     setIsSubmitted(true);
-    if (selectedOption === currentQ.correctIndex) {
+    if (currentQ && checkIsCorrect(studentAnswer, currentQ)) {
+      setScore(prev => prev + 1);
+    }
+  };
+
+  const handleSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (isSubmitted) return;
+    setIsSubmitted(true);
+    if (timerRef.current) clearInterval(timerRef.current);
+    if (currentQ && checkIsCorrect(studentAnswer, currentQ)) {
       setScore(prev => prev + 1);
     }
   };
@@ -81,23 +131,78 @@ export const HistologyPracticalExamView: React.FC<HistologyPracticalExamViewProp
   const handleNext = () => {
     if (currentIndex < totalQ - 1) {
       setCurrentIndex(prev => prev + 1);
-      setSelectedOption(null);
+      setStudentAnswer('');
       setIsSubmitted(false);
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      setIsFinished(true);
     }
   };
 
   const handleRestart = () => {
     setCurrentIndex(0);
-    setSelectedOption(null);
+    setStudentAnswer('');
     setIsSubmitted(false);
+    setIsFinished(false);
     setScore(0);
+    setTimeLeft(30);
   };
+
+  if (isFinished) {
+    const percentage = Math.round((score / totalQ) * 100);
+    return (
+      <div className="min-h-screen bg-slate-950 text-slate-100 p-4 sm:p-6 lg:p-8 flex items-center justify-center max-w-3xl mx-auto">
+        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 text-center space-y-6 w-full shadow-2xl">
+          <div className="w-16 h-16 rounded-2xl bg-teal-500/20 text-teal-400 mx-auto flex items-center justify-center">
+            <Award className="w-8 h-8" />
+          </div>
+          <div className="space-y-2">
+            <span className="text-xs font-mono font-bold text-teal-400 uppercase tracking-widest">
+              OPSE Written Spotter Examination Completed
+            </span>
+            <h2 className="text-2xl font-black text-white">
+              نتيجة امتحان علم الأنسجة العملي الكتابي
+            </h2>
+            <p className="text-xs text-slate-400">
+              المراجع الأكاديمي المعتمد: <strong className="text-teal-300">الدكتور ثابت الذيفاني</strong>
+            </p>
+          </div>
+
+          <div className="p-6 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-around">
+            <div>
+              <span className="text-xs text-slate-400 block">الدرجة النهائية</span>
+              <span className="text-3xl font-black text-white font-mono">{score} / {totalQ}</span>
+            </div>
+            <div>
+              <span className="text-xs text-slate-400 block">النسبة المئوية</span>
+              <span className="text-3xl font-black text-teal-400 font-mono">{percentage}%</span>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <button
+              onClick={handleRestart}
+              className="px-6 py-2.5 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold text-xs flex items-center gap-2 transition-all shadow-md"
+            >
+              <RotateCcw className="w-4 h-4" />
+              <span>إعادة الاختبار</span>
+            </button>
+            <button
+              onClick={onBackToHome}
+              className="px-6 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs transition-all border border-slate-700"
+            >
+              العودة إلى المعمل
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 p-4 sm:p-6 lg:p-8 space-y-6 max-w-5xl mx-auto">
-      {/* 1. TOP HEADER & SCORE */}
-      <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+      {/* 1. TOP HEADER & SCORE & TIMER */}
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-800">
         <button
           onClick={onBackToHome}
           className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-850 text-slate-300 hover:text-white border border-slate-700/80 text-xs font-semibold flex items-center gap-2 transition-colors shadow-sm"
@@ -106,27 +211,40 @@ export const HistologyPracticalExamView: React.FC<HistologyPracticalExamViewProp
           <span>Exit Exam Mode</span>
         </button>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
+          {/* 30-Second Countdown Timer Badge */}
+          <div className={`px-3 py-1.5 rounded-xl border flex items-center gap-2 text-xs font-bold font-mono transition-colors ${
+            timeLeft <= 5 
+              ? 'bg-rose-950/80 text-rose-300 border-rose-500/80 animate-pulse' 
+              : 'bg-indigo-950/60 text-indigo-300 border-indigo-500/50'
+          }`}>
+            <Clock className="w-3.5 h-3.5" />
+            <span>00:{timeLeft < 10 ? `0${timeLeft}` : timeLeft}</span>
+            <span className="text-[10px] text-slate-400">(30s/Slide)</span>
+          </div>
+
           <span className="text-xs font-mono text-slate-400">
             Slide {currentIndex + 1} of {totalQ}
           </span>
-          <div className="px-3 py-1 rounded-xl bg-teal-500/10 border border-teal-500/30 text-teal-300 text-xs font-bold font-mono">
+
+          <div className="px-3 py-1.5 rounded-xl bg-teal-500/10 border border-teal-500/30 text-teal-300 text-xs font-bold font-mono">
             Score: {score} / {currentIndex + (isSubmitted ? 1 : 0)}
           </div>
         </div>
       </div>
 
-      {/* 2. TITLE BADGE */}
-      <div className="text-center space-y-1">
-        <div className="flex items-center justify-center gap-2">
+      {/* 2. TITLE BADGE & REVIEWER RECOGNITION */}
+      <div className="text-center space-y-1.5">
+        <div className="flex items-center justify-center gap-2 flex-wrap">
           <h1 className="text-xl sm:text-2xl font-extrabold text-white flex items-center justify-center gap-2">
-            <span>🔬 IDENTIFY THE SLIDE</span>
+            <span>🔬 OPSE WRITTEN SPOTTER IDENTIFICATION</span>
           </h1>
           <OwnershipWatermark variant="badge" className="text-[10px]" />
         </div>
-        <p className="text-xs sm:text-sm text-slate-400">
-          First-Year Medical Practical Examination — Faculty Handout
-        </p>
+        <div className="flex items-center justify-center gap-2 text-xs text-slate-400">
+          <ShieldCheck className="w-4 h-4 text-teal-400" />
+          <span>المراجع الأكاديمي المعتمد للامتحانات: <strong className="text-teal-300">الدكتور ثابت الذيفاني</strong></span>
+        </div>
       </div>
 
       {/* 3. LARGE MICROSCOPIC IMAGE (BLIND PRACTICE MODE) */}
@@ -148,61 +266,55 @@ export const HistologyPracticalExamView: React.FC<HistologyPracticalExamViewProp
         />
       </div>
 
-      {/* 4. MULTIPLE CHOICE QUESTION CARD */}
+      {/* 4. OPSE WRITTEN SPOTTER INPUT CARD (No A,B,C,D Options) */}
       <div className="p-5 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 shadow-xl">
-        <h3 className="text-sm sm:text-base font-bold text-white">
-          {currentQ.prompt}
-        </h3>
-
-        {/* 4 Options (A, B, C, D) */}
-        <div className="space-y-2.5">
-          {currentQ.options.map((opt, optIdx) => {
-            const isSelected = selectedOption === optIdx;
-            let optStyle = 'bg-slate-950 border-slate-800 hover:border-slate-700 text-slate-300';
-
-            if (isSubmitted) {
-              if (optIdx === currentQ.correctIndex) {
-                optStyle = 'bg-emerald-950/70 border-emerald-500 text-emerald-200 font-bold';
-              } else if (isSelected && !isCorrect) {
-                optStyle = 'bg-rose-950/70 border-rose-500 text-rose-200';
-              } else {
-                optStyle = 'bg-slate-950/40 border-slate-900 text-slate-500';
-              }
-            } else if (isSelected) {
-              optStyle = 'bg-teal-950/50 border-teal-500 text-teal-200 font-semibold';
-            }
-
-            return (
-              <button
-                key={optIdx}
-                disabled={isSubmitted}
-                onClick={() => handleSelectOption(optIdx)}
-                className={`w-full text-left p-3.5 rounded-xl border text-xs sm:text-sm transition-all flex items-center justify-between ${optStyle}`}
-              >
-                <div className="flex items-center gap-3">
-                  <span className="w-6 h-6 rounded-lg border border-slate-700 text-xs font-bold flex items-center justify-center shrink-0">
-                    {String.fromCharCode(65 + optIdx)}
-                  </span>
-                  <span>{opt}</span>
-                </div>
-
-                {isSubmitted && optIdx === currentQ.correctIndex && (
-                  <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 ml-2" />
-                )}
-                {isSubmitted && isSelected && !isCorrect && (
-                  <XCircle className="w-5 h-5 text-rose-400 shrink-0 ml-2" />
-                )}
-              </button>
-            );
-          })}
+        <div className="space-y-1">
+          <h3 className="text-sm sm:text-base font-bold text-white">
+            {currentQ.prompt}
+          </h3>
+          <p className="text-xs text-slate-400 font-arabic" dir="rtl">
+            {currentQ.promptAr}
+          </p>
         </div>
 
-        {/* Submit & Next Actions */}
-        <div className="pt-2 flex items-center justify-between">
+        {/* Written Text Input Form */}
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <div className="relative">
+            <input
+              type="text"
+              disabled={isSubmitted}
+              value={studentAnswer}
+              onChange={e => setStudentAnswer(e.target.value)}
+              placeholder="اكتب الإجابة النسيجية هنا (مثال: Simple Columnar Epithelium, Kidney Cortex...)"
+              className="w-full bg-slate-950 border-2 border-slate-700 focus:border-teal-400 focus:ring-4 focus:ring-teal-500/20 disabled:opacity-80 rounded-xl px-4 py-3.5 text-sm sm:text-base text-white placeholder-slate-500 outline-none transition-all font-semibold"
+              autoFocus
+              autoComplete="off"
+              spellCheck="false"
+            />
+            {!isSubmitted && (
+              <button
+                type="submit"
+                disabled={!studentAnswer.trim()}
+                className="absolute left-2.5 top-1/2 -translate-y-1/2 px-4 py-1.5 rounded-lg bg-teal-500 hover:bg-teal-400 disabled:opacity-40 text-slate-950 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-md"
+              >
+                <span>تأكيد الإجابة</span>
+                <Send className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+
+          <div className="flex items-center justify-between text-[11px] text-slate-500">
+            <span>* مطابقة وتصحيح آلي فوري مع مصفوفة المصطلحات المعتمدة (acceptableAnswers).</span>
+            <span className="font-mono text-teal-400 font-bold">مؤقت: 30 ثانية لكل شريحة</span>
+          </div>
+        </form>
+
+        {/* Navigation & Status Actions */}
+        <div className="pt-2 flex items-center justify-between gap-3">
           {!isSubmitted ? (
             <button
-              disabled={selectedOption === null}
-              onClick={handleSubmit}
+              onClick={() => handleSubmit()}
+              disabled={!studentAnswer.trim()}
               className="px-6 py-2.5 rounded-xl bg-teal-500 hover:bg-teal-400 disabled:opacity-40 disabled:pointer-events-none text-slate-950 text-xs font-bold transition-all shadow-md"
             >
               Submit Identification
@@ -210,16 +322,26 @@ export const HistologyPracticalExamView: React.FC<HistologyPracticalExamViewProp
           ) : (
             <button
               onClick={handleNext}
-              className="px-6 py-2.5 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 text-xs font-bold flex items-center gap-2 transition-all shadow-lg"
+              className="px-6 py-2.5 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 text-xs font-bold flex items-center gap-2 transition-all shadow-lg cursor-pointer"
             >
-              <span>Next Slide</span>
+              <span>{currentIndex < totalQ - 1 ? 'Next Slide' : 'إنهاء الامتحان وعرض النتيجة'}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           )}
 
           {isSubmitted && (
-            <span className="text-xs font-bold italic text-teal-400">
-              {isCorrect ? '✓ Excellent identification!' : 'Keep going. You are improving.'}
+            <span className={`text-xs font-bold flex items-center gap-1.5 ${isCorrect ? 'text-emerald-400' : 'text-rose-400'}`}>
+              {isCorrect ? (
+                <>
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>إجابة صحيحة ومقبولة ✓</span>
+                </>
+              ) : (
+                <>
+                  <XCircle className="w-4 h-4" />
+                  <span>الإجابة الصحيحة: {currentQ.correctAnswer}</span>
+                </>
+              )}
             </span>
           )}
         </div>
@@ -238,13 +360,16 @@ export const HistologyPracticalExamView: React.FC<HistologyPracticalExamViewProp
               ) : (
                 <span className="text-rose-400 flex items-center gap-1.5 text-sm">
                   <XCircle className="w-4 h-4" />
-                  ✕ Incorrect Slide
+                  ✕ Incorrect Identification
                 </span>
               )}
             </div>
             <p className="text-slate-200 leading-relaxed font-normal">
               {currentQ.explanation}
             </p>
+            <div className="text-[11px] text-slate-400 pt-1">
+              المراجع الأكاديمي المعتمد: <strong>الدكتور ثابت الذيفاني</strong>
+            </div>
           </div>
         )}
       </div>

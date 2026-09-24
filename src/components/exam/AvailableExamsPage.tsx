@@ -350,10 +350,10 @@ export const AvailableExamsPage: React.FC<AvailableExamsPageProps> = ({
                 </div>
               </div>
 
-              {/* Start Exam Button */}
+              {/* Start Exam Button & Certified Reviewer */}
               <div className="pt-6 mt-4 border-t border-slate-100 flex items-center justify-between gap-3">
                 <span className="text-xs font-bold text-slate-500">
-                  إعداد: <span className="text-slate-700">{exam.authorName}</span>
+                  المراجع المعتمد: <span className="text-indigo-700 font-black">الدكتور ثابت الذيفاني</span>
                 </span>
 
                 <button

@@ -22,6 +22,8 @@ import { storageService } from './services/storageService';
 import { authService } from './services/authService';
 import { securityService } from './services/securityService';
 import { LAB_SUBJECTS } from './data/mockData';
+import { collection, onSnapshot } from 'firebase/firestore';
+import { db } from './firebase';
 
 // Layout Components
 import { Navbar } from './components/layout/Navbar';
@@ -156,9 +158,51 @@ export default function App() {
       }
     } catch {}
 
+    // Real-time Firestore sync with central collections (/lessons, /slides)
+    let unsubLessons: (() => void) | null = null;
+    let unsubSlides: (() => void) | null = null;
+    try {
+      unsubLessons = onSnapshot(collection(db, 'lessons'), (snap) => {
+        if (!isMounted) return;
+        const list: Practical[] = [];
+        snap.forEach((d) => {
+          list.push({ id: d.id, ...d.data() } as Practical);
+        });
+        if (list.length > 0) {
+          setPracticals(list);
+          try {
+            localStorage.setItem('labhub_medical_practicals', JSON.stringify(list));
+          } catch {}
+        }
+      }, (err) => {
+        console.warn('Realtime lessons listener error:', err);
+      });
+
+      unsubSlides = onSnapshot(collection(db, 'slides'), (snap) => {
+        if (!isMounted) return;
+        const slidesList: any[] = [];
+        snap.forEach((d) => {
+          slidesList.push({ id: d.id, ...d.data() });
+        });
+        if (slidesList.length > 0) {
+          try {
+            localStorage.setItem('labhub_managed_images', JSON.stringify(slidesList));
+          } catch {}
+          // Update practicals to reflect any slide updates
+          setPracticals(storageService.getPracticals());
+        }
+      }, (err) => {
+        console.warn('Realtime slides listener error:', err);
+      });
+    } catch (e) {
+      console.warn('Could not attach Firestore realtime listeners:', e);
+    }
+
     return () => {
       isMounted = false;
       clearInterval(interval);
+      if (unsubLessons) unsubLessons();
+      if (unsubSlides) unsubSlides();
       window.removeEventListener('focus', handleFocus);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('labhub_production_sync', handleProductionSync);

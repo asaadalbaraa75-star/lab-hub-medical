@@ -133,12 +133,17 @@ export type AdminSubPage =
 export interface ManagedImage {
   id: string;
   url: string;
+  image?: string;
+  imageUrl?: string;
   title: string;
   caption?: string;
   subject: LabSubjectId;
+  categoryId?: string;
+  categoryTitle?: string;
   lessonId?: string;
   lessonTitle?: string;
   category?: 'lesson' | 'spotter' | 'diagram' | 'general';
+  order?: number;
   uploadedBy: string;
   uploadedAt: string;
   updatedAt: string;
@@ -543,8 +548,9 @@ export interface ExamQuestion {
   magnificationOrView?: string;
   markerPosition?: { x: number; y: number };
   markerLabel?: string;
-  options: string[];
-  correctAnswer: string; // matches one option or typed text
+  options?: string[];
+  correctAnswer: string; // matches typed text or canonical answer
+  acceptableAnswers?: string[]; // accepted answers list (OPSE written spotters)
   alternativeAnswers?: string[]; // accepted synonyms (e.g. ['Femur', 'os femoris', 'thigh bone'])
   correctIndex?: number;
   explanation: string;
@@ -587,6 +593,7 @@ export interface MedicalExam {
   createdAt: string;
   updatedAt?: string;
   authorName: string;
+  reviewerDoctor?: string; // المراجع الأكاديمي المعتمد: الدكتور ثابت الذيفاني
   randomizeQuestions?: boolean;
   randomizeAnswers?: boolean;
   allowRetake?: boolean;

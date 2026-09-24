@@ -353,7 +353,7 @@ export const BIOCHEMISTRY_DETAILED_TESTS: BiochemistryTestDetail[] = [
 /**
  * 30+ High-Yield Medical Practical OSPE Questions with Large Images & Precise Answers
  */
-export const PRACTICAL_EXAM_QUESTIONS: ExamQuestion[] = [
+const RAW_PRACTICAL_EXAM_QUESTIONS: any[] = [
   // ==================== ANATOMY LAB QUESTIONS ====================
   {
     id: 'anat_q1',
@@ -1424,7 +1424,32 @@ export const PRACTICAL_EXAM_QUESTIONS: ExamQuestion[] = [
 ];
 
 /**
+ * All OSPE Practical Questions mapped strictly to Written Station Spotters
+ * (Slide Image + Question Text + Student Text Input + Acceptable Answers Array + 30-Second Timer)
+ * Eliminating Multiple Choice (A, B, C, D) options everywhere.
+ */
+export const PRACTICAL_EXAM_QUESTIONS: ExamQuestion[] = RAW_PRACTICAL_EXAM_QUESTIONS.map((q) => {
+  const canonical = (q.correctAnswer || '').trim();
+  const alt = (q.alternativeAnswers || []).map((a: string) => a.trim());
+  const opt = (q.options || []).map((o: string) => o.trim());
+
+  // Aggregate all canonical, synonyms and translations into acceptableAnswers
+  const acceptable = Array.from(new Set([canonical, ...alt, ...opt])).filter(Boolean);
+
+  return {
+    ...q,
+    type: 'write_answer',
+    questionType: 'write_answer',
+    timeSeconds: 30, // Strict 30s per slide
+    acceptableAnswers: acceptable,
+    alternativeAnswers: acceptable,
+    options: undefined // Deleted multiple-choice options completely
+  };
+});
+
+/**
  * Pre-Configured Medical Practical Examinations
+ * Reviewer and Author strictly restricted to: "الدكتور ثابت الذيفاني"
  */
 export const MEDICAL_PRACTICAL_EXAMS: MedicalExam[] = [
   {
@@ -1458,123 +1483,138 @@ export const MEDICAL_PRACTICAL_EXAMS: MedicalExam[] = [
       'anat_opse_15'
     ],
     createdAt: '2026-09-23',
-    authorName: 'د. ثابت الذيفاني'
+    authorName: 'الدكتور ثابت الذيفاني',
+    reviewerDoctor: 'الدكتور ثابت الذيفاني'
   },
   {
     id: 'exam_anat_ospe',
     title: 'Anatomy Comprehensive Practical Exam',
     titleArabic: 'الامتحان العملي الشامل للتشريح (Anatomy Comprehensive Exam)',
     labId: 'anatomy',
-    examType: 'mixed',
-    description: 'Comprehensive timed medical OSPE practical exam covering major osteology bones (Femur, Tibia, Humerus, Scapula), muscle dissections, and joint kinesiology.',
+    examType: 'opse_spotter',
+    description: 'الامتحان العملي الطبي الشامل لمحطات العظام والعضلات والمفاصل بنظام الكتابة المباشرة 30 ثانية لكل شريحة.',
     timeLimitMinutes: 10,
     passingScorePercent: 75,
     totalMarks: 14,
     difficulty: 'university_ospe',
     isPublished: true,
+    timePerQuestionSeconds: 30,
     questionIds: ['anat_q1', 'anat_q2', 'anat_q3', 'anat_q4', 'anat_q5', 'anat_q6', 'anat_q7', 'anat_q8', 'anat_q9', 'anat_q10', 'anat_q11', 'anat_q12', 'anat_q13', 'anat_q14'],
     createdAt: '2026-08-28',
-    authorName: 'Department of Anatomy'
+    authorName: 'الدكتور ثابت الذيفاني',
+    reviewerDoctor: 'الدكتور ثابت الذيفاني'
   },
   {
     id: 'exam_anat_bones',
     title: 'Bones Practical Exam',
     titleArabic: 'امتحان العظام والهيكل العظمي (Bones Exam)',
     labId: 'anatomy',
-    examType: 'bone_id',
-    description: 'Focused OSPE station exam on identification of dry bones, bony landmarks, axes, and osteological features (Femur, Tibia, Humerus, Scapula, Mandible, Axial skeleton).',
+    examType: 'opse_spotter',
+    description: 'محطات التعرف الكتابي المباشر على العظام ومعالمها التشريحية بدقة علمية.',
     timeLimitMinutes: 6,
     passingScorePercent: 70,
     totalMarks: 6,
     difficulty: 'intermediate',
     isPublished: true,
+    timePerQuestionSeconds: 30,
     questionIds: ['anat_q1', 'anat_q2', 'anat_q3', 'anat_q4', 'anat_q8', 'anat_q14'],
     createdAt: '2026-09-01',
-    authorName: 'Department of Anatomy'
+    authorName: 'الدكتور ثابت الذيفاني',
+    reviewerDoctor: 'الدكتور ثابت الذيفاني'
   },
   {
     id: 'exam_anat_muscles',
     title: 'Muscles Practical Exam',
     titleArabic: 'امتحان العضلات والتشريح العضلي (Muscles Exam)',
     labId: 'anatomy',
-    examType: 'muscle_id',
-    description: 'Practical station exam on gross muscle dissections, origin/insertion landmarks, actions, and motor nerve supply (Biceps, Triceps, Deltoid, Pectoralis Major, Gastrocnemius).',
+    examType: 'opse_spotter',
+    description: 'محطات التعرف العملي الكتابي على العضلات والحجرات العضلية والأعصاب المحركة.',
     timeLimitMinutes: 6,
     passingScorePercent: 75,
     totalMarks: 5,
     difficulty: 'intermediate',
     isPublished: true,
+    timePerQuestionSeconds: 30,
     questionIds: ['anat_q5', 'anat_q6', 'anat_q9', 'anat_q10', 'anat_q13'],
     createdAt: '2026-09-01',
-    authorName: 'Department of Anatomy'
+    authorName: 'الدكتور ثابت الذيفاني',
+    reviewerDoctor: 'الدكتور ثابت الذيفاني'
   },
   {
     id: 'exam_anat_movements',
     title: 'Movements & Joints Exam',
     titleArabic: 'امتحان الحركات والمفاصل (Movements Exam)',
     labId: 'anatomy',
-    examType: 'movement_id',
-    description: 'Practical kinesiology and arthrology exam evaluating anatomical plane movements (Flexion, Extension, Abduction) and knee joint stabilizing ligaments.',
+    examType: 'opse_spotter',
+    description: 'محطات التعرف العملي على المفاصل الزليلية والأربطة وحركات المفاصل.',
     timeLimitMinutes: 5,
     passingScorePercent: 70,
     totalMarks: 3,
     difficulty: 'basic',
     isPublished: true,
+    timePerQuestionSeconds: 30,
     questionIds: ['anat_q7', 'anat_q11', 'anat_q12'],
     createdAt: '2026-09-01',
-    authorName: 'Department of Anatomy'
+    authorName: 'الدكتور ثابت الذيفاني',
+    reviewerDoctor: 'الدكتور ثابت الذيفاني'
   },
   {
     id: 'exam_hist_ospe',
     title: 'Histology Microscopic Slide Identification Exam',
     titleArabic: 'اختبار الشرائح المجهرية — معمل الأنسجة (Histology Lab)',
     labId: 'histology',
-    examType: 'image_recognition',
-    description: 'High-power photomicrograph identification of basic epithelia, cartilage, compact bone, muscle types, and blood cytology.',
+    examType: 'opse_spotter',
+    description: 'محطات مجهرية كتابية للتعرف على الأنسجة الطلائية والضامة والعضلية والعصبية.',
     timeLimitMinutes: 8,
     passingScorePercent: 70,
     totalMarks: 9,
     difficulty: 'intermediate',
     isPublished: true,
+    timePerQuestionSeconds: 30,
     questionIds: ['hist_q1', 'hist_q2', 'hist_q3', 'hist_q4', 'hist_q5', 'hist_q6', 'hist_q7', 'hist_q8', 'hist_q9'],
     createdAt: '2026-08-28',
-    authorName: 'Department of Histology'
+    authorName: 'الدكتور ثابت الذيفاني',
+    reviewerDoctor: 'الدكتور ثابت الذيفاني'
   },
   {
     id: 'exam_biochem_ospe',
     title: 'Biochemistry Practical Laboratory Tests & Interpretation',
     titleArabic: 'اختبار التفاعلات والتفسير البيوكيميائي — معمل الكيمياء الحيوية',
     labId: 'biochemistry',
-    examType: 'practical_interpretation',
-    description: 'Identification of biochemical test tubes, reaction mechanisms (Benedict, Iodine, Biuret, Ninhydrin, Molisch, Barfoed, Seliwanoff, Sudan), and clinical interpretations.',
+    examType: 'opse_spotter',
+    description: 'محطات كتابية للتعرف على التفاعلات المخبرية وتغيرات الألوان والتفسير السريري.',
     timeLimitMinutes: 8,
     passingScorePercent: 75,
     totalMarks: 8,
     difficulty: 'intermediate',
     isPublished: true,
+    timePerQuestionSeconds: 30,
     questionIds: ['biochem_q1', 'biochem_q2', 'biochem_q3', 'biochem_q4', 'biochem_q5', 'biochem_q6', 'biochem_q7', 'biochem_q8'],
     createdAt: '2026-08-29',
-    authorName: 'Department of Medical Biochemistry'
+    authorName: 'الدكتور ثابت الذيفاني',
+    reviewerDoctor: 'الدكتور ثابت الذيفاني'
   },
   {
     id: 'exam_ospe_comprehensive',
     title: 'University Integrated Medical OSPE — Practical Examination',
     titleArabic: 'الامتحان العملي الطبي الشامل المتكامل (OSPE)',
     labId: 'mixed',
-    examType: 'mixed',
-    description: 'Comprehensive timed medical OSCE/OSPE practical examination covering Anatomy osteology & myology, Histology epithelia & tissues, and Biochemistry diagnostic laboratory tests.',
+    examType: 'opse_spotter',
+    description: 'الامتحان العملي النهائي الشامل لمحطات التشريح والأنسجة والكيمياء الحيوية بمؤقت 30 ثانية لكل محطة.',
     timeLimitMinutes: 15,
     passingScorePercent: 70,
     totalMarks: 25,
     difficulty: 'university_ospe',
     isPublished: true,
+    timePerQuestionSeconds: 30,
     questionIds: [
       'anat_q1', 'anat_q2', 'anat_q3', 'anat_q4', 'anat_q5', 'anat_q6', 'anat_q7',
       'hist_q1', 'hist_q2', 'hist_q3', 'hist_q4', 'hist_q5', 'hist_q6', 'hist_q7', 'hist_q9',
       'biochem_q1', 'biochem_q2', 'biochem_q3', 'biochem_q4', 'biochem_q5', 'biochem_q6', 'biochem_q7', 'biochem_q8'
     ],
     createdAt: '2026-08-30',
-    authorName: 'Medical Academic Examination Board'
+    authorName: 'الدكتور ثابت الذيفاني',
+    reviewerDoctor: 'الدكتور ثابت الذيفاني'
   }
 ];
 

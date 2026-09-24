@@ -165,11 +165,13 @@ export const PracticalExamRunner: React.FC<PracticalExamRunnerProps> = ({
       const studentAns = (answers[q.id] || '').trim();
       const normStudent = studentAns.toLowerCase();
       const normCorrect = (q.correctAnswer || '').trim().toLowerCase();
-      const normAlternatives = (q.alternativeAnswers || []).map(a => a.trim().toLowerCase());
+      const normAcceptable = Array.from(
+        new Set([...(q.acceptableAnswers || []), ...(q.alternativeAnswers || [])])
+      ).map(a => a.trim().toLowerCase());
 
       const isCorrect = normStudent !== '' && (
         normStudent === normCorrect ||
-        normAlternatives.includes(normStudent)
+        normAcceptable.includes(normStudent)
       );
 
       if (isCorrect) {
@@ -447,87 +449,39 @@ export const PracticalExamRunner: React.FC<PracticalExamRunnerProps> = ({
               )}
             </div>
 
-            {/* Answer Input: OPSE Written Station (Text Input) vs MCQ Options */}
-            {Boolean(
-              currentQuestion.type === 'write_answer' ||
-              (currentQuestion as any).questionType === 'write_answer' ||
-              !currentQuestion.options ||
-              currentQuestion.options.length <= 1
-            ) ? (
-              <div className="space-y-3 pt-2">
-                <div className="flex items-center justify-between text-xs font-bold text-indigo-700 bg-indigo-50 border border-indigo-200/80 px-3 py-2 rounded-xl">
-                  <span className="flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-indigo-600 animate-pulse" />
-                    <span>محطة عملية كتابية (OPSE Written Spotter Station)</span>
-                  </span>
-                  <span className="font-mono text-[11px] text-indigo-600">30 ثانية لكل سؤال</span>
-                </div>
-
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={currentAnswer || ''}
-                    onChange={(e) => handleSelectOption(e.target.value)}
-                    placeholder="اكتب اسم العضو / النسيج / الإجابة التشريحية هنا..."
-                    className="w-full px-4 py-3.5 rounded-xl border-2 border-indigo-300 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-500/20 text-slate-900 placeholder-slate-400 font-bold text-base transition-all bg-white shadow-xs"
-                    autoFocus
-                    autoComplete="off"
-                    spellCheck="false"
-                  />
-                  {currentAnswer && (
-                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
-                      تم تدوين الإجابة ✓
-                    </div>
-                  )}
-                </div>
-
-                <p className="text-[11px] text-slate-500 leading-relaxed">
-                  * سيتم مطابقة إجابتك وتصحيحها آلياً مع المصطلحات الطبية والإجابات المقبولة (Case-insensitive & Trimmed).
-                </p>
+            {/* OSPE Written Spotter Station Text Input (Multiple Choice Options Completely Removed) */}
+            <div className="space-y-3 pt-2">
+              <div className="flex items-center justify-between text-xs font-bold text-indigo-700 bg-indigo-50 border border-indigo-200/80 px-3 py-2 rounded-xl">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-indigo-600 animate-pulse" />
+                  <span>محطة عملية كتابية (OPSE Written Spotter Station)</span>
+                </span>
+                <span className="font-mono text-[11px] text-indigo-600">مؤقت زمني 30 ثانية</span>
               </div>
-            ) : (
-              /* Answer Options Grid */
-              <div className="space-y-2.5 pt-2" role="radiogroup" aria-label="خيارات الإجابة">
-                {currentQuestion.options.map((option, optIdx) => {
-                  const isSelected = currentAnswer === option;
-                  const letter = String.fromCharCode(65 + optIdx); // A, B, C, D
 
-                  return (
-                    <button
-                      key={option}
-                      type="button"
-                      onClick={() => handleSelectOption(option)}
-                      className={`w-full text-left p-3.5 rounded-xl border transition-all flex items-center justify-between group active:scale-[0.99] ${
-                        isSelected
-                          ? 'bg-indigo-50/90 border-indigo-600 text-indigo-950 ring-2 ring-indigo-500/20 shadow-xs'
-                          : 'bg-white border-slate-200 hover:border-indigo-300 text-slate-800 hover:bg-slate-50/60'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <span
-                          className={`w-7 h-7 rounded-lg text-xs font-bold flex items-center justify-center transition-colors font-mono ${
-                            isSelected
-                              ? 'bg-indigo-600 text-white'
-                              : 'bg-slate-100 text-slate-600 group-hover:bg-slate-200'
-                          }`}
-                        >
-                          {letter}
-                        </span>
-                        <span className="text-sm font-semibold">{option}</span>
-                      </div>
-
-                      <div
-                        className={`w-5 h-5 rounded-full border flex items-center justify-center transition-colors ${
-                          isSelected ? 'border-indigo-600 bg-indigo-600' : 'border-slate-300'
-                        }`}
-                      >
-                        {isSelected && <div className="w-2 h-2 rounded-full bg-white" />}
-                      </div>
-                    </button>
-                  );
-                })}
+              <div className="relative">
+                <input
+                  type="text"
+                  value={currentAnswer || ''}
+                  onChange={(e) => handleSelectOption(e.target.value)}
+                  placeholder="اكتب اسم العضو / النسيج / الإجابة التشريحية هنا..."
+                  className="w-full px-4 py-3.5 rounded-xl border-2 border-indigo-300 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-500/20 text-slate-900 placeholder-slate-400 font-bold text-base transition-all bg-white shadow-xs"
+                  autoFocus
+                  autoComplete="off"
+                  spellCheck="false"
+                />
+                {currentAnswer && (
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                    تم تدوين الإجابة ✓
+                  </div>
+                )}
               </div>
-            )}
+
+              <div className="flex items-center justify-between text-[11px] text-slate-500">
+                <span>* مطابقة وتصحيح آلي مع المصطلحات الطبية والإجابات المقبولة (acceptableAnswers).</span>
+                <span className="text-slate-400 font-semibold">المراجع: الدكتور ثابت الذيفاني</span>
+              </div>
+            </div>
           </div>
 
           {/* Navigation Buttons */}

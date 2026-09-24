@@ -42,20 +42,20 @@ export const AcademicApprovalHub: React.FC<AcademicApprovalHubProps> = ({
   const departmentHeads = [
     {
       dept: 'Department of Anatomy',
-      head: 'Prof. Eleanor Vance, MD, PhD',
-      status: 'Active Reviewer',
+      head: 'الدكتور ثابت الذيفاني',
+      status: 'Active Reviewer (المراجع الأكاديمي المعتمد)',
       practicalsCount: safePracticals.filter(p => p.courseId === 'anatomy').length
     },
     {
       dept: 'Department of Histology & Cell Biology',
-      head: 'Dr. Marcus Sterling, FRCPath',
-      status: 'Active Reviewer',
+      head: 'الدكتور ثابت الذيفاني',
+      status: 'Active Reviewer (المراجع الأكاديمي المعتمد)',
       practicalsCount: safePracticals.filter(p => p.courseId === 'histology').length
     },
     {
       dept: 'Department of Clinical Biochemistry',
-      head: 'Dr. Tariq Vance, MD, MSc',
-      status: 'Active Reviewer',
+      head: 'الدكتور ثابت الذيفاني',
+      status: 'Active Reviewer (المراجع الأكاديمي المعتمد)',
       practicalsCount: safePracticals.filter(p => p.courseId === 'biochemistry').length
     }
   ];

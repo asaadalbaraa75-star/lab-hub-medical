@@ -42,6 +42,8 @@ import {
   PRACTICAL_EXAM_QUESTIONS,
   BIOCHEMISTRY_DETAILED_TESTS
 } from '../data/medicalExamData';
+import { db } from '../firebase';
+import { doc, deleteDoc } from 'firebase/firestore';
 
 import { securityService } from './securityService';
 import { apiService } from './apiService';
@@ -187,8 +189,8 @@ class StorageService {
     const list = this.getPracticals();
     const filtered = list.filter(p => p.id !== id);
     this.set(STORAGE_KEYS.PRACTICALS, filtered);
-    // Sync deletion to shared backend database
-    fetch(`/api/practicals/${id}`, { method: 'DELETE' }).catch(e => console.warn('Could not sync practical deletion to server:', e));
+    // Sync deletion directly to central Firestore /lessons collection (prevents 405 error)
+    deleteDoc(doc(db, 'lessons', id)).catch(e => console.warn('Could not sync practical deletion to Firestore:', e));
     return true;
   }
 

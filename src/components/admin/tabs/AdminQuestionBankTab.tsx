@@ -1216,53 +1216,35 @@ export const QuestionModal: React.FC<Props> = ({ isOpen, onClose, examId, subjec
                 </div>
               </div>
 
-              {/* Options */}
-              <div className="space-y-2">
-                <label className="block text-slate-700">خيارات الإجابة (Options) *</label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {formOptions.map((opt, idx) => (
-                    <div key={idx} className="flex items-center gap-2">
-                      <span className="w-6 h-6 rounded-lg bg-slate-100 text-slate-700 font-mono font-bold flex items-center justify-center shrink-0">
-                        {String.fromCharCode(65 + idx)}
-                      </span>
-                      <input
-                        type="text"
-                        value={opt}
-                        onChange={e => {
-                          const next = [...formOptions];
-                          next[idx] = e.target.value;
-                          setFormOptions(next);
-                        }}
-                        placeholder={`Option ${String.fromCharCode(65 + idx)}`}
-                        className="w-full py-1.5 px-3 rounded-xl border border-slate-200 text-slate-800"
-                      />
-                    </div>
-                  ))}
+              {/* OPSE Written Spotter Station - Answers */}
+              <div className="space-y-3 pt-2 border-t border-slate-100">
+                <div className="flex items-center justify-between p-2.5 rounded-xl bg-indigo-50 border border-indigo-200 text-xs font-bold text-indigo-900">
+                  <span>محطة كتابية عملية (OPSE Written Spotter) — تم إلغاء الخيارات المتعددة (A, B, C, D)</span>
+                  <span className="font-mono text-indigo-700">30 ثانية لكل شريحة</span>
                 </div>
-              </div>
 
-              {/* Correct Answer & Alternative Answers */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-slate-700 mb-1">الإجابة الصحيحة (Correct Answer) *</label>
-                  <input
-                    type="text"
-                    value={formCorrectAnswer}
-                    onChange={e => setFormCorrectAnswer(e.target.value)}
-                    placeholder="يجب أن تطابق أحد الخيارات أعلاه أو الإجابة النموذجية"
-                    className="w-full py-2 px-3 rounded-xl border border-emerald-300 bg-emerald-50/50 text-emerald-950 font-bold"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-slate-700 mb-1">بدائل مقبولة (مفصولة بفواصل)</label>
-                  <input
-                    type="text"
-                    value={formAlternativeAnswers}
-                    onChange={e => setFormAlternativeAnswers(e.target.value)}
-                    placeholder="مثال: Femur bone, Right femur"
-                    className="w-full py-2 px-3 rounded-xl border border-slate-200 text-slate-800"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-slate-700 mb-1 text-xs font-bold">الإجابة النموذجية (Canonical Answer) *</label>
+                    <input
+                      type="text"
+                      value={formCorrectAnswer}
+                      onChange={e => setFormCorrectAnswer(e.target.value)}
+                      placeholder="مثال: Femur"
+                      className="w-full py-2 px-3 rounded-xl border-2 border-emerald-400 bg-emerald-50/40 text-emerald-950 font-bold text-sm"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-700 mb-1 text-xs font-bold">مصفوفة الإجابات المقبولة (acceptableAnswers - مفصولة بفواصل)</label>
+                    <input
+                      type="text"
+                      value={formAlternativeAnswers}
+                      onChange={e => setFormAlternativeAnswers(e.target.value)}
+                      placeholder="مثال: Femur, Os femoris, عظم الفخذ, فخذ"
+                      className="w-full py-2 px-3 rounded-xl border border-slate-200 text-slate-800 text-sm font-medium"
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -1529,21 +1511,24 @@ export const QuestionModal: React.FC<Props> = ({ isOpen, onClose, examId, subjec
               )}
             </div>
 
-            <div className="space-y-1.5 pt-2 border-t border-slate-100">
-              <span className="text-xs text-slate-400 font-bold block">الخيارات:</span>
-              <div className="grid grid-cols-2 gap-2">
-                {previewQuestion.options.map((opt, i) => (
-                  <div
-                    key={opt}
-                    className={`p-2 rounded-xl text-xs font-semibold border ${
-                      opt === previewQuestion.correctAnswer
-                        ? 'bg-emerald-50 border-emerald-300 text-emerald-900'
-                        : 'bg-slate-50 border-slate-200 text-slate-700'
-                    }`}
-                  >
-                    <span className="font-mono font-bold mr-1">{String.fromCharCode(65 + i)}.</span> {opt}
+            <div className="space-y-2 pt-2 border-t border-slate-100">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-slate-400 font-bold">نوع السؤال:</span>
+                <span className="font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-200">
+                  محطة كتابية عملية (OPSE Written Spotter - 30s)
+                </span>
+              </div>
+              <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5 text-xs">
+                <div>
+                  <span className="font-bold text-slate-600">الإجابة النموذجية: </span>
+                  <span className="font-black text-emerald-700">{previewQuestion.correctAnswer}</span>
+                </div>
+                {previewQuestion.acceptableAnswers && previewQuestion.acceptableAnswers.length > 0 && (
+                  <div className="text-[11px] text-slate-500">
+                    <span className="font-semibold text-slate-400">الإجابات المقبولة: </span>
+                    <span>{previewQuestion.acceptableAnswers.join(' • ')}</span>
                   </div>
-                ))}
+                )}
               </div>
             </div>
           </div>

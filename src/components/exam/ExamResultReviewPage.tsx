@@ -98,6 +98,9 @@ export const ExamResultReviewPage: React.FC<ExamResultReviewPageProps> = ({
             <p className="text-sm text-slate-300 font-medium">
               {attempt.examTitle} • {new Date(attempt.completedAt).toLocaleDateString('ar-EG', { dateStyle: 'full' })}
             </p>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/20 border border-teal-400/40 text-teal-300 text-xs font-bold">
+              <span>المراجع الأكاديمي المعتمد للامتحان: الدكتور ثابت الذيفاني</span>
+            </div>
           </div>
 
           {/* Large Score Ring / Percentage Badge */}

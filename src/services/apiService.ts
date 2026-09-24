@@ -19,6 +19,8 @@ import { ExamQuestion, MedicalExam, NotificationItem, Practical, ManagedImage } 
 import { storageService } from './storageService';
 import { extractYouTubeVideoId, getYouTubeEmbedUrl } from '../utils/youtubeUtils';
 import { PRACTICAL_EXAM_QUESTIONS, MEDICAL_PRACTICAL_EXAMS } from '../data/medicalExamData';
+import { DEFAULT_MANAGED_IMAGES } from '../data/defaultManagedImages';
+import { compressImageToMax200KB } from '../utils/imageCompressor';
 
 export interface AskTutorResponse {
   answer: string;
@@ -273,9 +275,10 @@ export async function apiUpdateQuestionStatus(
 export async function apiUploadQuestionImage(base64Image: string): Promise<string | null> {
   try {
     if (!base64Image) return null;
+    const compressed = await compressImageToMax200KB(base64Image);
     const fileId = `q_img_${Date.now()}`;
     const imgRef = storageRef(storage, `questions/${fileId}`);
-    await uploadString(imgRef, base64Image, 'data_url');
+    await uploadString(imgRef, compressed, 'data_url');
     return await getDownloadURL(imgRef);
   } catch (e) {
     console.warn('[STORAGE] Falling back to direct data string for image upload:', e);
@@ -468,9 +471,10 @@ export async function apiUploadPracticalImage(image: string): Promise<string> {
   try {
     if (!image) return '';
     if (image.startsWith('http')) return image;
+    const compressed = await compressImageToMax200KB(image);
     const fileId = `lesson_img_${Date.now()}`;
     const imgRef = storageRef(storage, `lessons/${fileId}`);
-    await uploadString(imgRef, image, 'data_url');
+    await uploadString(imgRef, compressed, 'data_url');
     return await getDownloadURL(imgRef);
   } catch (e) {
     console.warn('[STORAGE] Fallback to direct image string:', e);
@@ -484,8 +488,27 @@ export async function apiFetchImages(): Promise<ManagedImage[]> {
     const snap = await getDocs(collection(db, 'slides'));
     const list: ManagedImage[] = [];
     snap.forEach((d) => {
-      list.push({ id: d.id, ...d.data() } as ManagedImage);
+      const data = d.data();
+      const resolvedUrl = data.url || data.image || data.imageUrl || '';
+      list.push({
+        id: d.id,
+        ...data,
+        url: resolvedUrl,
+        image: resolvedUrl,
+        imageUrl: resolvedUrl
+      } as ManagedImage);
     });
+
+    // Ensure defaults across all 3 subjects (Anatomy, Histology, Biochemistry) are seeded if not present
+    const existingIds = new Set(list.map((i) => i.id));
+    for (const defImg of DEFAULT_MANAGED_IMAGES) {
+      if (!existingIds.has(defImg.id)) {
+        list.push(defImg);
+        // Persist to central Firestore collection so all users and devices receive it
+        setDoc(doc(db, 'slides', defImg.id), defImg, { merge: true }).catch(() => {});
+      }
+    }
+
     if (list.length > 0) {
       try {
         localStorage.setItem('labhub_managed_images', JSON.stringify(list));
@@ -495,59 +518,112 @@ export async function apiFetchImages(): Promise<ManagedImage[]> {
   } catch (e) {
     console.warn('[FIRESTORE] Fetch images fallback:', e);
   }
+
+  // Fallback to local storage or default catalog
   try {
     const cached = localStorage.getItem('labhub_managed_images');
-    if (cached) return JSON.parse(cached);
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
   } catch {}
-  return [];
+  return DEFAULT_MANAGED_IMAGES;
 }
 
 export async function apiAddImage(payload: {
   image: string;
   title: string;
   caption?: string;
-  subject?: string;
+  subject?: any;
+  categoryId?: string;
+  categoryTitle?: string;
   lessonId?: string;
+  lessonTitle?: string;
   category?: string;
   stainOrView?: string;
   magnification?: string;
   uploadedBy?: string;
   userId?: string;
   userEmail?: string;
-}): Promise<{ success: boolean; image?: any; error?: string }> {
+}): Promise<{ success: boolean; image?: ManagedImage; error?: string }> {
   try {
     let finalImageUrl = payload.image;
-    // Upload image to Firebase Storage if data URL
+    // Compress and upload image to Firebase Storage if data URL
     if (payload.image && payload.image.startsWith('data:image/')) {
       try {
+        const compressedBase64 = await compressImageToMax200KB(payload.image);
         const fileId = `slide_${Date.now()}`;
         const sRef = storageRef(storage, `slides/${fileId}`);
-        await uploadString(sRef, payload.image, 'data_url');
+        await uploadString(sRef, compressedBase64, 'data_url');
         finalImageUrl = await getDownloadURL(sRef);
       } catch (uploadErr) {
-        console.warn('[STORAGE] Image upload fallback:', uploadErr);
+        console.warn('[STORAGE] Image upload fallback, using payload image directly:', uploadErr);
       }
     }
 
     const id = `slide_${Date.now()}`;
     const newSlide: ManagedImage = {
-      ...payload,
       id,
+      title: payload.title,
+      caption: payload.caption || '',
+      url: finalImageUrl,
       image: finalImageUrl,
       imageUrl: finalImageUrl,
-      createdAt: new Date().toISOString(),
+      subject: payload.subject || 'anatomy',
+      categoryId: payload.categoryId,
+      categoryTitle: payload.categoryTitle,
+      lessonId: payload.lessonId,
+      lessonTitle: payload.lessonTitle,
+      category: (payload.category as any) || 'lesson',
+      stainOrView: payload.stainOrView || '',
+      magnification: payload.magnification || '',
+      uploadedBy: payload.uploadedBy || 'مسؤول المنصة',
+      uploadedAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
-    } as any;
+    };
 
+    // 1. Save directly to central Firestore collections (/slides & /images)
     await setDoc(doc(db, 'slides', id), newSlide, { merge: true });
+    await setDoc(doc(db, 'images', id), newSlide, { merge: true }).catch(() => {});
 
-    // If assigned to a lesson, update the lesson's slide image
+    // 2. If assigned to a lesson, update the lesson's slide image and images array in /lessons
     if (payload.lessonId) {
-      await setDoc(
-        doc(db, 'lessons', payload.lessonId),
-        { imageUrl: finalImageUrl, realImagePath: finalImageUrl, updatedAt: new Date().toISOString() },
-        { merge: true }
-      ).catch(() => {});
+      try {
+        const lessonDocRef = doc(db, 'lessons', payload.lessonId);
+        const practicalMediaItem = {
+          url: finalImageUrl,
+          caption: payload.caption || payload.title,
+          stainOrView: payload.stainOrView || '',
+          magnification: payload.magnification || ''
+        };
+
+        await setDoc(
+          lessonDocRef,
+          {
+            imageUrl: finalImageUrl,
+            realImagePath: finalImageUrl,
+            images: [practicalMediaItem],
+            updatedAt: new Date().toISOString()
+          },
+          { merge: true }
+        );
+      } catch (lessonErr) {
+        console.warn('[FIRESTORE] Lesson sync warning:', lessonErr);
+      }
+    }
+
+    // 3. Update local cache
+    try {
+      const local = await apiFetchImages();
+      const existingIdx = local.findIndex((i) => i.id === id);
+      if (existingIdx >= 0) local[existingIdx] = newSlide;
+      else local.unshift(newSlide);
+      localStorage.setItem('labhub_managed_images', JSON.stringify(local));
+    } catch {}
+
+    // 4. Notify live app and all listeners
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('labhub_production_sync', { detail: { type: 'slide_added', id } }));
     }
 
     return { success: true, image: newSlide };
@@ -563,8 +639,11 @@ export async function apiUpdateImage(
     image?: string;
     title?: string;
     caption?: string;
-    subject?: string;
+    subject?: any;
+    categoryId?: string;
+    categoryTitle?: string;
     lessonId?: string;
+    lessonTitle?: string;
     category?: string;
     stainOrView?: string;
     magnification?: string;
@@ -593,16 +672,49 @@ export async function apiUpdateImage(
     if (finalImageUrl) {
       updatedData.image = finalImageUrl;
       updatedData.imageUrl = finalImageUrl;
+      updatedData.url = finalImageUrl;
     }
 
+    // 1. Save directly to central Firestore /slides collection
     await setDoc(doc(db, 'slides', id), updatedData, { merge: true });
 
+    // 2. If attached to a lesson, update the lesson in /lessons immediately
     if (payload.lessonId && finalImageUrl) {
-      await setDoc(
-        doc(db, 'lessons', payload.lessonId),
-        { imageUrl: finalImageUrl, realImagePath: finalImageUrl, updatedAt: new Date().toISOString() },
-        { merge: true }
-      ).catch(() => {});
+      try {
+        const practicalMediaItem = {
+          url: finalImageUrl,
+          caption: payload.caption || payload.title || '',
+          stainOrView: payload.stainOrView || '',
+          magnification: payload.magnification || ''
+        };
+        await setDoc(
+          doc(db, 'lessons', payload.lessonId),
+          {
+            imageUrl: finalImageUrl,
+            realImagePath: finalImageUrl,
+            images: [practicalMediaItem],
+            updatedAt: new Date().toISOString()
+          },
+          { merge: true }
+        );
+      } catch (lessonErr) {
+        console.warn('[FIRESTORE] Lesson update sync warning:', lessonErr);
+      }
+    }
+
+    // 3. Update local cache
+    try {
+      const local = await apiFetchImages();
+      const idx = local.findIndex((i) => i.id === id);
+      if (idx >= 0) {
+        local[idx] = { ...local[idx], ...updatedData, id };
+        localStorage.setItem('labhub_managed_images', JSON.stringify(local));
+      }
+    } catch {}
+
+    // 4. Notify live app and all listeners
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('labhub_production_sync', { detail: { type: 'slide_updated', id } }));
     }
 
     return { success: true, image: { id, ...updatedData } };
@@ -614,7 +726,20 @@ export async function apiUpdateImage(
 
 export async function apiDeleteImage(id: string, _userMeta?: { userId?: string; userName?: string; userEmail?: string }): Promise<boolean> {
   try {
+    // 1. Delete from central Firestore collection
     await deleteDoc(doc(db, 'slides', id));
+
+    // 2. Update local cache
+    try {
+      const local = (await apiFetchImages()).filter((i) => i.id !== id);
+      localStorage.setItem('labhub_managed_images', JSON.stringify(local));
+    } catch {}
+
+    // 3. Notify live app
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('labhub_production_sync', { detail: { type: 'slide_deleted', id } }));
+    }
+
     return true;
   } catch (e) {
     console.error('[FIRESTORE] Delete image error:', e);
@@ -631,25 +756,41 @@ export async function apiAssignImage(payload: {
   try {
     const slidesSnap = await getDocs(collection(db, 'slides'));
     let slideImgUrl = '';
+    let slideTitle = '';
     slidesSnap.forEach((d) => {
       if (d.id === payload.imageId) {
         const dat = d.data();
-        slideImgUrl = dat.image || dat.imageUrl || '';
+        slideImgUrl = dat.image || dat.imageUrl || dat.url || '';
+        slideTitle = dat.title || '';
       }
     });
 
     await setDoc(
       doc(db, 'slides', payload.imageId),
-      { lessonId: payload.lessonId, subject: payload.subject, caption: payload.caption, updatedAt: new Date().toISOString() },
+      {
+        lessonId: payload.lessonId,
+        subject: payload.subject,
+        caption: payload.caption,
+        updatedAt: new Date().toISOString()
+      },
       { merge: true }
     );
 
     if (slideImgUrl) {
       await setDoc(
         doc(db, 'lessons', payload.lessonId),
-        { imageUrl: slideImgUrl, realImagePath: slideImgUrl, updatedAt: new Date().toISOString() },
+        {
+          imageUrl: slideImgUrl,
+          realImagePath: slideImgUrl,
+          images: [{ url: slideImgUrl, caption: payload.caption || slideTitle }],
+          updatedAt: new Date().toISOString()
+        },
         { merge: true }
       );
+    }
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('labhub_production_sync', { detail: { type: 'slide_assigned', id: payload.imageId } }));
     }
 
     return { success: true };

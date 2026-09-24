@@ -429,7 +429,7 @@ const BASE_INITIAL_PRACTICALS: Practical[] = [
     status: 'published',
     authorName: 'Dr. Tariq Vance, MD',
     authorRole: 'Senior Histology Faculty',
-    approvedBy: 'Prof. Eleanor Hayes, MD',
+    approvedBy: 'الدكتور ثابت الذيفاني',
     approvalDate: 'Aug 25, 2026',
     learningObjectives: [
       'Differentiate the microscopic morphology of Skeletal, Cardiac, and Smooth muscle tissues under H&E stain.',
@@ -668,7 +668,7 @@ const BASE_INITIAL_PRACTICALS: Practical[] = [
     status: 'published',
     authorName: 'Dr. Tariq Vance, MD',
     authorRole: 'Senior Anatomy Faculty',
-    approvedBy: 'Prof. Eleanor Hayes, MD',
+    approvedBy: 'الدكتور ثابت الذيفاني',
     approvalDate: 'Aug 21, 2026',
     learningObjectives: [
       'Identify all major osteological landmarks of the Scapula (Acromion, Coracoid process, Glenoid cavity, Spine, Supraspinous & Infraspinous fossae).',
@@ -852,7 +852,7 @@ const BASE_INITIAL_PRACTICALS: Practical[] = [
     status: 'published',
     authorName: 'Dr. Tariq Vance, MD, MSc',
     authorRole: 'Clinical Biochemistry Faculty',
-    approvedBy: 'Prof. Eleanor Hayes, MD',
+    approvedBy: 'الدكتور ثابت الذيفاني',
     approvalDate: 'Aug 27, 2026',
     learningObjectives: [
       'Master the principle and reaction mechanism of the Molisch General Carbohydrate Test (alpha-naphthol dehydration violet ring).',
@@ -1360,7 +1360,7 @@ export const INITIAL_SCHEDULE: ScheduleItem[] = [
     practicalNumber: 1,
     practicalId: 'prac_bio_01',
     practicalTitle: 'Practical 01 — Qualitative Identification of Carbohydrates',
-    instructorName: 'Prof. Eleanor Hayes, MD',
+    instructorName: 'الدكتور ثابت الذيفاني',
     room: 'Biochemistry Lab 2',
     isToday: false,
     isTomorrow: false,
@@ -1388,7 +1388,7 @@ export const INITIAL_ANNOUNCEMENTS: Announcement[] = [
     content: 'The laboratory manual and interactive testing algorithms for Practical 01 (Carbohydrate Qualitative Tests) are now live. Students must review Molisch, Benedict, and Barfoed procedures before entering Lab 2.',
     date: 'Aug 27, 2026',
     labId: 'biochemistry',
-    author: 'Prof. Eleanor Hayes, Dean',
+    author: 'الدكتور ثابت الذيفاني',
     authorRole: 'Academic Directorate',
     priority: 'urgent'
   },
@@ -1467,7 +1467,7 @@ export const INITIAL_FILES: FileAsset[] = [
     fileType: 'pdf',
     fileSize: '2.3 MB',
     uploadDate: 'Aug 23, 2026',
-    uploadedBy: 'Prof. Eleanor Hayes',
+    uploadedBy: 'الدكتور ثابت الذيفاني',
     courseId: 'biochemistry',
     practicalId: 'prac_bio_01',
     version: '3.1',

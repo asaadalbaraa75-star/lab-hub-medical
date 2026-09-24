@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { extractYouTubeVideoId, getYouTubeEmbedUrl, getYouTubeWatchUrl, getYouTubeThumbnailUrl } from '../../../utils/youtubeUtils';
 import {
   Video,
   Play,
@@ -46,14 +47,14 @@ export const DoctorVideoSection: React.FC<DoctorVideoProps> = ({
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
-  const effectiveVideoId = videoId?.trim();
-  const isAvailable = status === 'active' && effectiveVideoId;
-  const directUrl = youtubeUrl || (effectiveVideoId ? `https://www.youtube.com/watch?v=${effectiveVideoId}` : '#');
+  const effectiveVideoId = extractYouTubeVideoId(videoId || youtubeUrl) || videoId?.trim() || '';
+  const isAvailable = status === 'active' && Boolean(effectiveVideoId);
+  const directUrl = getYouTubeWatchUrl(effectiveVideoId || youtubeUrl);
   const embedUrl = effectiveVideoId
-    ? `https://www.youtube.com/embed/${effectiveVideoId}?autoplay=1&rel=0&modestbranding=1`
+    ? getYouTubeEmbedUrl(effectiveVideoId, { autoplay: isPlaying, rel: false })
     : '';
   const thumbnail = effectiveVideoId
-    ? `https://img.youtube.com/vi/${effectiveVideoId}/hqdefault.jpg`
+    ? getYouTubeThumbnailUrl(effectiveVideoId)
     : '';
 
   return (

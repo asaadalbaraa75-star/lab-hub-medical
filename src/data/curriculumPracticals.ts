@@ -15,7 +15,7 @@ export const ADDITIONAL_PRACTICALS: Practical[] = [
     status: 'published',
     authorName: 'Prof. Marcus Brody, PhD',
     authorRole: 'Department of Anatomy',
-    approvedBy: 'Prof. Eleanor Hayes, MD',
+    approvedBy: 'الدكتور ثابت الذيفاني',
     approvalDate: 'Aug 29, 2026',
     learningObjectives: [
       'Identify the three cranial fossae (anterior, middle, posterior) on a dried human skull.',
@@ -122,7 +122,7 @@ export const ADDITIONAL_PRACTICALS: Practical[] = [
     status: 'published',
     authorName: 'Prof. Marcus Brody, PhD',
     authorRole: 'Department of Anatomy',
-    approvedBy: 'Prof. Eleanor Hayes, MD',
+    approvedBy: 'الدكتور ثابت الذيفاني',
     approvalDate: 'Aug 28, 2026',
     learningObjectives: [
       'Differentiate the anatomical features of the femur (head, fovea, neck, trochanters, condyles).',
@@ -206,7 +206,7 @@ export const ADDITIONAL_PRACTICALS: Practical[] = [
     status: 'published',
     authorName: 'Prof. Marcus Brody, PhD',
     authorRole: 'Department of Anatomy',
-    approvedBy: 'Prof. Eleanor Hayes, MD',
+    approvedBy: 'الدكتور ثابت الذيفاني',
     approvalDate: 'Aug 30, 2026',
     learningObjectives: [
       'Dissect and identify pectoralis major and minor muscles, clavipectoral fascia, and subclavius.',
@@ -290,7 +290,7 @@ export const ADDITIONAL_PRACTICALS: Practical[] = [
     status: 'published',
     authorName: 'Prof. Marcus Brody, PhD',
     authorRole: 'Department of Anatomy',
-    approvedBy: 'Prof. Eleanor Hayes, MD',
+    approvedBy: 'الدكتور ثابت الذيفاني',
     approvalDate: 'Aug 31, 2026',
     learningObjectives: [
       'Define boundaries of superior and inferior (anterior, middle, posterior) mediastinum.',
@@ -452,7 +452,7 @@ export const ADDITIONAL_PRACTICALS: Practical[] = [
     status: 'published',
     authorName: 'Dr. Tariq Vance, MD',
     authorRole: 'Senior Histology Faculty',
-    approvedBy: 'Prof. Eleanor Hayes, MD',
+    approvedBy: 'الدكتور ثابت الذيفاني',
     approvalDate: 'Aug 21, 2026',
     learningObjectives: [
       'Master the optical setup of a binocular compound microscope and achieve Koehler illumination.',
@@ -530,7 +530,7 @@ export const ADDITIONAL_PRACTICALS: Practical[] = [
     status: 'published',
     authorName: 'Dr. Tariq Vance, MD',
     authorRole: 'Senior Histology Faculty',
-    approvedBy: 'Prof. Eleanor Hayes, MD',
+    approvedBy: 'الدكتور ثابت الذيفاني',
     approvalDate: 'Aug 23, 2026',
     learningObjectives: [
       'Classify epithelia by cell shape (squamous, cuboidal, columnar) and layer count (simple, stratified, pseudostratified).',
@@ -614,7 +614,7 @@ export const ADDITIONAL_PRACTICALS: Practical[] = [
     status: 'published',
     authorName: 'Dr. Tariq Vance, MD',
     authorRole: 'Senior Histology Faculty',
-    approvedBy: 'Prof. Eleanor Hayes, MD',
+    approvedBy: 'الدكتور ثابت الذيفاني',
     approvalDate: 'Aug 24, 2026',
     learningObjectives: [
       'Differentiate loose (areolar) from dense regular and dense irregular connective tissue.',
@@ -774,7 +774,7 @@ export const ADDITIONAL_PRACTICALS: Practical[] = [
     status: 'published',
     authorName: 'Dr. Tariq Vance, MD',
     authorRole: 'Senior Histology Faculty',
-    approvedBy: 'Prof. Eleanor Hayes, MD',
+    approvedBy: 'الدكتور ثابت الذيفاني',
     approvalDate: 'Aug 26, 2026',
     learningObjectives: [
       'Identify the parts of a multipolar neuron (soma, axon hillock, dendrites, Nissl bodies) in spinal cord anterior horn.',
@@ -860,7 +860,7 @@ export const ADDITIONAL_PRACTICALS: Practical[] = [
     status: 'published',
     authorName: 'Dr. Soraya Al-Khatib, PhD',
     authorRole: 'Head of Clinical Biochemistry',
-    approvedBy: 'Prof. Eleanor Hayes, MD',
+    approvedBy: 'الدكتور ثابت الذيفاني',
     approvalDate: 'Aug 22, 2026',
     learningObjectives: [
       "Explain the chemical mechanism of Molisch's test as a universal screen for carbohydrates.",
@@ -943,7 +943,7 @@ export const ADDITIONAL_PRACTICALS: Practical[] = [
     status: 'published',
     authorName: 'Dr. Soraya Al-Khatib, PhD',
     authorRole: 'Head of Clinical Biochemistry',
-    approvedBy: 'Prof. Eleanor Hayes, MD',
+    approvedBy: 'الدكتور ثابت الذيفاني',
     approvalDate: 'Aug 23, 2026',
     learningObjectives: [
       'Differentiate reducing sugars (glucose, galactose, fructose, maltose, lactose) from non-reducing sugars (sucrose).',
@@ -1101,7 +1101,7 @@ export const ADDITIONAL_PRACTICALS: Practical[] = [
     status: 'published',
     authorName: 'Dr. Soraya Al-Khatib, PhD',
     authorRole: 'Head of Clinical Biochemistry',
-    approvedBy: 'Prof. Eleanor Hayes, MD',
+    approvedBy: 'الدكتور ثابت الذيفاني',
     approvalDate: 'Aug 25, 2026',
     learningObjectives: [
       'Explain the chemical basis of Biuret reaction (coordination of Cu2+ with unshared electron pairs of 4 peptide bond nitrogens).',
