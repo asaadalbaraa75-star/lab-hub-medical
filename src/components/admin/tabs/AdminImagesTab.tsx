@@ -19,6 +19,9 @@ import {
   Check,
   Maximize2,
   ChevronDown,
+  ChevronUp,
+  ArrowUp,
+  ArrowDown,
   ChevronRight,
   Folder,
   FolderOpen,
@@ -499,6 +502,58 @@ export const AdminImagesTab: React.FC<Props> = ({ currentUser }) => {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
+  // Reorder images within a lesson
+  const handleReorderLessonImages = async (
+    lessonId: string,
+    currentIndex: number,
+    direction: 'earlier' | 'later'
+  ) => {
+    const targetIndex = direction === 'earlier' ? currentIndex - 1 : currentIndex + 1;
+    const targetLesson = practicals.find(p => p.id === lessonId);
+    const lessonImgs = images.filter(i => i.lessonId === lessonId);
+    if (!lessonImgs || targetIndex < 0 || targetIndex >= lessonImgs.length) return;
+
+    setIsSaving(true);
+    try {
+      const reordered = [...lessonImgs];
+      const [moved] = reordered.splice(currentIndex, 1);
+      reordered.splice(targetIndex, 0, moved);
+
+      // Optimistic local update
+      const otherImages = images.filter(i => i.lessonId !== lessonId);
+      setImages([...reordered, ...otherImages]);
+
+      const res = await apiService.reorderLessonImages(
+        lessonId,
+        reordered.map((img, idx) => ({
+          id: img.id,
+          url: img.url,
+          caption: img.caption,
+          stainOrView: img.stainOrView,
+          magnification: img.magnification,
+          order: idx + 1
+        }))
+      );
+
+      if (res.success) {
+        setFeedback({
+          type: 'success',
+          message: `تم تحديث وترتيب صور الدرس "${targetLesson?.title || lessonId}" بنجاح ومزامنتها لجميع الطلاب.`
+        });
+        await loadData();
+      } else {
+        setFeedback({ type: 'error', message: res.error || 'فشل تحديث ترتيب الصور.' });
+        await loadData();
+      }
+    } catch (err: any) {
+      console.error('Error reordering images:', err);
+      setFeedback({ type: 'error', message: err.message || 'حدث خطأ أثناء تعديل الترتيب.' });
+      await loadData();
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   // Toggle accordion section
   const toggleSection = (sectionId: string) => {
     setOpenSections(prev => ({
@@ -673,8 +728,15 @@ export const AdminImagesTab: React.FC<Props> = ({ currentUser }) => {
   };
 
   // Image Card Component (Standardized across Hierarchy & Grid)
-  const renderImageCard = (img: ManagedImage) => {
+  const renderImageCard = (
+    img: ManagedImage,
+    indexInLesson?: number,
+    totalInLesson?: number,
+    lessonId?: string
+  ) => {
     const subjectInfo = getSubjectBadge(img.subject);
+    const hasOrdering = Boolean(lessonId && totalInLesson !== undefined && totalInLesson > 1);
+
     return (
       <div
         key={img.id}
@@ -688,7 +750,7 @@ export const AdminImagesTab: React.FC<Props> = ({ currentUser }) => {
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             loading="lazy"
             onError={(e: any) => {
-              e.target.src = 'https://placehold.co/600x400/0f172a/ffffff?text=Medical+Specimen';
+              e.target.src = 'https://images.unsplash.com/photo-1576086213369-97a306d36557?w=800';
             }}
           />
 
@@ -697,6 +759,11 @@ export const AdminImagesTab: React.FC<Props> = ({ currentUser }) => {
             <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold border shadow-sm ${subjectInfo.bg}`}>
               {subjectInfo.label}
             </span>
+            {indexInLesson !== undefined && (
+              <span className="px-2 py-0.5 rounded-md bg-indigo-600/90 text-white font-mono text-[10px] font-bold border border-indigo-400/30 shadow-xs">
+                لوحة {indexInLesson + 1}
+              </span>
+            )}
             {img.magnification && (
               <span className="px-1.5 py-0.5 rounded bg-black/70 backdrop-blur-sm text-white font-mono text-[10px]">
                 {img.magnification}
@@ -759,7 +826,7 @@ export const AdminImagesTab: React.FC<Props> = ({ currentUser }) => {
             </div>
           </div>
 
-          {/* Action Buttons: Replace, Edit, Delete, Copy */}
+          {/* Action Buttons: Replace, Edit, Delete, Copy, Reorder */}
           <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-1 flex-wrap">
             <div className="flex items-center gap-1">
               {/* Copy URL */}
@@ -776,8 +843,35 @@ export const AdminImagesTab: React.FC<Props> = ({ currentUser }) => {
                 )}
               </button>
 
+              {/* Order Controls (Move Earlier / Move Later) */}
+              {canManage && hasOrdering && (
+                <div className="flex items-center gap-0.5 bg-slate-100 p-0.5 rounded-lg border border-slate-200" title="تعديل ترتيب اللوحة داخل الدرس">
+                  <button
+                    type="button"
+                    disabled={indexInLesson === 0 || isSaving}
+                    onClick={() => handleReorderLessonImages(lessonId!, indexInLesson!, 'earlier')}
+                    className="p-1 rounded hover:bg-white text-slate-700 disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
+                    title="تقديم ترتيب اللوحة"
+                  >
+                    <ChevronUp className="w-3.5 h-3.5" />
+                  </button>
+                  <span className="text-[10px] font-mono font-bold px-1 text-slate-600">
+                    #{indexInLesson! + 1}
+                  </span>
+                  <button
+                    type="button"
+                    disabled={indexInLesson === totalInLesson! - 1 || isSaving}
+                    onClick={() => handleReorderLessonImages(lessonId!, indexInLesson!, 'later')}
+                    className="p-1 rounded hover:bg-white text-slate-700 disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
+                    title="تأخير ترتيب اللوحة"
+                  >
+                    <ChevronDown className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              )}
+
               {/* Quick Assign if unassigned */}
-              {canManage && (
+              {canManage && !img.lessonId && (
                 <button
                   type="button"
                   onClick={() => handleOpenAssignModal(img)}
@@ -1242,7 +1336,7 @@ export const AdminImagesTab: React.FC<Props> = ({ currentUser }) => {
                                   </div>
                                 ) : (
                                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                                    {lesson.images.map(img => renderImageCard(img))}
+                                    {lesson.images.map((img, idx) => renderImageCard(img, idx, lesson.images.length, lesson.id))}
                                   </div>
                                 )}
                               </div>

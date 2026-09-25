@@ -7,6 +7,9 @@
 // and stored persistently.
 // =======================================================================
 
+import { db } from '../../../firebase';
+import { collection, doc, setDoc, deleteDoc, onSnapshot } from 'firebase/firestore';
+
 export interface MedicalImageHotspot {
   id: string;
   pinNumber: number;
@@ -473,6 +476,45 @@ class MedicalMediaService {
 
   constructor() {
     this.loadFromStorage();
+    this.initFirestoreSync();
+  }
+
+  private initFirestoreSync() {
+    try {
+      onSnapshot(collection(db, 'slides'), (snap) => {
+        const firestoreList: MedicalImageRecord[] = [];
+        snap.forEach((docItem) => {
+          const d = docItem.data();
+          if (d.url || d.imageUrl || d.image || d.dataUrl) {
+            firestoreList.push({
+              id: docItem.id,
+              subject: d.subject || 'histology',
+              topicOrLessonId: d.lessonId || d.topicOrLessonId || docItem.id,
+              title: d.title || 'Microscopic Image',
+              titleAr: d.titleAr,
+              sourceType: 'user_upload',
+              referenceSource: d.uploadedBy || 'Shared Laboratory Slide',
+              isPrimarySource: true,
+              dataUrl: d.url || d.imageUrl || d.image || d.dataUrl,
+              hasLabels: true,
+              uploadedAt: d.uploadedAt || new Date().toISOString(),
+              hotspots: d.hotspots || []
+            });
+          }
+        });
+        if (firestoreList.length > 0) {
+          // Merge with inMemoryRecords
+          const existingIds = new Set(firestoreList.map(f => f.id));
+          const nonDuplicated = this.inMemoryRecords.filter(r => !existingIds.has(r.id));
+          this.inMemoryRecords = [...firestoreList, ...nonDuplicated];
+          this.persist();
+        }
+      }, (err) => {
+        console.warn('MedicalMediaService live sync warning:', err);
+      });
+    } catch (e) {
+      console.warn('initFirestoreSync error:', e);
+    }
   }
 
   private loadFromStorage() {
@@ -563,6 +605,29 @@ class MedicalMediaService {
 
     this.inMemoryRecords.unshift(newRecord);
     this.persist();
+
+    // Persist to central shared Firestore collections
+    try {
+      setDoc(doc(db, 'slides', newRecord.id), {
+        id: newRecord.id,
+        title: newRecord.title,
+        titleAr: newRecord.titleAr || '',
+        url: newRecord.dataUrl,
+        imageUrl: newRecord.dataUrl,
+        imageURL: newRecord.dataUrl,
+        image: newRecord.dataUrl,
+        subject: newRecord.subject,
+        lessonId: newRecord.topicOrLessonId,
+        uploadedAt: newRecord.uploadedAt,
+        hotspots: newRecord.hotspots,
+        sourceType: 'user_upload'
+      }, { merge: true }).catch(() => {});
+
+      setDoc(doc(db, 'medical_media', newRecord.id), newRecord, { merge: true }).catch(() => {});
+    } catch (e) {
+      console.warn('Firestore save in MedicalMediaService:', e);
+    }
+
     return newRecord;
   }
 
@@ -572,6 +637,10 @@ class MedicalMediaService {
     if (rec) {
       rec.hotspots = hotspots;
       this.persist();
+      try {
+        setDoc(doc(db, 'slides', recordId), { hotspots }, { merge: true }).catch(() => {});
+        setDoc(doc(db, 'medical_media', recordId), { hotspots }, { merge: true }).catch(() => {});
+      } catch {}
     }
   }
 
@@ -579,6 +648,10 @@ class MedicalMediaService {
   public deleteUserImage(recordId: string): void {
     this.inMemoryRecords = this.inMemoryRecords.filter(r => r.id !== recordId);
     this.persist();
+    try {
+      deleteDoc(doc(db, 'slides', recordId)).catch(() => {});
+      deleteDoc(doc(db, 'medical_media', recordId)).catch(() => {});
+    } catch {}
   }
 
   // Default Atlas Factory (Builds structured pre-seeded reference representation)

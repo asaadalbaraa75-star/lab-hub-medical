@@ -59,9 +59,9 @@ export function sortImagesCurriculum(images: ManagedImage[], practicals: Practic
   });
 
   return [...images].sort((a, b) => {
-    // 1. Explicit sortOrder / orderIndex
-    const orderA = (a as any).sortOrder ?? (a as any).orderIndex;
-    const orderB = (b as any).sortOrder ?? (b as any).orderIndex;
+    // 1. Explicit order / sortOrder / orderIndex
+    const orderA = a.order ?? (a as any).sortOrder ?? (a as any).orderIndex;
+    const orderB = b.order ?? (b as any).sortOrder ?? (b as any).orderIndex;
     if (typeof orderA === 'number' && typeof orderB === 'number') {
       if (orderA !== orderB) return orderA - orderB;
     }
@@ -81,6 +81,9 @@ export function sortImagesCurriculum(images: ManagedImage[], practicals: Practic
       if (pracInfoA.index !== pracInfoB.index) {
         return pracInfoA.index - pracInfoB.index;
       }
+      const ordA = a.order ?? 999;
+      const ordB = b.order ?? 999;
+      if (ordA !== ordB) return ordA - ordB;
     } else if (pracInfoA && !pracInfoB) {
       return -1;
     } else if (!pracInfoA && pracInfoB) {

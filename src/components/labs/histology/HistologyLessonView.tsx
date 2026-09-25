@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { db } from '../../../firebase';
+import { doc, onSnapshot } from 'firebase/firestore';
 import {
   ArrowLeft,
   ArrowRight,
@@ -41,6 +43,31 @@ export const HistologyLessonView: React.FC<HistologyLessonViewProps> = ({
   // "SEE MORE, READ LESS": Default directly to the visual slide & practical identification view
   const [activeTab, setActiveTab] = useState<'slide' | 'handout'>('slide');
   const [viewerMode, setViewerMode] = useState<'slide' | 'practice'>('slide');
+
+  // Live Firestore images sync
+  const [liveImages, setLiveImages] = useState<{ url: string; caption?: string; stainOrView?: string; magnification?: string }[]>([]);
+  const [selectedPlateIndex, setSelectedPlateIndex] = useState<number>(0);
+
+  useEffect(() => {
+    let isMounted = true;
+    const unsub = onSnapshot(doc(db, 'lessons', lesson.id), (docSnap) => {
+      if (!isMounted || !docSnap.exists()) return;
+      const data = docSnap.data();
+      if (Array.isArray(data.images) && data.images.length > 0) {
+        setLiveImages(data.images);
+      } else if (data.imageUrl || data.imageURL || data.realImagePath) {
+        setLiveImages([{ url: data.imageUrl || data.imageURL || data.realImagePath }]);
+      }
+    }, () => {});
+
+    return () => {
+      isMounted = false;
+      unsub();
+    };
+  }, [lesson.id]);
+
+  const currentPlate = liveImages[selectedPlateIndex] || liveImages[0];
+  const effectiveSlideImage = currentPlate?.url || (lesson as any).imageUrl || (lesson as any).imageURL || lesson.realImagePath;
 
   // Metadata drawer / popover state
   const [showMetadataModal, setShowMetadataModal] = useState<boolean>(false);

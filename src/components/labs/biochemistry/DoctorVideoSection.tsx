@@ -51,7 +51,7 @@ export const DoctorVideoSection: React.FC<DoctorVideoProps> = ({
   const isAvailable = status === 'active' && Boolean(effectiveVideoId);
   const directUrl = getYouTubeWatchUrl(effectiveVideoId || youtubeUrl);
   const embedUrl = effectiveVideoId
-    ? getYouTubeEmbedUrl(effectiveVideoId, { autoplay: isPlaying, rel: false })
+    ? getYouTubeEmbedUrl(effectiveVideoId, { autoplay: isPlaying })
     : '';
   const thumbnail = effectiveVideoId
     ? getYouTubeThumbnailUrl(effectiveVideoId)

@@ -2,6 +2,7 @@ import {
   collection,
   doc,
   getDocs,
+  getDoc,
   setDoc,
   deleteDoc,
   query,
@@ -12,7 +13,8 @@ import {
   ref as storageRef,
   uploadBytes,
   getDownloadURL,
-  uploadString
+  uploadString,
+  deleteObject
 } from 'firebase/storage';
 import { db, storage } from '../firebase';
 import { ExamQuestion, MedicalExam, NotificationItem, Practical, ManagedImage } from '../types';
@@ -569,6 +571,7 @@ export async function apiAddImage(payload: {
       url: finalImageUrl,
       image: finalImageUrl,
       imageUrl: finalImageUrl,
+      imageURL: finalImageUrl,
       subject: payload.subject || 'anatomy',
       categoryId: payload.categoryId,
       categoryTitle: payload.categoryTitle,
@@ -594,15 +597,29 @@ export async function apiAddImage(payload: {
           url: finalImageUrl,
           caption: payload.caption || payload.title,
           stainOrView: payload.stainOrView || '',
-          magnification: payload.magnification || ''
+          magnification: payload.magnification || '',
+          order: 1
         };
+
+        let updatedImages = [practicalMediaItem];
+        try {
+          const existingSnap = await getDoc(lessonDocRef);
+          if (existingSnap.exists()) {
+            const exData = existingSnap.data();
+            if (Array.isArray(exData.images) && exData.images.length > 0) {
+              const withoutThis = exData.images.filter((img: any) => img.url !== finalImageUrl);
+              updatedImages = [...withoutThis, { ...practicalMediaItem, order: withoutThis.length + 1 }];
+            }
+          }
+        } catch {}
 
         await setDoc(
           lessonDocRef,
           {
             imageUrl: finalImageUrl,
+            imageURL: finalImageUrl,
             realImagePath: finalImageUrl,
-            images: [practicalMediaItem],
+            images: updatedImages,
             updatedAt: new Date().toISOString()
           },
           { merge: true }
@@ -645,6 +662,7 @@ export async function apiUpdateImage(
     lessonId?: string;
     lessonTitle?: string;
     category?: string;
+    order?: number;
     stainOrView?: string;
     magnification?: string;
     updatedBy?: string;
@@ -656,9 +674,10 @@ export async function apiUpdateImage(
     let finalImageUrl = payload.image;
     if (payload.image && payload.image.startsWith('data:image/')) {
       try {
+        const compressedBase64 = await compressImageToMax200KB(payload.image);
         const fileId = `slide_${Date.now()}`;
         const sRef = storageRef(storage, `slides/${fileId}`);
-        await uploadString(sRef, payload.image, 'data_url');
+        await uploadString(sRef, compressedBase64, 'data_url');
         finalImageUrl = await getDownloadURL(sRef);
       } catch (uploadErr) {
         console.warn('[STORAGE] Image upload fallback:', uploadErr);
@@ -672,11 +691,13 @@ export async function apiUpdateImage(
     if (finalImageUrl) {
       updatedData.image = finalImageUrl;
       updatedData.imageUrl = finalImageUrl;
+      updatedData.imageURL = finalImageUrl;
       updatedData.url = finalImageUrl;
     }
 
-    // 1. Save directly to central Firestore /slides collection
+    // 1. Save directly to central Firestore collections (/slides & /images)
     await setDoc(doc(db, 'slides', id), updatedData, { merge: true });
+    await setDoc(doc(db, 'images', id), updatedData, { merge: true }).catch(() => {});
 
     // 2. If attached to a lesson, update the lesson in /lessons immediately
     if (payload.lessonId && finalImageUrl) {
@@ -685,14 +706,35 @@ export async function apiUpdateImage(
           url: finalImageUrl,
           caption: payload.caption || payload.title || '',
           stainOrView: payload.stainOrView || '',
-          magnification: payload.magnification || ''
+          magnification: payload.magnification || '',
+          order: payload.order ?? 1
         };
+
+        const lessonDocRef = doc(db, 'lessons', payload.lessonId);
+        let updatedImages = [practicalMediaItem];
+        try {
+          const lSnap = await getDoc(lessonDocRef);
+          if (lSnap.exists()) {
+            const exData = lSnap.data();
+            if (Array.isArray(exData.images) && exData.images.length > 0) {
+              const idx = exData.images.findIndex((img: any) => img.url === finalImageUrl || (payload.order && img.order === payload.order));
+              if (idx >= 0) {
+                updatedImages = [...exData.images];
+                updatedImages[idx] = practicalMediaItem;
+              } else {
+                updatedImages = [...exData.images, practicalMediaItem];
+              }
+            }
+          }
+        } catch {}
+
         await setDoc(
-          doc(db, 'lessons', payload.lessonId),
+          lessonDocRef,
           {
             imageUrl: finalImageUrl,
+            imageURL: finalImageUrl,
             realImagePath: finalImageUrl,
-            images: [practicalMediaItem],
+            images: updatedImages,
             updatedAt: new Date().toISOString()
           },
           { merge: true }
@@ -724,18 +766,112 @@ export async function apiUpdateImage(
   }
 }
 
+export async function apiReorderLessonImages(
+  lessonId: string,
+  orderedImages: { id?: string; url: string; caption?: string; stainOrView?: string; magnification?: string; order?: number }[]
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const firstImgUrl = orderedImages[0]?.url || '';
+    const formattedImages = orderedImages.map((img, idx) => ({
+      url: img.url,
+      caption: img.caption || '',
+      stainOrView: img.stainOrView || '',
+      magnification: img.magnification || '',
+      order: idx + 1
+    }));
+
+    // 1. Update lesson document in /lessons
+    await setDoc(
+      doc(db, 'lessons', lessonId),
+      {
+        images: formattedImages,
+        ...(firstImgUrl ? { imageUrl: firstImgUrl, imageURL: firstImgUrl, realImagePath: firstImgUrl } : {}),
+        updatedAt: new Date().toISOString()
+      },
+      { merge: true }
+    );
+
+    // 2. Update order on slide documents in /slides
+    for (let idx = 0; idx < orderedImages.length; idx++) {
+      const img = orderedImages[idx];
+      if (img.id) {
+        await setDoc(doc(db, 'slides', img.id), { order: idx + 1, updatedAt: new Date().toISOString() }, { merge: true }).catch(() => {});
+      }
+    }
+
+    // 3. Notify live app
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('labhub_production_sync', { detail: { type: 'lesson_reordered', lessonId } }));
+    }
+
+    return { success: true };
+  } catch (e: any) {
+    console.error('[FIRESTORE] Reorder lesson images error:', e);
+    return { success: false, error: e.message || 'فشل تحديث ترتيب الصور.' };
+  }
+}
+
 export async function apiDeleteImage(id: string, _userMeta?: { userId?: string; userName?: string; userEmail?: string }): Promise<boolean> {
   try {
-    // 1. Delete from central Firestore collection
-    await deleteDoc(doc(db, 'slides', id));
+    let targetUrl = '';
+    // 0. Attempt to delete underlying file from Firebase Storage
+    try {
+      const slideSnap = await getDoc(doc(db, 'slides', id));
+      if (slideSnap.exists()) {
+        const slideData = slideSnap.data();
+        targetUrl = slideData?.url || slideData?.imageUrl || slideData?.image || slideData?.imageURL || '';
+        if (targetUrl && typeof targetUrl === 'string' && (targetUrl.includes('firebasestorage.googleapis.com') || targetUrl.includes('storage.googleapis.com'))) {
+          try {
+            const fileRef = storageRef(storage, targetUrl);
+            await deleteObject(fileRef);
+          } catch (storageErr) {
+            console.warn('[STORAGE] Delete object warning:', storageErr);
+          }
+        }
+      }
+    } catch {}
 
-    // 2. Update local cache
+    // 1. Delete from central Firestore collections (/slides & /images)
+    await deleteDoc(doc(db, 'slides', id));
+    await deleteDoc(doc(db, 'images', id)).catch(() => {});
+
+    // 2. Clean up from any lesson in /lessons that referenced this image
+    if (targetUrl) {
+      try {
+        const lessonsSnap = await getDocs(collection(db, 'lessons'));
+        lessonsSnap.forEach(async (lDoc) => {
+          const lData = lDoc.data();
+          let needsUpdate = false;
+          let newImages = lData.images;
+          if (Array.isArray(lData.images)) {
+            const filtered = lData.images.filter((img: any) => img.url !== targetUrl && img.imageId !== id);
+            if (filtered.length !== lData.images.length) {
+              newImages = filtered;
+              needsUpdate = true;
+            }
+          }
+          const isCover = lData.imageUrl === targetUrl || lData.imageURL === targetUrl || lData.realImagePath === targetUrl;
+          if (needsUpdate || isCover) {
+            const firstImg = newImages && newImages.length > 0 ? newImages[0].url : '';
+            await setDoc(doc(db, 'lessons', lDoc.id), {
+              images: newImages || [],
+              ...(isCover ? { imageUrl: firstImg, imageURL: firstImg, realImagePath: firstImg } : {}),
+              updatedAt: new Date().toISOString()
+            }, { merge: true });
+          }
+        });
+      } catch (cleanErr) {
+        console.warn('[FIRESTORE] Cleanup lesson after image deletion warning:', cleanErr);
+      }
+    }
+
+    // 3. Update local cache
     try {
       const local = (await apiFetchImages()).filter((i) => i.id !== id);
       localStorage.setItem('labhub_managed_images', JSON.stringify(local));
     } catch {}
 
-    // 3. Notify live app
+    // 4. Notify live app
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('labhub_production_sync', { detail: { type: 'slide_deleted', id } }));
     }
@@ -781,6 +917,7 @@ export async function apiAssignImage(payload: {
         doc(db, 'lessons', payload.lessonId),
         {
           imageUrl: slideImgUrl,
+          imageURL: slideImgUrl,
           realImagePath: slideImgUrl,
           images: [{ url: slideImgUrl, caption: payload.caption || slideTitle }],
           updatedAt: new Date().toISOString()
@@ -830,7 +967,8 @@ export const apiService = {
   addImage: apiAddImage,
   updateImage: apiUpdateImage,
   deleteImage: apiDeleteImage,
-  assignImage: apiAssignImage
+  assignImage: apiAssignImage,
+  reorderLessonImages: apiReorderLessonImages
 };
 
 export default apiService;

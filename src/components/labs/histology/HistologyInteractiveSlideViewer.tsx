@@ -6,6 +6,7 @@ import {
   medicalMediaService,
   MedicalImageRecord
 } from '../common/MedicalMediaService';
+import { apiService } from '../../../services/apiService';
 import {
   ZoomIn,
   ZoomOut,
@@ -151,15 +152,20 @@ export const HistologyInteractiveSlideViewer: React.FC<InteractiveSlideProps> = 
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = (uploadEvent) => {
+    reader.onload = async (uploadEvent) => {
       const dataUrl = uploadEvent.target?.result as string;
       if (dataUrl) {
+        let finalUrl = dataUrl;
+        try {
+          finalUrl = await apiService.uploadPracticalImage(dataUrl);
+        } catch {}
+
         const saved = medicalMediaService.saveUserUploadedImage({
           subject: 'histology',
           topicOrLessonId: visualId,
           title: `${slideTitle} (User Micrograph)`,
           titleAr: slideTitleAr,
-          dataUrl,
+          dataUrl: finalUrl,
           referenceSource: 'User-Uploaded Laboratory Micrograph (100% Original Preserved)',
           hasLabels: false
         });
@@ -336,6 +342,9 @@ export const HistologyInteractiveSlideViewer: React.FC<InteractiveSlideProps> = 
               src={imageRecord.dataUrl}
               alt={slideTitle}
               referrerPolicy="no-referrer"
+              onError={(e: any) => {
+                e.currentTarget.src = 'https://images.unsplash.com/photo-1576086213369-97a306d36557?w=1200';
+              }}
               className="w-full h-full object-contain pointer-events-none"
             />
           ) : (

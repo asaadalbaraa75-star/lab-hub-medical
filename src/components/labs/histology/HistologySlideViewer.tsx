@@ -181,11 +181,18 @@ export const HistologySlideViewer: React.FC<HistologySlideViewerProps> = ({
 
   // Resolve effective image URL across all potential property names
   const rawImage = realImagePath || imageUrl || imageURL || imageSrc || '';
-  const effectiveImageUrl = (rawImage && rawImage !== '/images/histology/real_histology_slide_required.svg')
+  const initialEffective = (rawImage && rawImage !== '/images/histology/real_histology_slide_required.svg')
     ? rawImage
     : 'https://images.unsplash.com/photo-1576086213369-97a306d36557?w=1200';
 
-  const isRealSlideAvailable = Boolean(effectiveImageUrl);
+  const [displayUrl, setDisplayUrl] = useState<string>(initialEffective);
+
+  useEffect(() => {
+    const updated = (rawImage && rawImage !== '/images/histology/real_histology_slide_required.svg')
+      ? rawImage
+      : 'https://images.unsplash.com/photo-1576086213369-97a306d36557?w=1200';
+    setDisplayUrl(updated);
+  }, [rawImage]);
 
   return (
     <div
@@ -270,8 +277,11 @@ export const HistologySlideViewer: React.FC<HistologySlideViewerProps> = ({
           ) : (
             <div className="relative inline-flex items-center justify-center max-w-full max-h-full">
               <img
-                src={effectiveImageUrl}
+                src={displayUrl}
                 alt={titleEn}
+                onError={() => {
+                  setDisplayUrl('https://images.unsplash.com/photo-1576086213369-97a306d36557?w=1200');
+                }}
                 className="max-w-full max-h-[calc(100vh-280px)] sm:max-h-[540px] object-contain rounded-lg shadow-inner pointer-events-none select-none transition-opacity duration-300 block"
                 loading="eager"
                 referrerPolicy="no-referrer"

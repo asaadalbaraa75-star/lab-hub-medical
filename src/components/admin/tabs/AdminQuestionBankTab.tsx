@@ -8,13 +8,41 @@
  * - Owner (سكينة أسعد) & Admins: Full control, Review, Approve, Reject, Publish
  * - Assistants (1, 2, 3): Add, Upload Images, Edit Own, Save Draft, Submit for Review
  */
-import React, { useState, useRef } from 'react';
-import { X, Upload, RefreshCw, CheckCircle2, AlertTriangle, Image as ImageIcon } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  HelpCircle,
+  Plus,
+  Search,
+  Filter,
+  Trash2,
+  Edit2,
+  Copy,
+  Eye,
+  CheckCircle2,
+  AlertTriangle,
+  Image as ImageIcon,
+  RefreshCw,
+  X,
+  Clock,
+  ChevronDown,
+  Upload,
+  Send,
+  Check,
+  FileText,
+  MessageSquare,
+  User,
+  ShieldCheck,
+  Sparkles
+} from 'lucide-react';
 import { collection, addDoc, updateDoc, doc, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../../../firebase';
+import { ExamQuestion, LabSubjectId, User as UserType, ExamType, QuestionStatus } from '../../../types';
+import { storageService } from '../../../services/storageService';
+import { apiService } from '../../../services/apiService';
+import { authService } from '../../../services/authService';
 
-interface Props {
+interface QuestionModalProps {
   isOpen: boolean;
   onClose: () => void;
   examId: string;
@@ -22,7 +50,7 @@ interface Props {
   currentUser: any;
 }
 
-export const QuestionModal: React.FC<Props> = ({ isOpen, onClose, examId, subject, currentUser }) => {
+export const QuestionModal: React.FC<QuestionModalProps> = ({ isOpen, onClose, examId, subject, currentUser }) => {
   const [questionEn, setQuestionEn] = useState('Identify the indicated structure:');
   const [questionAr, setQuestionAr] = useState('تعرّف على التركيب المشار إليه:');
   const [correctAnswer, setCorrectAnswer] = useState('');
@@ -160,6 +188,20 @@ export const QuestionModal: React.FC<Props> = ({ isOpen, onClose, examId, subjec
   );
 };
 
+interface AdminQuestionBankTabProps {
+  currentUser: UserType;
+}
+
+export const AdminQuestionBankTab: React.FC<AdminQuestionBankTabProps> = ({ currentUser }) => {
+  const [questions, setQuestions] = useState<ExamQuestion[]>([]);
+  const [filteredQuestions, setFilteredQuestions] = useState<ExamQuestion[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Role Checks
+  const isOwner = currentUser.role === 'owner' || currentUser.role === 'admin';
+  const isEditor = currentUser.role === 'content_exams' || currentUser.role === 'editor';
+  const isExamEditor = currentUser.role === 'exams_only' || currentUser.role === 'exam_editor';
+  const isAssistant = isEditor || isExamEditor || currentUser.id.startsWith('usr_assistant') || currentUser.id.startsWith('AST-');
 
   // Filters
   const [searchQuery, setSearchQuery] = useState('');

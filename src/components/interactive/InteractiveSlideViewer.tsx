@@ -110,6 +110,9 @@ export const InteractiveSlideViewer: React.FC<InteractiveSlideViewerProps> = ({
             <img
               src={interactiveImage.baseImage}
               alt={interactiveImage.title}
+              onError={(e: any) => {
+                e.currentTarget.src = 'https://images.unsplash.com/photo-1576086213369-97a306d36557?w=1200';
+              }}
               className="max-h-[460px] w-auto rounded-xl object-contain shadow-2xl pointer-events-none"
             />
 
