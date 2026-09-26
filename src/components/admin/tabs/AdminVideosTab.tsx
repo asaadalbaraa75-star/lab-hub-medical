@@ -21,6 +21,7 @@ import {
 import { EducationalVideo, EDUCATIONAL_VIDEOS } from '../../../data/educationalVideosData';
 import { User, LabSubjectId } from '../../../types';
 import { apiService } from '../../../services/apiService';
+import { getYouTubeEmbedUrl, getYouTubeWatchUrl } from '../../../utils/youtubeUtils';
 
 const STORAGE_CUSTOM_VIDEOS_KEY = 'labhub_custom_educational_videos_v3';
 
@@ -889,9 +890,10 @@ export const AdminVideosTab: React.FC<Props> = ({ currentUser }) => {
 
             <div className="relative aspect-video rounded-2xl overflow-hidden bg-black shadow-md">
               <iframe
-                src={`https://www.youtube.com/embed/${previewVideo.youtubeVideoId || previewVideo.youtubeId}?autoplay=1`}
+                src={getYouTubeEmbedUrl(previewVideo.youtubeVideoId || previewVideo.youtubeId || previewVideo.youtubeUrl, { autoplay: true })}
                 title={previewVideo.title}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
                 allowFullScreen
                 className="w-full h-full border-0"
               />
@@ -899,7 +901,7 @@ export const AdminVideosTab: React.FC<Props> = ({ currentUser }) => {
 
             <div className="flex items-center justify-between pt-2">
               <a
-                href={`https://www.youtube.com/watch?v=${previewVideo.youtubeVideoId || previewVideo.youtubeId}`}
+                href={getYouTubeWatchUrl(previewVideo.youtubeVideoId || previewVideo.youtubeId || previewVideo.youtubeUrl)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs transition-colors"

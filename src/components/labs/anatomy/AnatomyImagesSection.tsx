@@ -17,6 +17,7 @@ import {
 } from './atlas/AnatomyInteractiveAtlasData';
 import { InteractiveAtlasCanvas } from './atlas/InteractiveAtlasCanvas';
 import { OwnershipWatermark } from '../../common/OwnershipWatermark';
+import { getYouTubeEmbedUrl, getYouTubeWatchUrl } from '../../../utils/youtubeUtils';
 import {
   Layers,
   Search,
@@ -268,14 +269,27 @@ export const AnatomyImagesSection: React.FC<AnatomyImagesSectionProps> = ({
               </button>
             </div>
 
-            <div className="relative aspect-video w-full rounded-2xl overflow-hidden bg-black border border-slate-800">
-              <iframe
-                src={`https://www.youtube-nocookie.com/embed/${activeVideoModal}?autoplay=1&rel=0`}
-                title="Medical Anatomy Video"
-                className="w-full h-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
+            <div className="space-y-2">
+              <div className="relative aspect-video w-full rounded-2xl overflow-hidden bg-black border border-slate-800 shadow-2xl">
+                <iframe
+                  src={getYouTubeEmbedUrl(activeVideoModal, { autoplay: true })}
+                  title="Medical Anatomy Video"
+                  className="w-full h-full border-0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
+                />
+              </div>
+              <div className="flex items-center justify-between text-xs px-1">
+                <a
+                  href={getYouTubeWatchUrl(activeVideoModal)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-rose-400 hover:text-rose-300 font-bold transition-colors"
+                >
+                  فتح الفيديو مباشرة على YouTube
+                </a>
+              </div>
             </div>
           </div>
         </div>

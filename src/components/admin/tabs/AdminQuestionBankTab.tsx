@@ -96,29 +96,40 @@ export const QuestionModal: React.FC<QuestionModalProps> = ({ isOpen, onClose, e
 
       const answersArr = (acceptableAnswers ? `${correctAnswer}, ${acceptableAnswers}` : correctAnswer)
         .split(',')
-        .map((a) => a.trim().toLowerCase())
+        .map((a) => a.trim())
         .filter((a) => a.length > 0);
 
-      await addDoc(collection(db, 'questions'), {
+      const newQDoc = {
         examId,
-        subject,
-        type: 'written_opse',
+        subject: subject || 'anatomy',
+        labId: subject || 'anatomy',
+        topic: 'Muscles',
+        type: 'write_answer',
+        questionType: 'write_answer',
         questionEn,
+        questionText: questionEn,
         questionAr,
+        questionTextArabic: questionAr,
         imageUrl: finalUrl,
         correctAnswer: correctAnswer.trim(),
         acceptableAnswers: answersArr,
-        timeSeconds: Number(seconds),
-        marks: Number(marks),
+        timeSeconds: Number(seconds) || 45,
+        marks: Number(marks) || 1,
         clinicalNotes,
+        clinicalNote: clinicalNotes,
+        status: 'published',
         createdAt: serverTimestamp(),
+        submittedAt: new Date().toISOString(),
         createdBy: currentUser?.name || 'Admin'
-      });
+      };
 
-      setIsSaving(false);
+      await addDoc(collection(db, 'questions'), newQDoc);
+
       onClose();
     } catch (err: any) {
-      setError('حدث خطأ أثناء الحفظ: ' + err.message);
+      console.error('[FIRESTORE] Error adding OPSE question:', err);
+      setError('حدث خطأ أثناء الحفظ: ' + (err.message || 'فشل الاتصال'));
+    } finally {
       setIsSaving(false);
     }
   };
@@ -448,14 +459,19 @@ export const AdminQuestionBankTab: React.FC<AdminQuestionBankTabProps> = ({ curr
     setIsUploadingImage(true);
     const reader = new FileReader();
     reader.onload = async () => {
-      const base64Data = reader.result as string;
-      const uploadedUrl = await apiService.uploadQuestionImage(base64Data);
-      if (uploadedUrl) {
-        setFormImageUrl(uploadedUrl);
-      } else {
-        setFormImageUrl(base64Data);
+      try {
+        const base64Data = reader.result as string;
+        const uploadedUrl = await apiService.uploadQuestionImage(base64Data);
+        if (uploadedUrl) {
+          setFormImageUrl(uploadedUrl);
+        } else {
+          setFormImageUrl(base64Data);
+        }
+      } catch (err) {
+        console.error('Failed to upload image:', err);
+      } finally {
+        setIsUploadingImage(false);
       }
-      setIsUploadingImage(false);
     };
     reader.onerror = () => {
       alert('تعذر قراءة ملف الصورة.');

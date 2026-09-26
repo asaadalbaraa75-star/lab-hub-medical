@@ -38,6 +38,7 @@ import {
   CARBOHYDRATE_EXPERIMENTS
 } from './CarbohydrateCurriculumData';
 import { BiochemistryTestTube } from './BiochemistryTestTube';
+import { getYouTubeEmbedUrl } from '../../../utils/youtubeUtils';
 
 interface CarbohydrateExperimentLessonViewProps {
   experiment: CarbohydrateExperiment;
@@ -567,9 +568,10 @@ export const CarbohydrateExperimentLessonView: React.FC<CarbohydrateExperimentLe
             {/* Video Player */}
             <div className="aspect-video w-full rounded-xl overflow-hidden bg-black shadow-sm border border-slate-200">
               <iframe
-                src={`https://www.youtube-nocookie.com/embed/${experiment.doctorVideo.videoId}?rel=0&modestbranding=1`}
+                src={getYouTubeEmbedUrl(experiment.doctorVideo.videoId || experiment.doctorVideo.youtubeUrl)}
                 title={experiment.doctorVideo.titleEn}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
                 allowFullScreen
                 className="w-full h-full border-0"
               />

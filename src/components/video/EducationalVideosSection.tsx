@@ -556,6 +556,7 @@ export const EducationalVideosSection: React.FC<Props> = ({ onVideoCompleted }) 
                 src={iframeSrc}
                 title={selectedVideo.title}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
                 allowFullScreen
                 className="w-full h-full border-0"
               />

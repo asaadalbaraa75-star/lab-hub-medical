@@ -20,6 +20,7 @@ import {
 } from './AnatomyCurriculumData';
 import { AnatomyInteractiveImageViewer } from './components/AnatomyInteractiveImageViewer';
 import { OwnershipWatermark } from '../../common/OwnershipWatermark';
+import { getYouTubeEmbedUrl, getYouTubeWatchUrl } from '../../../utils/youtubeUtils';
 import {
   BookOpen,
   ChevronRight,
@@ -32,7 +33,8 @@ import {
   Sparkles,
   HelpCircle,
   Eye,
-  Check
+  Check,
+  ExternalLink
 } from 'lucide-react';
 
 interface AnatomyLessonsSectionProps {
@@ -347,14 +349,35 @@ export const AnatomyLessonsSection: React.FC<AnatomyLessonsSectionProps> = ({
                 )}
               </div>
             ) : (
-              <div className="aspect-video w-full rounded-xl overflow-hidden border border-slate-800 bg-black">
-                <iframe
-                  src={`https://www.youtube-nocookie.com/embed/${activeLesson.video.youtubeId}?autoplay=1&rel=0`}
-                  title={activeLesson.video.titleEn}
-                  className="w-full h-full"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
+              <div className="space-y-2">
+                <div className="aspect-video w-full rounded-xl overflow-hidden border border-slate-800 bg-black shadow-xl">
+                  <iframe
+                    src={getYouTubeEmbedUrl(activeLesson.video.youtubeId, { autoplay: true })}
+                    title={activeLesson.video.titleEn}
+                    className="w-full h-full border-0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    allowFullScreen
+                  />
+                </div>
+                <div className="flex items-center justify-between px-1 text-xs">
+                  <a
+                    href={getYouTubeWatchUrl(activeLesson.video.youtubeId)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-indigo-400 hover:text-indigo-300 font-bold transition-colors"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    <span>مشاهدة مباشرة على YouTube</span>
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => setIsPlayingVideo(false)}
+                    className="text-slate-400 hover:text-white cursor-pointer px-2 py-0.5 rounded bg-slate-800"
+                  >
+                    إغلاق المشغل
+                  </button>
+                </div>
               </div>
             )}
           </div>

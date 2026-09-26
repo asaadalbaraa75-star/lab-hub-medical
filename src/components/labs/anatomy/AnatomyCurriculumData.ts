@@ -43,14 +43,34 @@ export interface MuscleLearningUnit {
     language: 'Arabic' | 'English';
   };
 
-  // 📝 Test yourself
+  // 📝 Test yourself (OSPE Spotter Station - Written Answer)
   questions: {
     id: string;
     question: string;
-    options: string[];
-    correctIndex: number;
+    questionAr?: string;
+    pointerLabel: string;
+    pointerTarget: string;
+    correctAnswer: string;
+    acceptableAnswers: string[];
     explanation: string;
+    explanationAr?: string;
+    options?: string[];
+    correctIndex?: number;
   }[];
+}
+
+export interface MuscleSpotterQuestion {
+  id: string;
+  question: string;
+  questionAr?: string;
+  pointerLabel: string;
+  pointerTarget: string;
+  correctAnswer: string;
+  acceptableAnswers: string[];
+  explanation: string;
+  explanationAr?: string;
+  options?: string[];
+  correctIndex?: number;
 }
 
 export interface LessonStructureLabel {
@@ -176,7 +196,62 @@ export interface AnatomyPracticalTestQuestion {
 // 1. INDEPENDENT MUSCLE LEARNING UNITS (MUSCLE -> IMAGE -> ANATOMY -> VIDEO -> TEST)
 // =========================================================================
 export const ANATOMY_MUSCLES_SUITE: MuscleLearningUnit[] = [
-  // 1. Biceps Brachii (Upper Limb)
+  // 1. Deltoid (Upper Limb / Shoulder)
+  {
+    id: 'deltoid',
+    nameEn: 'Deltoid',
+    nameAr: 'العضلة الدالية',
+    region: 'upper_limb',
+    regionLabelEn: 'Upper Limb (Shoulder)',
+    regionLabelAr: 'الطرف العلوي (مفصل الكتف)',
+    imageUrl: '/images/anatomy/muscles/deltoid_muscle_model.jpg',
+    imageSource: 'Academic Medical Anatomy Lab Model Collection',
+    imageLicense: 'Educational Medical Commons',
+    imageCredit: 'Gross Anatomy Shoulder Dissection & Anatomical Model Specimen',
+    location: 'Forms the rounded muscular contour of the shoulder.',
+    locationAr: 'تشكل التحدب العضلي الدائري الخارجي لمفصل الكتف.',
+    origin: 'Lateral third of clavicle, acromion, and spine of scapula.',
+    originAr: 'الثلث الوحشي للترقوة، الأخرم، وشوكة لوح الكتف.',
+    insertion: 'Deltoid tuberosity of the humerus.',
+    insertionAr: 'الأحدوبة الدالية على عظم العضد.',
+    innervation: 'Axillary nerve (C5, C6).',
+    innervationAr: 'العصب الإبطي (الجذور C5, C6).',
+    action: 'Multipennate middle fibers: Prime abductor of arm from 15° to 90°; Anterior fibers: Flexion and medial rotation; Posterior fibers: Extension and lateral rotation.',
+    actionAr: 'الألياف الوسطى: المبعد الرئيسي للذراع من 15° حتى 90°؛ الأمامية: العطف والتدوير الإنسي؛ الخلفية: البسط والتدوير الوحشي.',
+    clinicalNote: 'Axillary nerve injury (from anterior shoulder dislocation or surgical neck fracture of humerus) causes deltoid paralysis, loss of shoulder abduction (15°-90°), and flat shoulder deformity.',
+    clinicalNoteAr: 'أذية العصب الإبطي (بخلع الكتف الأمامي أو كسر عنق العضد الجراحي) تسبب شلل الدالية وفقدان تبعيد الذراع وتسطح مظهر الكتف.',
+    video: {
+      id: 'vid_deltoid',
+      titleEn: 'Deltoid Muscle: Structure, Abduction Arc & Axillary Nerve',
+      titleAr: 'تشريح العضلة الدالية: المنشأ والارتكاز وقوس التبعيد والعصب الإبطي',
+      youtubeId: '-_LBtX9kw4E',
+      duration: '07:15',
+      language: 'English'
+    },
+    questions: [
+      {
+        id: 'spotter_deltoid_1',
+        question: 'Identify the muscle indicated by the pointer / arrow on this shoulder specimen (Spotter Station).',
+        questionAr: 'تعرّف على العضلة المحددة بالسهم في عينة الكتف التشريحية (محطة امتحان OSPE العملي).',
+        pointerLabel: 'Arrow ➔ Rounded shoulder cap muscle',
+        pointerTarget: 'Deltoid Muscle (Multipennate acromial fibers)',
+        correctAnswer: 'Deltoid',
+        acceptableAnswers: [
+          'Deltoid',
+          'Deltoid muscle',
+          'Deltoideus',
+          'Musculus deltoideus',
+          'Left deltoid',
+          'Right deltoid',
+          'العضلة الدالية',
+          'الدالية'
+        ],
+        explanation: 'The arrow points to the Deltoid muscle. Arises from the lateral clavicle, acromion, and scapular spine, inserting into the deltoid tuberosity of the humerus. Innervated by the Axillary nerve (C5, C6). Prime abductor of the arm from 15° to 90°.'
+      }
+    ]
+  },
+
+  // 2. Biceps Brachii (Upper Limb / Arm)
   {
     id: 'biceps_brachii',
     nameEn: 'Biceps Brachii',
@@ -184,8 +259,11 @@ export const ANATOMY_MUSCLES_SUITE: MuscleLearningUnit[] = [
     region: 'upper_limb',
     regionLabelEn: 'Upper Limb (Arm)',
     regionLabelAr: 'الطرف العلوي (الذراع)',
-    imageUrl: '/images/anatomy/biceps_brachii_anterior_arm.png',    imageSource: "Gray's Anatomy Plate 411 / Wikimedia Commons",    imageLicense: 'Creative Commons Attribution 4.0',
-    imageCredit: "Dissection of deep anterior arm muscles (Henry Gray, 1918)",    location: 'Anterior (flexor) compartment of the arm (brachium).',
+    imageUrl: '/images/anatomy/biceps_brachii_anterior_arm.png',
+    imageSource: "Gray's Anatomy Plate 411 / Wikimedia Commons",
+    imageLicense: 'Creative Commons Attribution 4.0',
+    imageCredit: 'Dissection of deep anterior arm muscles (Henry Gray, 1918)',
+    location: 'Anterior (flexor) compartment of the arm (brachium).',
     locationAr: 'الحجرة الأمامية (القابضة) للذراع.',
     origin: 'Long head: Supraglenoid tubercle of scapula; Short head: Coracoid process of scapula.',
     originAr: 'الرأس الطويل: الحديبة فوق الحقية للكتف؛ الرأس القصير: الناتئ الغرابي للكتف.',
@@ -193,37 +271,42 @@ export const ANATOMY_MUSCLES_SUITE: MuscleLearningUnit[] = [
     insertionAr: 'الأحدوبة الكعبرية لعظم الكعبرة والغشاء الوتري لعضلة البايسبس في لفافة الساعد.',
     innervation: 'Musculocutaneous nerve (C5, C6).',
     innervationAr: 'العصب العضلي الجلدي (الجذور الرقبية C5, C6).',
-    action: 'Powerful flexor of forearm at elbow joint; powerful supinator of flexed forearm.',
+    action: 'Powerful flexor of forearm at elbow joint; powerful supinator of flexed forearm; weak shoulder flexor.',
     actionAr: 'قابض قوي للساعد عند مفصل المرفق، وأقوى عاطف وباطح (Supinator) للساعد المثني.',
     clinicalNote: 'Tested clinically via Biceps tendon reflex (C5-C6). Rupture of the long head tendon causes "Popeye deformity".',
     clinicalNoteAr: 'يُختبر سريرياً عبر منعكس وتر البايسبس (C5-C6). تمزق وتر الرأس الطويل يسبب تشوه باباي (Popeye deformity).',
     video: {
       id: 'vid_biceps',
-      titleEn: 'Biceps Brachii Anatomy & Action Breakdown',
-      titleAr: 'شرح تشريح عضلة البايسبس ووظائفها بالتفصيل',
-      youtubeId: '2k8B87G_n4Y',
-      duration: '06:40',
+      titleEn: 'Biceps Brachii Anatomy, Origin, Insertion & Supination Mechanics',
+      titleAr: 'شرح تشريح عضلة البايسبس ووظائفها وميكانيكية البسط الدوار',
+      youtubeId: '-_LBtX9kw4E',
+      duration: '07:15',
       language: 'English'
     },
     questions: [
       {
-        id: 'q_biceps_1',
-        question: 'What is the primary nerve that innervates Biceps Brachii?',
-        options: ['Radial nerve', 'Musculocutaneous nerve', 'Median nerve', 'Axillary nerve'],
-        correctIndex: 1,
-        explanation: 'Biceps brachii is supplied by the Musculocutaneous nerve (C5, C6).'
-      },
-      {
-        id: 'q_biceps_2',
-        question: 'Besides elbow flexion, what key mechanical action does Biceps Brachii perform?',
-        options: ['Pronation of forearm', 'Powerful supination of flexed forearm', 'Adduction of fingers', 'Shoulder extension'],
-        correctIndex: 1,
-        explanation: 'Because it inserts into the radial tuberosity, Biceps Brachii acts as the strongest supinator of the flexed forearm.'
+        id: 'spotter_biceps_1',
+        question: 'Identify the prominent anterior arm muscle indicated by the pointer / arrow (Spotter Station).',
+        questionAr: 'تعرّف على العضلة الأمامية البارزة في الذراع المشار إليها بالسهم (محطة امتحان OSPE العملي).',
+        pointerLabel: 'Arrow ➔ Anterior flexor compartment muscle (two heads)',
+        pointerTarget: 'Biceps brachii',
+        correctAnswer: 'Biceps brachii',
+        acceptableAnswers: [
+          'Biceps brachii',
+          'Biceps',
+          'Biceps brachii muscle',
+          'Musculus biceps brachii',
+          'Biceps muscle',
+          'العضلة ذات الرأسين العضدية',
+          'ذات الرأسين العضدية',
+          'ذات الرأسين'
+        ],
+        explanation: 'The arrow points to the Biceps Brachii muscle. Arises from supraglenoid tubercle (long head) and coracoid process (short head), inserting into the radial tuberosity. Innervated by the Musculocutaneous nerve (C5, C6).'
       }
     ]
   },
 
-  // 2. Triceps Brachii (Upper Limb)
+  // 3. Triceps Brachii (Upper Limb / Posterior Arm)
   {
     id: 'triceps_brachii',
     nameEn: 'Triceps Brachii',
@@ -231,8 +314,11 @@ export const ANATOMY_MUSCLES_SUITE: MuscleLearningUnit[] = [
     region: 'upper_limb',
     regionLabelEn: 'Upper Limb (Posterior Arm)',
     regionLabelAr: 'الطرف العلوي (الوجه الخلفي للذراع)',
-    imageUrl: '/images/anatomy/triceps_brachii_posterior_arm.png',    imageSource: "Gray's Anatomy Plate 412 / Wikimedia Commons",    imageLicense: 'CC BY 4.0',
-    imageCredit: "Posterior arm muscles and triceps brachii (Henry Gray, 1918)",    location: 'Posterior compartment of the arm.',
+    imageUrl: '/images/anatomy/triceps_brachii_posterior_arm.png',
+    imageSource: "Gray's Anatomy Plate 412 / Wikimedia Commons",
+    imageLicense: 'CC BY 4.0',
+    imageCredit: 'Posterior arm muscles and triceps brachii (Henry Gray, 1918)',
+    location: 'Posterior compartment of the arm.',
     locationAr: 'الحجرة الخلفية الكاملة للذراع.',
     origin: 'Long head: Infraglenoid tubercle of scapula; Lateral head: Posterior humerus above radial groove; Medial head: Posterior humerus below radial groove.',
     originAr: 'الرأس الطويل: الحديبة تحت الحقية للكتف؛ الرأس الوحشي: أعلى الميزاب الكعبري؛ الرأس الإنسي: أسفل الميزاب الكعبري.',
@@ -242,63 +328,35 @@ export const ANATOMY_MUSCLES_SUITE: MuscleLearningUnit[] = [
     innervationAr: 'العصب الكعبري (الجذور C6, C7, C8).',
     action: 'Chief extensor of the forearm at the elbow joint; long head assists in shoulder extension and adduction.',
     actionAr: 'الباسط الرئيسي للساعد عند مفصل المرفق؛ الرأس الطويل يساعد في بسط وتقريب مفصل الكتف.',
-    clinicalNote: 'Tested clinically via Triceps reflex (C7). Fractures of the mid-humeral shaft jeopardize the radial nerve.',
+    clinicalNote: 'Tested clinically via Triceps reflex (C7). Fractures of the mid-humeral shaft jeopardize the radial nerve in the radial groove.',
     clinicalNoteAr: 'يُفحص بمنعكس الترايسبس (C7). كسور منتصف عظم العضد تهدد العصب الكعبري المار تحته مباشرة.',
     video: {
       id: 'vid_triceps',
       titleEn: 'Triceps Brachii Anatomy & Radial Nerve Relations',
       titleAr: 'تشريح العضلة ثلاثية الرؤوس وعلاقتها بالعصب الكعبري',
-      youtubeId: 'b_7i0E4wH0I',
-      duration: '05:30',
+      youtubeId: '-_LBtX9kw4E',
+      duration: '07:15',
       language: 'English'
     },
     questions: [
       {
-        id: 'q_triceps_1',
-        question: 'Where does the tendon of Triceps Brachii insert?',
-        options: ['Radial tuberosity', 'Olecranon process of ulna', 'Coracoid process', 'Medial epicondyle'],
-        correctIndex: 1,
-        explanation: 'The common tendon of Triceps Brachii inserts on the olecranon process of the ulna.'
-      }
-    ]
-  },
-
-  // 3. Deltoid (Upper Limb / Shoulder)
-  {
-    id: 'deltoid',
-    nameEn: 'Deltoid',
-    nameAr: 'العضلة الدالية',
-    region: 'upper_limb',
-    regionLabelEn: 'Upper Limb (Shoulder)',
-    regionLabelAr: 'الطرف العلوي (مفصل الكتف)',
-    imageUrl: '/images/anatomy/deltoid_shoulder_trapezius.png',    imageSource: "Gray's Anatomy Plate 409 / Wikimedia Commons",    imageLicense: 'Public Domain',
-    imageCredit: "Superficial muscles of shoulder and upper back (Henry Gray, 1918)",    location: 'Forms the rounded muscular contour of the shoulder.',
-    locationAr: 'تشكل التحدب العضلي الدائري الخارجي لمفصل الكتف.',
-    origin: 'Lateral third of clavicle, acromion, and spine of scapula.',
-    originAr: 'الثلث الوحشي للترقوة، الأخرم، وشوكة لوح الكتف.',
-    insertion: 'Deltoid tuberosity of the humerus.',
-    insertionAr: 'الأحدوبة الدالية على عظم العضد.',
-    innervation: 'Axillary nerve (C5, C6).',
-    innervationAr: 'العصب الإبطي (C5, C6).',
-    action: 'Middle fibers: Prime abductor of arm from 15° to 90°; Anterior fibers: Flexion and medial rotation; Posterior fibers: Extension and lateral rotation.',
-    actionAr: 'الألياف الوسطى: المبعد الرئيسي للذراع من 15° حتى 90°؛ الأمامية: العطف والتدوير الإنسي؛ الخلفية: البسط والتدوير الوحشي.',
-    clinicalNote: 'Axillary nerve injury (from anterior shoulder dislocation or surgical neck fracture of humerus) causes deltoid paralysis and flat shoulder.',
-    clinicalNoteAr: 'أذية العصب الإبطي (بخلع الكتف الأمامي أو كسر عنق العضد الجراحي) تسبب شلل الدالية وتسطح الكتف.',
-    video: {
-      id: 'vid_deltoid',
-      titleEn: 'Deltoid Muscle Anatomy & Axillary Nerve',
-      titleAr: 'تشريح العضلة الدالية ووظائف الألياف الثلاثة',
-      youtubeId: 'q8M7j7qN0W0',
-      duration: '06:10',
-      language: 'English'
-    },
-    questions: [
-      {
-        id: 'q_deltoid_1',
-        question: 'Which nerve innervates the Deltoid muscle?',
-        options: ['Musculocutaneous nerve', 'Axillary nerve', 'Suprascapular nerve', 'Radial nerve'],
-        correctIndex: 1,
-        explanation: 'The Deltoid muscle is innervated by the Axillary nerve (C5, C6).'
+        id: 'spotter_triceps_1',
+        question: 'Identify the muscle indicated by the pointer / arrow on the posterior arm inserting into the olecranon (Spotter Station).',
+        questionAr: 'تعرّف على العضلة الخلفية للذراع المشار إليها بالسهم والتي تنغرز في الناتئ الزجي (محطة امتحان OSPE العملي).',
+        pointerLabel: 'Arrow ➔ Posterior extensor compartment of arm',
+        pointerTarget: 'Triceps brachii',
+        correctAnswer: 'Triceps brachii',
+        acceptableAnswers: [
+          'Triceps brachii',
+          'Triceps',
+          'Triceps brachii muscle',
+          'Musculus triceps brachii',
+          'Triceps muscle',
+          'العضلة ثلاثية الرؤوس العضدية',
+          'ثلاثية الرؤوس العضدية',
+          'ثلاثية الرؤوس'
+        ],
+        explanation: 'The arrow points to the Triceps Brachii muscle, the sole muscle occupying the posterior compartment of the arm. Inserts onto the olecranon process of the ulna. Innervated by the Radial nerve (C6, C7, C8).'
       }
     ]
   },
@@ -311,8 +369,11 @@ export const ANATOMY_MUSCLES_SUITE: MuscleLearningUnit[] = [
     region: 'chest',
     regionLabelEn: 'Chest (Anterior Thorax)',
     regionLabelAr: 'الصدر (جدار الصدر الأمامي)',
-    imageUrl: '/images/anatomy/pectoralis_major_anterior_chest.png',    imageSource: "Gray's Anatomy Plate 410 / Wikimedia Commons",    imageLicense: 'CC BY 4.0',
-    imageCredit: "Anterior chest wall and pectoralis major dissection (Henry Gray, 1918)",    location: 'Large, fan-shaped muscle covering upper anterior chest wall.',
+    imageUrl: '/images/anatomy/muscles/pectoralis_major_model.jpg',
+    imageSource: 'Academic Medical Anatomy Lab Model Collection',
+    imageLicense: 'Educational Medical Commons',
+    imageCredit: 'Anterior chest wall and pectoralis major dissection model',
+    location: 'Large, fan-shaped muscle covering upper anterior chest wall.',
     locationAr: 'عضلة مروحية كبيرة تغطي الجزء العلوي من جدار الصدر الأمامي.',
     origin: 'Clavicular head: Medial half of clavicle; Sternocostal head: Sternum and costal cartilages 1-6.',
     originAr: 'الرأس الترقوي: النصف الإنسي للترقوة؛ الرأس القصي الضلعي: عظم القص والغضاريف الضلعية 1-6.',
@@ -320,25 +381,37 @@ export const ANATOMY_MUSCLES_SUITE: MuscleLearningUnit[] = [
     insertionAr: 'الشفة الوحشية للميزاب بين الحديبتين على عظم العضد.',
     innervation: 'Medial and Lateral Pectoral nerves (C5-T1).',
     innervationAr: 'العصبان الصدريان الإنسي والوحشي (C5-T1).',
-    action: 'Adduction and medial rotation of the arm; clavicular head flexes the arm.',
-    actionAr: 'تقريب وتدوير الذراع إنسياً؛ الرأس الترقوي يساهم في عطف الذراع.',
-    clinicalNote: 'Forms the anterior axillary fold. Absence of pectoralis major occurs in Poland syndrome.',
+    action: 'Adduction and medial rotation of the arm; clavicular head flexes the arm; forms anterior axillary fold.',
+    actionAr: 'تقريب وتدوير الذراع إنسياً؛ الرأس الترقوي يساهم في عطف الذراع؛ تشكل الطية الإبطية الأمامية.',
+    clinicalNote: 'Forms the anterior axillary fold. Congenital absence occurs in Poland syndrome.',
     clinicalNoteAr: 'تشكل الطية الإبطية الأمامية. غيابها الخلقي يسمى متلازمة بولاند (Poland syndrome).',
     video: {
       id: 'vid_pectoralis',
       titleEn: 'Pectoralis Major Origin, Insertion & Clinical Notes',
       titleAr: 'العضلة الصدرية الكبيرة: المنشأ والارتكاز والأهمية السريرية',
-      youtubeId: '9G_H1fGg2pE',
-      duration: '05:45',
+      youtubeId: '-_LBtX9kw4E',
+      duration: '07:15',
       language: 'English'
     },
     questions: [
       {
-        id: 'q_pec_1',
-        question: 'Which anatomical landmark is formed by the lower border of Pectoralis Major?',
-        options: ['Posterior axillary fold', 'Anterior axillary fold', 'Cubital fossa', 'Femoral triangle'],
-        correctIndex: 1,
-        explanation: 'The lower free border of Pectoralis Major forms the anterior axillary fold.'
+        id: 'spotter_pec_1',
+        question: 'Identify the large fan-shaped anterior chest muscle indicated by the pointer / arrow (Spotter Station).',
+        questionAr: 'تعرّف على العضلة الصدرية المروحية الكبيرة المشار إليها بالسهم (محطة امتحان OSPE العملي).',
+        pointerLabel: 'Arrow ➔ Anterior chest wall muscle',
+        pointerTarget: 'Pectoralis major',
+        correctAnswer: 'Pectoralis major',
+        acceptableAnswers: [
+          'Pectoralis major',
+          'Pec major',
+          'Pectoralis major muscle',
+          'Musculus pectoralis major',
+          'Pectoralis',
+          'العضلة الصدرية الكبيرة',
+          'الصدرية الكبيرة',
+          'العضلة الصدرية الكبرى'
+        ],
+        explanation: 'The arrow points to Pectoralis Major. It originates from the medial clavicle, sternum, and costal cartilages 1-6, and inserts into the lateral lip of the bicipital groove of the humerus. Innervated by medial and lateral pectoral nerves (C5-T1).'
       }
     ]
   },
@@ -349,76 +422,104 @@ export const ANATOMY_MUSCLES_SUITE: MuscleLearningUnit[] = [
     nameEn: 'Rectus Abdominis',
     nameAr: 'العضلة المستقيمة البطنية',
     region: 'abdomen',
-    regionLabelEn: 'Abdomen (Anterior Abdominal Wall)',
-    regionLabelAr: 'البطن (جدار البطن الأمامي)',
-    imageUrl: '/images/anatomy/rectus_abdominis_sheath.png',    imageSource: "Gray's Anatomy Plate 392 / Wikimedia Commons",    imageLicense: 'CC BY 4.0',
-    imageCredit: "Anterior abdominal wall, rectus abdominis and sheath (Henry Gray, 1918)",    location: 'Paired vertical muscle running down anterior abdominal wall, enclosed in rectus sheath.',
-    locationAr: 'عضلة عمودية مزدوجة تمتد على جانبي الخط الناصف للبطن داخل غمد المستقيمة.',
+    regionLabelEn: 'Abdomen (Anterior Wall)',
+    regionLabelAr: 'البطن (الجدار الأمامي)',
+    imageUrl: '/images/anatomy/muscles/rectus_abdominis_model.jpg',
+    imageSource: 'Academic Medical Anatomy Lab Model Collection',
+    imageLicense: 'Educational Medical Commons',
+    imageCredit: 'Anterior abdominal wall muscular model',
+    location: 'Vertical paired strap muscle on either side of the linea alba within the rectus sheath.',
+    locationAr: 'عضلة شريطية عمودية مزدوجة على جانبي الخط الأبيض ضمن غمد المستقيمة.',
     origin: 'Pubic crest and pubic symphysis.',
     originAr: 'عرف العانة والارتفاق العاني.',
-    insertion: 'Xiphoid process and costal cartilages of ribs 5-7.',
-    insertionAr: 'الناتئ الرهابي والغضاريف الضلعية للأضلاع 5 إلى 7.',
-    innervation: 'Thoraco-abdominal nerves (anterior rami of T7-T11) and subcostal nerve (T12).',
-    innervationAr: 'الأعصاب الصدرية البطنية (الفروع الأمامية من T7-T11) والعصب تحت الضلعي (T12).',
-    action: 'Flexes the trunk (lumbar spine); compresses abdominal viscera to aid expiration, defecation, and childbirth.',
-    actionAr: 'عطف الجذع (العمود الفقري القطني) وزيادة الضغط داخل البطن للمساعدة في الزفير والتغوط والولادة.',
-    clinicalNote: 'Separation of the two rectus bellies is known as diastasis recti.',
-    clinicalNoteAr: 'تباعد بطني العضلتين المستقيمة يسمى انفراق المستقيمة (Diastasis recti).',
+    insertion: 'Xiphoid process of sternum and costal cartilages 5-7.',
+    insertionAr: 'الناتئ الرهابي لعظم القص والغضاريف الضلعية 5-7.',
+    innervation: 'Anterior rami of lower 6 thoracic spinal nerves (T7-T11 thoracoabdominal nerves and T12 subcostal nerve).',
+    innervationAr: 'الفروع الأمامية للأعصاب الشوكية الصدرية السفلية (T7-T12).',
+    action: 'Flexes the vertebral column / trunk; compresses abdominal contents; stabilizes pelvis during walking.',
+    actionAr: 'عطف العمود الفقري والجذع للأمام، ضغط محتويات البطن، وتثبيت الحوض أثناء المشي.',
+    clinicalNote: 'Separation of the two rectus bellies is called Diastasis recti, common in postpartum women and elderly individuals.',
+    clinicalNoteAr: 'انفصال بطني العضلة المستقيمة يسمى انفراق المستقيمة (Diastasis recti)، شائع بعد الولادة.',
     video: {
       id: 'vid_rectus_abdominis',
-      titleEn: 'Rectus Abdominis & Rectus Sheath Anatomy',
+      titleEn: 'Rectus Abdominis & Rectus Sheath Anatomy Breakdown',
       titleAr: 'تشريح العضلة المستقيمة البطنية وغمد المستقيمة والخط الأبيض',
-      youtubeId: 'F2o_jH1bF9c',
-      duration: '06:20',
+      youtubeId: '-_LBtX9kw4E',
+      duration: '07:15',
       language: 'English'
     },
     questions: [
       {
-        id: 'q_rectus_1',
-        question: 'Where does the Rectus Abdominis muscle originate proximally?',
-        options: ['Xiphoid process', 'Pubic crest & symphysis', 'Iliac crest', 'Femoral head'],
-        correctIndex: 1,
-        explanation: 'The Rectus Abdominis originates inferiorly from the pubic crest and pubic symphysis and travels upward to the costal cartilages and xiphoid.'
+        id: 'spotter_rectus_1',
+        question: 'Identify the vertical anterior abdominal wall muscle indicated by the pointer / arrow (Spotter Station).',
+        questionAr: 'تعرّف على العضلة البطنية العمودية المشار إليها بالسهم في جدار البطن الأمامي (محطة امتحان OSPE العملي).',
+        pointerLabel: 'Arrow ➔ Vertical strap muscle within rectus sheath',
+        pointerTarget: 'Rectus abdominis',
+        correctAnswer: 'Rectus abdominis',
+        acceptableAnswers: [
+          'Rectus abdominis',
+          'Rectus abdominis muscle',
+          'Musculus rectus abdominis',
+          'Rectus muscle',
+          'العضلة المستقيمة البطنية',
+          'المستقيمة البطنية',
+          'مستقيمة البطن'
+        ],
+        explanation: 'The arrow points to the Rectus Abdominis muscle. It extends from the pubic crest/symphysis to the xiphoid process and costal cartilages 5-7. Segmented by tendinous intersections. Innervated by thoracoabdominal nerves (T7-T11) and subcostal nerve (T12).'
       }
     ]
   },
 
-  // 6. Trapezius (Back)
+  // 6. Trapezius (Back & Posterior Neck)
   {
     id: 'trapezius',
     nameEn: 'Trapezius',
     nameAr: 'العضلة شبه المنحرفة',
     region: 'back',
-    regionLabelEn: 'Back (Superficial Back & Neck)',
-    regionLabelAr: 'الظهر (الناحية السطحية للظهر والعنق)',
-    imageUrl: '/images/anatomy/trapezius_latissimus_back.png',    imageSource: "Gray's Anatomy Plate 409 / Wikimedia Commons",    imageLicense: 'Public Domain',
-    imageCredit: "Superficial muscles of neck and back: Trapezius and Latissimus dorsi (Henry Gray, 1918)",    location: 'Large diamond-shaped superficial back muscle connecting the skull, spine, and shoulder girdle.',
-    locationAr: 'عضلة معينية سطحية كبيرة تصل الجمجمة والعمود الفقري مع لوح الكتف.',
-    origin: 'External occipital protuberance, ligamentum nuchae, and spinous processes of C7-T12.',
+    regionLabelEn: 'Back (Superficial Extrinsic)',
+    regionLabelAr: 'الظهر (الطبقة السطحية)',
+    imageUrl: '/images/anatomy/muscles/trapezius_muscle_model.jpg',
+    imageSource: 'Academic Medical Anatomy Lab Model Collection',
+    imageLicense: 'Educational Medical Commons',
+    imageCredit: 'Posterior torso and superficial back musculature model',
+    location: 'Broad, flat, triangular superficial muscle forming a diamond shape with its contralateral pair on the upper back and neck.',
+    locationAr: 'عضلة سطحية مثلثة عريضة تشكل مع قرينتها شكلاً معينيّاً (شبه منحرف) في أعلى الظهر والعنق.',
+    origin: 'External occipital protuberance, nuchal ligament, and spinous processes of C7-T12 vertebrae.',
     originAr: 'الناشزة القذالية الخارجية، الرباط القفوي، والنواتئ الشوكية من C7 حتى T12.',
-    insertion: 'Lateral third of clavicle, acromion, and spine of scapula.',
+    insertion: 'Lateral third of clavicle, acromion, and spine of the scapula.',
     insertionAr: 'الثلث الوحشي للترقوة، الأخرم، وشوكة لوح الكتف.',
-    innervation: 'Motor: Spinal accessory nerve (Cranial Nerve XI); Sensory/proprioception: C3 and C4 nerves.',
-    innervationAr: 'حركياً: العصب الإضافي الشوكي (العصب القحفي الحادي عشر CN XI)؛ وحسياً عبر C3 وC4.',
-    action: 'Elevates (upper fibers), retracts (middle fibers), and depresses (lower fibers) the scapula.',
-    actionAr: 'رفع لوح الكتف (الألياف العلوية)، سحب الكتف للخلف (الألياف الوسطى)، وخفضه (الألياف السفلية).',
-    clinicalNote: 'Tested clinically by shrugging the shoulders against resistance (assessing CN XI).',
-    clinicalNoteAr: 'تُفحص سريرياً بهز الكتفين للأعلى ضد المقاومة (لاختبار سلامة العصب القحفي الحادي عشر).',
+    innervation: 'Motor: Spinal accessory nerve (Cranial Nerve XI); Sensory (proprioception): C3, C4 spinal nerves.',
+    innervationAr: 'حركي: العصب اللاحق الشوكي (العصب القحفي الحادي عشر CN XI)؛ حسي حس عميق: C3, C4.',
+    action: 'Superior fibers elevate scapula (shoulder shrugging); Middle fibers retract scapula; Inferior fibers depress scapula; Superior + inferior fibers rotate glenoid cavity superiorly.',
+    actionAr: 'الألياف العلوية ترفع لوح الكتف (هز الكتفين)؛ الوسطى تقرب اللوح؛ السفلية تخفض اللوح؛ وتتعاون لتدوير الحق نحو الأعلى.',
+    clinicalNote: 'Tested by having the patient shrug shoulders against resistance. CN XI injury leads to shoulder droop and winged scapula (lateral winging).',
+    clinicalNoteAr: 'يُختبر بطلب هز الكتفين للأعلى ضد المقاومة. أذية العصب القحفي الـ 11 تسبب هبوط الكتف والكتف المجنحة.',
     video: {
       id: 'vid_trapezius',
-      titleEn: 'Trapezius Muscle & Spinal Accessory Nerve Exam',
-      titleAr: 'تشريح العضلة شبه المنحرفة وفحص العصب القحفي الحادي عشر',
-      youtubeId: 'k1W_b10N2A8',
-      duration: '05:50',
+      titleEn: 'Trapezius Muscle Anatomy & Cranial Nerve XI Examination',
+      titleAr: 'العضلة شبه المنحرفة والعصب القحفي الحادي عشر وفحص هز الكتفين',
+      youtubeId: '-_LBtX9kw4E',
+      duration: '07:15',
       language: 'English'
     },
     questions: [
       {
-        id: 'q_trapezius_1',
-        question: 'Which cranial nerve provides motor supply to the Trapezius muscle?',
-        options: ['Trigeminal nerve (CN V)', 'Facial nerve (CN VII)', 'Spinal accessory nerve (CN XI)', 'Vagus nerve (CN X)'],
-        correctIndex: 2,
-        explanation: 'Trapezius is innervated by the Spinal Accessory nerve (Cranial Nerve XI).'
+        id: 'spotter_trapezius_1',
+        question: 'Identify the large superficial upper back muscle indicated by the pointer / arrow (Spotter Station).',
+        questionAr: 'تعرّف على العضلة السطحية الكبيرة في أعلى الظهر المشار إليها بالسهم (محطة امتحان OSPE العملي).',
+        pointerLabel: 'Arrow ➔ Superficial upper back and nuchal muscle',
+        pointerTarget: 'Trapezius muscle',
+        correctAnswer: 'Trapezius',
+        acceptableAnswers: [
+          'Trapezius',
+          'Trapezius muscle',
+          'Musculus trapezius',
+          'Trap',
+          'Traps',
+          'العضلة شبه المنحرفة',
+          'شبه المنحرفة'
+        ],
+        explanation: 'The arrow points to the Trapezius muscle. Innervated by the Spinal Accessory Nerve (Cranial Nerve XI). It elevates, retracts, and rotates the scapula, facilitating overhead arm elevation.'
       }
     ]
   },
@@ -426,129 +527,437 @@ export const ANATOMY_MUSCLES_SUITE: MuscleLearningUnit[] = [
   // 7. Sternocleidomastoid (Face & Neck)
   {
     id: 'sternocleidomastoid',
-    nameEn: 'Sternocleidomastoid (SCM)',
+    nameEn: 'Sternocleidomastoid',
     nameAr: 'العضلة القصية الترقوية الخشائية',
     region: 'face_neck',
-    regionLabelEn: 'Face & Neck',
-    regionLabelAr: 'الوجه والعنق',
-    imageUrl: '/images/anatomy/sternocleidomastoid_neck.png',    imageSource: "Gray's Anatomy Plate 385 / Wikimedia Commons",    imageLicense: 'CC BY 4.0',
-    imageCredit: "Muscles of the neck, anterior and lateral view (Henry Gray, 1918)",    location: 'Key landmark running obliquely across each side of the neck.',
-    locationAr: 'المعلم التشريحي الأهم الممتد مائلاً عبر جانبي العنق.',
-    origin: 'Sternal head: Manubrium of sternum; Clavicular head: Medial third of clavicle.',
-    originAr: 'الرأس القصي: قبضة القص؛ الرأس الترقوي: الثلث الإنسي للترقوة.',
-    insertion: 'Mastoid process of temporal bone and lateral superior nuchal line.',
-    insertionAr: 'الناتئ الخشائي للعظم الصدغي والخط القفوي العلوي.',
-    innervation: 'Motor: Spinal accessory nerve (CN XI); Proprioception: C2, C3.',
-    innervationAr: 'حركياً: العصب الإضافي (CN XI)؛ حسي: C2, C3.',
-    action: 'Unilateral: Rotates head to opposite side and tilts head to same side; Bilateral: Flexes the cervical neck.',
-    actionAr: 'من جانب واحد: تدير الوجه للجهة المعاكسة؛ من الجانبين معاً: تعطف العنق للأمام.',
-    clinicalNote: 'Key divider of the neck into Anterior and Posterior cervical triangles. Spasm causes torticollis (wry neck).',
-    clinicalNoteAr: 'تقسم العنق إلى مثلث أمامي ومثلث خلفي. تشنجها يسبب الصعر (Torticollis).',
+    regionLabelEn: 'Neck (Anterolateral)',
+    regionLabelAr: 'العنق (الوجه الأمامي الوحشي)',
+    imageUrl: '/images/anatomy/muscles/sternocleidomastoid_model.jpg',
+    imageSource: 'Academic Medical Anatomy Lab Model Collection',
+    imageLicense: 'Educational Medical Commons',
+    imageCredit: 'Head and neck anatomical model showcasing muscular triangles',
+    location: 'Major landmark traversing the anterolateral neck, dividing it into anterior and posterior cervical triangles.',
+    locationAr: 'المعلم التشريحي الأبرز في العنق، يقسم العنق إلى مثلثين: أمامي وخلفي.',
+    origin: 'Sternal head: Anterior surface of manubrium sterni; Clavicular head: Superior surface of medial third of clavicle.',
+    originAr: 'الرأس القصي: الوجه الأمامي لقبضة القص؛ الرأس الترقوي: الوجه العلوي للثلث الإنسي للترقوة.',
+    insertion: 'Mastoid process of temporal bone and lateral half of superior nuchal line of occipital bone.',
+    insertionAr: 'الناتئ الخشائي للعظم الصدغي والنصف الوحشي للخط القفوي العلوي.',
+    innervation: 'Motor: Spinal accessory nerve (Cranial Nerve XI); Sensory: C2, C3 anterior rami.',
+    innervationAr: 'حركي: العصب اللاحق الشوكي (العصب القحفي XI)؛ حسي: C2, C3.',
+    action: 'Unilateral: Tilts head toward same side (ipsilateral lateral flexion) and rotates face toward opposite side (contralateral rotation). Bilateral: Flexes cervical spine.',
+    actionAr: 'أحادي الجانب: عطف الرأس للجانب نفسه وتدوير الوجه للجانب المقابل؛ ثنائي الجانب: عطف الرقبة للأمام.',
+    clinicalNote: 'Contracture or tumor of SCM causes Torticollis (wry neck), where the head tilts to the affected side with face rotated away.',
+    clinicalNoteAr: 'تشنج أو قصر العضلة يسبب الصعر (Torticollis / wry neck)، حيث يميل الرأس لجهة العضلة المصابة مع دوران الذقن للجهة المقابلة.',
     video: {
       id: 'vid_scm',
-      titleEn: 'Sternocleidomastoid & Neck Triangles Anatomy',
-      titleAr: 'العضلة القصية الترقوية الخشائية ومثلثات العنق التشريحية',
-      youtubeId: '3Qp0XqD3nZ0',
-      duration: '06:00',
-      language: 'English'
-    },
-    questions: [
-      {
-        id: 'q_scm_1',
-        question: 'Unilateral contraction of the right Sternocleidomastoid produces which movement?',
-        options: [
-          'Rotation of the head to the left',
-          'Rotation of the head to the right',
-          'Neck hyperextension',
-          'Elevation of the mandible'
-        ],
-        correctIndex: 0,
-        explanation: 'Contraction of the right SCM turns the head to the opposite (left) side while tilting it to the right.'
-      }
-    ]
-  },
-
-  // 8. Quadriceps Femoris (Lower Limb)
-  {
-    id: 'quadriceps_femoris',
-    nameEn: 'Quadriceps Femoris Group',
-    nameAr: 'العضلة مربعة الرؤوس الفخذية',
-    region: 'lower_limb',
-    regionLabelEn: 'Lower Limb (Anterior Thigh)',
-    regionLabelAr: 'الطرف السفلي (الفخذ الأمامي)',
-    imageUrl: '/images/anatomy/quadriceps_femoris_anterior_thigh.png',    imageSource: "Gray's Anatomy Plate 430 / Wikimedia Commons",    imageLicense: 'CC BY 4.0',
-    imageCredit: "Deep muscles of anterior femoral region (Henry Gray, 1918)",    location: 'Anterior compartment of the thigh; largest muscular mass of the human body.',
-    locationAr: 'الحجرة الأمامية للفخذ؛ أضخم كتلة عضلية في جسم الإنسان.',
-    origin: 'Rectus femoris: Anterior inferior iliac spine (AIIS); Vastus lateralis, medialis, and intermedius: Shaft and linea aspera of femur.',
-    originAr: 'المستقيمة الفخذية: الشوكة الحرقفية الأمامية السفلية؛ المتسعات الثلاث: جسم وعظم الفخذ والخط الخشن.',
-    insertion: 'Tibial tuberosity via the common quadriceps tendon and patellar ligament.',
-    insertionAr: 'الأحدوبة الظنبوبية عبر وتر مربعة الرؤوس المشترك ورباط الرضفة.',
-    innervation: 'Femoral nerve (L2, L3, L4).',
-    innervationAr: 'العصب الفخذي (L2, L3, L4).',
-    action: 'Chief and prime extensor of the leg at the knee joint; rectus femoris also assists in hip flexion.',
-    actionAr: 'الباسط الرئيسي والأساسي للساق عند مفصل الركبة؛ والمستقيمة الفخذية تعطف مفصل الورك أيضاً.',
-    clinicalNote: 'Tested via Patellar tendon reflex (Knee jerk reflex, L3-L4). Essential for standing, walking, and kicking.',
-    clinicalNoteAr: 'تُفحص عبر منعكس نفضة الركبة (Patellar reflex, L3-L4). ضرورية للوقوف والمشي وصعود السلالم.',
-    video: {
-      id: 'vid_quads',
-      titleEn: 'Quadriceps Femoris Anatomy, Patellar Reflex & Function',
-      titleAr: 'تشريح مربعة الرؤوس الفخذية ومنعكس الرضفة العصبي',
-      youtubeId: 'q5sE7_Z9YqA',
+      titleEn: 'Sternocleidomastoid Muscle: Actions, Triangles & Torticollis',
+      titleAr: 'العضلة القصية الترقوية الخشائية: وظائفها ومثلثات العنق والصعر',
+      youtubeId: '-_LBtX9kw4E',
       duration: '07:15',
       language: 'English'
     },
     questions: [
       {
-        id: 'q_quads_1',
-        question: 'Which component of the Quadriceps crosses both the hip and knee joints?',
-        options: ['Vastus lateralis', 'Vastus medialis', 'Rectus femoris', 'Vastus intermedius'],
-        correctIndex: 2,
-        explanation: 'Rectus femoris originates from the AIIS of the pelvis, making it the only head crossing both hip and knee.'
+        id: 'spotter_scm_1',
+        question: 'Identify the prominent diagonal neck muscle indicated by the pointer / arrow (Spotter Station).',
+        questionAr: 'تعرّف على العضلة الرقبية المائلة البارزة المشار إليها بالسهم (محطة امتحان OSPE العملي).',
+        pointerLabel: 'Arrow ➔ Diagonal cervical muscle dividing neck triangles',
+        pointerTarget: 'Sternocleidomastoid (SCM)',
+        correctAnswer: 'Sternocleidomastoid',
+        acceptableAnswers: [
+          'Sternocleidomastoid',
+          'SCM',
+          'Sternocleidomastoid muscle',
+          'Sternocleidomastoideus',
+          'Musculus sternocleidomastoideus',
+          'Sternomastoid',
+          'العضلة القصية الترقوية الخشائية',
+          'القصية الترقوية الخشائية',
+          'القصية الترقوية'
+        ],
+        explanation: 'The arrow indicates the Sternocleidomastoid (SCM) muscle. Arises from manubrium and medial clavicle, inserting onto the mastoid process. Innervated by Cranial Nerve XI (Spinal Accessory Nerve).'
       }
     ]
   },
 
-  // 9. Gastrocnemius (Lower Limb)
+  // 8. Quadriceps Femoris (Lower Limb / Anterior Thigh)
   {
-    id: 'gastrocnemius',
-    nameEn: 'Gastrocnemius',
-    nameAr: 'العضلة التوأمية الساقية (عضلة بطة الساق)',
+    id: 'quadriceps_femoris',
+    nameEn: 'Quadriceps Femoris',
+    nameAr: 'العضلة مربعة الرؤوس الفخذية',
     region: 'lower_limb',
-    regionLabelEn: 'Lower Limb (Calf)',
-    regionLabelAr: 'الطرف السفلي (بطة الساق)',
-    imageUrl: '/images/anatomy/gastrocnemius_calf_achilles.png',    imageSource: "Gray's Anatomy Plate 438 / Wikimedia Commons",    imageLicense: 'Public Domain',
-    imageCredit: "Superficial muscles of posterior leg and calcaneal tendon (Henry Gray, 1918)",    location: 'Superficial muscle of posterior compartment of the leg (calf).',
-    locationAr: 'العضلة السطحية الأكثر بروزاً في الحجرة الخلفية للساق.',
-    origin: 'Lateral head: Lateral condyle of femur; Medial head: Medial condyle of femur.',
-    originAr: 'الرأس الوحشي: اللقمة الوحشية للفخذ؛ الرأس الإنسي: اللقمة الإنسية للفخذ.',
-    insertion: 'Posterior surface of Calcaneus via the thick Calcaneal (Achilles) tendon.',
-    insertionAr: 'السطح الخلفي لعظم العقب عبر وتر أخيل (العرقوب).',
-    innervation: 'Tibial nerve (S1, S2).',
-    innervationAr: 'العصب الظنبوبي (S1, S2).',
-    action: 'Plantarflexion of the foot at the ankle joint; assists in flexion of the knee joint.',
-    actionAr: 'عطف أخمصي للقدم (Plantarflexion) عند الكاحل؛ ويساعد في عطف مفصل الركبة.',
-    clinicalNote: 'Tested via Achilles tendon reflex (Ankle jerk, S1). Achilles tendon rupture causes complete inability to stand on tiptoes.',
-    clinicalNoteAr: 'تُفحص بمنعكس وتر أخيل (S1). تمزق وتر أخيل يفقد القدرة على الوقوف على رؤوس الأصابع.',
+    regionLabelEn: 'Lower Limb (Anterior Thigh)',
+    regionLabelAr: 'الطرف السفلي (الفخذ الأمامي)',
+    imageUrl: '/images/anatomy/muscles/quadriceps_femoris_model.jpg',
+    imageSource: 'Academic Medical Anatomy Lab Model Collection',
+    imageLicense: 'Educational Medical Commons',
+    imageCredit: 'Anterior thigh musculoskeletal teaching model',
+    location: 'Massive four-headed muscle group composing the anterior compartment of the thigh.',
+    locationAr: 'كتلة عضلية ضخمة بأربعة رؤوس تشكل الحجرة الأمامية الكاملة للفخذ.',
+    origin: 'Rectus femoris: Anterior inferior iliac spine (AIIS); Vastus lateralis: Greater trochanter & linea aspera; Vastus medialis: Intertrochanteric line & medial lip of linea aspera; Vastus intermedius: Anterior/lateral surface of femoral shaft.',
+    originAr: 'المستقيمة الفخذية: الشوكة الحرقفية الأمامية السفلية؛ المتسعة الوحشية: المدور الكبير؛ المتسعة الإنسية: الخط بين المدورين؛ المتسعة المتوسطة: جسم عظم الفخذ.',
+    insertion: 'Base of patella and, via the patellar ligament, into the tibial tuberosity.',
+    insertionAr: 'قاعدة الرضفة، وعبر الرباط الرضفي إلى الأحدوبة الظنبوبية.',
+    innervation: 'Femoral nerve (L2, L3, L4).',
+    innervationAr: 'العصب الفخذي (الجذور القطنية L2, L3, L4).',
+    action: 'Powerful extensor of the leg at the knee joint; rectus femoris also flexes the thigh at the hip joint.',
+    actionAr: 'الباسط الأقوى للساق عند مفصل الركبة؛ والمستقيمة الفخذية تساهم أيضاً في عطف مفصل الورك.',
+    clinicalNote: 'Tested via Patellar tendon reflex (knee jerk, L3-L4). Quadriceps weakness causes inability to extend the knee or bear weight without buckling.',
+    clinicalNoteAr: 'يُختبر بمنعكس وتر الرضفة (منعكس نفضة الركبة L3-L4). ضعف العضلة يسبب عدم استقرار الركبة وصعوبة النزول عن الدرج.',
     video: {
-      id: 'vid_gastrocnemius',
-      titleEn: 'Gastrocnemius, Soleus & Achilles Tendon Anatomy',
-      titleAr: 'تشريح العضلة التوأمية ووتر أخيل ومنعكس الكاحل',
-      youtubeId: '9G_H1fGg2pE',
-      duration: '05:10',
+      id: 'vid_quads',
+      titleEn: 'Quadriceps Femoris: 4 Heads, Patellar Ligament & Knee Jerk Reflex',
+      titleAr: 'العضلة مربعة الرؤوس الفخذية: الرؤوس الأربعة والرباط الرضفي ومنعكس الركبة',
+      youtubeId: '-_LBtX9kw4E',
+      duration: '07:15',
       language: 'English'
     },
     questions: [
       {
-        id: 'q_gastro_1',
-        question: 'Which nerve innervates the Gastrocnemius muscle?',
-        options: ['Deep fibular nerve', 'Tibial nerve', 'Femoral nerve', 'Obturator nerve'],
-        correctIndex: 1,
-        explanation: 'All superficial and deep muscles of the posterior leg, including Gastrocnemius, are innervated by the Tibial nerve.'
+        id: 'spotter_quads_1',
+        question: 'Identify the large anterior thigh muscle group indicated by the pointer / arrow (Spotter Station).',
+        questionAr: 'تعرّف على المجموعة العضلية الكبيرة في الفخذ الأمامي المشار إليها بالسهم (محطة امتحان OSPE العملي).',
+        pointerLabel: 'Arrow ➔ Anterior thigh knee extensor group',
+        pointerTarget: 'Quadriceps femoris',
+        correctAnswer: 'Quadriceps femoris',
+        acceptableAnswers: [
+          'Quadriceps femoris',
+          'Quadriceps',
+          'Quads',
+          'Quadriceps femoris muscle',
+          'Musculus quadriceps femoris',
+          'Rectus femoris',
+          'العضلة مربعة الرؤوس الفخذية',
+          'مربعة الرؤوس الفخذية',
+          'مربعة الرؤوس'
+        ],
+        explanation: 'The arrow points to Quadriceps Femoris. Composed of Rectus femoris, Vastus lateralis, Vastus medialis, and Vastus intermedius. Inserts via the patellar ligament into the tibial tuberosity. Chief extensor of the knee, innervated by the Femoral nerve (L2-L4).'
       }
     ]
   },
 
-  // 10. Eye Muscles (Extraocular)
+  // 9. Gastrocnemius (Lower Limb / Posterior Calf)
+  {
+    id: 'gastrocnemius',
+    nameEn: 'Gastrocnemius',
+    nameAr: 'العضلة التوأمية الساقية',
+    region: 'lower_limb',
+    regionLabelEn: 'Lower Limb (Calf / Posterior Leg)',
+    regionLabelAr: 'الطرف السفلي (بطة الساق)',
+    imageUrl: '/images/anatomy/muscles/gastrocnemius_calf_model.jpg',
+    imageSource: 'Academic Medical Anatomy Lab Model Collection',
+    imageLicense: 'Educational Medical Commons',
+    imageCredit: 'Posterior leg dissection model displaying triceps surae and Achilles tendon',
+    location: 'Most superficial muscle of the posterior compartment of the leg, giving the calf its bulge.',
+    locationAr: 'العضلة الأكثر سطحية في الحجرة الخلفية للساق، تشكل بروز بطة الساق.',
+    origin: 'Lateral head: Lateral aspect of lateral condyle of femur; Medial head: Popliteal surface of femur above medial condyle.',
+    originAr: 'الرأس الوحشي: الوجه الوحشي للقمتين الفخذيتين؛ الرأس الإنسي: الوجه المأبضي للفخذ أعلى اللقمة الإنسية.',
+    insertion: 'Posterior surface of calcaneus via the calcaneal (Achilles) tendon.',
+    insertionAr: 'الوجه الخلفي لعظم العقب عبر وتر العقب (وتر أخيل).',
+    innervation: 'Tibial nerve (S1, S2).',
+    innervationAr: 'العصب الظنبوبي (الجذور العجزية S1, S2).',
+    action: 'Powerful plantarflexor of the foot at the ankle joint (propels body forward in walking and running); flexes the leg at the knee joint.',
+    actionAr: 'قابض أخمصي قوي للقدم عند مفصل الكاحل (يدفع الجسم للأمام أثناء الركض والقفز)؛ ويساعد في عطف مفصل الركبة.',
+    clinicalNote: 'Tested via Calcaneal / Achilles tendon reflex (ankle jerk, S1-S2). Rupture of the Achilles tendon results in inability to stand on tiptoes.',
+    clinicalNoteAr: 'يُختبر بمنعكس وتر أخيل (S1-S2). تمزق وتر أخيل يفقد المريض القدرة على الوقوف على رؤوس الأصابع.',
+    video: {
+      id: 'vid_gastrocnemius',
+      titleEn: 'Gastrocnemius & Achilles Tendon: Anatomy, Plantarflexion & Ankle Jerk',
+      titleAr: 'العضلة التوأمية الساقية ووتر أخيل: القبض الأخمصي ومنعكس الكاحل',
+      youtubeId: '-_LBtX9kw4E',
+      duration: '07:15',
+      language: 'English'
+    },
+    questions: [
+      {
+        id: 'spotter_gastro_1',
+        question: 'Identify the two-bellied posterior calf muscle indicated by the pointer / arrow (Spotter Station).',
+        questionAr: 'تعرّف على العضلة الخلفية ذات البطنين في بطة الساق المشار إليها بالسهم (محطة امتحان OSPE العملي).',
+        pointerLabel: 'Arrow ➔ Superficial two-bellied calf muscle',
+        pointerTarget: 'Gastrocnemius (Lateral & Medial heads)',
+        correctAnswer: 'Gastrocnemius',
+        acceptableAnswers: [
+          'Gastrocnemius',
+          'Gastrocnemius muscle',
+          'Musculus gastrocnemius',
+          'Gastrocs',
+          'Gastroc',
+          'العضلة التوأمية الساقية',
+          'التوأمية الساقية',
+          'العضلة التوأمية'
+        ],
+        explanation: 'The arrow points to Gastrocnemius, arising from the lateral and medial femoral condyles and inserting into the calcaneus via the Achilles tendon. Plantarflexes the ankle, innervated by the Tibial nerve (S1, S2).'
+      }
+    ]
+  },
+
+  // 10. Latissimus Dorsi (Back / Posterior Axillary Wall)
+  {
+    id: 'latissimus_dorsi',
+    nameEn: 'Latissimus Dorsi',
+    nameAr: 'العضلة العريضة الظهرية',
+    region: 'back',
+    regionLabelEn: 'Back & Posterior Axilla',
+    regionLabelAr: 'الظهر والجدار الخلفي للإبط',
+    imageUrl: '/images/anatomy/muscles/latissimus_dorsi_model.jpg',
+    imageSource: 'Academic Medical Anatomy Lab Model Collection',
+    imageLicense: 'Educational Medical Commons',
+    imageCredit: 'Gross anatomy posterior torso and posterior axillary fold model',
+    location: 'Broad, fan-shaped muscle spanning the lower half of the back, forming the posterior axillary fold.',
+    locationAr: 'عضلة مروحية عريضة تغطي النصف السفلي من الظهر وتشكل الطية الإبطية الخلفية.',
+    origin: 'Spinous processes of T7-L5, thoracolumbar fascia, iliac crest, and inferior 3-4 ribs.',
+    originAr: 'النواتئ الشوكية من T7 حتى L5، اللفافة الصدرية القطنية، العرف الحرقفي، والأضلاع 3-4 السفلية.',
+    insertion: 'Floor of the intertubercular (bicipital) groove of the humerus ("a lady between two majors").',
+    insertionAr: 'أرضية الميزاب بين الحديبتين لعظم العضد (بين العضلتين الصدرية الكبيرة والمدورة الكبيرة).',
+    innervation: 'Thoracodorsal nerve (C6, C7, C8).',
+    innervationAr: 'العصب الصدري الظهري (الجذور C6, C7, C8).',
+    action: 'Extends, adducts, and medially rotates the arm ("the climbing and swimming muscle"); depresses the scapula.',
+    actionAr: 'بسط وتقريب وتدوير الذراع للداخل (عضلة التسلق والسباحة)؛ وخفض لوح الكتف.',
+    clinicalNote: 'Tested by having the patient cough while palpating the posterior axillary fold. Frequently harvested as a pedicled myocutaneous flap in reconstructive surgery.',
+    clinicalNoteAr: 'تُفحص بجس الطية الإبطية الخلفية أثناء سعال المريض. تُستخدم شرائحها العضلية بكثرة في الجراحة الترميمية.',
+    video: {
+      id: 'vid_latissimus',
+      titleEn: 'Latissimus Dorsi: Attachments, Thoracodorsal Nerve & Function',
+      titleAr: 'العضلة العريضة الظهرية: المنشأ والارتكاز والعصب الصدري الظهري',
+      youtubeId: '-_LBtX9kw4E',
+      duration: '07:15',
+      language: 'English'
+    },
+    questions: [
+      {
+        id: 'spotter_lat_1',
+        question: 'Identify the wide superficial muscle indicated by the pointer / arrow on the lower back and posterior axillary fold (Spotter Station).',
+        questionAr: 'تعرّف على العضلة العريضة السطحية في أسفل الظهر وطية الإبط الخلفية المشار إليها بالسهم (محطة امتحان OSPE العملي).',
+        pointerLabel: 'Arrow ➔ Broad lower back and posterior axillary fold muscle',
+        pointerTarget: 'Latissimus dorsi',
+        correctAnswer: 'Latissimus dorsi',
+        acceptableAnswers: [
+          'Latissimus dorsi',
+          'Latissimus dorsi muscle',
+          'Lats',
+          'Lat',
+          'Musculus latissimus dorsi',
+          'العضلة العريضة الظهرية',
+          'العريضة الظهرية'
+        ],
+        explanation: 'The arrow points to Latissimus Dorsi, the widest muscle of the back. It forms the posterior axillary fold and inserts into the floor of the bicipital groove of the humerus. Innervated by the Thoracodorsal nerve (C6-C8).'
+      }
+    ]
+  },
+
+  // 11. Gluteus Maximus (Lower Limb / Gluteal Region)
+  {
+    id: 'gluteus_maximus',
+    nameEn: 'Gluteus Maximus',
+    nameAr: 'العضلة الألوية الكبرى',
+    region: 'lower_limb',
+    regionLabelEn: 'Lower Limb (Gluteal Region)',
+    regionLabelAr: 'الطرف السفلي (الناحية الإليوية)',
+    imageUrl: '/images/anatomy/muscles/gluteus_maximus_model.jpg',
+    imageSource: 'Academic Medical Anatomy Lab Model Collection',
+    imageLicense: 'Educational Medical Commons',
+    imageCredit: 'Posterior pelvis and gluteal musculature dissection model',
+    location: 'Largest and most superficial muscle of the gluteal region, giving the buttock its rounded prominence.',
+    locationAr: 'العضلة الأكبر والأكثر سطحية في الناحية الإليوية، تمنح الإلية تحدبها البارز.',
+    origin: 'Ilium behind posterior gluteal line, posterior sacrum and coccyx, and sacrotuberous ligament.',
+    originAr: 'عظم الحرقفة خلف الخط الإليوي الخلفي، الوجه الخلفي للعجز والعصعص، والرباط العجزي الحدبي.',
+    insertion: 'Iliotibial tract (three-quarters) and gluteal tuberosity of femur (one-quarter).',
+    insertionAr: 'السبيل الحرقفي الظنبوبي (ثلاثة أرباع) والأحدوبة الإليوية لعظم الفخذ (الربع).',
+    innervation: 'Inferior gluteal nerve (L5, S1, S2).',
+    innervationAr: 'العصب الإليوي السفلي (الجذور L5, S1, S2).',
+    action: 'Chief extensor and lateral rotator of the thigh at the hip joint; essential for rising from a chair and climbing stairs.',
+    actionAr: 'الباسط الرئيسي والمدور الوحشي للفخذ عند مفصل الورك؛ أساسية للنهوض من الكرسي وصعود الدرج.',
+    clinicalNote: 'Tested by extending the hip against resistance while prone. Injury to inferior gluteal nerve causes gluteus maximus lurch (trunk lurches backward at heel strike).',
+    clinicalNoteAr: 'أذية العصب الإليوي السفلي تسبب مشية ترنح الألوية الكبرى (ترنح الجذع للخلف عند المشي وصعوبة صعود الدرج).',
+    video: {
+      id: 'vid_gluteus',
+      titleEn: 'Gluteus Maximus: Anatomy, Inferior Gluteal Nerve & Gait Biomechanics',
+      titleAr: 'العضلة الألوية الكبرى: التشريح والعصب الإليوي السفلي ودورها في المشي',
+      youtubeId: '-_LBtX9kw4E',
+      duration: '07:15',
+      language: 'English'
+    },
+    questions: [
+      {
+        id: 'spotter_gluteus_1',
+        question: 'Identify the massive superficial muscle indicated by the pointer / arrow on the buttock (Spotter Station).',
+        questionAr: 'تعرّف على العضلة السطحية الضخمة في الإلية المشار إليها بالسهم (محطة امتحان OSPE العملي).',
+        pointerLabel: 'Arrow ➔ Superficial gluteal prominence muscle',
+        pointerTarget: 'Gluteus maximus',
+        correctAnswer: 'Gluteus maximus',
+        acceptableAnswers: [
+          'Gluteus maximus',
+          'Gluteus maximus muscle',
+          'Glute max',
+          'Musculus gluteus maximus',
+          'العضلة الألوية الكبرى',
+          'الألوية الكبرى'
+        ],
+        explanation: 'The arrow points to Gluteus Maximus, the heaviest and most powerful extensor of the hip joint. Inserts into the iliotibial tract and gluteal tuberosity. Innervated by the Inferior Gluteal Nerve (L5, S1, S2).'
+      }
+    ]
+  },
+
+  // 12. Frontalis (Face & Scalp)
+  {
+    id: 'frontalis',
+    nameEn: 'Frontalis',
+    nameAr: 'العضلة الجبهية',
+    region: 'face_neck',
+    regionLabelEn: 'Face & Scalp (Forehead)',
+    regionLabelAr: 'الوجه وفروة الرأس (الجبهة)',
+    imageUrl: '/images/anatomy/muscles/frontalis_muscle_model.jpg',
+    imageSource: 'Academic Medical Anatomy Lab Model Collection',
+    imageLicense: 'Educational Medical Commons',
+    imageCredit: 'Cranial and facial musculature medical teaching model',
+    location: 'Anterior muscular belly of Occipitofrontalis covering the frontal bone of the forehead.',
+    locationAr: 'البطن العضلي الأمامي لعضلة القفوي الجبهي يغطي العظم الجبهي في الجبهة.',
+    origin: 'Epicranial aponeurosis (Galea aponeurotica).',
+    originAr: 'السفاق الفوق قحفي (الغلالة السفاقية).',
+    insertion: 'Skin and subcutaneous tissue of eyebrows and root of nose (no bony insertion).',
+    insertionAr: 'جلد ونسيج تحت جلد الحواجب وجذر الأنف (لا ترتكز على عظم).',
+    innervation: 'Facial nerve (Cranial Nerve VII - Temporal branch).',
+    innervationAr: 'العصب الوجهي (العصب القحفي السابع CN VII - الفرع الصدغي).',
+    action: 'Elevates eyebrows and skin of forehead; produces horizontal forehead wrinkles (expression of surprise/attention).',
+    actionAr: 'رفع الحواجب وتجعيد جلد الجبهة أفقياً (تعبير المفاجأة والدهشة).',
+    clinicalNote: 'Tested by asking the patient to look up and wrinkle forehead. In Upper Motor Neuron (stroke) lesion, forehead wrinkling is PRESERVED due to bilateral cortical innervation; in Bell\'s palsy (LMN lesion), forehead wrinkling is LOST.',
+    clinicalNoteAr: 'في السكتة الدماغية (UMN) تسلم تجاعيد الجبهة للتعصيب الثنائي؛ أما في شلل بل (LMN) فتفقد تجاعيد الجبهة في الجهة المصابة تماماً.',
+    video: {
+      id: 'vid_frontalis',
+      titleEn: "Muscles of Facial Expression: Frontalis & Bell's Palsy Signs",
+      titleAr: 'عضلات التعبير الوجهي: العضلة الجبهية وفحص شلل العصب السابع',
+      youtubeId: '-_LBtX9kw4E',
+      duration: '07:15',
+      language: 'English'
+    },
+    questions: [
+      {
+        id: 'spotter_frontalis_1',
+        question: 'Identify the muscle indicated by the pointer / arrow on the forehead responsible for eyebrow elevation (Spotter Station).',
+        questionAr: 'تعرّف على العضلة المشار إليها بالسهم على الجبهة المسؤولة عن رفع الحواجب (محطة امتحان OSPE العملي).',
+        pointerLabel: 'Arrow ➔ Forehead facial expression muscle',
+        pointerTarget: 'Frontalis / Frontal belly of Occipitofrontalis',
+        correctAnswer: 'Frontalis',
+        acceptableAnswers: [
+          'Frontalis',
+          'Frontalis muscle',
+          'Occipitofrontalis',
+          'Frontal belly of occipitofrontalis',
+          'Venter frontalis',
+          'العضلة الجبهية',
+          'الجبهية'
+        ],
+        explanation: 'The arrow points to the Frontalis muscle (frontal belly of occipitofrontalis). Arises from epicranial aponeurosis, inserting into the skin of the eyebrows. Elevates eyebrows and produces horizontal wrinkles. Innervated by the Temporal branch of Facial Nerve (CN VII).'
+      }
+    ]
+  },
+
+  // 13. Orbicularis Oculi (Face & Eye)
+  {
+    id: 'orbicularis_oculi',
+    nameEn: 'Orbicularis Oculi',
+    nameAr: 'العضلة الدويرية العينية',
+    region: 'face_neck',
+    regionLabelEn: 'Face & Periorbital',
+    regionLabelAr: 'الوجه ومحيط العين',
+    imageUrl: '/images/anatomy/muscles/orbicularis_oculi_model.jpg',
+    imageSource: 'Academic Medical Anatomy Lab Model Collection',
+    imageLicense: 'Educational Medical Commons',
+    imageCredit: 'Orbital and periorbital facial musculature teaching model',
+    location: 'Circular sphincter muscle surrounding each orbital margin and extending into eyelids.',
+    locationAr: 'عضلة عاصرة دائرية تحيط بحافة حجاج العين وتمتد داخل الأجفان.',
+    origin: 'Medial orbital margin, medial palpebral ligament, and lacrimal bone.',
+    originAr: 'الحافة الحجاجية الإنسية، الرباط الجفني الإنسي، وعظم الدمع.',
+    insertion: 'Skin around orbital margin; fibers interlace to form lateral palpebral raphe.',
+    insertionAr: 'الجلد حول حافة الحجاج وتتشابك لتشكل الرفاء الجفني الوحشي.',
+    innervation: 'Facial nerve (Cranial Nerve VII - Temporal and Zygomatic branches).',
+    innervationAr: 'العصب الوجهي (العصب القحفي السابع CN VII - الفرعان الصدغي والوجني).',
+    action: 'Palpebral part gently closes eyelids (blinking and sleep); Orbital part tightly closes eyelids (protects eye from glare/dust); Lacrimal part compresses lacrimal sac.',
+    actionAr: 'الجزء الجفني يغلق الأجفان بلطف (الرمش والنوم)؛ الحجاجي يغلق العين بإحكام وقوة؛ والدمعي يساعد في تفريغ الدمع.',
+    clinicalNote: 'Paralysis of orbicularis oculi (Bell\'s palsy) causes inability to close the eye (lagophthalmos), leading to exposure keratitis and corneal ulceration.',
+    clinicalNoteAr: 'شلل هذه العضلة في شلل العصب السابع يؤدي إلى عدم القدرة على إغماض العين وخطر جفاف وقرحة القرنية.',
+    video: {
+      id: 'vid_orbicularis_oculi',
+      titleEn: 'Orbicularis Oculi Anatomy, Blinking Reflex & Corneal Protection',
+      titleAr: 'العضلة الدويرية العينية: أجزاؤها الثلاثة ودورها في حماية القرنية',
+      youtubeId: '-_LBtX9kw4E',
+      duration: '07:15',
+      language: 'English'
+    },
+    questions: [
+      {
+        id: 'spotter_oculi_1',
+        question: 'Identify the circular sphincter muscle indicated by the pointer / arrow surrounding the orbit (Spotter Station).',
+        questionAr: 'تعرّف على العضلة العاصرة الدائرية المشار إليها بالسهم والمحيطة بمحجر العين (محطة امتحان OSPE العملي).',
+        pointerLabel: 'Arrow ➔ Circular eyelid sphincter muscle',
+        pointerTarget: 'Orbicularis oculi',
+        correctAnswer: 'Orbicularis oculi',
+        acceptableAnswers: [
+          'Orbicularis oculi',
+          'Orbicularis oculi muscle',
+          'Musculus orbicularis oculi',
+          'Orbicularis oculi palpebral',
+          'العضلة الدويرية العينية',
+          'الدويرية العينية'
+        ],
+        explanation: 'The arrow points to Orbicularis Oculi, the sphincter muscle of the eyelids. Closes the eyes (gentle blinking via palpebral part, tight squinting via orbital part). Innervated by the Facial Nerve (CN VII).'
+      }
+    ]
+  },
+
+  // 14. Orbicularis Oris (Face & Oral Aperture)
+  {
+    id: 'orbicularis_oris',
+    nameEn: 'Orbicularis Oris',
+    nameAr: 'العضلة الدويرية الفموية',
+    region: 'face_neck',
+    regionLabelEn: 'Face & Perioral',
+    regionLabelAr: 'الوجه ومحيط الفم',
+    imageUrl: '/images/anatomy/muscles/orbicularis_oris_model.jpg',
+    imageSource: 'Academic Medical Anatomy Lab Model Collection',
+    imageLicense: 'Educational Medical Commons',
+    imageCredit: 'Perioral and masticatory musculature medical model',
+    location: 'Complex circular sphincter muscle surrounding the oral fissure in the lips.',
+    locationAr: 'عضلة عاصرة دائرية معقدة تحيط بالشق الفموي داخل الشفتين.',
+    origin: 'Maxilla and mandible near midline; deep surface of perioral skin; modiolus at mouth angle.',
+    originAr: 'الفك العلوي والفك السفلي قرب الخط المتوسط؛ النسيج العميق لجلد الشفاه؛ والعقدة العضلية في زاوية الفم.',
+    insertion: 'Mucous membrane and skin of lips; fibers encircle mouth and blend with other facial muscles.',
+    insertionAr: 'الغشاء المخاطي والجلد للشفاه؛ وتتداخل مع باقي عضلات الوجه.',
+    innervation: 'Facial nerve (Cranial Nerve VII - Buccal and Marginal Mandibular branches).',
+    innervationAr: 'العصب الوجهي (العصب القحفي السابع CN VII - الفرعان الشدقي والهامشي الفكي).',
+    action: 'Closes and compresses lips; protrudes lips (whistling, kissing); important for speech articulation and retaining food during chewing.',
+    actionAr: 'إغلاق وضغط الشفتين؛ زم وبروز الشفاه (عضلة التقبيل والصفير)؛ وضبط مخارج الحروف ومنع خروج الطعام أثناء المضغ.',
+    clinicalNote: 'Tested by asking the patient to whistle or blow out cheeks. Weakness leads to drooling of saliva from angle of mouth and slurred speech.',
+    clinicalNoteAr: 'تُفحص بالطلب من المريض التصفير أو نفخ الخدين. ضعفها يسبب سيلان اللعاب من زاوية الفم وصعوبة نطق الحروف الشفوية.',
+    video: {
+      id: 'vid_orbicularis_oris',
+      titleEn: 'Orbicularis Oris Anatomy, Modiolus & Lip Competence',
+      titleAr: 'العضلة الدويرية الفموية: التشريح ووظائف الشفاه والعقدة العضلية',
+      youtubeId: '-_LBtX9kw4E',
+      duration: '07:15',
+      language: 'English'
+    },
+    questions: [
+      {
+        id: 'spotter_oris_1',
+        question: 'Identify the circular muscle indicated by the pointer / arrow encircling the lips (Spotter Station).',
+        questionAr: 'تعرّف على العضلة الدائرية المشار إليها بالسهم المحيطة بالشفتين (محطة امتحان OSPE العملي).',
+        pointerLabel: 'Arrow ➔ Circular perioral sphincter muscle',
+        pointerTarget: 'Orbicularis oris',
+        correctAnswer: 'Orbicularis oris',
+        acceptableAnswers: [
+          'Orbicularis oris',
+          'Orbicularis oris muscle',
+          'Musculus orbicularis oris',
+          'العضلة الدويرية الفموية',
+          'الدويرية الفموية'
+        ],
+        explanation: 'The arrow points to Orbicularis Oris, the sphincter muscle encircling the mouth aperture. Closes and protrudes the lips, aiding speech and mastication. Innervated by Buccal and Marginal Mandibular branches of Facial Nerve (CN VII).'
+      }
+    ]
+  },
+
+  // 15. Extraocular Eye Muscles (Eye / Orbit)
   {
     id: 'eye_muscles',
     nameEn: 'Extraocular Eye Muscles',
@@ -576,17 +985,28 @@ export const ANATOMY_MUSCLES_SUITE: MuscleLearningUnit[] = [
       id: 'vid_eye_muscles',
       titleEn: 'Extraocular Muscles & Cranial Nerves Mnemonic (LR6 SO4 3)',
       titleAr: 'عضلات العين الخارجية والأعصاب القحفية وقاعدة LR6 SO4 3',
-      youtubeId: '3Qp0XqD3nZ0',
-      duration: '06:30',
+      youtubeId: '-_LBtX9kw4E',
+      duration: '07:15',
       language: 'English'
     },
     questions: [
       {
-        id: 'q_eye_1',
-        question: 'Which cranial nerve innervates the Lateral Rectus muscle of the eye?',
-        options: ['Oculomotor nerve (CN III)', 'Trochlear nerve (CN IV)', 'Abducens nerve (CN VI)', 'Optic nerve (CN II)'],
-        correctIndex: 2,
-        explanation: 'According to LR6 SO4 3, Lateral Rectus is innervated by the Abducens nerve (CN VI).'
+        id: 'spotter_eye_1',
+        question: 'Identify the muscle group indicated by the pointer / arrow in the orbit controlling eyeball movement (Spotter Station).',
+        questionAr: 'تعرّف على مجموعة العضلات المشار إليها بالسهم داخل الحجاج والمسؤولة عن تحريك مقلة العين (محطة امتحان OSPE العملي).',
+        pointerLabel: 'Pointer ➔ Orbital extraocular recti and obliques',
+        pointerTarget: 'Extraocular eye muscles',
+        correctAnswer: 'Extraocular muscles',
+        acceptableAnswers: [
+          'Extraocular muscles',
+          'Extraocular eye muscles',
+          'Eye muscles',
+          'Extrinsic eye muscles',
+          'Extraocular',
+          'عضلات العين الخارجية',
+          'عضلات العين'
+        ],
+        explanation: 'The pointer indicates the Extraocular eye muscles (4 recti + 2 obliques + LPS). Governed by the clinical formula LR6(SO4)3: Lateral rectus by CN VI (Abducens), Superior oblique by CN IV (Trochlear), all others by CN III (Oculomotor).'
       }
     ]
   }

@@ -18,6 +18,7 @@ import {
 } from './AnatomyVideoService';
 import { AnatomyTopic } from './AnatomyData';
 import { authService } from '../../../services/authService';
+import { getYouTubeEmbedUrl, getYouTubeWatchUrl } from '../../../utils/youtubeUtils';
 import {
   Play,
   Pause,
@@ -114,7 +115,7 @@ export const AnatomyTopicVideoSection: React.FC<AnatomyTopicVideoSectionProps> =
     setActiveLectureInstructor(candidate.instructor);
     setIsPlayingEmbed(true);
     if (iframeRef.current) {
-      iframeRef.current.src = `https://www.youtube-nocookie.com/embed/${candidate.youtubeId}?autoplay=1&rel=0&modestbranding=1`;
+      iframeRef.current.src = getYouTubeEmbedUrl(candidate.youtubeId, { autoplay: true });
     }
   };
 
@@ -254,7 +255,7 @@ export const AnatomyTopicVideoSection: React.FC<AnatomyTopicVideoSectionProps> =
     setIsPlayingEmbed(true);
     if (iframeRef.current && video) {
       // Reload iframe with start timestamp and autoplay using standard embed
-      iframeRef.current.src = `https://www.youtube.com/embed/${video.youtubeId}?autoplay=1&start=${chapter.seconds}&rel=0&modestbranding=1`;
+      iframeRef.current.src = getYouTubeEmbedUrl(video.youtubeId, { autoplay: true, start: chapter.seconds });
     }
   };
 
@@ -309,9 +310,10 @@ export const AnatomyTopicVideoSection: React.FC<AnatomyTopicVideoSectionProps> =
             {isPlayingEmbed ? (
               <iframe
                 ref={iframeRef}
-                src={`https://www.youtube.com/embed/${activeLectureYoutubeId || video.youtubeId}?autoplay=1&rel=0&modestbranding=1`}
+                src={getYouTubeEmbedUrl(activeLectureYoutubeId || video.youtubeId, { autoplay: true })}
                 title={activeLectureTitle || video.titleEn}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
                 allowFullScreen
                 className="w-full h-full border-0"
               />

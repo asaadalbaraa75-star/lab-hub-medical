@@ -6,6 +6,7 @@
 
 import React, { useState } from 'react';
 import { OwnershipWatermark } from '../../common/OwnershipWatermark';
+import { getYouTubeEmbedUrl, getYouTubeWatchUrl } from '../../../utils/youtubeUtils';
 import {
   Video,
   Play,
@@ -251,12 +252,13 @@ export const AnatomyVideosSection: React.FC<AnatomyVideosSectionProps> = ({
             </button>
           </div>
 
-          <div className="aspect-video w-full rounded-xl overflow-hidden bg-black border border-slate-800">
+          <div className="aspect-video w-full rounded-xl overflow-hidden bg-black border border-slate-800 shadow-2xl">
             <iframe
-              src={`https://www.youtube.com/embed/${activeVideo.youtubeId}?autoplay=1&rel=0`}
+              src={getYouTubeEmbedUrl(activeVideo.youtubeId, { autoplay: true })}
               title={activeVideo.title}
-              className="w-full h-full"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              className="w-full h-full border-0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
               allowFullScreen
             />
           </div>
@@ -265,7 +267,7 @@ export const AnatomyVideosSection: React.FC<AnatomyVideosSectionProps> = ({
           <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs">
             <span className="text-slate-400">إذا واجهت رسالة &quot;Video unavailable&quot; داخل المنصة:</span>
             <a
-              href={`https://www.youtube.com/watch?v=${activeVideo.youtubeId}`}
+              href={getYouTubeWatchUrl(activeVideo.youtubeId)}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-red-600 hover:bg-red-500 text-white font-bold text-xs transition-all shadow-md shadow-red-600/20"

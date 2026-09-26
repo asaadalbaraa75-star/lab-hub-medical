@@ -9,12 +9,19 @@
 import React, { useState } from 'react';
 import {
   MuscleLearningUnit,
+  MuscleSpotterQuestion,
   ANATOMY_MUSCLES_SUITE
 } from './AnatomyCurriculumData';
 import { INTERACTIVE_ATLAS_TOPICS } from './atlas/AnatomyInteractiveAtlasData';
 import { InteractiveAtlasCanvas } from './atlas/InteractiveAtlasCanvas';
 import { MedicalImageSourceBadge } from '../../common/MedicalImageSourceBadge';
 import { OwnershipWatermark } from '../../common/OwnershipWatermark';
+import { db, storage } from '../../../firebase';
+import { doc, setDoc } from 'firebase/firestore';
+import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { storageService } from '../../../services/storageService';
+import { ExamQuestion } from '../../../types';
+import { getYouTubeEmbedUrl, getYouTubeWatchUrl } from '../../../utils/youtubeUtils';
 import {
   Activity,
   Play,
@@ -32,7 +39,10 @@ import {
   ShieldCheck,
   Video,
   Layers,
-  Compass
+  Compass,
+  UploadCloud,
+  Check,
+  RefreshCw
 } from 'lucide-react';
 
 interface AnatomyMusclesSectionProps {
@@ -55,6 +65,32 @@ const MUSCLE_TO_ATLAS_TOPIC: Record<string, string> = {
   eye_muscles: 'muscle_extraocular_eye'
 };
 
+// Auto-grading normalizer for OSPE spotters
+function normalizeSpotterAnswer(input: string): string {
+  if (!input) return '';
+  return input
+    .trim()
+    .toLowerCase()
+    .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '')
+    .replace(/\s+/g, ' ')
+    .replace(/^(the|a|an|musculus|m\.)\s+/i, '')
+    .replace(/\s+(muscle|muscles|belly|head|part)$/i, '')
+    .trim();
+}
+
+function checkSpotterAnswer(userInput: string, correctAnswer: string, acceptableAnswers: string[]): boolean {
+  const normUser = normalizeSpotterAnswer(userInput);
+  if (!normUser) return false;
+
+  const allAcceptable = [correctAnswer, ...acceptableAnswers];
+  for (const acc of allAcceptable) {
+    const normAcc = normalizeSpotterAnswer(acc);
+    if (normUser === normAcc) return true;
+    if (userInput.trim().toLowerCase() === acc.trim().toLowerCase()) return true;
+  }
+  return false;
+}
+
 export const AnatomyMusclesSection: React.FC<AnatomyMusclesSectionProps> = ({
   onBackToMain,
   onOpenSpotter,
@@ -64,10 +100,19 @@ export const AnatomyMusclesSection: React.FC<AnatomyMusclesSectionProps> = ({
   const [activeMuscleId, setActiveMuscleId] = useState<string>(
     initialMuscleId || ANATOMY_MUSCLES_SUITE[0].id
   );
-  const [viewMode, setViewMode] = useState<'atlas' | 'card'>('atlas');
-  const [quizAnswers, setQuizAnswers] = useState<Record<string, number>>({});
-  const [quizSubmitted, setQuizSubmitted] = useState<Record<string, boolean>>({});
+  const [viewMode, setViewMode] = useState<'atlas' | 'card'>('card');
   const [isPlayingVideo, setIsPlayingVideo] = useState<boolean>(false);
+
+  // OSPE Spotter Text Input states
+  const [spotterInputs, setSpotterInputs] = useState<Record<string, string>>({});
+  const [spotterChecked, setSpotterChecked] = useState<Record<string, boolean>>({});
+  const [spotterCorrect, setSpotterCorrect] = useState<Record<string, boolean>>({});
+
+  // Central Question Bank Sync State
+  const [isSyncing, setIsSyncing] = useState<Record<string, boolean>>({});
+  const [syncStatus, setSyncStatus] = useState<Record<string, 'idle' | 'success' | 'error'>>({});
+  const [isSyncingAll, setIsSyncingAll] = useState<boolean>(false);
+  const [syncAllMsg, setSyncAllMsg] = useState<string | null>(null);
 
   const regions = [
     { id: 'all', labelEn: 'All Muscles', labelAr: 'جميع العضلات' },
@@ -91,27 +136,115 @@ export const AnatomyMusclesSection: React.FC<AnatomyMusclesSectionProps> = ({
   const atlasTopicId = MUSCLE_TO_ATLAS_TOPIC[activeMuscle.id];
   const atlasTopic = INTERACTIVE_ATLAS_TOPICS.find(t => t.id === atlasTopicId);
 
-  const handleSelectOption = (questionId: string, optionIndex: number) => {
-    if (quizSubmitted[questionId]) return;
-    setQuizAnswers(prev => ({ ...prev, [questionId]: optionIndex }));
+  // OSPE Spotter Handlers
+  const handleSpotterInputChange = (questionId: string, val: string) => {
+    setSpotterInputs(prev => ({ ...prev, [questionId]: val }));
   };
 
-  const handleSubmitQuestion = (questionId: string) => {
-    if (quizAnswers[questionId] === undefined) return;
-    setQuizSubmitted(prev => ({ ...prev, [questionId]: true }));
+  const handleCheckSpotter = (question: MuscleSpotterQuestion) => {
+    const input = spotterInputs[question.id] || '';
+    if (!input.trim()) return;
+
+    const isMatch = checkSpotterAnswer(input, question.correctAnswer, question.acceptableAnswers);
+    setSpotterChecked(prev => ({ ...prev, [question.id]: true }));
+    setSpotterCorrect(prev => ({ ...prev, [question.id]: isMatch }));
   };
 
-  const handleResetQuestion = (questionId: string) => {
-    setQuizAnswers(prev => {
-      const next = { ...prev };
-      delete next[questionId];
-      return next;
-    });
-    setQuizSubmitted(prev => {
-      const next = { ...prev };
-      delete next[questionId];
-      return next;
-    });
+  const handleResetSpotter = (questionId: string) => {
+    setSpotterInputs(prev => ({ ...prev, [questionId]: '' }));
+    setSpotterChecked(prev => ({ ...prev, [questionId]: false }));
+    setSpotterCorrect(prev => ({ ...prev, [questionId]: false }));
+  };
+
+  // Sync to Firebase Storage & Central Firestore (/questions)
+  const handleSyncQuestionToCentralBank = async (
+    q: MuscleSpotterQuestion,
+    muscle: MuscleLearningUnit
+  ) => {
+    setIsSyncing(prev => ({ ...prev, [q.id]: true }));
+    setSyncStatus(prev => ({ ...prev, [q.id]: 'idle' }));
+
+    try {
+      let finalImageUrl = muscle.imageUrl;
+
+      // 1. Try uploading to Firebase Storage if not already external/cloud
+      try {
+        if (muscle.imageUrl && (muscle.imageUrl.startsWith('/') || muscle.imageUrl.startsWith('data:'))) {
+          const response = await fetch(muscle.imageUrl);
+          const blob = await response.blob();
+          const fileId = `muscle_${muscle.id}_${Date.now()}.jpg`;
+          const sRef = storageRef(storage, `questions/${fileId}`);
+          const uploadRes = await uploadBytes(sRef, blob);
+          finalImageUrl = await getDownloadURL(uploadRes.ref);
+        }
+      } catch (storageErr) {
+        console.warn('Storage upload fallback, keeping image path:', storageErr);
+      }
+
+      // 2. Prepare Question Document for central /questions
+      const qDocId = `q_anat_muscle_${muscle.id}`;
+      const examQ: ExamQuestion = {
+        id: qDocId,
+        labId: 'anatomy',
+        type: 'write_answer',
+        questionType: 'write_answer',
+        topic: 'Muscles',
+        unit: muscle.regionLabelEn,
+        lessonTitle: muscle.nameEn,
+        difficulty: 'medium',
+        language: 'bilingual',
+        questionText: q.question,
+        questionTextArabic: q.questionAr || `تعرّف على العضلة المحددة بالسهم في العينة (${muscle.nameAr})`,
+        imageUrl: finalImageUrl,
+        specimenCategory: 'Myology Specimen (OSPE Spotter)',
+        magnificationOrView: muscle.regionLabelEn,
+        markerLabel: q.pointerLabel || 'Arrow ➔',
+        correctAnswer: q.correctAnswer,
+        acceptableAnswers: q.acceptableAnswers,
+        explanation: q.explanation,
+        timeSeconds: 45,
+        marks: 1,
+        status: 'published',
+        submittedAt: new Date().toISOString()
+      };
+
+      // 3. Write to Firestore central collection /questions
+      await setDoc(doc(db, 'questions', qDocId), examQ, { merge: true });
+
+      // 4. Update local cache for instant zero-latency availability
+      const existing = storageService.getExamQuestions();
+      const filtered = existing.filter(item => item.id !== qDocId);
+      filtered.unshift(examQ);
+      try {
+        localStorage.setItem('labhub_exam_questions', JSON.stringify(filtered));
+      } catch {}
+
+      setSyncStatus(prev => ({ ...prev, [q.id]: 'success' }));
+    } catch (err: any) {
+      console.error('Error saving muscle question to Firestore /questions:', err);
+      setSyncStatus(prev => ({ ...prev, [q.id]: 'error' }));
+    } finally {
+      // Guaranteed to prevent button freezing
+      setIsSyncing(prev => ({ ...prev, [q.id]: false }));
+    }
+  };
+
+  const handleSyncAllMusclesToBank = async () => {
+    setIsSyncingAll(true);
+    setSyncAllMsg('جاري رفع الصور ومزامنة جميع أسئلة العضلات إلى البنك المركزي (/questions)...');
+    try {
+      for (const m of ANATOMY_MUSCLES_SUITE) {
+        for (const q of m.questions) {
+          await handleSyncQuestionToCentralBank(q, m);
+        }
+      }
+      setSyncAllMsg('تم حفظ ونشر جميع أسئلة العضلات في مجموعة /questions بنجاح!');
+      setTimeout(() => setSyncAllMsg(null), 5000);
+    } catch (e: any) {
+      setSyncAllMsg('حدث خطأ أثناء المزامنة: ' + (e.message || 'فشل الاتصال'));
+    } finally {
+      setIsSyncingAll(false);
+    }
   };
 
   return (
@@ -132,18 +265,46 @@ export const AnatomyMusclesSection: React.FC<AnatomyMusclesSectionProps> = ({
           <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-2xl leading-relaxed">
             كل عضلة هي وحدة دراسية مستقلة تتبع السلسلة الأكاديمية: الصورة الطبية الحقيقية / الأطلس التفاعلي ← الموقع ← المنشأ ← الارتكاز ← التعصيب ← الفعل الحركي ← الفيديو ← الاختبار العملي.
           </p>
+          {syncAllMsg && (
+            <div className="mt-2 text-xs font-bold text-teal-300 bg-teal-950/80 border border-teal-600/50 px-3 py-1.5 rounded-xl inline-flex items-center gap-2">
+              <Check className="w-3.5 h-3.5" />
+              <span>{syncAllMsg}</span>
+            </div>
+          )}
         </div>
 
-        {onBackToMain && (
+        <div className="flex flex-wrap items-center gap-2.5 self-start md:self-center">
           <button
             type="button"
-            onClick={onBackToMain}
-            className="self-start md:self-center px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white text-xs font-bold border border-slate-700 transition-colors flex items-center gap-2 shrink-0 cursor-pointer shadow-sm"
+            disabled={isSyncingAll}
+            onClick={handleSyncAllMusclesToBank}
+            className="px-3.5 py-2.5 rounded-xl bg-teal-700/80 hover:bg-teal-600 text-white text-xs font-bold border border-teal-500/50 transition-all flex items-center gap-2 cursor-pointer shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
+            title="رفع الصور لـ Firebase Storage وحفظ جميع أسئلة العضلات في مجموعة Firestore المركزية (/questions)"
           >
-            <span>Back to Anatomy Hub</span>
-            <ChevronRight className="w-3.5 h-3.5 rotate-180" />
+            {isSyncingAll ? (
+              <>
+                <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                <span>جاري الحفظ في /questions...</span>
+              </>
+            ) : (
+              <>
+                <UploadCloud className="w-3.5 h-3.5 text-teal-300" />
+                <span>حفظ الكل في /questions المركزي</span>
+              </>
+            )}
           </button>
-        )}
+
+          {onBackToMain && (
+            <button
+              type="button"
+              onClick={onBackToMain}
+              className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white text-xs font-bold border border-slate-700 transition-colors flex items-center gap-2 shrink-0 cursor-pointer shadow-sm"
+            >
+              <span>Back to Anatomy Hub</span>
+              <ChevronRight className="w-3.5 h-3.5 rotate-180" />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* 2. REGION SELECTOR PILLS */}
@@ -419,11 +580,22 @@ export const AnatomyMusclesSection: React.FC<AnatomyMusclesSectionProps> = ({
               <div className="flex items-center justify-between">
                 <h4 className="text-sm font-bold text-white flex items-center gap-2">
                   <Video className="w-4 h-4 text-rose-400" />
-                  <span>🎥 Video Explanation ({activeMuscle.nameEn})</span>
+                  <span>🎥 Medical Video Walkthrough ({activeMuscle.nameEn})</span>
                 </h4>
-                <span className="text-xs text-slate-400 font-mono">
-                  Duration: {activeMuscle.video.duration}
-                </span>
+                <div className="flex items-center gap-3">
+                  <a
+                    href={getYouTubeWatchUrl(activeMuscle.video.youtubeId)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-rose-400 hover:text-rose-300 font-bold flex items-center gap-1 transition-colors"
+                  >
+                    <span>فتح على YouTube</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                  <span className="text-xs text-slate-400 font-mono">
+                    ⏱ {activeMuscle.video.duration}
+                  </span>
+                </div>
               </div>
 
               {!isPlayingVideo ? (
@@ -441,141 +613,229 @@ export const AnatomyMusclesSection: React.FC<AnatomyMusclesSectionProps> = ({
                     {activeMuscle.video.titleAr}
                   </span>
                   <span className="mt-2 text-[10px] px-2.5 py-1 rounded bg-slate-900 text-slate-300 border border-slate-700">
-                    Click to Play Pre-Selected Medical Lecture
+                    Click to Play Medical Video Lecture
                   </span>
                 </div>
               ) : (
-                <div className="relative rounded-2xl overflow-hidden border border-slate-800 bg-black aspect-video w-full">
-                  <iframe
-                    src={`https://www.youtube-nocookie.com/embed/${activeMuscle.video.youtubeId}?autoplay=1&rel=0`}
-                    title={activeMuscle.video.titleEn}
-                    className="w-full h-full"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
+                <div className="space-y-2">
+                  <div className="relative rounded-2xl overflow-hidden border border-slate-800 bg-black aspect-video w-full shadow-2xl">
+                    <iframe
+                      src={getYouTubeEmbedUrl(activeMuscle.video.youtubeId, { autoplay: true })}
+                      title={activeMuscle.video.titleEn}
+                      className="w-full h-full border-0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      referrerPolicy="strict-origin-when-cross-origin"
+                      allowFullScreen
+                    />
+                  </div>
+                  <div className="flex items-center justify-between px-1 text-xs">
+                    <a
+                      href={getYouTubeWatchUrl(activeMuscle.video.youtubeId)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-rose-400 hover:text-rose-300 font-bold transition-colors"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      <span>مشاهدة مباشرة على YouTube (إذا واجهت أي تقييد في العرض)</span>
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => setIsPlayingVideo(false)}
+                      className="text-slate-400 hover:text-white cursor-pointer px-2 py-1 rounded bg-slate-800"
+                    >
+                      إغلاق المشغل
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
 
-            {/* 4. 📝 SPOTTER QUESTION TEST */}
+            {/* 4. 📝 OSPE SPOTTER QUESTION TEST (WRITTEN TEXT INPUT ONLY - NO MCQ A/B/C/D) */}
             <div className="pt-4 border-t border-slate-800 space-y-4">
-              <div className="flex items-center justify-between">
-                <h4 className="text-sm font-bold text-white flex items-center gap-2">
-                  <Target className="w-4 h-4 text-emerald-400" />
-                  <span>📝 Practice Spotter Questions ({activeMuscle.questions.length})</span>
-                </h4>
-                <span className="text-xs text-emerald-400 font-semibold">
-                  Instant Feedback
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+                <div>
+                  <h4 className="text-sm sm:text-base font-black text-white flex items-center gap-2">
+                    <Target className="w-4 h-4 text-emerald-400" />
+                    <span>📝 OSPE Spotter Station (سؤال عملي كتابي - إجابة نصية)</span>
+                  </h4>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    التعرف على العضلة المحددة بالسهم بالاسم العلمي الإنجليزي وكتابتها في حقل الإدخال للتصحيح التلقائي.
+                  </p>
+                </div>
+                <span className="self-start sm:self-center px-2.5 py-1 rounded-lg bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 text-[11px] font-bold">
+                  Text Input · Auto-Grading
                 </span>
               </div>
 
               <div className="space-y-4">
                 {activeMuscle.questions.map((q, qIndex) => {
-                  const selectedIdx = quizAnswers[q.id];
-                  const isSubmitted = quizSubmitted[q.id];
-                  const isCorrect = selectedIdx === q.correctIndex;
+                  const userVal = spotterInputs[q.id] || '';
+                  const isChecked = spotterChecked[q.id];
+                  const isCorrect = spotterCorrect[q.id];
+                  const syncing = isSyncing[q.id];
+                  const synced = syncStatus[q.id] === 'success';
 
                   return (
                     <div
                       key={q.id}
-                      className="p-4 sm:p-5 rounded-2xl bg-slate-950 border border-slate-800 space-y-3"
+                      className="p-4 sm:p-6 rounded-2xl bg-slate-950 border border-slate-800 space-y-4 shadow-inner"
                     >
-                      <div className="flex items-start gap-2">
-                        <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px] font-bold">
-                          Q{qIndex + 1}
-                        </span>
-                        <p className="text-xs sm:text-sm font-bold text-white">
+                      {/* Station Badge & Pointer Callout */}
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div className="flex items-center gap-2">
+                          <span className="px-2.5 py-0.5 rounded-md bg-teal-900/60 text-teal-300 text-xs font-mono font-bold border border-teal-700/50">
+                            Station {qIndex + 1}
+                          </span>
+                          <span className="text-xs font-bold text-amber-400 flex items-center gap-1 bg-amber-950/40 px-2 py-0.5 rounded border border-amber-800/40">
+                            <span>🎯 {q.pointerLabel}</span>
+                          </span>
+                        </div>
+
+                        {/* Save to Firestore /questions button */}
+                        <button
+                          type="button"
+                          disabled={syncing || synced}
+                          onClick={() => handleSyncQuestionToCentralBank(q, activeMuscle)}
+                          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm ${
+                            synced
+                              ? 'bg-emerald-950 text-emerald-300 border border-emerald-500/50 cursor-default'
+                              : syncing
+                              ? 'bg-slate-800 text-slate-400 cursor-not-allowed'
+                              : 'bg-indigo-600 hover:bg-indigo-500 text-white border border-indigo-500/40'
+                          }`}
+                          title="رفع الصورة لـ Firebase Storage وحفظ السؤال في Firestore المركزي (/questions)"
+                        >
+                          {syncing ? (
+                            <>
+                              <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                              <span>جاري الحفظ بالسحابة...</span>
+                            </>
+                          ) : synced ? (
+                            <>
+                              <Check className="w-3.5 h-3.5 text-emerald-400" />
+                              <span>محفوظ في /questions</span>
+                            </>
+                          ) : (
+                            <>
+                              <UploadCloud className="w-3.5 h-3.5" />
+                              <span>حفظ السؤال المركزي (/questions)</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+
+                      {/* Question Text */}
+                      <div className="space-y-1">
+                        <p className="text-xs sm:text-sm font-bold text-white leading-relaxed">
                           {q.question}
                         </p>
-                      </div>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
-                        {q.options.map((opt, optIdx) => {
-                          const isOptionSelected = selectedIdx === optIdx;
-                          let btnStyle =
-                            'bg-slate-900/90 hover:bg-slate-850 text-slate-200 border-slate-800';
-
-                          if (isSubmitted) {
-                            if (optIdx === q.correctIndex) {
-                              btnStyle =
-                                'bg-emerald-950/60 border-emerald-500 text-emerald-300 font-bold';
-                            } else if (isOptionSelected) {
-                              btnStyle =
-                                'bg-rose-950/60 border-rose-500 text-rose-300 line-through';
-                            } else {
-                              btnStyle = 'bg-slate-900/40 text-slate-500 border-slate-900';
-                            }
-                          } else if (isOptionSelected) {
-                            btnStyle = 'bg-teal-950 border-teal-500 text-teal-300 font-bold';
-                          }
-
-                          return (
-                            <button
-                              key={optIdx}
-                              type="button"
-                              onClick={() => handleSelectOption(q.id, optIdx)}
-                              disabled={isSubmitted}
-                              className={`p-3 rounded-xl border text-xs text-left transition-all flex items-center justify-between gap-2 cursor-pointer ${btnStyle}`}
-                            >
-                              <span>{opt}</span>
-                              {isSubmitted && optIdx === q.correctIndex && (
-                                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                              )}
-                              {isSubmitted && isOptionSelected && optIdx !== q.correctIndex && (
-                                <XCircle className="w-4 h-4 text-rose-400 shrink-0" />
-                              )}
-                            </button>
-                          );
-                        })}
-                      </div>
-
-                      {/* Question Actions */}
-                      <div className="pt-2 flex items-center justify-between">
-                        {!isSubmitted ? (
-                          <button
-                            type="button"
-                            onClick={() => handleSubmitQuestion(q.id)}
-                            disabled={selectedIdx === undefined}
-                            className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                              selectedIdx !== undefined
-                                ? 'bg-teal-600 hover:bg-teal-500 text-white shadow-md'
-                                : 'bg-slate-800 text-slate-500 cursor-not-allowed'
-                            }`}
-                          >
-                            Check Answer
-                          </button>
-                        ) : (
-                          <div className="flex items-center gap-3 w-full justify-between">
-                            <div className="flex items-center gap-1.5 text-xs font-bold">
-                              {isCorrect ? (
-                                <span className="text-emerald-400 flex items-center gap-1">
-                                  <CheckCircle2 className="w-4 h-4" />
-                                  <span>Correct Answer!</span>
-                                </span>
-                              ) : (
-                                <span className="text-rose-400 flex items-center gap-1">
-                                  <XCircle className="w-4 h-4" />
-                                  <span>Incorrect, review explanation below</span>
-                                </span>
-                              )}
-                            </div>
-                            <button
-                              type="button"
-                              onClick={() => handleResetQuestion(q.id)}
-                              className="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium transition-colors flex items-center gap-1 cursor-pointer"
-                            >
-                              <RotateCcw className="w-3 h-3" />
-                              <span>Retry</span>
-                            </button>
-                          </div>
+                        {q.questionAr && (
+                          <p className="text-xs text-slate-400">
+                            {q.questionAr}
+                          </p>
                         )}
                       </div>
 
-                      {/* Explanation box */}
-                      {isSubmitted && (
-                        <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300 space-y-1 animate-in fade-in duration-200">
-                          <span className="font-bold text-teal-400 block">Explanation:</span>
-                          <p>{q.explanation}</p>
+                      {/* Interactive Written Text Input */}
+                      <div className="space-y-2 pt-1">
+                        <label className="block text-[11px] font-bold text-slate-300">
+                          اكتب الاسم العلمي الإنجليزي للعضلة (Scientific English Name):
+                        </label>
+                        <div className="flex flex-col sm:flex-row gap-2">
+                          <input
+                            type="text"
+                            value={userVal}
+                            disabled={isChecked}
+                            onChange={(e) => handleSpotterInputChange(q.id, e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' && !isChecked && userVal.trim()) {
+                                handleCheckSpotter(q);
+                              }
+                            }}
+                            placeholder="Type scientific English name (e.g. Deltoid, Biceps brachii...)"
+                            className={`flex-1 px-4 py-3 text-xs sm:text-sm rounded-xl border font-bold transition-all focus:outline-none focus:ring-2 ${
+                              isChecked
+                                ? isCorrect
+                                  ? 'bg-emerald-950/40 border-emerald-500 text-emerald-200'
+                                  : 'bg-rose-950/40 border-rose-500 text-rose-200'
+                                : 'bg-slate-900 border-slate-700 text-white placeholder-slate-500 focus:border-teal-500 focus:ring-teal-500/30'
+                            }`}
+                          />
+
+                          {!isChecked ? (
+                            <button
+                              type="button"
+                              onClick={() => handleCheckSpotter(q)}
+                              disabled={!userVal.trim()}
+                              className={`px-5 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer shrink-0 ${
+                                userVal.trim()
+                                  ? 'bg-teal-600 hover:bg-teal-500 text-white shadow-lg'
+                                  : 'bg-slate-800 text-slate-500 cursor-not-allowed'
+                              }`}
+                            >
+                              Check Answer
+                            </button>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => handleResetSpotter(q.id)}
+                              className="px-4 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs sm:text-sm font-bold transition-colors flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
+                            >
+                              <RotateCcw className="w-3.5 h-3.5" />
+                              <span>Retry (إعادة)</span>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Immediate Feedback Card */}
+                      {isChecked && (
+                        <div
+                          className={`p-4 rounded-xl border text-xs space-y-2 animate-in fade-in duration-200 ${
+                            isCorrect
+                              ? 'bg-emerald-950/40 border-emerald-500/60 text-emerald-200'
+                              : 'bg-rose-950/40 border-rose-500/60 text-rose-200'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2">
+                            {isCorrect ? (
+                              <>
+                                <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+                                <span className="font-black text-sm text-emerald-300">
+                                  ✓ إجابة صحيحة ونموذجية!
+                                </span>
+                              </>
+                            ) : (
+                              <>
+                                <XCircle className="w-5 h-5 text-rose-400 shrink-0" />
+                                <span className="font-black text-sm text-rose-300">
+                                  ✕ إجابة غير دقيقة!
+                                </span>
+                              </>
+                            )}
+                          </div>
+
+                          <div className="space-y-1 pt-1 text-slate-300">
+                            <div>
+                              <span className="font-bold text-white">الاسم العلمي المعتمد: </span>
+                              <span className="font-mono font-bold text-teal-300 text-xs sm:text-sm">
+                                {q.correctAnswer}
+                              </span>
+                            </div>
+                            <div>
+                              <span className="font-bold text-slate-400">البدائل المقبولة للتصحيح: </span>
+                              <span className="text-slate-300 text-[11px]">
+                                {q.acceptableAnswers.join(' • ')}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="pt-2 border-t border-slate-800 text-slate-300">
+                            <span className="font-bold text-teal-400 block mb-0.5">
+                              التوضيح التشريحي الأكاديمي:
+                            </span>
+                            <p className="leading-relaxed">{q.explanation}</p>
+                          </div>
                         </div>
                       )}
                     </div>

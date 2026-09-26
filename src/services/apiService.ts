@@ -571,7 +571,6 @@ export async function apiAddImage(payload: {
       url: finalImageUrl,
       image: finalImageUrl,
       imageUrl: finalImageUrl,
-      imageURL: finalImageUrl,
       subject: payload.subject || 'anatomy',
       categoryId: payload.categoryId,
       categoryTitle: payload.categoryTitle,
