@@ -89,8 +89,10 @@ const BENEDICT_MCQS: MCQQuestion[] = [
 
 export const BenedictDedicatedLesson: React.FC<BenedictDedicatedLessonProps> = ({ onBack }) => {
   const [selectedColorIndex, setSelectedColorIndex] = useState<number>(4);
-  const [selectedAnswers, setSelectedAnswers] = useState<Record<number, string>>({});
+  const [inputsState, setInputsState] = useState<Record<number, string>>({});
+  const [writtenAnswers, setWrittenAnswers] = useState<Record<number, string>>({});
   const [revealedAnswers, setRevealedAnswers] = useState<Record<number, boolean>>({});
+  const [isCorrectAnswers, setIsCorrectAnswers] = useState<Record<number, boolean>>({});
 
   const colorScale = [
     {
@@ -139,10 +141,6 @@ export const BenedictDedicatedLesson: React.FC<BenedictDedicatedLessonProps> = (
       borderClass: 'border-rose-500'
     }
   ];
-
-  const handleSelectOption = (qId: number, key: string) => {
-    setSelectedAnswers(prev => ({ ...prev, [qId]: key }));
-  };
 
   const handleReveal = (qId: number) => {
     setRevealedAnswers(prev => ({ ...prev, [qId]: true }));
@@ -661,104 +659,102 @@ export const BenedictDedicatedLesson: React.FC<BenedictDedicatedLessonProps> = (
         </div>
       </div>
 
-      {/* SECTION 9: INTERACTIVE EXAM MCQS */}
+      {/* SECTION 9: INTERACTIVE WRITTEN EXAM QUESTIONS */}
       <div className="bg-[#0B1120] border border-slate-800 rounded-3xl p-6 sm:p-7 shadow-xl space-y-6">
         <div className="flex items-center gap-3 border-b border-slate-800 pb-3">
           <div className="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 flex items-center justify-center">
             <HelpCircle className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-white">8. Exam Practice MCQs (أسئلة تدريبية للاختبار)</h2>
-            <p className="text-xs text-slate-400">Interactive First-Year Medical Review</p>
+            <h2 className="text-lg font-bold text-white">8. Written Exam Practice (أسئلة تدريبية كتابية للاختبار)</h2>
+            <p className="text-xs text-slate-400">Written First-Year Medical Review (No MCQs)</p>
           </div>
         </div>
 
         <div className="space-y-6">
           {BENEDICT_MCQS.map((q, idx) => {
-            const userChoice = selectedAnswers[q.id];
             const isRevealed = revealedAnswers[q.id];
-            const isCorrect = userChoice === q.correctKey;
+            const isCorrect = isCorrectAnswers[q.id];
+            const targetOption = q.options.find(o => o.key === q.correctKey);
+            const targetText = targetOption?.text || q.correctKey;
 
             return (
               <div
                 key={q.id}
-                className="bg-[#0F172A] border border-slate-800 rounded-2xl p-5 space-y-4"
+                className="bg-[#0F172A] border border-slate-800 rounded-2xl p-5 space-y-4 text-right"
               >
                 <div className="space-y-1">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-between">
                     <span className="px-2 py-0.5 rounded bg-slate-800 text-amber-400 text-[10px] font-mono font-bold">
-                      MCQ #{idx + 1}
+                      سؤال كتابي #{idx + 1}
                     </span>
+                    {isRevealed && (
+                      <span className={`text-xs font-bold px-2 py-0.5 rounded flex items-center gap-1 ${isCorrect ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-rose-950 text-rose-300 border border-rose-800'}`}>
+                        {isCorrect ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
+                        {isCorrect ? 'إجابة صحيحة' : 'إجابة غير دقيقة'}
+                      </span>
+                    )}
                   </div>
-                  <h4 className="text-sm font-bold text-white">{q.question}</h4>
+                  <h4 className="text-sm font-bold text-white leading-snug">{q.question}</h4>
                   <p className="text-xs text-slate-400 font-arabic">{q.questionAr}</p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  {q.options.map(opt => {
-                    const isSelected = userChoice === opt.key;
-                    let optionStyle = 'bg-slate-900/80 border-slate-800 text-slate-300 hover:border-slate-700';
+                {/* Written Input Box Form */}
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const userVal = (inputsState[q.id] || '').trim();
+                    if (!userVal) return;
+                    const normUser = userVal.toLowerCase().replace(/[^a-z0-9\u0600-\u06FF]/g, '');
+                    const normTarget = targetText.toLowerCase().replace(/[^a-z0-9\u0600-\u06FF]/g, '');
+                    const isMatch = normUser === normTarget || (normTarget.length >= 3 && (normUser.includes(normTarget) || normTarget.includes(normUser)));
+                    setWrittenAnswers(prev => ({ ...prev, [q.id]: userVal }));
+                    setRevealedAnswers(prev => ({ ...prev, [q.id]: true }));
+                    setIsCorrectAnswers(prev => ({ ...prev, [q.id]: isMatch }));
+                  }}
+                  className="space-y-3 pt-1"
+                >
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={inputsState[q.id] || ''}
+                      onChange={(e) => setInputsState(prev => ({ ...prev, [q.id]: e.target.value }))}
+                      disabled={isRevealed}
+                      placeholder="اكتب الإجابة هنا..."
+                      className="w-full bg-slate-900 border border-slate-700 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none transition disabled:opacity-75"
+                    />
+                  </div>
 
-                    if (isSelected) {
-                      optionStyle = 'bg-amber-950/40 border-amber-500/60 text-amber-200 ring-1 ring-amber-500/40';
-                    }
-
-                    if (isRevealed) {
-                      if (opt.key === q.correctKey) {
-                        optionStyle = 'bg-emerald-950/60 border-emerald-500 text-emerald-200 ring-1 ring-emerald-500';
-                      } else if (isSelected && !isCorrect) {
-                        optionStyle = 'bg-rose-950/60 border-rose-500 text-rose-200 ring-1 ring-rose-500';
-                      }
-                    }
-
-                    return (
-                      <button
-                        key={opt.key}
-                        type="button"
-                        onClick={() => handleSelectOption(q.id, opt.key)}
-                        disabled={isRevealed}
-                        className={`p-3 rounded-xl border text-left text-xs transition-all flex items-start gap-2.5 cursor-pointer ${optionStyle}`}
-                      >
-                        <span className="font-mono font-bold text-amber-400 shrink-0">
-                          {opt.key}.
-                        </span>
-                        <span className="leading-relaxed">{opt.text}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-
-                <div className="flex items-center justify-between pt-2">
-                  <button
-                    type="button"
-                    onClick={() => handleReveal(q.id)}
-                    disabled={!userChoice || isRevealed}
-                    className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer shadow-sm"
-                  >
-                    {isRevealed ? 'تم التحقق من الإجابة' : 'تحقق من الإجابة (Verify Answer)'}
-                  </button>
-
-                  {isRevealed && (
-                    <div className="flex items-center gap-1.5 text-xs font-bold">
-                      {isCorrect ? (
-                        <span className="text-emerald-400 flex items-center gap-1">
-                          <CheckCircle2 className="w-4 h-4" />
-                          <span>إجابة صحيحة! Excellent</span>
-                        </span>
-                      ) : (
-                        <span className="text-rose-400 flex items-center gap-1">
-                          <XCircle className="w-4 h-4" />
-                          <span>إجابة خاطئة. Correct is {q.correctKey}</span>
-                        </span>
-                      )}
-                    </div>
-                  )}
-                </div>
+                  {!isRevealed ? (
+                    <button
+                      type="submit"
+                      disabled={!(inputsState[q.id] || '').trim()}
+                      className="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 disabled:opacity-40 disabled:cursor-not-allowed text-slate-950 text-xs font-bold transition-all cursor-pointer shadow-sm"
+                    >
+                      تحقق من الإجابة (Verify Answer)
+                    </button>
+                  ) : null}
+                </form>
 
                 {isRevealed && (
-                  <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-300 space-y-1">
-                    <span className="font-bold text-amber-300 block">التفسير الطبي (Explanation):</span>
-                    <p className="leading-relaxed">{q.explanation}</p>
+                  <div className="space-y-2 pt-2 border-t border-slate-800">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                      <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800">
+                        <span className="text-slate-400 text-[10px] block">إجابتك:</span>
+                        <span className={isCorrect ? 'text-emerald-400 font-bold' : 'text-rose-400 font-bold'}>
+                          {writtenAnswers[q.id] || '(فارغ)'}
+                        </span>
+                      </div>
+                      <div className="p-2.5 rounded-lg bg-slate-900 border border-amber-500/40">
+                        <span className="text-amber-400 text-[10px] font-bold block">الإجابة النموذجية المعتمدة:</span>
+                        <span className="text-white font-bold">{targetText}</span>
+                      </div>
+                    </div>
+
+                    <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-300 space-y-1">
+                      <span className="font-bold text-amber-300 block">التفسير الطبي (Explanation):</span>
+                      <p className="leading-relaxed">{q.explanation}</p>
+                    </div>
                   </div>
                 )}
               </div>

@@ -51,9 +51,11 @@ export const CarbohydrateExperimentLessonView: React.FC<CarbohydrateExperimentLe
   onSelectExperiment,
   onBackToOverview
 }) => {
-  // MCQ state
-  const [selectedAnswers, setSelectedAnswers] = useState<Record<number, string>>({});
+  // Written Quiz state
+  const [writtenAnswers, setWrittenAnswers] = useState<Record<number, string>>({});
   const [revealedAnswers, setRevealedAnswers] = useState<Record<number, boolean>>({});
+  const [isCorrectAnswers, setIsCorrectAnswers] = useState<Record<number, boolean>>({});
+  const [inputsState, setInputsState] = useState<Record<number, string>>({});
   
   // Real image modal state
   const [isImageZoomed, setIsImageZoomed] = useState(false);
@@ -74,9 +76,19 @@ export const CarbohydrateExperimentLessonView: React.FC<CarbohydrateExperimentLe
   const prevExp = currentIndex > 0 ? CARBOHYDRATE_EXPERIMENTS[currentIndex - 1] : null;
   const nextExp = currentIndex < CARBOHYDRATE_EXPERIMENTS.length - 1 ? CARBOHYDRATE_EXPERIMENTS[currentIndex + 1] : null;
 
-  const handleSelectOption = (questionId: number, optionKey: string) => {
-    setSelectedAnswers(prev => ({ ...prev, [questionId]: optionKey }));
-    setRevealedAnswers(prev => ({ ...prev, [questionId]: true }));
+  const handleCheckWrittenAnswer = (qId: number, targetOptionText: string, correctKey: string) => {
+    const userVal = (inputsState[qId] || '').trim();
+    if (!userVal) return;
+
+    const normUser = userVal.toLowerCase().replace(/[^a-z0-9\u0600-\u06FF]/g, '');
+    const normTarget = targetOptionText.toLowerCase().replace(/[^a-z0-9\u0600-\u06FF]/g, '');
+    const normKey = correctKey.toLowerCase().trim();
+
+    const isMatch = normUser === normTarget || normUser === normKey || (normTarget.length >= 3 && (normUser.includes(normTarget) || normTarget.includes(normUser)));
+
+    setWrittenAnswers(prev => ({ ...prev, [qId]: userVal }));
+    setRevealedAnswers(prev => ({ ...prev, [qId]: true }));
+    setIsCorrectAnswers(prev => ({ ...prev, [qId]: isMatch }));
   };
 
   return (
@@ -618,25 +630,26 @@ export const CarbohydrateExperimentLessonView: React.FC<CarbohydrateExperimentLe
             </div>
           </div>
 
-          {/* SECTION 7: QUESTIONS (MCQ Knowledge Check) */}
+          {/* SECTION 7: QUESTIONS (Written Knowledge Check — NO MCQS) */}
           <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-5" id="section-questions">
             <div className="flex items-center justify-between pb-2 border-b border-slate-100">
               <div className="flex items-center gap-2">
                 <HelpCircle className="w-5 h-5 text-indigo-600" />
                 <h3 className="text-sm font-bold text-slate-900">
-                  Questions & Practice MCQs (أسئلة واختبار الفهم)
+                  Written Questions & Knowledge Check (أسئلة واختبار الفهم الكتابي)
                 </h3>
               </div>
               <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">
-                {experiment.questions.length} MCQs
+                {experiment.questions.length} أسئلة كتابية
               </span>
             </div>
 
             <div className="space-y-4">
               {experiment.questions.map((q, qIndex) => {
                 const isAnswered = revealedAnswers[q.id];
-                const selectedKey = selectedAnswers[q.id];
-                const isCorrect = selectedKey === q.correctKey;
+                const isCorrect = isCorrectAnswers[q.id];
+                const targetOption = q.options.find(o => o.key === q.correctKey);
+                const targetText = targetOption?.text || q.correctKey;
 
                 return (
                   <div
@@ -658,11 +671,11 @@ export const CarbohydrateExperimentLessonView: React.FC<CarbohydrateExperimentLe
                           >
                             {isCorrect ? (
                               <>
-                                <CheckCircle2 className="w-3.5 h-3.5" /> Correct
+                                <CheckCircle2 className="w-3.5 h-3.5" /> Correct (إجابة صحيحة)
                               </>
                             ) : (
                               <>
-                                <XCircle className="w-3.5 h-3.5" /> Incorrect
+                                <XCircle className="w-3.5 h-3.5" /> Incorrect (إجابة غير دقيقة)
                               </>
                             )}
                           </span>
@@ -676,56 +689,51 @@ export const CarbohydrateExperimentLessonView: React.FC<CarbohydrateExperimentLe
                       </p>
                     </div>
 
-                    {/* Options */}
-                    <div className="space-y-1.5">
-                      {q.options.map((opt) => {
-                        const isThisSelected = selectedKey === opt.key;
-                        const isThisCorrect = opt.key === q.correctKey;
+                    {/* Written Input Box Form */}
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        handleCheckWrittenAnswer(q.id, targetText, q.correctKey);
+                      }}
+                      className="space-y-2 pt-1"
+                    >
+                      <div className="relative">
+                        <input
+                          type="text"
+                          value={inputsState[q.id] || ''}
+                          onChange={(e) => setInputsState(prev => ({ ...prev, [q.id]: e.target.value }))}
+                          disabled={isAnswered}
+                          placeholder="اكتب إجابتك هنا..."
+                          className="w-full bg-white border border-slate-300 focus:border-indigo-500 rounded-lg px-3 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none transition disabled:bg-slate-100"
+                        />
+                      </div>
 
-                        let btnStyle = 'border-slate-200 bg-white hover:bg-slate-50 text-slate-700';
-                        if (isAnswered) {
-                          if (isThisCorrect) {
-                            btnStyle = 'border-emerald-500 bg-emerald-50 text-emerald-900 font-bold';
-                          } else if (isThisSelected && !isThisCorrect) {
-                            btnStyle = 'border-rose-400 bg-rose-50 text-rose-900 line-through';
-                          } else {
-                            btnStyle = 'border-slate-200 bg-slate-50/50 text-slate-400';
-                          }
-                        }
+                      {!isAnswered ? (
+                        <button
+                          type="submit"
+                          disabled={!(inputsState[q.id] || '').trim()}
+                          className="px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 text-white text-xs font-bold transition flex items-center gap-1 cursor-pointer"
+                        >
+                          <span>تحقق من الإجابة</span>
+                        </button>
+                      ) : null}
+                    </form>
 
-                        return (
-                          <button
-                            key={opt.key}
-                            onClick={() => handleSelectOption(q.id, opt.key)}
-                            disabled={isAnswered}
-                            className={`w-full text-left text-xs p-2.5 rounded-lg border transition-all flex items-center gap-2.5 ${btnStyle}`}
-                          >
-                            <span
-                              className={`w-5 h-5 rounded-full flex items-center justify-center font-bold text-[10px] shrink-0 ${
-                                isAnswered && isThisCorrect
-                                  ? 'bg-emerald-600 text-white'
-                                  : isAnswered && isThisSelected && !isThisCorrect
-                                  ? 'bg-rose-600 text-white'
-                                  : 'bg-slate-100 text-slate-700'
-                              }`}
-                            >
-                              {opt.key}
-                            </span>
-                            <span className="flex-1">{opt.text}</span>
-                          </button>
-                        );
-                      })}
-                    </div>
-
-                    {/* Explanation */}
+                    {/* Model Answer & Explanation */}
                     {isAnswered && (
-                      <div className="text-xs bg-white p-3 rounded-lg border border-slate-200 space-y-1 animate-in fade-in">
-                        <span className="font-bold text-slate-800 flex items-center gap-1">
-                          <Info className="w-3.5 h-3.5 text-indigo-600" /> Explanation:
-                        </span>
-                        <p className="text-slate-600 leading-relaxed text-[11px]">
-                          {q.explanation}
-                        </p>
+                      <div className="text-xs bg-white p-3 rounded-lg border border-slate-200 space-y-2 animate-in fade-in">
+                        <div className="flex items-center justify-between text-[11px] font-bold border-b border-slate-100 pb-1.5">
+                          <span className="text-slate-500">إجابتك: <strong className={isCorrect ? 'text-emerald-700' : 'text-rose-700'}>{writtenAnswers[q.id]}</strong></span>
+                          <span className="text-indigo-700">الإجابة النموذجية: <strong>{targetText}</strong></span>
+                        </div>
+                        <div className="space-y-1">
+                          <span className="font-bold text-slate-800 flex items-center gap-1 text-[11px]">
+                            <Info className="w-3.5 h-3.5 text-indigo-600" /> التفسير العلمي:
+                          </span>
+                          <p className="text-slate-600 leading-relaxed text-[11px]">
+                            {q.explanation}
+                          </p>
+                        </div>
                       </div>
                     )}
                   </div>

@@ -371,7 +371,8 @@ export const ProteinTestsInteractiveLab: React.FC = () => {
   const [activeExpIndex, setActiveExpIndex] = useState<number>(0);
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
   const [hasObservedResult, setHasObservedResult] = useState<boolean>(false);
-  const [selectedQuizOption, setSelectedQuizOption] = useState<number | null>(null);
+  const [quizWrittenInput, setQuizWrittenInput] = useState<string>('');
+  const [isQuizCorrect, setIsQuizCorrect] = useState<boolean>(false);
   const [hasCheckedAnswer, setHasCheckedAnswer] = useState<boolean>(false);
 
   const currentExp = PROTEIN_EXPERIMENTS[activeExpIndex];
@@ -382,7 +383,8 @@ export const ProteinTestsInteractiveLab: React.FC = () => {
     setActiveExpIndex(index);
     setCurrentStepIndex(0);
     setHasObservedResult(false);
-    setSelectedQuizOption(null);
+    setQuizWrittenInput('');
+    setIsQuizCorrect(false);
     setHasCheckedAnswer(false);
   };
 
@@ -397,7 +399,8 @@ export const ProteinTestsInteractiveLab: React.FC = () => {
   const handleResetExperiment = () => {
     setCurrentStepIndex(0);
     setHasObservedResult(false);
-    setSelectedQuizOption(null);
+    setQuizWrittenInput('');
+    setIsQuizCorrect(false);
     setHasCheckedAnswer(false);
   };
 
@@ -876,15 +879,15 @@ export const ProteinTestsInteractiveLab: React.FC = () => {
               </div>
             </div>
 
-            {/* "INTERPRET THE RESULT" CLINICAL QUIZ */}
-            <div className="p-6 rounded-3xl bg-slate-950 border border-indigo-500/40 space-y-4 shadow-xl">
+            {/* "INTERPRET THE RESULT" CLINICAL WRITTEN QUIZ */}
+            <div className="p-6 rounded-3xl bg-slate-950 border border-indigo-500/40 space-y-4 shadow-xl text-right">
               <div className="flex items-center justify-between pb-3 border-b border-slate-800">
                 <span className="text-xs font-bold text-indigo-400 uppercase font-mono flex items-center gap-1.5">
                   <HelpCircle className="w-4 h-4" />
-                  Interpret the result (تفسير النتيجة المخبرية)
+                  Interpret the result (تفسير النتيجة المخبرية — اختبار كتابي)
                 </span>
-                <span className="text-xs text-slate-400">
-                  Select your clinical reasoning
+                <span className="text-xs text-slate-400 font-mono">
+                  Written Response
                 </span>
               </div>
 
@@ -897,76 +900,88 @@ export const ProteinTestsInteractiveLab: React.FC = () => {
                 </p>
               )}
 
-              {/* Options */}
-              <div className="space-y-2.5">
-                {currentExp.quizQuestion.options.map((option, optIdx) => {
-                  const isSelected = selectedQuizOption === optIdx;
-                  const isCorrect = optIdx === currentExp.quizQuestion.correctIndex;
+              {/* Written Input Form (Strictly No MCQs) */}
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (!quizWrittenInput.trim() || hasCheckedAnswer) return;
+                  const correctTarget = currentExp.quizQuestion.options[currentExp.quizQuestion.correctIndex] || '';
+                  const normUser = quizWrittenInput.trim().toLowerCase().replace(/[^a-z0-9\u0600-\u06FF]/g, '');
+                  const normTarget = correctTarget.toLowerCase().replace(/[^a-z0-9\u0600-\u06FF]/g, '');
+                  const isMatch = normUser === normTarget || (normTarget.length >= 4 && (normUser.includes(normTarget) || normTarget.includes(normUser)));
+                  setIsQuizCorrect(isMatch);
+                  setHasCheckedAnswer(true);
+                }}
+                className="space-y-3 pt-1"
+              >
+                <label className="text-xs font-bold text-slate-300 block">
+                  اكتب تفسيرك السريري أو النتيجة المخبرية هنا:
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={quizWrittenInput}
+                    onChange={(e) => setQuizWrittenInput(e.target.value)}
+                    disabled={hasCheckedAnswer}
+                    placeholder="اكتب إجابتك هنا بالإنجليزية أو العربية..."
+                    className="w-full bg-slate-900 border border-slate-700 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20 rounded-xl px-4 py-3 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none transition font-semibold disabled:opacity-80"
+                  />
+                </div>
 
-                  let style = 'bg-slate-900 border-slate-800 hover:border-slate-700 text-slate-200';
-                  if (hasCheckedAnswer) {
-                    if (isCorrect) {
-                      style = 'bg-emerald-950/60 border-emerald-500 text-emerald-200 font-bold';
-                    } else if (isSelected && !isCorrect) {
-                      style = 'bg-rose-950/60 border-rose-500 text-rose-300';
-                    } else {
-                      style = 'bg-slate-950 border-slate-850 text-slate-500 opacity-60';
-                    }
-                  } else if (isSelected) {
-                    style = 'bg-indigo-950/60 border-indigo-500 text-white font-semibold';
-                  }
+                {!hasCheckedAnswer ? (
+                  <button
+                    type="submit"
+                    disabled={!quizWrittenInput.trim()}
+                    className="py-2.5 px-6 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:pointer-events-none text-white text-xs font-bold transition shadow cursor-pointer flex items-center gap-1.5"
+                  >
+                    <span>تحقق من الإجابة (Check Answer)</span>
+                  </button>
+                ) : null}
+              </form>
 
-                  return (
-                    <button
-                      key={optIdx}
-                      disabled={hasCheckedAnswer}
-                      onClick={() => setSelectedQuizOption(optIdx)}
-                      className={`w-full text-left p-3.5 rounded-xl border text-xs sm:text-sm transition-all flex items-center justify-between ${style}`}
-                    >
-                      <span>{option}</span>
-                      {hasCheckedAnswer && isCorrect && (
-                        <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 ml-2" />
-                      )}
-                      {hasCheckedAnswer && isSelected && !isCorrect && (
-                        <XCircle className="w-4 h-4 text-rose-400 shrink-0 ml-2" />
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Check Answer Button & Feedback */}
-              {!hasCheckedAnswer ? (
-                <button
-                  disabled={selectedQuizOption === null}
-                  onClick={() => setHasCheckedAnswer(true)}
-                  className="py-2.5 px-6 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:pointer-events-none text-white text-xs font-bold transition shadow"
-                >
-                  تحقق من الإجابة
-                </button>
-              ) : (
+              {/* Instant Evaluation Feedback */}
+              {hasCheckedAnswer && (
                 <div
                   className={`p-4 rounded-2xl border text-xs sm:text-sm space-y-2 ${
-                    selectedQuizOption === currentExp.quizQuestion.correctIndex
+                    isQuizCorrect
                       ? 'bg-emerald-950/30 border-emerald-500/50 text-emerald-200'
                       : 'bg-rose-950/30 border-rose-500/50 text-rose-200'
                   }`}
                 >
-                  <div className="font-bold flex items-center gap-1.5">
-                    {selectedQuizOption === currentExp.quizQuestion.correctIndex ? (
-                      <>
-                        <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                        <span>إجابة صحيحة (Correct Interpretation)</span>
-                      </>
-                    ) : (
-                      <>
-                        <XCircle className="w-4 h-4 text-rose-400" />
-                        <span>إجابة غير دقيقة (Incorrect)</span>
-                      </>
-                    )}
+                  <div className="font-bold flex items-center justify-between pb-1 border-b border-white/10">
+                    <div className="flex items-center gap-1.5">
+                      {isQuizCorrect ? (
+                        <>
+                          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                          <span>إجابة صحيحة (Correct Interpretation)</span>
+                        </>
+                      ) : (
+                        <>
+                          <XCircle className="w-4 h-4 text-rose-400" />
+                          <span>إجابة غير دقيقة</span>
+                        </>
+                      )}
+                    </div>
                   </div>
-                  <p className="text-slate-300 leading-relaxed text-xs">
-                    {currentExp.quizQuestion.explanation}
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs pt-1">
+                    <div className="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800">
+                      <span className="text-slate-400 text-[10px] block">إجابتك:</span>
+                      <span className={isQuizCorrect ? 'text-emerald-300 font-bold' : 'text-rose-300 font-bold'}>
+                        {quizWrittenInput || '(فارغ)'}
+                      </span>
+                    </div>
+
+                    <div className="p-2.5 rounded-lg bg-slate-900/90 border border-indigo-600/30">
+                      <span className="text-indigo-400 text-[10px] font-bold block">الإجابة النموذجية المعتمدة:</span>
+                      <span className="text-white font-bold">
+                        {currentExp.quizQuestion.options[currentExp.quizQuestion.correctIndex]}
+                      </span>
+                    </div>
+                  </div>
+
+                  <p className="text-slate-300 leading-relaxed text-xs pt-1">
+                    💡 <span className="font-bold">التفسير العلمي:</span> {currentExp.quizQuestion.explanation}
                   </p>
                 </div>
               )}

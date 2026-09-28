@@ -26,6 +26,7 @@ import {
   ChevronRight,
   Play,
   CheckCircle2,
+  XCircle,
   RotateCcw,
   Target,
   ArrowRight,
@@ -48,7 +49,8 @@ export const AnatomyLessonsSection: React.FC<AnatomyLessonsSectionProps> = ({
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [activeLesson, setActiveLesson] = useState<AnatomyLesson | null>(null);
-  const [quizSelectedIdx, setQuizSelectedIdx] = useState<number | undefined>(undefined);
+  const [quizWrittenInput, setQuizWrittenInput] = useState<string>('');
+  const [quizIsCorrect, setQuizIsCorrect] = useState<boolean>(false);
   const [quizSubmitted, setQuizSubmitted] = useState<boolean>(false);
   const [isPlayingVideo, setIsPlayingVideo] = useState<boolean>(false);
 
@@ -68,7 +70,8 @@ export const AnatomyLessonsSection: React.FC<AnatomyLessonsSectionProps> = ({
 
   const handleOpenLesson = (lesson: AnatomyLesson) => {
     setActiveLesson(lesson);
-    setQuizSelectedIdx(undefined);
+    setQuizWrittenInput('');
+    setQuizIsCorrect(false);
     setQuizSubmitted(false);
     setIsPlayingVideo(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -389,86 +392,107 @@ export const AnatomyLessonsSection: React.FC<AnatomyLessonsSectionProps> = ({
               <span>Quick Knowledge Check (سؤال فحص الفهم السريع)</span>
             </h4>
 
-            <div className="p-4 sm:p-5 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
-              <p className="text-xs sm:text-sm font-bold text-slate-200">
-                {activeLesson.practiceQuestion.question}
-              </p>
+            <div className="p-4 sm:p-5 rounded-xl bg-slate-950 border border-slate-800 space-y-4">
+              <div>
+                <p className="text-xs sm:text-sm font-bold text-slate-200">
+                  {activeLesson.practiceQuestion.question}
+                </p>
+                <p className="text-[11px] text-slate-400 mt-1 font-arabic">
+                  اكتب إجابتك الطبية الدقيقة (اسم التركيب أو الوظيفة) في الصندوق أدناه:
+                </p>
+              </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {activeLesson.practiceQuestion.options.map((opt, optIdx) => {
-                  const isChosen = quizSelectedIdx === optIdx;
-                  let style = 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-850 hover:text-white';
+              {/* Written Input Box Form */}
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (!quizWrittenInput.trim() || quizSubmitted) return;
+                  const correctTarget = activeLesson.practiceQuestion.options[activeLesson.practiceQuestion.correctIndex] || '';
+                  const normUser = quizWrittenInput.trim().toLowerCase().replace(/[^a-z0-9\u0600-\u06FF]/g, '');
+                  const normTarget = correctTarget.toLowerCase().replace(/[^a-z0-9\u0600-\u06FF]/g, '');
+                  const isMatch = normUser === normTarget || (normTarget.length >= 4 && (normUser.includes(normTarget) || normTarget.includes(normUser)));
+                  setQuizIsCorrect(isMatch);
+                  setQuizSubmitted(true);
+                }}
+                className="space-y-3"
+              >
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={quizWrittenInput}
+                    onChange={(e) => setQuizWrittenInput(e.target.value)}
+                    disabled={quizSubmitted}
+                    placeholder="اكتب إجابتك هنا (Type your answer)..."
+                    className="w-full bg-slate-900 border border-slate-700 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none transition disabled:opacity-75"
+                  />
+                </div>
 
-                  if (quizSubmitted) {
-                    if (optIdx === activeLesson.practiceQuestion.correctIndex) {
-                      style = 'bg-emerald-950/80 border-emerald-500 text-emerald-200 font-bold';
-                    } else if (isChosen) {
-                      style = 'bg-rose-950/80 border-rose-500 text-rose-200';
-                    }
-                  } else if (isChosen) {
-                    style = 'bg-indigo-950 border-indigo-500 text-indigo-200 font-semibold';
-                  }
-
-                  return (
+                <div className="flex items-center justify-between">
+                  {!quizSubmitted ? (
                     <button
-                      key={optIdx}
-                      type="button"
-                      disabled={quizSubmitted}
-                      onClick={() => setQuizSelectedIdx(optIdx)}
-                      className={`p-3 rounded-lg border text-left text-xs sm:text-sm transition-all flex items-center justify-between cursor-pointer ${style}`}
+                      type="submit"
+                      disabled={!quizWrittenInput.trim()}
+                      className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-bold transition-all cursor-pointer shadow flex items-center gap-1.5"
                     >
-                      <span>{opt}</span>
-                      {quizSubmitted && optIdx === activeLesson.practiceQuestion.correctIndex && (
-                        <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                      )}
+                      <Check className="w-3.5 h-3.5" />
+                      <span>تحقق من الإجابة (Check Answer)</span>
                     </button>
-                  );
-                })}
-              </div>
-
-              <div className="pt-2 flex items-center justify-between">
-                {!quizSubmitted ? (
-                  <button
-                    type="button"
-                    disabled={quizSelectedIdx === undefined}
-                    onClick={() => setQuizSubmitted(true)}
-                    className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                      quizSelectedIdx !== undefined
-                        ? 'bg-indigo-600 hover:bg-indigo-500 text-white shadow'
-                        : 'bg-slate-800 text-slate-500 cursor-not-allowed'
-                    }`}
-                  >
-                    Check Answer
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setQuizSubmitted(false);
-                      setQuizSelectedIdx(undefined);
-                    }}
-                    className="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-slate-200 font-bold cursor-pointer"
-                  >
-                    <RotateCcw className="w-3 h-3" />
-                    <span>Try Again</span>
-                  </button>
-                )}
-              </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setQuizSubmitted(false);
+                        setQuizWrittenInput('');
+                        setQuizIsCorrect(false);
+                      }}
+                      className="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-slate-200 font-bold cursor-pointer"
+                    >
+                      <RotateCcw className="w-3 h-3" />
+                      <span>إعادة المحاولة (Try Again)</span>
+                    </button>
+                  )}
+                </div>
+              </form>
 
               {quizSubmitted && (
-                <div
-                  className={`p-3 rounded-lg text-xs leading-relaxed ${
-                    quizSelectedIdx === activeLesson.practiceQuestion.correctIndex
-                      ? 'bg-emerald-950/40 text-emerald-200 border border-emerald-800/40'
-                      : 'bg-rose-950/40 text-rose-200 border border-rose-800/40'
-                  }`}
-                >
-                  <span className="font-bold block mb-1">
-                    {quizSelectedIdx === activeLesson.practiceQuestion.correctIndex
-                      ? '✓ Correct Answer!'
-                      : '✗ Incorrect Answer'}
-                  </span>
-                  {activeLesson.practiceQuestion.explanation}
+                <div className="space-y-3 pt-2 border-t border-slate-800">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                    <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800">
+                      <span className="text-slate-400 text-[10px] block">إجابتك:</span>
+                      <span className={quizIsCorrect ? 'text-emerald-400 font-bold' : 'text-rose-400 font-bold'}>
+                        {quizWrittenInput || '(فارغ)'}
+                      </span>
+                    </div>
+                    <div className="p-2.5 rounded-lg bg-slate-900 border border-indigo-500/40">
+                      <span className="text-indigo-400 text-[10px] font-bold block">الإجابة النموذجية المعتمدة:</span>
+                      <span className="text-white font-bold">
+                        {activeLesson.practiceQuestion.options[activeLesson.practiceQuestion.correctIndex]}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div
+                    className={`p-3 rounded-lg text-xs leading-relaxed ${
+                      quizIsCorrect
+                        ? 'bg-emerald-950/40 text-emerald-200 border border-emerald-800/40'
+                        : 'bg-rose-950/40 text-rose-200 border border-rose-800/40'
+                    }`}
+                  >
+                    <span className="font-bold flex items-center gap-1.5 mb-1">
+                      {quizIsCorrect ? (
+                        <>
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                          <span>إجابة صحيحة (Correct)!</span>
+                        </>
+                      ) : (
+                        <>
+                          <XCircle className="w-3.5 h-3.5 text-rose-400" />
+                          <span>إجابة غير دقيقة (Review Model Answer)</span>
+                        </>
+                      )}
+                    </span>
+                    {activeLesson.practiceQuestion.explanation}
+                  </div>
                 </div>
               )}
             </div>
