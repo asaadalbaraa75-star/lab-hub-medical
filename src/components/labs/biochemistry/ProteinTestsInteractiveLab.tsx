@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ProteinExperimentVideoSection } from './ProteinExperimentVideoSection';
 import {
   TestTube,
   Flame,
@@ -973,6 +974,9 @@ export const ProteinTestsInteractiveLab: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* DOCTOR EXPLANATION VIDEO FOR THE ACTIVE EXPERIMENT (Video Player with Embed Link & Edit Option) */}
+      <ProteinExperimentVideoSection testId={currentExp.id} />
 
       {/* FINAL COMPREHENSIVE COMPARISON CARD */}
       <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 shadow-xl space-y-4">

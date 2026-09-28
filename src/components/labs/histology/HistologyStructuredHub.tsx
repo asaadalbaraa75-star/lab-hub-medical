@@ -75,8 +75,8 @@ export const HistologyStructuredHub: React.FC<HistologyStructuredHubProps> = ({
         </div>
       </div>
 
-      {/* CHAPTER SELECTOR TABS */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      {/* CHAPTER SELECTOR TABS (All 9 Strict Chapters from Faculty Handout) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {HISTOLOGY_CURRICULUM_CHAPTERS.map((chap, idx) => {
           const isSelected = activeChapterIndex === idx;
           return (
@@ -90,7 +90,7 @@ export const HistologyStructuredHub: React.FC<HistologyStructuredHubProps> = ({
               }`}
             >
               <div className="flex items-center justify-between text-[11px] text-teal-400 font-mono mb-1">
-                <span>CHAPTER 0{idx + 1}</span>
+                <span>CHAPTER {idx < 9 ? '0' : ''}{idx + 1}</span>
                 <span>{chap.content_blocks.length} Blocks</span>
               </div>
               <h3 className="text-sm font-bold text-white mb-0.5 truncate">

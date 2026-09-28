@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   HelpCircle,
   CheckCircle2,
@@ -10,9 +10,12 @@ import {
   Award,
   ArrowRight,
   Send,
-  Layers
+  Layers,
+  ImageIcon
 } from 'lucide-react';
 import { QuizSlideData } from './HistologyLessonsData';
+import { SlideImageUploadMapper } from './SlideImageUploadMapper';
+import { getCustomSlideImage } from '../../../utils/slideImageStorage';
 
 interface HistologyQuizSlideProps {
   data: QuizSlideData;
@@ -23,6 +26,12 @@ export const HistologyQuizSlide: React.FC<HistologyQuizSlideProps> = ({ data, on
   const [writtenAnswer, setWrittenAnswer] = useState<string>('');
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const [hasRevealed, setHasRevealed] = useState<boolean>(false);
+  const [customImage, setCustomImage] = useState<string | null>(null);
+
+  useEffect(() => {
+    const saved = getCustomSlideImage(data.prompt) || getCustomSlideImage(data.answerTitle);
+    setCustomImage(saved);
+  }, [data.prompt, data.answerTitle]);
 
   const normalize = (txt: string) => {
     return txt
@@ -73,7 +82,7 @@ export const HistologyQuizSlide: React.FC<HistologyQuizSlideProps> = ({ data, on
       <div className="lg:col-span-7 flex flex-col space-y-3">
         <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 shadow-2xl">
           <img
-            src={data.image}
+            src={customImage || data.image}
             alt={data.imageAlt}
             referrerPolicy="no-referrer"
             className="w-full h-full object-cover select-none"
@@ -85,9 +94,17 @@ export const HistologyQuizSlide: React.FC<HistologyQuizSlideProps> = ({ data, on
             <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-teal-500 text-slate-950 shadow-md">
               Practical Spotter Written Exam
             </span>
-            <span className="px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-900/80 text-slate-300 border border-slate-700 backdrop-blur-md">
-              Magnification: 40x High Power
-            </span>
+            <div className="flex items-center gap-1.5">
+              <SlideImageUploadMapper
+                slideKey={data.prompt}
+                slideTitle={data.answerTitle}
+                onImageChange={(newImg) => setCustomImage(newImg)}
+                compact
+              />
+              <span className="px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-900/80 text-slate-300 border border-slate-700 backdrop-blur-md">
+                40x High Power
+              </span>
+            </div>
           </div>
 
           {/* Bottom Banner on Image */}

@@ -26,6 +26,8 @@ import {
   HistologySlideMetadata
 } from './HistologyCurriculumData';
 import { HistologySlideViewer } from './HistologySlideViewer';
+import { SlideImageUploadMapper } from './SlideImageUploadMapper';
+import { getCustomSlideImage } from '../../../utils/slideImageStorage';
 import { OwnershipWatermark } from '../../common/OwnershipWatermark';
 
 interface HistologyLessonViewProps {
@@ -67,8 +69,15 @@ export const HistologyLessonView: React.FC<HistologyLessonViewProps> = ({
     };
   }, [lesson.id]);
 
+  const [customSlideImage, setCustomSlideImage] = useState<string | null>(null);
+
+  useEffect(() => {
+    const saved = getCustomSlideImage(lesson.id) || getCustomSlideImage(lesson.titleEn);
+    setCustomSlideImage(saved);
+  }, [lesson.id, lesson.titleEn]);
+
   const currentPlate = liveImages[selectedPlateIndex] || liveImages[0];
-  const effectiveSlideImage = currentPlate?.url || (lesson as any).imageUrl || (lesson as any).imageURL || lesson.realImagePath;
+  const effectiveSlideImage = customSlideImage || currentPlate?.url || (lesson as any).imageUrl || (lesson as any).imageURL || lesson.realImagePath;
 
   // Metadata drawer / popover state
   const [showMetadataModal, setShowMetadataModal] = useState<boolean>(false);
@@ -154,6 +163,13 @@ export const HistologyLessonView: React.FC<HistologyLessonViewProps> = ({
               <span>Booklet Notes</span>
             </button>
           </div>
+
+          <SlideImageUploadMapper
+            slideKey={lesson.id}
+            slideTitle={lesson.titleEn}
+            onImageChange={(img) => setCustomSlideImage(img)}
+            compact
+          />
 
           <button
             onClick={() => setShowMetadataModal(true)}

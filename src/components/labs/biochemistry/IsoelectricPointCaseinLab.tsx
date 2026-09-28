@@ -522,6 +522,8 @@ export const IsoelectricPointCaseinLab: React.FC = () => {
         </div>
 
         <DoctorVideoSection
+          videoId="JpU4T1rR4sU"
+          youtubeUrl="https://www.youtube.com/watch?v=JpU4T1rR4sU"
           title="Isoelectric Point (pI) Test — Casein Precipitation & BCG Color Transition"
           titleAr="تجربة نقطة التعادل الكهربائي (pI) للكازيين وترسيبه بكاشف بروموكريسول الأخضر"
           doctorName="Faculty of Medical Biochemistry"
@@ -538,7 +540,7 @@ export const IsoelectricPointCaseinLab: React.FC = () => {
             "كاشف بروموكريسول الأخضر (BCG) يتلون بالأخضر عند pH ~ 4.6–4.9 ليتوافق مع ترسب الكازيين",
             "إضافة حمض زائد تعيد ذوبان البروتين بسبب اكتساب شحنات موجبة (+)"
           ]}
-          status="coming_soon"
+          status="active"
         />
       </div>
     </div>
