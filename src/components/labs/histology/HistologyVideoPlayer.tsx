@@ -1,150 +1,108 @@
 import React, { useState } from 'react';
-import { sanitizeToEmbedUrl } from '../../../data/histologyJsonData';
-import {
-  Video,
-  AlertCircle,
-  RefreshCw,
-  ExternalLink,
-  ShieldCheck,
-  Play
-} from 'lucide-react';
+import { Play, AlertCircle, RefreshCw, Video, ExternalLink } from 'lucide-react';
+import { MediaVideoBlock, convertToEmbedUrl } from '../../../data/histologyJsonData';
 
 interface HistologyVideoPlayerProps {
-  originalUrl?: string;
-  fixedEmbedUrl?: string;
-  title?: string;
-  description?: string;
+  video: MediaVideoBlock;
+  className?: string;
 }
 
 export const HistologyVideoPlayer: React.FC<HistologyVideoPlayerProps> = ({
-  originalUrl = '',
-  fixedEmbedUrl = '',
-  title = 'شرح مجهري مرئي',
-  description = ''
+  video,
+  className = ''
 }) => {
   const [hasError, setHasError] = useState<boolean>(false);
-  const [isRetrying, setIsRetrying] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // Compute robust embed url
-  const effectiveEmbedUrl = sanitizeToEmbedUrl(fixedEmbedUrl || originalUrl);
+  const embedUrl = convertToEmbedUrl(video.fixed_embed_url || video.original_url);
 
   const handleRetry = () => {
-    setIsRetrying(true);
     setHasError(false);
-    setTimeout(() => {
-      setIsRetrying(false);
-    }, 600);
+    setIsLoading(true);
   };
-
-  const handleOpenExternal = () => {
-    const targetUrl = originalUrl || fixedEmbedUrl;
-    if (targetUrl) {
-      window.open(targetUrl, '_blank', 'noopener,noreferrer');
-    }
-  };
-
-  const isInvalidUrl = !effectiveEmbedUrl || hasError;
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-      {/* Video Header */}
-      <div className="px-4 py-3 bg-slate-850/80 border-b border-slate-800 flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-teal-500/10 border border-teal-500/30 flex items-center justify-center text-teal-400">
+    <div className={`relative rounded-3xl overflow-hidden bg-slate-950 border border-slate-800 shadow-2xl ${className}`}>
+      {/* Video Title Header */}
+      <div className="p-4 sm:p-5 bg-gradient-to-r from-slate-900 to-slate-950 border-b border-slate-800 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center shrink-0">
             <Video className="w-4 h-4" />
           </div>
           <div>
-            <h4 className="text-sm font-bold text-white leading-tight">
-              {title}
+            <h4 className="text-sm font-bold text-white leading-snug">
+              {video.title || 'فيديو الشرح المجهري والتطبيقي'}
             </h4>
-            {description && (
-              <p className="text-xs text-slate-400 line-clamp-1">{description}</p>
-            )}
+            <span className="text-[11px] text-teal-400 font-mono">
+              Medical Histology Practical Demonstration
+            </span>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-teal-500/10 text-teal-300 border border-teal-500/20">
-            <ShieldCheck className="w-3 h-3 text-teal-400" />
-            <span>EMBED SECURE</span>
-          </span>
-          {originalUrl && (
-            <button
-              onClick={handleOpenExternal}
-              title="فتح الرابط في نافذة جديدة"
-              className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
-            >
-              <ExternalLink className="w-3.5 h-3.5" />
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Video Viewport or Fallback Card */}
-      <div className="relative w-full aspect-video bg-slate-950 flex items-center justify-center">
-        {isInvalidUrl ? (
-          /* Sleek Fallback Card (كود الحماية المعتمد) */
-          <div className="w-full h-full p-6 flex flex-col items-center justify-center text-center space-y-4 bg-gradient-to-b from-slate-900 via-slate-950 to-slate-900">
-            <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shadow-inner">
-              <AlertCircle className="w-7 h-7" />
-            </div>
-
-            <div className="space-y-1.5 max-w-md">
-              <span className="px-3 py-1 rounded-full text-[11px] font-bold tracking-wider bg-amber-500/10 text-amber-300 border border-amber-500/30 uppercase">
-                تنبيه تشغيل الفيديو
-              </span>
-              <h5 className="text-base sm:text-lg font-bold text-white">
-                الفيديو قيد التحديث ومتاح قريباً عبر المنصة
-              </h5>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                يتم حالياً مزامنة السيرفر وتجهيز الرابط الآمن. يمكنك إعادة التحميل أو فتح الرابط الخارجي المعتمد مباشرة.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3 pt-2">
-              <button
-                type="button"
-                onClick={handleRetry}
-                disabled={isRetrying}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-all border border-slate-700 cursor-pointer"
-              >
-                <RefreshCw className={`w-3.5 h-3.5 ${isRetrying ? 'animate-spin' : ''}`} />
-                <span>إعادة المحاولة</span>
-              </button>
-
-              {originalUrl && (
-                <button
-                  type="button"
-                  onClick={handleOpenExternal}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-500 text-white text-xs font-bold transition-all shadow-md cursor-pointer"
-                >
-                  <Play className="w-3.5 h-3.5 fill-current" />
-                  <span>فتح الرابط الأصلي</span>
-                </button>
-              )}
-            </div>
-          </div>
-        ) : (
-          <iframe
-            src={effectiveEmbedUrl}
-            title={title}
-            className="w-full h-full border-0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowFullScreen
-            onError={() => setHasError(true)}
-          />
+        {video.original_url && (
+          <a
+            href={video.original_url}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="text-xs text-slate-400 hover:text-teal-400 flex items-center gap-1 transition px-2.5 py-1.5 rounded-lg bg-slate-800/60 hover:bg-slate-800 shrink-0"
+          >
+            <span>المصدر</span>
+            <ExternalLink className="w-3 h-3" />
+          </a>
         )}
       </div>
 
-      {/* Video Footer */}
-      <div className="px-4 py-2.5 bg-slate-900 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
-        <span className="flex items-center gap-1.5 font-mono text-[11px]">
-          <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" />
-          <span>Histology Clinical Demonstration</span>
-        </span>
-        <span className="text-[11px] text-slate-400">
-          دقة عالية • وضع ملء الشاشة مدعوم
-        </span>
+      {/* Main Video Viewport or Fallback */}
+      <div className="relative aspect-video w-full bg-slate-950 flex items-center justify-center">
+        {hasError || !embedUrl ? (
+          /* Fallback UI requested by user: "الفيديو قيد التحديث" */
+          <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-gradient-to-b from-slate-900 via-slate-950 to-slate-900 space-y-3 animate-fadeIn">
+            <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center">
+              <AlertCircle className="w-7 h-7" />
+            </div>
+
+            <div className="space-y-1">
+              <h5 className="text-base font-bold text-white">
+                الفيديو قيد التحديث ومتاح قريباً
+              </h5>
+              <p className="text-xs text-slate-400 max-w-md mx-auto leading-relaxed">
+                يتم حالياً مزامنة وسائط هذا الشرح المجهري مع السيرفر لضمان التشغيل الدقيق وبأعلى جودة. يمكنك مراجعة شريحة الشرح النظري وبنك الأسئلة أدناه.
+              </p>
+            </div>
+
+            <button
+              onClick={handleRetry}
+              className="mt-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition border border-slate-700"
+            >
+              <RefreshCw className="w-3.5 h-3.5" />
+              <span>إعادة المحاولة</span>
+            </button>
+          </div>
+        ) : (
+          <>
+            {isLoading && (
+              <div className="absolute inset-0 flex items-center justify-center bg-slate-950 z-10">
+                <div className="flex flex-col items-center gap-2">
+                  <div className="w-8 h-8 border-2 border-teal-500 border-t-transparent rounded-full animate-spin" />
+                  <span className="text-xs text-slate-400">جاري تحميل مشغل الفيديو الطبي...</span>
+                </div>
+              </div>
+            )}
+
+            <iframe
+              src={embedUrl}
+              title={video.title || 'Histology Video'}
+              className="w-full h-full border-0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              onLoad={() => setIsLoading(false)}
+              onError={() => {
+                setIsLoading(false);
+                setHasError(true);
+              }}
+            />
+          </>
+        )}
       </div>
     </div>
   );

@@ -1,272 +1,274 @@
 import React, { useState } from 'react';
-import { HistologyQuizBlock } from '../../../data/histologyJsonData';
 import {
   HelpCircle,
   CheckCircle2,
   XCircle,
   Eye,
-  Award,
   RotateCcw,
   Sparkles,
+  Send,
   Microscope,
-  Info
+  Award,
+  Layers,
+  FileCheck
 } from 'lucide-react';
+import { PracticalQuizBlock } from '../../../data/histologyJsonData';
 
 interface HistologyPracticalQuizSectionProps {
-  quizBlocks: HistologyQuizBlock[];
-  chapterTitle?: string;
+  quiz: PracticalQuizBlock;
 }
 
 export const HistologyPracticalQuizSection: React.FC<HistologyPracticalQuizSectionProps> = ({
-  quizBlocks,
-  chapterTitle
+  quiz
 }) => {
-  const [userAnswers, setUserAnswers] = useState<{ [qIndex: number]: number }>({});
-  const [revealed, setRevealed] = useState<{ [qIndex: number]: boolean }>({});
+  const [studentInput, setStudentInput] = useState<string>('');
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const [hasRevealed, setHasRevealed] = useState<boolean>(false);
 
-  if (!quizBlocks || quizBlocks.length === 0) {
-    return (
-      <div className="p-8 text-center bg-slate-900 border border-slate-800 rounded-2xl text-slate-400 text-sm">
-        لا توجد أسئلة عملية متاحة لهذا الفصل حالياً.
-      </div>
-    );
-  }
-
-  const handleSelectOption = (qIdx: number, optIdx: number) => {
-    setUserAnswers(prev => ({ ...prev, [qIdx]: optIdx }));
-    setRevealed(prev => ({ ...prev, [qIdx]: true }));
+  // Normalization helper for smart checking of medical terms
+  const normalize = (text: string) => {
+    return text
+      .toLowerCase()
+      .trim()
+      .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '')
+      .replace(/\s+/g, ' ');
   };
 
-  const handleReset = (qIdx: number) => {
-    setUserAnswers(prev => {
-      const copy = { ...prev };
-      delete copy[qIdx];
-      return copy;
-    });
-    setRevealed(prev => {
-      const copy = { ...prev };
-      delete copy[qIdx];
-      return copy;
-    });
+  const checkAnswerAccuracy = () => {
+    const user = normalize(studentInput);
+    if (!user) return false;
+
+    const answerNorm = normalize(quiz.correct_answer);
+    const tissueNorm = normalize(quiz.tissue_name);
+
+    // Extract core keywords from tissue name and correct answer
+    const keywords = [
+      ...tissueNorm.split(' '),
+      ...answerNorm.split(' ').slice(0, 5)
+    ].filter(w => w.length > 3 && !['with', 'from', 'this', 'that', 'type'].includes(w));
+
+    // Match if user string contains core keywords or tissue name
+    if (user.includes(tissueNorm) || tissueNorm.includes(user)) return true;
+    
+    // Check keyword intersection
+    const matchedCount = keywords.filter(kw => user.includes(kw)).length;
+    return matchedCount >= 2;
   };
 
-  const handleResetAll = () => {
-    setUserAnswers({});
-    setRevealed({});
+  const isCorrect = isSubmitted && checkAnswerAccuracy();
+  const isAnswered = isSubmitted || hasRevealed;
+
+  const handleSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!studentInput.trim()) return;
+    setIsSubmitted(true);
   };
 
-  // Determine correct option letter/index from `correct_answer`
-  const getIsCorrect = (q: HistologyQuizBlock, selectedOptIdx: number): boolean => {
-    const selectedLetter = String.fromCharCode(65 + selectedOptIdx); // 0->'A', 1->'B', etc.
-    const cleanCorrect = q.correct_answer.trim();
-    // Check if correct_answer starts with (A), A, or mentions "(A)"
-    return (
-      cleanCorrect.includes(`(${selectedLetter})`) ||
-      cleanCorrect.startsWith(`${selectedLetter}.`) ||
-      cleanCorrect.startsWith(`${selectedLetter}:`) ||
-      cleanCorrect.includes(`الإجابة الصحيحة هي (${selectedLetter})`) ||
-      cleanCorrect.includes(`الخيار (${selectedLetter})`)
-    );
+  const handleReveal = () => {
+    setHasRevealed(true);
+    setIsSubmitted(true);
   };
 
-  const answeredCount = Object.keys(revealed).length;
-  const correctCount = Object.keys(revealed).filter(idxStr => {
-    const idx = parseInt(idxStr, 10);
-    return getIsCorrect(quizBlocks[idx], userAnswers[idx]);
-  }).length;
+  const handleReset = () => {
+    setStudentInput('');
+    setIsSubmitted(false);
+    setHasRevealed(false);
+  };
 
   return (
-    <div className="space-y-6">
-      {/* Quiz Dashboard Stats Header */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-md">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-teal-500/10 border border-teal-500/30 flex items-center justify-center text-teal-400">
-            <Award className="w-5 h-5" />
-          </div>
-          <div>
-            <h3 className="text-sm sm:text-base font-bold text-white">
-              الاختبارات العملية والتعرف على الشرائح (MCQs Practical Spotter)
-            </h3>
-            <p className="text-xs text-slate-400">
-              إجمالي الأسئلة: {quizBlocks.length} • تم الإجابة: {answeredCount}
-            </p>
-          </div>
+    <div className="p-6 sm:p-8 rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl space-y-6">
+      {/* Station Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800">
+        <div>
+          <span className="px-2.5 py-0.5 rounded-full bg-teal-500/10 text-teal-400 border border-teal-500/20 text-xs font-mono font-bold uppercase">
+            PRACTICAL WRITTEN EXAM (اختبار عملي كتابي)
+          </span>
+          <h3 className="text-lg sm:text-xl font-bold text-white mt-1">
+            تعرف على الشريحة والتركيب المجهري
+          </h3>
         </div>
 
-        <div className="flex items-center gap-3 self-end sm:self-auto">
-          {answeredCount > 0 && (
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800">
-              <span className="text-xs text-slate-400 font-mono">الدرجة:</span>
-              <span className="text-sm font-bold font-mono text-teal-400">
-                {correctCount} / {quizBlocks.length}
-              </span>
-            </div>
-          )}
-
-          {answeredCount > 0 && (
-            <button
-              onClick={handleResetAll}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-colors cursor-pointer"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              <span>إعادة الاختبار</span>
-            </button>
-          )}
-        </div>
+        <button
+          onClick={handleReset}
+          className="text-xs text-slate-400 hover:text-white flex items-center gap-1.5 self-start sm:self-auto px-3 py-1.5 rounded-xl bg-slate-800 border border-slate-700 transition"
+        >
+          <RotateCcw className="w-3.5 h-3.5" />
+          <span>إعادة المحاولة</span>
+        </button>
       </div>
 
-      {/* Questions List */}
-      <div className="space-y-6">
-        {quizBlocks.map((quiz, qIdx) => {
-          const isAnswered = revealed[qIdx] !== undefined;
-          const selectedIdx = userAnswers[qIdx];
-          const isCorrect = isAnswered ? getIsCorrect(quiz, selectedIdx) : false;
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Left Column: Visual Microscopy Slide & Explicit Slide Metadata (7 Cols) */}
+        <div className="lg:col-span-7 space-y-4">
+          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 shadow-xl">
+            {quiz.image_url ? (
+              <img
+                src={quiz.image_url}
+                alt={quiz.image_tag}
+                className="w-full h-full object-cover select-none"
+              />
+            ) : (
+              <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center text-slate-400">
+                <Microscope className="w-12 h-12 text-teal-400 mb-2" />
+                <span className="text-sm font-bold text-slate-300">{quiz.image_tag}</span>
+              </div>
+            )}
 
-          return (
+            <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-slate-900/90 backdrop-blur-md border border-slate-700 text-teal-300 text-xs font-mono font-bold">
+              {quiz.image_tag}
+            </div>
+
+            <div className="absolute bottom-3 left-3 right-3 p-2.5 rounded-xl bg-slate-950/90 backdrop-blur-md border border-slate-800 text-xs text-slate-200">
+              <span className="text-amber-400 font-bold block mb-0.5">Stain & Magnification:</span>
+              <span>{quiz.stain_and_mag}</span>
+            </div>
+          </div>
+
+          {/* EXPLICIT SLIDE DATA CARD UNDERNEATH (Required by User Prompt) */}
+          <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800/80 space-y-2 text-xs">
+            <div className="flex items-center gap-2 text-teal-400 font-bold font-mono text-[11px] uppercase">
+              <Layers className="w-3.5 h-3.5" />
+              بيانات وتفاصيل الشريحة المجهرية (Microscopic Slide Profile)
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-300">
+              <div>
+                <span className="text-slate-400 block text-[11px]">اسم النسيج (Tissue Name):</span>
+                <span className="font-semibold text-white">{quiz.tissue_name}</span>
+              </div>
+
+              <div>
+                <span className="text-slate-400 block text-[11px]">نوع الصبغة (Stain):</span>
+                <span className="font-semibold text-white">{quiz.stain_and_mag}</span>
+              </div>
+            </div>
+
+            <div className="pt-1.5 border-t border-slate-850">
+              <span className="text-slate-400 block text-[11px]">التفاصيل والخصائص المجهرية:</span>
+              <p className="text-slate-300 leading-relaxed text-xs font-arabic">
+                {quiz.microscopic_details}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column: WRITTEN QUIZ INPUT FORM (NO MCQS) (5 Cols) */}
+        <div className="lg:col-span-5 space-y-4">
+          <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2">
+            <span className="text-xs font-bold font-mono uppercase text-teal-400 flex items-center gap-1.5">
+              <HelpCircle className="w-4 h-4" />
+              سؤال الفحص العملي (OSPE Written Question)
+            </span>
+            <p className="text-sm font-bold text-white leading-relaxed">
+              {quiz.question}
+            </p>
+          </div>
+
+          {/* PURE WRITTEN INPUT FORM — Strictly NO MCQs */}
+          <form onSubmit={handleSubmit} className="space-y-3">
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-300 flex items-center justify-between">
+                <span>اكتب إجابتك هنا (الاسم النسيجي / التشخيص):</span>
+                <span className="text-[11px] text-teal-400 font-mono font-normal">نظام كتابي حصراً</span>
+              </label>
+
+              <div className="relative">
+                <input
+                  type="text"
+                  value={studentInput}
+                  disabled={isAnswered}
+                  onChange={(e) => setStudentInput(e.target.value)}
+                  placeholder="مثال: Simple Squamous Epithelium أو نسيج طلائي حرشفي بسيط..."
+                  className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm focus:outline-none focus:border-teal-500 placeholder-slate-500 transition shadow-inner"
+                />
+              </div>
+            </div>
+
+            {/* Verification Button & Direct Reveal Button */}
+            {!isAnswered ? (
+              <div className="flex items-center gap-2 pt-1">
+                <button
+                  type="submit"
+                  disabled={!studentInput.trim()}
+                  className="flex-1 py-3 px-4 rounded-xl bg-teal-600 hover:bg-teal-500 disabled:opacity-40 disabled:pointer-events-none text-slate-950 font-bold text-xs transition shadow-lg shadow-teal-600/20 flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <Send className="w-4 h-4" />
+                  <span>تحقق من الإجابة</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleReveal}
+                  className="py-3 px-3 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-300 hover:text-white text-xs font-semibold transition border border-slate-700 flex items-center gap-1.5 cursor-pointer shrink-0"
+                  title="عرض الإجابة النموذجية مباشرة"
+                >
+                  <Eye className="w-4 h-4 text-teal-400" />
+                  <span>كشف</span>
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={handleReset}
+                className="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-200 text-xs font-bold transition border border-slate-700 flex items-center justify-center gap-2"
+              >
+                <RotateCcw className="w-4 h-4" />
+                <span>إعادة إدخال إجابة جديدة</span>
+              </button>
+            )}
+          </form>
+
+          {/* DIAGNOSTIC FEEDBACK & SCIENTIFIC EXPLANATION (Shown upon check/reveal) */}
+          {isAnswered && (
             <div
-              key={qIdx}
-              id={`quiz-card-${qIdx}`}
-              className={`bg-slate-900 border rounded-2xl p-5 sm:p-7 shadow-xl space-y-5 transition-all ${
-                isAnswered
-                  ? isCorrect
-                    ? 'border-emerald-500/50 ring-1 ring-emerald-500/30'
-                    : 'border-rose-500/50 ring-1 ring-rose-500/30'
-                  : 'border-slate-800 hover:border-slate-700'
+              className={`p-5 rounded-2xl border space-y-3.5 shadow-xl animate-fadeIn ${
+                isCorrect
+                  ? 'bg-emerald-950/20 border-emerald-500/50'
+                  : 'bg-slate-950 border-amber-500/50'
               }`}
             >
-              {/* Question Header & Slide Tag */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
-                <div className="flex items-center gap-2.5">
-                  <span className="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-teal-500/10 text-teal-300 border border-teal-500/30">
-                    سؤال 0{qIdx + 1}
-                  </span>
-                  <span className="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-slate-800 text-slate-300 border border-slate-700 flex items-center gap-1.5">
-                    <Microscope className="w-3.5 h-3.5 text-teal-400" />
-                    <span>{quiz.image_tag}</span>
-                  </span>
-                </div>
-
-                <span className="px-3 py-1 rounded-full text-[11px] font-mono font-semibold bg-slate-950 text-amber-300 border border-amber-500/30 self-start sm:self-auto">
-                  {quiz.stain_and_mag}
+              <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+                <span className="text-xs font-bold uppercase tracking-wider text-teal-400 flex items-center gap-1.5">
+                  <Award className="w-4 h-4" />
+                  النتيجة والتشخيص المعتمد
                 </span>
-              </div>
-
-              {/* Slide Mockup / Visual Card */}
-              <div className="relative rounded-xl overflow-hidden bg-slate-950 border border-slate-800 p-4 sm:p-5 flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center text-teal-400 shrink-0">
-                    <Eye className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <span className="text-[10px] font-mono uppercase text-slate-400 tracking-wider">
-                      MICROSCOPIC SPECIMEN
-                    </span>
-                    <h4 className="text-sm font-bold text-white">
-                      {quiz.image_tag.replace('[', '').replace(']', '')}
-                    </h4>
-                    <p className="text-xs text-teal-400/90 font-mono">
-                      {quiz.stain_and_mag}
-                    </p>
-                  </div>
-                </div>
-
-                <span className="text-xs font-mono text-slate-500 hidden sm:inline-block">
-                  Verified Slide Exam
-                </span>
-              </div>
-
-              {/* Question Text */}
-              <div className="space-y-2">
-                <h4 className="text-base sm:text-lg font-bold text-white leading-relaxed font-arabic">
-                  {quiz.question}
-                </h4>
-              </div>
-
-              {/* Options */}
-              <div className="space-y-2.5">
-                {quiz.options.map((opt, optIdx) => {
-                  const isSelected = selectedIdx === optIdx;
-                  let optStyle = 'bg-slate-950 hover:bg-slate-850 text-slate-200 border-slate-800 hover:border-teal-500/40';
-
-                  if (isAnswered) {
-                    if (isSelected) {
-                      optStyle = isCorrect
-                        ? 'bg-emerald-950/70 border-emerald-500 text-emerald-200 ring-1 ring-emerald-500'
-                        : 'bg-rose-950/70 border-rose-500 text-rose-200 ring-1 ring-rose-500';
-                    }
-                  }
-
-                  return (
-                    <button
-                      key={optIdx}
-                      type="button"
-                      onClick={() => handleSelectOption(qIdx, optIdx)}
-                      className={`w-full text-right p-3.5 sm:p-4 rounded-xl border text-xs sm:text-sm font-arabic font-medium transition-all flex items-center justify-between gap-3 cursor-pointer ${optStyle}`}
-                    >
-                      <span>{opt}</span>
-                      <div className="shrink-0">
-                        {isAnswered && isSelected && (
-                          isCorrect ? (
-                            <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-                          ) : (
-                            <XCircle className="w-5 h-5 text-rose-400" />
-                          )
-                        )}
-                        {!isAnswered && (
-                          <span className="w-5 h-5 rounded-full border border-slate-700 flex items-center justify-center text-[10px] text-slate-400 font-mono">
-                            {String.fromCharCode(65 + optIdx)}
-                          </span>
-                        )}
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Scientific Explanation & Correct Answer Disclosure */}
-              {isAnswered && (
-                <div
-                  className={`p-4 sm:p-5 rounded-xl border space-y-2.5 animate-in fade-in duration-200 ${
+                <span
+                  className={`px-2.5 py-0.5 rounded-full text-[11px] font-black ${
                     isCorrect
-                      ? 'bg-emerald-950/30 border-emerald-500/40 text-emerald-100'
-                      : 'bg-rose-950/30 border-rose-500/40 text-rose-100'
+                      ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
+                      : 'bg-amber-500/20 text-amber-400 border border-amber-500/40'
                   }`}
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold font-mono uppercase tracking-wider flex items-center gap-1.5">
-                      {isCorrect ? (
-                        <>
-                          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                          <span className="text-emerald-300 font-bold">إجابة صحيحة (Correct!)</span>
-                        </>
-                      ) : (
-                        <>
-                          <XCircle className="w-4 h-4 text-rose-400" />
-                          <span className="text-rose-300 font-bold">إجابة غير صحيحة (Incorrect)</span>
-                        </>
-                      )}
-                    </span>
+                  {isCorrect ? '✓ إجابة ممتازة وصحيحة' : 'الإجابة النموذجية المعتمدة'}
+                </span>
+              </div>
 
-                    <button
-                      type="button"
-                      onClick={() => handleReset(qIdx)}
-                      className="text-[11px] text-slate-400 hover:text-white underline cursor-pointer"
-                    >
-                      إعادة المحاولة
-                    </button>
-                  </div>
-
-                  <div className="text-xs sm:text-sm leading-relaxed font-arabic pt-1 border-t border-slate-800/60">
-                    <span className="font-bold text-white block mb-1">
-                      التفسير العلمي المعتمد:
-                    </span>
-                    {quiz.correct_answer}
-                  </div>
+              {studentInput && (
+                <div className="text-xs">
+                  <span className="text-slate-400 block text-[11px]">إجابتك المكتوبة:</span>
+                  <span className="font-semibold text-slate-200 italic">{studentInput}</span>
                 </div>
               )}
+
+              <div className="space-y-1.5">
+                <span className="text-xs font-bold text-teal-300 block">
+                  الإجابة النموذجية والتفسير العلمي المستخرج:
+                </span>
+                <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-100 leading-relaxed font-arabic">
+                  {quiz.correct_answer}
+                </div>
+              </div>
+
+              <div className="p-3 rounded-xl bg-teal-950/30 border border-teal-500/30 text-teal-200 text-xs flex items-start gap-2">
+                <Sparkles className="w-4 h-4 text-teal-400 shrink-0 mt-0.5" />
+                <div>
+                  <strong className="block text-teal-300 mb-0.5">مفتاح التعرف التشخيصي:</strong>
+                  {quiz.microscopic_details}
+                </div>
+              </div>
             </div>
-          );
-        })}
+          )}
+        </div>
       </div>
     </div>
   );

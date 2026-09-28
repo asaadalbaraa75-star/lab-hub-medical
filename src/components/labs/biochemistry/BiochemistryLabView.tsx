@@ -144,11 +144,11 @@ export const BiochemistryLabView: React.FC<BiochemistryLabViewProps> = ({
                   02 — PROTEIN TESTS & PROTEINS
                 </div>
                 <div className="text-xs font-arabic text-slate-400">
-                  تجارب البروتين التفاعلية (Albumin, Casein, Tryptophan) والنظرية
+                  تجارب البروتين التفاعلية (Biuret, Casein pI, Albumin, Hopkins-Cole)
                 </div>
               </div>
             </div>
-            <span className="text-xs font-mono text-purple-300/80">3 Core Tests + Theory</span>
+            <span className="text-xs font-mono text-purple-300/80">4 Tests</span>
           </button>
         </div>
       </div>
@@ -178,7 +178,7 @@ export const BiochemistryLabView: React.FC<BiochemistryLabViewProps> = ({
                 }`}
               >
                 <TestTube className="w-3.5 h-3.5" />
-                <span>🧪 PROTEIN TESTS (3 تجارب تفاعلية)</span>
+                <span>🧪 PROTEIN TESTS (4 Tests)</span>
               </button>
 
               <button

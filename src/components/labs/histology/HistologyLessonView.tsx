@@ -17,7 +17,8 @@ import {
   FileText,
   HelpCircle,
   Target,
-  Info
+  Info,
+  Send
 } from 'lucide-react';
 import {
   HistologyLessonItem,
@@ -72,20 +73,20 @@ export const HistologyLessonView: React.FC<HistologyLessonViewProps> = ({
   // Metadata drawer / popover state
   const [showMetadataModal, setShowMetadataModal] = useState<boolean>(false);
 
-  // Practice Quiz Answers
-  const [selectedAnswers, setSelectedAnswers] = useState<{ [qId: string]: number }>({});
+  // Pure Written Practice Quiz Answers
+  const [writtenAnswers, setWrittenAnswers] = useState<{ [qId: string]: string }>({});
   const [submittedQuestions, setSubmittedQuestions] = useState<{ [qId: string]: boolean }>({});
   const [practiceCompleted, setPracticeCompleted] = useState<boolean>(false);
 
   const slideMetadata: HistologySlideMetadata = getSlideMetadata(lesson);
 
-  const handleAnswerSelect = (qId: string, optIdx: number) => {
+  const handleInputChange = (qId: string, text: string) => {
     if (submittedQuestions[qId]) return;
-    setSelectedAnswers(prev => ({ ...prev, [qId]: optIdx }));
+    setWrittenAnswers(prev => ({ ...prev, [qId]: text }));
   };
 
   const handleSubmitAnswer = (qId: string) => {
-    if (selectedAnswers[qId] === undefined) return;
+    if (!writtenAnswers[qId]?.trim()) return;
     setSubmittedQuestions(prev => ({ ...prev, [qId]: true }));
 
     const allSubmitted = lesson.practiceQuestions.every(
@@ -285,9 +286,19 @@ export const HistologyLessonView: React.FC<HistologyLessonViewProps> = ({
               </div>
 
               {lesson.practiceQuestions.slice(0, 1).map((q) => {
-                const selectedOpt = selectedAnswers[q.id];
+                const userVal = writtenAnswers[q.id] || '';
                 const isSubmitted = submittedQuestions[q.id];
-                const isCorrect = selectedOpt === q.correctIndex;
+                const correctAnswerText = q.options[q.correctIndex] || '';
+
+                // Smart keyword comparison
+                const normalize = (s: string) => s.toLowerCase().trim().replace(/[^a-z0-9\u0600-\u06FF]/gi, ' ');
+                const userNorm = normalize(userVal);
+                const answerNorm = normalize(correctAnswerText);
+                const isCorrect = userNorm.length > 0 && (
+                  answerNorm.includes(userNorm) ||
+                  userNorm.includes(answerNorm) ||
+                  answerNorm.split(' ').filter(w => w.length > 3).some(w => userNorm.includes(w))
+                );
 
                 return (
                   <div
@@ -303,87 +314,68 @@ export const HistologyLessonView: React.FC<HistologyLessonViewProps> = ({
                       </h3>
                     </div>
 
-                    {/* Options */}
-                    <div className="space-y-2">
-                      {q.options.map((opt, optIdx) => {
-                        const isSelected = selectedOpt === optIdx;
-                        let optionStyle =
-                          'bg-slate-950 border-slate-800 hover:border-slate-700 text-slate-300';
-
-                        if (isSubmitted) {
-                          if (optIdx === q.correctIndex) {
-                            optionStyle =
-                              'bg-emerald-950/60 border-emerald-500/80 text-emerald-200 font-bold';
-                          } else if (isSelected && !isCorrect) {
-                            optionStyle = 'bg-rose-950/60 border-rose-500/80 text-rose-300';
-                          } else {
-                            optionStyle = 'bg-slate-950/40 border-slate-900 text-slate-500';
-                          }
-                        } else if (isSelected) {
-                          optionStyle =
-                            'bg-teal-950/50 border-teal-500 text-teal-200 font-semibold';
-                        }
-
-                        return (
-                          <button
-                            key={optIdx}
-                            disabled={isSubmitted}
-                            onClick={() => handleAnswerSelect(q.id, optIdx)}
-                            className={`w-full text-left p-3 rounded-xl border text-xs sm:text-sm transition-all flex items-center justify-between ${optionStyle}`}
-                          >
-                            <div className="flex items-center gap-3">
-                              <span className="w-5 h-5 rounded-md border border-slate-700 text-[10px] font-bold flex items-center justify-center shrink-0">
-                                {String.fromCharCode(65 + optIdx)}
-                              </span>
-                              <span>{opt}</span>
-                            </div>
-
-                            {isSubmitted && optIdx === q.correctIndex && (
-                              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 ml-2" />
-                            )}
-                            {isSubmitted && isSelected && !isCorrect && (
-                              <XCircle className="w-4 h-4 text-rose-400 shrink-0 ml-2" />
-                            )}
-                          </button>
-                        );
-                      })}
-                    </div>
-
-                    {/* Submit or Explanation */}
-                    {!isSubmitted ? (
-                      <button
-                        disabled={selectedOpt === undefined}
-                        onClick={() => handleSubmitAnswer(q.id)}
-                        className="px-4 py-2 rounded-xl bg-teal-500 hover:bg-teal-400 disabled:opacity-40 disabled:pointer-events-none text-slate-950 text-xs font-bold transition-all shadow"
-                      >
-                        Confirm Answer
-                      </button>
-                    ) : (
-                      <div
-                        className={`p-3.5 rounded-xl border text-xs space-y-1.5 ${
-                          isCorrect
-                            ? 'bg-emerald-950/30 border-emerald-500/40'
-                            : 'bg-rose-950/30 border-rose-500/40'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2 font-bold">
-                          {isCorrect ? (
-                            <span className="text-emerald-400 flex items-center gap-1">
-                              <CheckCircle2 className="w-3.5 h-3.5" />
-                              ✓ Correct Identification!
-                            </span>
-                          ) : (
-                            <span className="text-rose-400 flex items-center gap-1">
-                              <XCircle className="w-3.5 h-3.5" />
-                              ✕ Incorrect
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-slate-300 leading-relaxed font-normal">
-                          {q.explanation}
-                        </p>
+                    {/* Pure Written Input Form (NO MCQs) */}
+                    <div className="space-y-3">
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-bold text-slate-300 flex items-center justify-between">
+                          <span>اكتب إجابتك هنا (الاسم النسيجي / التشخيص):</span>
+                          <span className="text-[11px] text-teal-400 font-mono">Written Mode</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={userVal}
+                          disabled={isSubmitted}
+                          onChange={(e) => handleInputChange(q.id, e.target.value)}
+                          placeholder="اكتب اسم النسيج أو التركيب المطلوب..."
+                          className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs sm:text-sm focus:outline-none focus:border-teal-500 placeholder-slate-500 transition shadow-inner"
+                        />
                       </div>
-                    )}
+
+                      {/* Submit / Verification Button */}
+                      {!isSubmitted ? (
+                        <button
+                          disabled={!userVal.trim()}
+                          onClick={() => handleSubmitAnswer(q.id)}
+                          className="px-4 py-2.5 rounded-xl bg-teal-500 hover:bg-teal-400 disabled:opacity-40 disabled:pointer-events-none text-slate-950 text-xs font-bold transition-all shadow flex items-center gap-2 cursor-pointer"
+                        >
+                          <Send className="w-3.5 h-3.5" />
+                          <span>تحقق من الإجابة</span>
+                        </button>
+                      ) : (
+                        <div
+                          className={`p-3.5 rounded-xl border text-xs space-y-2 ${
+                            isCorrect
+                              ? 'bg-emerald-950/30 border-emerald-500/40 text-emerald-200'
+                              : 'bg-slate-950 border-amber-500/40 text-slate-200'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between font-bold">
+                            <span className={isCorrect ? 'text-emerald-400 flex items-center gap-1' : 'text-amber-400 flex items-center gap-1'}>
+                              {isCorrect ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
+                              {isCorrect ? '✓ إجابة ممتازة وصحيحة' : 'الإجابة النموذجية المعتمدة'}
+                            </span>
+                            <button
+                              onClick={() => {
+                                setSubmittedQuestions(prev => ({ ...prev, [q.id]: false }));
+                                setWrittenAnswers(prev => ({ ...prev, [q.id]: '' }));
+                              }}
+                              className="text-[11px] text-slate-400 hover:text-white underline cursor-pointer"
+                            >
+                              إعادة المحاولة
+                            </button>
+                          </div>
+
+                          <div>
+                            <span className="text-slate-400 block text-[11px]">Correct Model Answer (الإجابة النموذجية):</span>
+                            <span className="font-bold text-white">{correctAnswerText}</span>
+                          </div>
+
+                          <p className="text-slate-300 leading-relaxed font-normal pt-1 border-t border-slate-800">
+                            {q.explanation}
+                          </p>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 );
               })}

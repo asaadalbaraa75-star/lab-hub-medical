@@ -183,7 +183,7 @@ export const HistologyHomeView: React.FC<HistologyHomeViewProps> = ({
                 className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-teal-300 border border-teal-500/40 text-xs font-bold flex items-center gap-2 transition-all shadow-md cursor-pointer"
               >
                 <BookOpen className="w-4 h-4 text-teal-400" />
-                <span>📖 الشرح النظري وبنك MCQs</span>
+                <span>📖 قسم الشرح والاختبارات العملية</span>
               </button>
             )}
             <button

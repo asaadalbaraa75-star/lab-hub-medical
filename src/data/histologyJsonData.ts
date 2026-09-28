@@ -1,4 +1,9 @@
-export interface HistologyTheoryBlock {
+/**
+ * Histology Standardized Curriculum JSON Dataset
+ * Structured precisely according to faculty curriculum requirements.
+ */
+
+export interface TheoryBlock {
   section: 'theory';
   title: string;
   content: string;
@@ -6,271 +11,295 @@ export interface HistologyTheoryBlock {
   key_terms: string[];
 }
 
-export interface HistologyQuizBlock {
+export interface PracticalQuizBlock {
   section: 'practical_quiz';
   image_tag: string;
+  image_url?: string;
   stain_and_mag: string;
   question: string;
   options: string[];
   correct_answer: string;
+  tissue_name: string;
+  microscopic_details: string;
 }
 
-export interface HistologyVideoBlock {
+export interface MediaVideoBlock {
   section: 'media_video';
+  title?: string;
   original_url: string;
   fixed_embed_url: string;
-  title?: string;
-  description?: string;
 }
 
-export type HistologyContentBlock = HistologyTheoryBlock | HistologyQuizBlock | HistologyVideoBlock;
+export type ContentBlock = TheoryBlock | PracticalQuizBlock | MediaVideoBlock;
 
 export interface HistologyChapterData {
   course: 'Histology';
   chapter: string;
-  chapterNumber: number;
-  descriptionAr: string;
-  content_blocks: HistologyContentBlock[];
+  chapter_ar: string;
+  content_blocks: ContentBlock[];
 }
 
-export const HISTOLOGY_DATABASE: HistologyChapterData[] = [
+// Convert standard YouTube URLs to valid iframe embed URLs
+export function convertToEmbedUrl(url: string): string {
+  if (!url) return '';
+  if (url.includes('/embed/')) return url;
+  
+  const watchMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
+  if (watchMatch && watchMatch[1]) {
+    return `https://www.youtube.com/embed/${watchMatch[1]}`;
+  }
+  return url;
+}
+
+export const HISTOLOGY_CURRICULUM_CHAPTERS: HistologyChapterData[] = [
+  // 1. Epithelial Tissue (النسيج الطلائي)
   {
     course: 'Histology',
-    chapter: 'الفصل الأول: مقدمة في علم الأنسجة والتقنيات المجهرية (Introduction & Histological Techniques)',
-    chapterNumber: 1,
-    descriptionAr: 'أسس المجهر الضوئي والإلكتروني، مراحل تحضير الشرائح النسيجية، وصبغات علم الأنسجة الأساسية (H&E, PAS, Silver).',
+    chapter: 'Epithelial Tissue (النسيج الطلائي)',
+    chapter_ar: 'النسيج الطلائي البسيط والمطبق',
     content_blocks: [
       {
         section: 'theory',
-        title: 'مراحل تحضير الشريحة النسيجية وتقنيات الصباغة (Tissue Processing & Staining)',
-        content: 'علم الأنسجة (Histology) هو الدراسة المجهرية لتراكيب خلايا وأنسجة الجسم السليمة. للحصول على شريحة مجهرية قابلة للفحص، تمر العينة النسيجية بعدة خطوات متسلسلة: أخذ الخزعة (Biopsy)، ثم التثبيت (Fixation) باستخدام الفورمالين (10% Formalin) لمنع التحلل الذاتي وحفظ التركيب الخلوي، ثم نزع الماء (Dehydration) بسلسلة كحول متصاعدة، فالترويق (Clearing) بواسطة الزايلين (Xylene)، ثم التضمين (Infiltration & Embedding) في شمع البارافين (Paraffin Wax). بعد التصلب تُقطع القوالب بميكروتوم (Microtome) بسماكة 4–6 ميكرومتر، وتوضع على شرائح زجاجية لتخضع للصبغ وفحصها.',
-        histology_notes: 'الصبغة الروتينية الأكثر استخداماً هي الهيماتوكسيلين والإيوسين (H&E Stain). الهيماتوكسيلين (Hematoxylin) صبغة قاعدية (Basic dye) ترتبط بالتراكيب الحامضية مثل الأحماض النووية (DNA/RNA) في النواة وتصبغها باللون الأزرق أو البنفسجي (Basophilic). بينما الإيوسين (Eosin) صبغة حامضية (Acidic dye) ترتبط بالبروتينات السيتوبلازمية وتصبغ السيتوبلازم وألياف الكولاجين باللون الوردي/الأحمر (Acidophilic/Eosinophilic).',
-        key_terms: ['Fixation (التثبيت)', 'Formalin (فورمالين)', 'Paraffin Embedding (تضمين البارافين)', 'Microtome (الميكروتوم)', 'Hematoxylin (هيماتوكسيلين)', 'Eosin (إيوسين)', 'Basophilic (شغوف بالقواعد)', 'Acidophilic (شغوف بالأحماض)']
+        title: 'Simple Squamous Epithelium (النسيج الطلائي الحرشفي البسيط)',
+        content:
+          'يتكون النسيج الطلائي الحرشفي البسيط من طبقة واحدة من الخلايا المسطحة الرقيقة تشبه حراشف السمك، تستقر مباشرة على الغشاء القاعدي (Basement Membrane). تحتوي كل خلية على نواة بيضاوية أو مفلطحة وبارزة مركزياً (Centrally placed bulging flattened nucleus). يتيح هذا النسيج النفاذية السريعة والانتشار الفعال للغازات والسوائل (Diffusion & Filtration). يتواجد في بطانة الأوعية الدموية والقلب حيث يُسمى Endothelium، وفي بطانة التجاويف المصلية حيث يُسمى Mesothelium، وفي محفظة بومان الكلوية (Bowman\'s capsule parietal layer) والحويصلات الهوائية الرئوية (Alveoli).',
+        histology_notes:
+          'تحت مجهر الضوء بصبغة H&E: تظهر الخلايا رقيقة جداً مع بروز النوى البيضاوية الداكنة (Basophilic nuclei) مع سيتوبلازم خفيف محب للحمض (Eosinophilic cytoplasm). حدود الخلايا غالباً غير واضحة إلا بصبغة نترات الفضة (Silver Stain) التي تظهر الحدود المتعرجة.',
+        key_terms: [
+          'Simple Squamous',
+          'Endothelium',
+          'Mesothelium',
+          'Basement Membrane',
+          'Diffusion Barrier'
+        ]
       },
       {
         section: 'practical_quiz',
-        image_tag: '[صورة-1: فحص صبغة H&E تحت المجهر الضوئي]',
-        stain_and_mag: 'H&E Stain | 400x High Power Field',
-        question: 'عند فحص شريحة مصبوغة بـ H&E، لوحظ تلوّن النواة باللون الأزرق الداكن / البنفسجي وتلوّن السيتوبلازم باللون الوردي. ما سبب تلوّن النواة بهذا اللون تحديداً؟',
+        image_tag: '[صورة-1: شريحة كلية توضح محفظة بومان - Bowman Capsule]',
+        image_url: 'https://images.unsplash.com/photo-1579165466791-78822d31e050?auto=format&fit=crop&w=800&q=80',
+        stain_and_mag: 'صبغة H&E — تكبير عالي (40x High Power)',
+        tissue_name: 'Simple Squamous Epithelium (Parietal layer of Bowman\'s capsule)',
+        microscopic_details: 'طبقة أحادية رقيقة جداً من الخلايا ذات النوى المسطحة المتباعدة تشكل الجدار الخارجي لمحفظة بومان في قشرة الكلية.',
+        question: 'تعرف على نوع النسيج الطلائي المبطن للجدار الخارجي (Parietal Layer) لمحفظة بومان المشار إليها في الشريحة:',
         options: [
-          'A. ارتباط صبغة الإيوسين الحامضية بالبروتينات الغشائية',
-          'B. ارتباط الهيماتوكسيلين القاعدي بمجموعات الفوسفات الحامضية في الأحماض النووية (DNA/RNA)',
-          'C. ترسب شمع البارافين حول الحبيبات النووية',
-          'D. تكسر الغشاء النووي أثناء التثبيت بالفورمالين'
+          'Simple Squamous Epithelium',
+          'Simple Cuboidal Epithelium',
+          'Transitional Epithelium',
+          'Stratified Squamous Non-keratinized'
         ],
-        correct_answer: 'الإجابة الصحيحة هي (B): الهيماتوكسيلين صبغة قاعدية (Basic dye) تحمل شحنة موجبة، وتنجذب بشدة للأحماض النووية الغنية بمجموعات الفوسفات سالبة الشحنة في النواة (DNA & RNA)، مما يعطي التلوّن القاعدي الأزرق (Basophilia).'
+        correct_answer: 'Simple Squamous Epithelium (نسيج طلائي حرشفي بسيط): يتكون من طبقة أحادية من الخلايا المسطحة ذات نوى بيضاوية ممتدة على طول الغشاء القاعدي لمحفظة بومان المحيطة بالكبيبة الكلوية.'
+      },
+      {
+        section: 'theory',
+        title: 'Simple Cuboidal Epithelium (النسيج الطلائي المكعبي البسيط)',
+        content:
+          'يتكون النسيج الطلائي المكعبي البسيط من طبقة واحدة متراصة من الخلايا المكعبة التي يتساوى طولها مع عرضها. تتميز كل خلية بوجود نواة كروية مركزية الموقع تماماً (Centrally located, perfectly spherical nucleus). يلعب هذا النسيج دوراً حيوياً في الإفراز والامتصاص (Secretion & Absorption). أهم مواقعه الشائعة: الأنابيب الكلوية (Renal Tubules)، الغدة الدرقية (Thyroid follicles)، وقنوات الغدد اللعابية.',
+        histology_notes:
+          'بصبغة H&E: تظهر الأنابيب الكلوية بمقطع عرضي كحلقة دائرية منتظمة من الخلايا المكعبة ذات النوى الكروية ذات التلوين القاعدي الداكن، والسيتوبلازم متجانس.',
+        key_terms: ['Simple Cuboidal', 'Renal Tubules', 'Thyroid Follicle', 'Central Spherical Nucleus']
+      },
+      {
+        section: 'practical_quiz',
+        image_tag: '[صورة-2: شريحة قشرة الكلية - Renal Tubules]',
+        image_url: 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=800&q=80',
+        stain_and_mag: 'صبغة H&E — قوة تكبير متوسطة (20x)',
+        tissue_name: 'Simple Cuboidal Epithelium (Kidney Collecting & Convoluted Tubules)',
+        microscopic_details: 'خلايا مكعبة متساوية الأبعاد ذات نوى دائرية بارزة في منتصف كل خلية تشكل جدار القنوات والأنابيب البولية.',
+        question: 'ما هو النسيج المكون لجدار الأنابيب الكلوية الملتفة (Renal Tubules) الظاهرة في الشريحة؟',
+        options: [
+          'Simple Cuboidal Epithelium',
+          'Simple Columnar Epithelium',
+          'Transitional Epithelium',
+          'Stratified Cuboidal Epithelium'
+        ],
+        correct_answer: 'Simple Cuboidal Epithelium (نسيج طلائي مكعبي بسيط): يتضح من خلال الخلايا المكعبة المنتظمة التي تحيط بتجويف الأنبوب الكببي مع نوى كروية مركزية.'
+      },
+      {
+        section: 'theory',
+        title: 'Simple Columnar Epithelium (النسيج الطلائي العمادي البسيط)',
+        content:
+          'يتألف من طبقة واحدة من الخلايا الطويلة العمودية حيث يفوق ارتفاعها عرضها بوضوح. تقع النوى البيضاوية (Oval nuclei) في الثلث القاعدي من الخلية وتكون مصطفة في مستوى واحد أفقي بالقرب من الغشاء القاعدي. ينقسم إلى نوعين رئيسيين: 1. غير مهدب (Non-ciliated): يوجد في بطانة المعدة والأمعاء الدقيقة والمرارة ويمتلك حافة مخططة (Brush/Striated border) من الخملات الدقيقة (Microvilli) وخلايا كأسية (Goblet cells) لإفراز المخاط. 2. مهدب (Ciliated): يوجد في قناة فالوب (Uterine tube) لتحريك البويضة المخصبة.',
+        histology_notes:
+          'بصبغة H&E يظهر سيتوبلازم الخلايا العمودية محباً للحمض (Pink/Eosinophilic) مع حافة زغابية واضحة، بينما تظهر الخلايا الكأسية (Goblet cells) فارغة أو شاحبة لأن المخاط يذوب أثناء تحضير النسيج الروتيني، لكنه يُصبغ بقوة باللون البنفسجي الفوشيا بصبغة PAS.',
+        key_terms: ['Simple Columnar', 'Goblet Cells', 'Striated Border', 'Microvilli', 'Basal Oval Nuclei']
+      },
+      {
+        section: 'practical_quiz',
+        image_tag: '[صورة-3: بطانة الأمعاء الدقيقة - Jejunum/Ileum]',
+        image_url: 'https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&w=800&q=80',
+        stain_and_mag: 'صبغة H&E + PAS — تكبير 40x',
+        tissue_name: 'Simple Columnar Epithelium with Goblet Cells & Brush Border',
+        microscopic_details: 'خلايا عمادية طويلة ذات نوى بيضاوية قاعدية، تتخللها خلايا كأسية مخاطية وحافة مفرشية للامتصاص.',
+        question: 'حدد نوع النسيج الطلائي المبطن للخملات المعوية في عينة الأمعاء الدقيقة الموضحة:',
+        options: [
+          'Simple Columnar Epithelium with Goblet cells',
+          'Pseudostratified Ciliated Columnar Epithelium',
+          'Simple Cuboidal Epithelium',
+          'Stratified Squamous Non-keratinized'
+        ],
+        correct_answer: 'Simple Columnar Epithelium with Goblet cells (نسيج طلائي عمادي بسيط مع خلايا كأسية): يتميز بارتفاع الخلايا، اصطفاف النوى البيضاوية قرب القاعدة، ووجود الخلايا الكأسية المفرزة للمخاط والحافة الزغابية.'
+      },
+      {
+        section: 'theory',
+        title: 'Pseudostratified Columnar Epithelium (النسيج الطلائي العمادي المطبق الكاذب)',
+        content:
+          'يبدو هذا النسيج كأنه مكون من عدة طبقات بسبب وجود النوى في مستويات وارتفاعات مختلفة (Nuclei at varying levels). ولكن في الحقيقة، جميع الخلايا تستند على نفس الغشاء القاعدي (All cells rest on the basement membrane)، إلا أن بعض الخلايا قصيرة لا تصل إلى السطح التجويفي الحر. النوع الأكثر شهرة هو النسيج الطلائي المهدب المبطن للجهاز التنفسي (Respiratory Epithelium) في القصبة الهوائية والشعب الهوائية، حيث تعلوه أهداب متحركة (Cilia) وخلايا كأسية لطرد الأجسام الغريبة بواسطة المصعد المخاطي الهدبي (Mucociliary escalator).',
+        histology_notes:
+          'بصبغة H&E: يظهر الغشاء القاعدي في القصبة الهوائية سميكاً بشكل واضح جداً. وتظهر الأهداب كخطوط ناعمة كثيفة ممتدة على السطح الحر للخلايا العمادية، مع نوى في مستويات متعددة.',
+        key_terms: ['Pseudostratified', 'Respiratory Epithelium', 'Cilia', 'Mucociliary Escalator', 'Trachea']
+      },
+      {
+        section: 'practical_quiz',
+        image_tag: '[صورة-4: مقطع عرضي في القصبة الهوائية - Trachea]',
+        image_url: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80',
+        stain_and_mag: 'صبغة H&E — تكبير 40x',
+        tissue_name: 'Pseudostratified Ciliated Columnar Epithelium (Respiratory Epithelium)',
+        microscopic_details: 'نوى مصفوفة على ارتفاعات مختلفة توحي بالتعدد، مع طبقة أهداب حركية واضحة على السطح القمي وخلايا كأسية مفرزة.',
+        question: 'ما هو التوصيف النسيجي الدقيق لبطانة القصبة الهوائية (Trachea) الظاهرة في الشريحة؟',
+        options: [
+          'Pseudostratified Ciliated Columnar Epithelium with Goblet cells',
+          'Stratified Squamous Epithelium',
+          'Transitional Epithelium',
+          'Simple Columnar Ciliated Epithelium'
+        ],
+        correct_answer: 'Pseudostratified Ciliated Columnar Epithelium (نسيج طلائي عمادي مطبق كاذب مهدب): النوى في مستويات متعددة، وجميع الخلايا ترتكز على الغشاء القاعدي، مع وفرة الأهداب القمية والخلايا الكأسية.'
       },
       {
         section: 'media_video',
-        original_url: 'https://www.youtube.com/watch?v=Jm21Z3H_i3k',
-        fixed_embed_url: 'https://www.youtube-nocookie.com/embed/Jm21Z3H_i3k',
-        title: 'خطوات إعداد وفحص الشرائح المجهرية (Histology Lab Preparation)',
-        description: 'شرح عملي تطبيقي لمراحل التثبيت، التقطيع بالميكروتوم، وخطوات صبغ H&E داخل المعمل الطبي.'
+        title: 'شرح النسيج الطلائي البسيط والمطبق وتطبيقات الشرائح المجهرية',
+        original_url: 'https://www.youtube.com/watch?v=l_A2U_VlRz0',
+        fixed_embed_url: 'https://www.youtube.com/embed/l_A2U_VlRz0'
       }
     ]
   },
+
+  // 2. Connective Tissue (النسيج الضام)
   {
     course: 'Histology',
-    chapter: 'الفصل الثاني: النسيج الطلائي البسيط والمركب (Epithelial Tissue: Simple & Stratified)',
-    chapterNumber: 2,
-    descriptionAr: 'تصنيف الأنسجة الطلائية حسب عدد الطبقات وشكل الخلايا السطحية، والخصائص المجهرية للغشاء القاعدي والتخصصات السطحية (Microvilli & Cilia).',
+    chapter: 'Connective Tissue (النسيج الضام)',
+    chapter_ar: 'النسيج الضام الأصيل والخاص',
     content_blocks: [
       {
         section: 'theory',
-        title: 'النسيج الطلائي البسيط والمتطبق (Classification of Epithelium)',
-        content: 'النسيج الطلائي (Epithelial Tissue) يتكون من خلايا متراصة بكثافة مع كمية ضئيلة جداً من المادة بين الخلوية (Intercellular matrix)، وتستند دائماً على غشاء قاعدي (Basement Membrane). النسيج الطلائي خالي من الأوعية الدموية (Avascular) ويتغذى بالانتشار من النسيج الضام الكامن تحته. يصنف الطلائي حسب عدد الطبقات إلى بسيط (Simple: طبقة واحدة من الخلايا تستند على الغشاء القاعدي) ومطبق (Stratified: طبقتان أو أكثر، ويسمى بناءً على شكل خلايا الطبقة السطحية فقط).',
-        histology_notes: '1. الطلائي الحرشفي البسيط (Simple Squamous): خلايا مسطحة نواتها مسطحة وممتدة أفقياً (كما في بطانة الأوعية الدموية Endothelium وأكياس الحويصلات الهوائية في الرئة).\n2. الطلائي المكعبي البسيط (Simple Cuboidal): خلايا مربعة بنواة مركزية كروية (أنابيب الكلى وحويصلات الغدة الدرقية).\n3. الطلائي العمودي البسيط (Simple Columnar): خلايا مستطيلة بنواة بيضاوية تقع قرب القاعدة (بطانة المعدة والأمعاء الدقيقة مع Microvilli وخلايا كاسية Goblet cells).\n4. المطبق الكاذب (Pseudostratified Columnar): جميع الخلايا تلامس الغشاء القاعدي ولكن ليست كلها تصل للسطح وتتوزع الأنوية بمستويات مختلفة (الجهاز التنفسي مع Cilia).',
-        key_terms: ['Basement Membrane (الغشاء القاعدي)', 'Simple Squamous (حرشفي بسيط)', 'Simple Cuboidal (مكعبي بسيط)', 'Simple Columnar (عمودي بسيط)', 'Pseudostratified (مطبق كاذب)', 'Goblet Cells (الخلايا الكاسية)', 'Microvilli (الخملات الدقيقة)', 'Cilia (الأهداب)']
+        title: 'Loose (Areolar) Connective Tissue (النسيج الضام الفجوي الرخو)',
+        content:
+          'النسيج الضام الفجوي الرخو هو أكثر أنواع الأنسجة الضامة انتشاراً في جسم الإنسان. يحتوي على جميع المكونات الأساسية للنسيج الضام بتوازن: 1. الخلايا: الخلايا الليفية اليافعة (Fibroblasts) وهي الأكثر عدداً ذات نوى بيضاوية كبيرة وشاحبة، البلعميات (Macrophages)، الخلايا البدينة (Mast cells) المليئة بحبيبات الهيستامين والهيبارين، وخلايا البلازما (Plasma cells) التي تنتج الأجسام المضادة مع نواة تشبه عجلة العربة (Clock-face/Cartwheel nucleus). 2. الألياف: ألياف كولاجين سميكة وردية، وألياف مرنة داكنة دقيقة متفرعة. 3. المادة الخلالية (Ground substance): لزجة غنية بالحمض الهيالوروني.',
+        histology_notes:
+          'بصبغة H&E: ألياف الكولاجين تأخذ لوناً وردياً متموجاً عريضاً، وألياف الإيلاستين رفيعة داكنة متفرعة. يمكن استخدام صبغة تولودين الزرقاء (Toluidine Blue) لصبغ الخلايا البدينة بظاهرة تلون الميتاكروماتية (Metachromasia).',
+        key_terms: ['Areolar Tissue', 'Fibroblasts', 'Mast Cells', 'Plasma Cells', 'Metachromasia', 'Collagen']
       },
       {
         section: 'practical_quiz',
-        image_tag: '[صورة-2: قطاع عرضي في القصبة الهوائية Trachea]',
-        stain_and_mag: 'H&E Stain | 400x Magnification',
-        question: 'في فحص مجهري لبطانة المجاري التنفسية، ظهرت الأنوية على مستويات وارتفاعات مختلفة، مع وجود أهداب سطحية (Cilia) وخلايا كاسية (Goblet cells) تفرز المخاط. ما نوع هذا النسيج الطلائي؟',
+        image_tag: '[صورة-5: مسحة النسيج الضام الرخو - Areolar Spread]',
+        image_url: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=800&q=80',
+        stain_and_mag: 'صبغة H&E خاصة — تكبير 40x',
+        tissue_name: 'Loose Areolar Connective Tissue',
+        microscopic_details: 'شبكة مفتوحة من حزم ألياف الكولاجين السميكة المتموجة وألياف الإيلاستين الرفيعة الداكنة، مع خلايا ليفية وخلايا مناعية متناثرة.',
+        question: 'تعرف على نوع النسيج المعروض الذي يظهر وفرة الألياف الكولاجينية المتموجة والألياف المرنة الرفيعة المتفرعة:',
         options: [
-          'A. Stratified Squamous Keratinized Epithelium',
-          'B. Pseudostratified Ciliated Columnar Epithelium with Goblet Cells',
-          'C. Simple Cuboidal Epithelium with Brush Border',
-          'D. Transitional Epithelium (Urothelium)'
+          'Loose (Areolar) Connective Tissue',
+          'Dense Regular Connective Tissue',
+          'Adipose Tissue',
+          'Hyaline Cartilage'
         ],
-        correct_answer: 'الإجابة الصحيحة هي (B): نسيج طلائي عمودي مطبق كاذب مهدب مع خلايا كاسية (Pseudostratified Ciliated Columnar Epithelium). المظهر يوحي بتعدد الطبقات بسبب اختلاف مواقع الأنوية، إلا أن جميع الخلايا ترتكز على الغشاء القاعدي، وتتميز بوجود الأهداب لدفع المخاط.'
+        correct_answer: 'Loose (Areolar) Connective Tissue (النسيج الضام الرخو): يظهر الألياف الكولاجينية الوردية السميكة والألياف المرنة الرفيعة الداكنة ومختلف أنواع الخلايا الضامة في أرضية خلالية وفيرة.'
+      },
+      {
+        section: 'theory',
+        title: 'Adipose Tissue (النسيج الدهني الأبيض والبني)',
+        content:
+          'ينقسم النسيج الدهني إلى نوعين رئيسيين: 1. النسيج الدهني الأبيض (White/Unilocular Adipose Tissue): كل خلية دهنية تحتوي على قطرة دهنية ضخمة واحدة غير محاطة بغشاء تشغل معظم السيتوبلازم وتدفع النواة والسيتوبلازم إلى المحيط، معطيةً الخلية مظهر الخاتم ذي الفص (Signet-ring appearance). وظيفته تخزين الطاقة، العزل الحراري، وحماية الأعضاء. 2. النسيج الدهني البني (Brown/Multilocular Adipose Tissue): تحتوي الخلايا على قطيرات دهنية متعددة ونواة كروية مركزية مع وفرة هائلة من الميتوكوندريا الحاوية على بروتين UCP-1 (Thermogenin) لإنتاج الحرارة بدون رجفة في حديثي الولادة.',
+        histology_notes:
+          'في التحضير الروتيني بصبغة H&E: تذوب الدهون بواسطة المذيبات العضوية مثل الزايلين (Xylene)، لذلك تظهر الخلايا الدهنية كفراغات فارغة بيضاء محاطة بحدود رفيعة جداً ونواة مضغوطة محيطية. لإظهار الدهون محفوظة، يجب استخدام التجميد وصبغات الدهون الخاصة مثل Oil Red O أو Sudan III/IV أو أكسيد الأوزميوم (Osmium Tetroxide) الذي يصبغها باللون الأسود.',
+        key_terms: ['White Adipose', 'Signet-ring Cell', 'Sudan III', 'Oil Red O', 'Brown Adipose', 'Thermogenin']
       },
       {
         section: 'practical_quiz',
-        image_tag: '[صورة-3: قطاع في المثانة البولية Urinary Bladder]',
-        stain_and_mag: 'H&E Stain | 200x Magnification',
-        question: 'ما هي الخاصية المجهرية المميزة لخلايا الطبقة السطحية في النسيج الطلائي البولي الانتقالي (Transitional Epithelium / Urothelium)؟',
+        image_tag: '[صورة-6: شريحة النسيج الدهني الأبيض - White Adipose]',
+        image_url: 'https://images.unsplash.com/photo-1579165466741-7f35e4755660?auto=format&fit=crop&w=800&q=80',
+        stain_and_mag: 'صبغة H&E الروتينية — تكبير 20x',
+        tissue_name: 'White (Unilocular) Adipose Tissue',
+        microscopic_details: 'فراغات سداسية أو مدورة تشبه قرص العسل خالية من الصبغة بسبب ذوبان الدهون، مع نوى مفلطحة مضغوطة في الأطراف (مظهر خاتم الفص).',
+        question: 'ما هو المظهر التشخيصي الكلاسيكي للخلايا في النسيج الدهني الأبيض تحت المجهر؟',
         options: [
-          'A. خلايا مسطحة خالية من الأنوية ومملوءة بطبقة كيراتين سميكة',
-          'B. خلايا عمودية طويلة مهدبة',
-          'C. خلايا قُبية كبيرة تشبه المظلة (Dome-shaped / Umbrella cells) ذات أنوية مدورة أو ثنائية النواة',
-          'D. خلايا حرشفية مفلطحة ذات زوائد شجيرية'
+          'Signet-ring appearance (مظهر خاتم الخطوبة)',
+          'Clock-face nucleus',
+          'Striated border',
+          'Concentric lamellae'
         ],
-        correct_answer: 'الإجابة الصحيحة هي (C): النسيج الانتقالي (Transitional) يتميز بخلايا سطحية مقببة أو مظلية (Umbrella cells) تتمدد وتتسطح عند امتلاء المثانة وتستدير عند تفريغها، وكثيراً ما تحوي نواتين.'
+        correct_answer: 'Signet-ring appearance (مظهر خاتم الفص): حيث تدفع القطيرة الدهنية الكبيرة المفردة النواة والسيتوبلازم إلى الحافة المحيطية للخلية.'
       },
       {
         section: 'media_video',
-        original_url: 'https://www.youtube.com/watch?v=kYJvO3PjWb0',
-        fixed_embed_url: 'https://www.youtube-nocookie.com/embed/kYJvO3PjWb0',
-        title: 'شرح النسيج الطلائي العملي للطب البشري (Epithelial Tissue Lab Practical)',
-        description: 'استعراض مجهري كامل للشرائح المعتمدة: Simple vs Stratified وتطبيقاتها السريرية.'
+        title: 'شرح مفصل للنسيج الضام والخلايا والألياف مع فحص الشرائح',
+        original_url: 'https://www.youtube.com/watch?v=680QpXzX6J4',
+        fixed_embed_url: 'https://www.youtube.com/embed/680QpXzX6J4'
       }
     ]
   },
+
+  // 3. Cartilage and Bone (الغضاريف والعظام)
   {
     course: 'Histology',
-    chapter: 'الفصل الثالث: النسيج الضام الأصيل والغضاريف والعظام (Connective Tissue, Cartilage & Bone)',
-    chapterNumber: 3,
-    descriptionAr: 'الألياف النسيجية (كولاجين، إيلاستين، شبكية)، الخلايا الثابتة والمتحركة، ونماذج الغضاريف (زجاجي، مرن، ليفي) والعظم المكتنز والإسفنجي.',
+    chapter: 'Cartilage & Bone (الغضاريف والعظام)',
+    chapter_ar: 'الغضروف الزجاجي والمرن والليفي والعظم المصمت',
     content_blocks: [
       {
         section: 'theory',
-        title: 'مكونات النسيج الضام والأنواع المتخصصة (Connective Tissue Proper & Skeletal Tissues)',
-        content: 'يتكون النسيج الضام (Connective Tissue) من ثلاثة عناصر رئيسية: الخلايا (مثل Fibroblasts, Macrophages, Mast cells, Adipocytes)، والألياف النسيجية (Collagen Fibers, Elastic Fibers, Reticular Fibers)، والمادة الأساسية غير المشكلة (Ground Substance). يتميز النسيج الضام عن الطلائي بغزارة المادة بين الخلوية (Extracellular Matrix - ECM). في الغضروف (Cartilage) تكون المادة متماسكة ومطاطية وتعيش الخلايا الغضروفية (Chondrocytes) في تجاويف تدعى الفجوات (Lacunae). أما في العظم (Bone) فتكون المادة الخلوية متكلسة بأملاح هيدروكسي أباتيت (Hydroxyapatite crystals) وتشكل أجهزة هافرس (Haversian Systems / Osteons).',
-        histology_notes: '1. الغضروف الزجاجي (Hyaline Cartilage): مادة أرضية زجاجية متجانسة كولاجين Type II غير ظاهر، تحاط بالغشاء الغضروفي (Perichondrium).\n2. الغضروف المرن (Elastic Cartilage): شبكة كثيفة من ألياف الإيلاستين (تصبغ بـ Orcein/Verhoeff) كما في صوان الأذن ولسان المزمار (Epiglottis).\n3. الغضروف الليفي (Fibrocartilage): حزم سميكة من كولاجين Type I موازية لصفوف الخلايا الغضروفية، خالي تماماً من الـ Perichondrium (الأقراص بين الفقرات Intervertebral discs).\n4. العظم المكتنز (Compact Bone): قنوات هافرس المركزية (Haversian canal) محاطة بصفائح متحدة المركز (Concentric lamellae) وخلايا عظمية (Osteocytes) تتصل بواسطة القنيات (Canaliculi).',
-        key_terms: ['Extracellular Matrix (المادة بين الخلوية)', 'Fibroblast (الأرومة الليفية)', 'Chondrocytes (خلايا غضروفية)', 'Lacunae (الفجوات)', 'Hyaline Cartilage (الغضروف الزجاجي)', 'Elastic Cartilage (الغضروف المرن)', 'Fibrocartilage (الغضروف الليفي)', 'Haversian System / Osteon (جهاز هافرس)']
+        title: 'Hyaline Cartilage (الغضروف الزجاجي)',
+        content:
+          'الغضروف الزجاجي هو أكثر أنواع الغضاريف شيوعاً. يتميز بمادته الخلالية المتجانسة ذات اللون الأزرق المزرق الشفاف (Glassy, basophilic matrix). يحتوي على ألياف كولاجين من النوع الثاني (Type II collagen fibrils) ولكنها غير مرئية بالمجهر الضوئي العادي لتساوي معامل انكسارها مع المادة الخلالية. الخلايا الغضروفية (Chondrocytes) تقبع داخل فجوات تدعى الجوبات (Lacunae)، وتتواجد غالباً في مجموعات متكاثرة تُسمى المجموعات الإسوية (Isogenous groups). يحاط الغضروف بغشاء ضام ليفي وعائي يُسمى سمحاق الغضروف (Perichondrium) باستثناء الأسطح المفصلية. يتواجد في الحلقات الرغامية، الحنجرة، أطراف الأضلاع، والأسطح المفصلية للعظام الطويلة.',
+        histology_notes:
+          'بصبغة H&E: تظهر المادة الخلالية المحيطة مباشرة بالفجوات (Territorial/Capsular matrix) أغمق لوناً قاعدياً بسبب التركيز المرتفع لسلفات الكوندرويتين، بينما تظهر المادة بين المجموعات (Interterritorial matrix) أفتح لوناً.',
+        key_terms: ['Hyaline Cartilage', 'Chondrocytes', 'Lacunae', 'Isogenous Groups', 'Perichondrium', 'Type II Collagen']
       },
       {
         section: 'practical_quiz',
-        image_tag: '[صورة-4: شريحة العظم المكتنز المجلخ Ground Compact Bone]',
-        stain_and_mag: 'Unstained Ground Section | 100x Magnification',
-        question: 'في فحص مقطع عرضي لعظم جاف مجلخ، ظهرت وحدة أسطوانية تسمى جهاز هافرس (Osteon). ما هو التركيب الموجود في مركز هذا الجهاز تماماً والذي يحتوي على الأوعية الدموية والأعصاب؟',
+        image_tag: '[صورة-7: مقطع الغضروف الزجاجي في القصبة الهوائية]',
+        image_url: 'https://images.unsplash.com/photo-1530497610245-94d3c16cda28?auto=format&fit=crop&w=800&q=80',
+        stain_and_mag: 'صبغة H&E — تكبير 40x',
+        tissue_name: 'Hyaline Cartilage (Tracheal ring)',
+        microscopic_details: 'مادة خلالية زجاجية بنفسجية ملساء تحوي خلايا غضروفية في جوبات (Lacunae) تتجمع في مجموعات إسوية (Isogenous groups)، محاطة بالسمحاق الغضروفي (Perichondrium).',
+        question: 'تعرف على التجمع الخلوي الخاص داخل الفجوات الغضروفية والمشار إليه بالسهم في نسيج الغضروف الزجاجي:',
         options: [
-          'A. Volkmann Canal (قناة فولكمان)',
-          'B. Haversian Canal (قناة هافرس المركزية)',
-          'C. Canaliculi (القنيات الدقيقة)',
-          'D. Medullary Cavity (التجويف النقيي)'
+          'Isogenous Groups (المجموعات الإسوية لخلايا Chondrocytes)',
+          'Osteons (أنظمة هافرس)',
+          'Sarcomeres',
+          'Intercalated discs'
         ],
-        correct_answer: 'الإجابة الصحيحة هي (B): قناة هافرس المركزية (Central / Haversian Canal) تمر طولياً في مركز كل جهاز هافرس وتحتوي على الأوعية الدموية المغذية، والأوعية اللمفاوية والألياف العصبية.'
+        correct_answer: 'Isogenous Groups (المجموعات الإسوية): تجمعات من 2 إلى 8 خلايا غضروفية (Chondrocytes) نشأت من انقسام خلية أم واحدة داخل نفس الفجوة في الغضروف الزجاجي.'
       },
-      {
-        section: 'practical_quiz',
-        image_tag: '[صورة-5: شريحة غضروف زجاجي Hyaline Cartilage في القصبة الهوائية]',
-        stain_and_mag: 'H&E Stain | 200x Magnification',
-        question: 'تتوضع الخلايا الغضروفية (Chondrocytes) البالغة داخل تجاويف صغيرة معزولة داخل المادة الأساسية الزجاجية. ماذا تسمى هذه التجاويف؟',
-        options: [
-          'A. Lacunae (الفجوات)',
-          'B. Canaliculi (القنيات)',
-          'C. Sinusoids (أشباه الجيوب)',
-          'D. Crypts (المخابئ النسيجية)'
-        ],
-        correct_answer: 'الإجابة الصحيحة هي (A): الفجوات (Lacunae) هي التجويف المجهري الصغير في المادة بين الخلوية التي تقبع بداخلها الخلية الغضروفية المفردة أو المجموعة المتآخية (Isogenous group).'
-      },
-      {
-        section: 'media_video',
-        original_url: 'https://www.youtube.com/watch?v=Fqj8PzE6U9M',
-        fixed_embed_url: 'https://www.youtube-nocookie.com/embed/Fqj8PzE6U9M',
-        title: 'مراجعة عملية: شرائح الغضاريف والعظام (Cartilage & Bone Slides Review)',
-        description: 'التفريق المباشر بين الغضروف الزجاجي، الغضروف المرن، الغضروف الليفي، وعظم هافرس.'
-      }
-    ]
-  },
-  {
-    course: 'Histology',
-    chapter: 'الفصل الرابع: الأنسجة العضلية والعصبية (Muscle & Nervous Tissue)',
-    chapterNumber: 4,
-    descriptionAr: 'المقارنة المجهرية بين العضلات الهيكلية، القلبية، والملساء؛ وتراكيب العصبونات وخلايا الغراء العصبي ومظهر العصب المحيطي.',
-    content_blocks: [
       {
         section: 'theory',
-        title: 'التمايز المجهري للأنسجة العضلية والعصبية (Muscle & Nerve Differentiation)',
-        content: 'الأنسجة العضلية مسؤولة عن الحركة والانقباض، وتنقسم إلى: 1) العضلات الهيكلية (Skeletal Muscle): ألياف أسطوانية طويلة عديدة الأنوية المحيطية (Peripheral multinucleated) مع تخطيط عرضي واضح (Striations). 2) العضلات القلبية (Cardiac Muscle): ألياف متفرعة ذات نواة مركزية واحدة أو اثنتين، وتخطيط عرضي مع وجود أقراص بينية فريدة (Intercalated Discs) غنية بالـ Gap Junctions. 3) العضلات الملساء (Smooth Muscle): خلايا مغزلية (Fusiform) ذات نواة مركزية مستطيلة أو عصوية غير مخططة وتتحكم بها الأعصاب اللاإرادية.\n\nالنسيج العصبي يتألف من عصبونات (Neurons: جسم الخلية Soma، التغصنات Dendrites، والمحور Axon) مع خلايا داعمة تدعى خلايا الغراء العصبي (Neuroglia: Astrocytes, Oligodendrocytes, Microglia, Schwann cells). في المقاطع العرضية للعصب المحيطي تحاط الحزم العصبية بغلاف perineurium غني بألياف كولاجينية.',
-        histology_notes: 'في فحص العضلات القلبية بصبغة H&E، تظهر الأقراص البينية (Intercalated discs) كخطوط عرضية داكنة قاتمة تمثل مناطق الالتقاء بين الخلايا المتجاورة وتضمن التوصيل الكهربائي المتزامن لانقباض القلب (Functional syncytium). حبيبات نسل (Nissl bodies) في أجسام العصبونات تمثل تجمعات غنية بالشبكة الإندوبلازمية الخشنة والريبوسومات وتصبغ بزرقة واضحة (Basophilic).',
-        key_terms: ['Skeletal Muscle (عضلات هيكلية)', 'Cardiac Muscle (عضلات قلبية)', 'Intercalated Discs (الأقراص البينية)', 'Smooth Muscle (عضلات ملساء)', 'Neuron (العصبون)', 'Nissl Bodies (حبيبات نسل)', 'Schwann Cells (خلايا شوان)', 'Myelin Sheath (غمد الميالين)']
+        title: 'Compact Bone (العظم المصمت أو القشري)',
+        content:
+          'يشكل العظم المصمت الطبقة الخارجية الصلبة للهيكل العظمي. الوحدة البنائية الوظيفية المميزة له هي جهاز هافرس أو العظمون (Haversian System / Osteon). يتكون كل عظمون من: 1. قناة هافرس المركزية (Haversian Canal) تحوي أوعية دموية وأعصاب. 2. صفائح عظمية متحدة المركز (Concentric Lamellae) من مصفوفة كولاجين متكلسة بأملاح هيدروكسي أباتيت. 3. فجوات (Lacunae) تحتوي على الخلايا العظمية الناضجة (Osteocytes). 4. نبيبات عظمية دقيقة (Canaliculi) تمتد فيها زوائد الخلايا لتأمين التغذية بالانتشار. تتصل قنوات هافرس ببعضها وبالسطح عبر قنوات فولكمان المستعرضة (Volkmann\'s canals).',
+        histology_notes:
+          'يُحضر العظم بطريقتين: 1. شرائح العظم المطحون (Ground bone): بدون صبغ، تظهر الفجوات والنبيبات وقنوات هافرس سوداء لامتلائها بجزيئات طحن دقيقة وهواء. 2. العظم منزوع الكلس (Decalcified bone) بصبغة H&E: يظهر الكولاجين أحمر/وردي مع بقاء الخلايا العظمية حية.',
+        key_terms: ['Compact Bone', 'Osteon', 'Haversian Canal', 'Volkmann Canal', 'Concentric Lamellae', 'Osteocytes', 'Canaliculi']
       },
       {
         section: 'practical_quiz',
-        image_tag: '[صورة-6: قطاع طولي في عضلة القلب Cardiac Muscle]',
-        stain_and_mag: 'Iron Hematoxylin / H&E | 400x Magnification',
-        question: 'لوحظ في قطاع نسيجي عضلات ذات خلايا متفرعة ذات أنوية مركزية، وخطوط داكنة مستعرضة مميزة تفصل بين الخلايا العضلية المتجاورة. ما هو هذا التركيب التشريحي الدقيق؟',
+        image_tag: '[صورة-8: شريحة العظم المصمت المطحون - Ground Bone]',
+        image_url: 'https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&w=800&q=80',
+        stain_and_mag: 'عظم مطحون جاف (Ground Bone Unstained) — تكبير 20x',
+        tissue_name: 'Compact Bone (Haversian System / Osteon)',
+        microscopic_details: 'قناة هافرس مركزية مظلمة محاطة بصفائح دائرية متحدة المركز من المادة العظمية، تتخللها جوبات سوداء ونبيبات دقيقة متفرعة تشبه أرجل العنكبوت.',
+        question: 'ما هو الاسم العلمي للوحدة البنائية الأسطوانية الدائرية المميزة للعظم المصمت الظاهرة في الشريحة؟',
         options: [
-          'A. Z-discs في اللييف العضلي الهيكلي',
-          'B. Intercalated Discs (الأقراص البينية) في العضلة القلبية',
-          'C. Neuromuscular junctions',
-          'D. Dense bodies في العضلات الملساء'
+          'Haversian System / Osteon (العظمون)',
+          'Trabecular network',
+          'Isogenous chondrocyte nest',
+          'Neuromuscular junction'
         ],
-        correct_answer: 'الإجابة الصحيحة هي (B): الأقراص البينية (Intercalated Discs) علامة مميزة وفريدة للنسيج العضلي القلبي، وتحتوي على desmosomes للتثبيت الميكانيكي وgap junctions لنقل الشحنات الكهربائية السريعة.'
+        correct_answer: 'Haversian System / Osteon (نظام هافرس أو العظمون): الوحدة الأسطوانية المكونة من قناة مركزية محاطة بصفائح عظمية دائرية متحدة المركز تحوي الخلايا العظمية.'
       },
       {
         section: 'media_video',
-        original_url: 'https://www.youtube.com/watch?v=kYJvO3PjWb0',
-        fixed_embed_url: 'https://www.youtube-nocookie.com/embed/kYJvO3PjWb0',
-        title: 'التعرف على الأنسجة العضلية والعصبية بالمجهر (Histology Practical: Muscle & Nerve)',
-        description: 'مقارنة الشرائح الثلاثة للعضلات مع قطاع العصب المحيطي Peripheral Nerve.'
-      }
-    ]
-  },
-  {
-    course: 'Histology',
-    chapter: 'الفصل الخامس: خلايا الدم المحيطي ونخاع العظم (Peripheral Blood Film & Hematopoiesis)',
-    chapterNumber: 5,
-    descriptionAr: 'مسحة الدم المحيطي بصبغة ليشمان (Leishman Stain)، التعرف على كريات الدم الحمر، الصفائح، وأنواع خلايا الدم البيضاء المحببة وغير المحببة.',
-    content_blocks: [
-      {
-        section: 'theory',
-        title: 'فحص مسحة الدم المحيطي (Peripheral Blood Smear Examination)',
-        content: 'تُصبغ مسحات الدم بصبغات رومانووسكي مثل ليشمان (Leishman Stain) أو جيمسا (Giemsa). يتكون الدم من بلازما وعناصر مشكلة تشمل: 1) كريات الدم الحمر (Erythrocytes / RBCs): أقراص مقعرة الوجهين بقطر 7.5 ميكرومتر عديمة النواة ومملوءة بالهيموغلوبين. 2) الصفائح الدموية (Platelets): شظايا خلوية صغيرة عديمة النواة تنشأ من Megakaryocytes في نخاع العظم. 3) كريات الدم البيضاء (Leukocytes / WBCs): تنقسم إلى محببة (Granulocytes) تشمل العدلات (Neutrophils: نواة عديدة الفصوص 3–5)، الحَمِضات (Eosinophils: نواة ثنائية الفصوص وحبيبات برتقالية/حمراء كروية)، والقَعِدات (Basophils: حبيبات زرقاء داكنة خشنة تغطي النواة). وغير محببة (Agranulocytes) تشمل اللمفاويات (Lymphocytes: نواة كروية تشغل معظم الخلية) والوحيدات (Monocytes: نواة كلوية الشكل / فاصولياء وسيتوبلازم رمادي مزرق).',
-        histology_notes: 'العدلات (Neutrophils) تمثل خط الدفاع الأول ضد البكتيريا وتكون النسبة الأكبر (50–70% من WBCs). الحَمِضات (Eosinophils 1–4%) تتكاثر في حالات الحساسية والعدوى الطفيلية، وتفرز Major Basic Protein من حبيباتها الإيوسينية الفاقعة.',
-        key_terms: ['Leishman Stain (صبغة ليشمان)', 'Neutrophil (العدلة)', 'Eosinophil (الحَمِضة)', 'Basophil (القَعِدة)', 'Lymphocyte (الخلية اللمفاوية)', 'Monocyte (الخلية الوحيدة)', 'Platelets (الصفائح الدموية)']
-      },
-      {
-        section: 'practical_quiz',
-        image_tag: '[صورة-7: خلية دم بيضاء في مسحة دم ليشمان]',
-        stain_and_mag: 'Leishman Stain | 1000x Oil Immersion',
-        question: 'خلية دم بيضاء قطرها 12–15 ميكرومتر، تحتوي على نواة مميزة تتكون من فصين متصلين (Bilobed nucleus) وسيتوبلازم مكتظ بحبيبات خشنة متوهجة باللون البرتقالي المحمر. ما هو تشخيص هذه الخلية؟',
-        options: [
-          'A. Basophil (خلية قعدة)',
-          'B. Eosinophil (خلية حمضة)',
-          'C. Neutrophil (خلية عدلة)',
-          'D. Small Lymphocyte (لمفاوية صغيرة)'
-        ],
-        correct_answer: 'الإجابة الصحيحة هي (B): الخلية الحَمِضة (Eosinophil) تتميز كلاسيكياً بالنواة ثنائية الفصوص الشبيهة بسماعة النظارات (Spectacle-shaped bilobed nucleus) والحبيبات السيتوبلازمية الحامضية الكبيرة المتلونة باللون الوردي البرتقالي المتوهج مع صبغة الإيوسين في ليشمان.'
-      },
-      {
-        section: 'media_video',
-        original_url: 'https://www.youtube.com/watch?v=p43qgA_yMlc',
-        fixed_embed_url: 'https://www.youtube-nocookie.com/embed/p43qgA_yMlc',
-        title: 'كيفية قراءة مسحة الدم والتعرف على خلايا WBC تحت المجهر (Blood Film Mastery)',
-        description: 'شرح مجهري مباشر بزيت التكبير 1000x لكيفية تمييز كل خلية بيضاء بدقة امتحانية.'
+        title: 'دراسة أنسجة الغضاريف والعظام تحت المجهر مع التعرف على الشرائح',
+        original_url: 'https://www.youtube.com/watch?v=3M_EfZ8O9iU',
+        fixed_embed_url: 'https://www.youtube.com/embed/3M_EfZ8O9iU'
       }
     ]
   }
 ];
-
-/**
- * Robust URL sanitizer to guarantee valid embeddable YouTube links
- */
-export function sanitizeToEmbedUrl(url: string): string {
-  if (!url || typeof url !== 'string') return '';
-  const trimmed = url.trim();
-
-  // If already an embed url
-  if (trimmed.includes('/embed/')) {
-    return trimmed.replace('http://', 'https://');
-  }
-
-  // Handle youtu.be/ID
-  const youtuBeMatch = trimmed.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
-  if (youtuBeMatch && youtuBeMatch[1]) {
-    return `https://www.youtube-nocookie.com/embed/${youtuBeMatch[1]}`;
-  }
-
-  // Handle youtube.com/watch?v=ID
-  const watchMatch = trimmed.match(/[?&]v=([a-zA-Z0-9_-]+)/);
-  if (watchMatch && watchMatch[1]) {
-    return `https://www.youtube-nocookie.com/embed/${watchMatch[1]}`;
-  }
-
-  // Handle youtube.com/shorts/ID
-  const shortsMatch = trimmed.match(/\/shorts\/([a-zA-Z0-9_-]+)/);
-  if (shortsMatch && shortsMatch[1]) {
-    return `https://www.youtube-nocookie.com/embed/${shortsMatch[1]}`;
-  }
-
-  // If standard valid URL
-  if (trimmed.startsWith('https://') || trimmed.startsWith('http://')) {
-    return trimmed;
-  }
-
-  return '';
-}
