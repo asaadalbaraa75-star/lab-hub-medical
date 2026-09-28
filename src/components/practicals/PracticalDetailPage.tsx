@@ -440,10 +440,11 @@ export const PracticalDetailPage: React.FC<PracticalDetailPageProps> = ({
 
           {/* Lesson Visual Slides / Plates in Sequence */}
           {(() => {
+            const practicalAny = practical as any;
             const lessonPlates = (practical.images && practical.images.length > 0)
               ? practical.images
-              : (practical.imageUrl || (practical as any).imageURL || practical.realImagePath)
-                ? [{ url: (practical.imageUrl || (practical as any).imageURL || practical.realImagePath)!, caption: practical.title, magnification: 'Plate 1' }]
+              : (practicalAny.imageUrl || practicalAny.imageURL || practicalAny.realImagePath)
+                ? [{ url: (practicalAny.imageUrl || practicalAny.imageURL || practicalAny.realImagePath)!, caption: practical.title, magnification: 'Plate 1' }]
                 : [];
 
             return lessonPlates.length > 0 ? (

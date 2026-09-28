@@ -15,6 +15,7 @@
 import React, { useState } from 'react';
 import { CarbohydratesSection } from './CarbohydratesSection';
 import { ProteinPracticalLab } from './ProteinPracticalLab';
+import { ProteinTestsInteractiveLab } from './ProteinTestsInteractiveLab';
 import { ProteinsTheorySection } from './ProteinsTheorySection';
 import { BiochemistryCertificateModal } from './BiochemistryCertificateModal';
 import { BiochemistryPathwaysViewer } from './BiochemistryPathwaysViewer';
@@ -22,7 +23,8 @@ import {
   FlaskConical,
   Dna,
   Award,
-  Sparkles
+  Sparkles,
+  TestTube
 } from 'lucide-react';
 
 interface BiochemistryLabViewProps {
@@ -33,7 +35,7 @@ export const BiochemistryLabView: React.FC<BiochemistryLabViewProps> = ({
   searchQuery = ''
 }) => {
   const [activeMainSection, setActiveMainSection] = useState<'carbohydrates' | 'proteins'>('carbohydrates');
-  const [proteinSubTab, setProteinSubTab] = useState<'practical' | 'theory'>('practical');
+  const [proteinSubTab, setProteinSubTab] = useState<'protein_tests' | 'practical' | 'theory'>('protein_tests');
   const [isCertificateOpen, setIsCertificateOpen] = useState<boolean>(false);
   const [showPathways, setShowPathways] = useState<boolean>(false);
 
@@ -139,14 +141,14 @@ export const BiochemistryLabView: React.FC<BiochemistryLabViewProps> = ({
                   SECTION 02
                 </div>
                 <div className="text-base font-bold text-white">
-                  02 — PROTEINS
+                  02 — PROTEIN TESTS & PROTEINS
                 </div>
                 <div className="text-xs font-arabic text-slate-400">
-                  الأحماض الأمينية وتجارب المعمل (Biuret & Casein)
+                  تجارب البروتين التفاعلية (Albumin, Casein, Tryptophan) والنظرية
                 </div>
               </div>
             </div>
-            <span className="text-xs font-mono text-purple-300/80">Practical + Theory</span>
+            <span className="text-xs font-mono text-purple-300/80">3 Core Tests + Theory</span>
           </button>
         </div>
       </div>
@@ -159,43 +161,65 @@ export const BiochemistryLabView: React.FC<BiochemistryLabViewProps> = ({
       {/* RENDER SECTION 02: PROTEINS */}
       {activeMainSection === 'proteins' && (
         <div className="space-y-6">
-          {/* Sub-navigation for Proteins: Dedicated Protein Practical vs Theory */}
-          <div className="flex items-center justify-between gap-3 bg-[#1E293B] p-3.5 rounded-2xl border border-[#334155]">
+          {/* Sub-navigation for Proteins: 3 Dedicated Sub-tabs */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#1E293B] p-3 rounded-2xl border border-[#334155]">
             <span className="text-xs font-bold text-slate-300 font-mono">
               PROTEINS MODULE SELECTION:
             </span>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <button
+                type="button"
+                id="protein-tab-interactive-tests"
+                onClick={() => setProteinSubTab('protein_tests')}
+                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                  proteinSubTab === 'protein_tests'
+                    ? 'bg-purple-600 text-white shadow-md shadow-purple-600/30'
+                    : 'bg-[#0F172A] text-slate-300 border border-slate-700 hover:text-white'
+                }`}
+              >
+                <TestTube className="w-3.5 h-3.5" />
+                <span>🧪 PROTEIN TESTS (3 تجارب تفاعلية)</span>
+              </button>
+
               <button
                 type="button"
                 id="protein-tab-practical"
                 onClick={() => setProteinSubTab('practical')}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                   proteinSubTab === 'practical'
                     ? 'bg-purple-600 text-white shadow-md shadow-purple-600/30'
-                    : 'bg-[#0F172A] text-slate-300 border border-slate-700'
+                    : 'bg-[#0F172A] text-slate-300 border border-slate-700 hover:text-white'
                 }`}
               >
-                🔬 PROTEIN PRACTICAL (معمل كشف البروتين والكازين)
+                <FlaskConical className="w-3.5 h-3.5" />
+                <span>🔬 BIURET & CASEIN LAB (المعمل الميداني)</span>
               </button>
 
               <button
                 type="button"
                 id="protein-tab-theory"
                 onClick={() => setProteinSubTab('theory')}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                   proteinSubTab === 'theory'
                     ? 'bg-purple-600 text-white shadow-md shadow-purple-600/30'
-                    : 'bg-[#0F172A] text-slate-300 border border-slate-700'
+                    : 'bg-[#0F172A] text-slate-300 border border-slate-700 hover:text-white'
                 }`}
               >
-                📖 THEORY & STRUCTURE (النظرية والتراكيب)
+                <Dna className="w-3.5 h-3.5" />
+                <span>📖 THEORY & STRUCTURE (النظرية والتراكيب)</span>
               </button>
             </div>
           </div>
 
-          {proteinSubTab === 'practical' ? (
+          {proteinSubTab === 'protein_tests' && (
+            <ProteinTestsInteractiveLab />
+          )}
+
+          {proteinSubTab === 'practical' && (
             <ProteinPracticalLab />
-          ) : (
+          )}
+
+          {proteinSubTab === 'theory' && (
             <ProteinsTheorySection />
           )}
         </div>

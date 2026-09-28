@@ -21,11 +21,13 @@ import { OwnershipWatermark } from '../../common/OwnershipWatermark';
 interface HistologyHomeViewProps {
   onSelectLesson: (lessonId: string) => void;
   onOpenExam: () => void;
+  onOpenStructuredHub?: () => void;
 }
 
 export const HistologyHomeView: React.FC<HistologyHomeViewProps> = ({
   onSelectLesson,
-  onOpenExam
+  onOpenExam,
+  onOpenStructuredHub
 }) => {
   const [selectedSectionId, setSelectedSectionId] = useState<string | null>(null);
 
@@ -168,18 +170,30 @@ export const HistologyHomeView: React.FC<HistologyHomeViewProps> = ({
           </p>
         </div>
 
-        {/* Quick Jump to Practical Exam Mode */}
+        {/* Quick Jump to Practical Exam Mode & Structured Hub */}
         <div className="mt-6 pt-4 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-3">
           <span className="text-xs text-slate-400">
-            Test your visual recognition on random slides:
+            أدوات التعلم السريع وبنك الأسئلة:
           </span>
-          <button
-            onClick={onOpenExam}
-            className="px-4 py-2 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 text-xs font-bold flex items-center gap-2 transition-all shadow-lg hover:shadow-teal-500/20"
-          >
-            <Target className="w-4 h-4" />
-            <span>🔬 IDENTIFY THE SLIDE (Exam Mode)</span>
-          </button>
+          <div className="flex items-center gap-2 flex-wrap">
+            {onOpenStructuredHub && (
+              <button
+                type="button"
+                onClick={onOpenStructuredHub}
+                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-teal-300 border border-teal-500/40 text-xs font-bold flex items-center gap-2 transition-all shadow-md cursor-pointer"
+              >
+                <BookOpen className="w-4 h-4 text-teal-400" />
+                <span>📖 الشرح النظري وبنك MCQs</span>
+              </button>
+            )}
+            <button
+              onClick={onOpenExam}
+              className="px-4 py-2 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 text-xs font-bold flex items-center gap-2 transition-all shadow-lg hover:shadow-teal-500/20 cursor-pointer"
+            >
+              <Target className="w-4 h-4" />
+              <span>🔬 IDENTIFY THE SLIDE (Exam Mode)</span>
+            </button>
+          </div>
         </div>
       </div>
 
